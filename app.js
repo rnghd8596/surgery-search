@@ -283,6 +283,10 @@ function search(qraw) {
       if (ediHits.length >= MAX_EDI * 2) break;
     }
   }
+  // 코드로만 검색된 경우, 해당 질환의 대표 수술로 수가 보강 (예: J34 → 비중격교정술)
+  if (!ediHits.length && gi.length) {
+    relatedEdi(state.D.g[gi[0][0]], 12).forEach(h => ediHits.push(h.i));
+  }
   // 별칭 검색어로 수가 보강 (예: 대장용종 → 용종절제술)
   if (syn && ediHits.length < 5) {
     const terms = [...new Set([...syn.q, syn.k])].map(norm).filter(t => t.length >= 2).sort((a, b) => b.length - a.length);
