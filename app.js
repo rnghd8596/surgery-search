@@ -214,8 +214,10 @@ $('#lockForm').addEventListener('submit', async (e) => {
     start(data);
   } catch (err) {
     setLockBusy(false);
+    console.error('UNLOCK ERROR:', err);
     const card = $('#lockCard');
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    $('#pwErr').textContent = '오류: ' + (err.message || err);
     $('#pwErr').classList.add('show');
     pwEl.select();
   }
