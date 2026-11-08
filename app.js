@@ -504,14 +504,6 @@ function switchTab(tabKey) {
     renderAbout();
   }
 }
-      renderNdaiTree();
-    }
-  } else if (tabKey === 'ocr') {
-    // 사진으로 검색 탭
-  } else if (tabKey === 'about') {
-    renderAbout();
-  }
-}
 
 function bindNavTabs() {
   $('#tabs').addEventListener('click', (e) => {
