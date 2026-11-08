@@ -313,7 +313,7 @@ async function unlockWithKey(key) {
   const [d, e, x, b] = await Promise.all([
     fetch('assets/data/diseases.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
     fetch('assets/data/edi.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
-    fetch('assets/data/exceptions.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
+    fetch('assets/data/exc.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
     fetch('assets/data/bunri.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
   ]);
   return { d, e, x, b };
@@ -410,10 +410,11 @@ $('#lockForm').addEventListener('submit', async (e) => {
     $('#lock').style.transition = 'opacity .45s ease, transform .45s ease';
     start(data);
   } catch (err) {
+    console.error('Unlock error:', err);
     setLockBusy(false);
     const card = $('#lockCard');
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
-    $('#pwErr').textContent = '비밀번호가 올바르지 않습니다';
+    $('#pwErr').textContent = (err && err.name === 'OperationError') ? '비밀번호가 올바르지 않습니다' : ('오류: ' + (err.message || '비밀번호가 올바르지 않습니다'));
     $('#pwErr').classList.add('show');
     pwEl.select();
   }
