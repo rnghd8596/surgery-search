@@ -211,6 +211,7 @@ html[data-theme="dark"] .tab.on{background:var(--brand-3);color:#8DBBFF}
 .hero-title .grad{
   background:linear-gradient(100deg,#3182F6,#7C5CFC 55%,#0FA97F);
   -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:-.01em;padding-right:.06em;margin-right:-.02em;
 }
 .hero-sub{margin:10px 0 0;font-size:14px;color:var(--text-3);font-weight:500}
 .hero.hide{display:none}
