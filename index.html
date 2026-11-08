@@ -406,26 +406,38 @@ window.onerror = function(msg, url, line, col, err) {
           <button type="button" class="f-chip" id="btnSelectOcrFile" style="background:#d97706;color:#fff;font-weight:850;padding:9px 20px;border-radius:10px;border:0;font-size:12.5px;box-shadow:var(--shadow-1);">사진 촬영 / 앨범에서 선택 (여러 장 가능)</button>
         </div>
 
-        <!-- 병원 서류 전용: 가입시기 & 보험회사 선택 (증권이 없는 경우) -->
-        <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);text-align:left;">
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>📅 가입시기 (병원서류만 올리는 경우):</span>
-            <span id="ocrDateBadge" style="font-size:11px;color:#d97706;font-weight:800;">2020년 이후</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px;" id="ocrGenChips">
-            <button class="f-chip" data-ocrgen="old" type="button" style="padding:8px 0;font-size:12px;font-weight:800;border-radius:10px;">2020년 이전</button>
-            <button class="f-chip on" data-ocrgen="recent" type="button" style="padding:8px 0;font-size:12px;font-weight:800;border-radius:10px;">2020년 이후</button>
-          </div>
-
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>🏢 가입 보험사:</span>
-            <span id="ocrCoBadge" style="font-size:11px;color:#d97706;font-weight:800;">전체</span>
+        <!-- 병원 서류 전용: 가입시기 & 보험회사 선택 (대형 강조 배너 & 명확한 단계별 가이드) -->
+        <div style="margin-top:16px;padding:16px 14px;background:rgba(217,119,6,0.06);border:1.5px solid rgba(217,119,6,0.3);border-radius:16px;text-align:left;">
+          
+          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
+            <span style="font-size:22px;line-height:1;">💡</span>
+            <div>
+              <div style="font-size:14.5px;font-weight:900;color:#b45309;">병원 서류(진단서 · 영수증)만 올리시는 경우</div>
+              <div style="font-size:12px;color:var(--text-2);margin-top:3px;line-height:1.45;">서류에는 가입 정보가 없으므로, 정확한 수술비 판정을 위해 아래 <b>가입시기</b>와 <b>보험회사</b>를 꼭 선택해 주세요!</div>
+            </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
-            <button class="f-chip on" id="btnOcrSonbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;">손해보험 (13개사)</button>
-            <button class="f-chip" id="btnOcrSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험 (18개사)</button>
-          </div>
+          <div style="padding-top:10px;border-top:1px dashed rgba(217,119,6,0.25);">
+            <!-- 1. 가입시기 -->
+            <div style="font-size:12.5px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+              <span>📅 1. 가입시기 선택:</span>
+              <span id="ocrDateBadge" style="font-size:12px;color:#d97706;font-weight:900;">2020년 이후</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;" id="ocrGenChips">
+              <button class="f-chip" data-ocrgen="old" type="button" style="padding:10px 0;font-size:13px;font-weight:850;border-radius:10px;">2020년 이전</button>
+              <button class="f-chip on" data-ocrgen="recent" type="button" style="padding:10px 0;font-size:13px;font-weight:850;border-radius:10px;">2020년 이후</button>
+            </div>
+
+            <!-- 2. 가입 보험사 -->
+            <div style="font-size:12.5px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+              <span>🏢 2. 가입 보험사 선택:</span>
+              <span id="ocrCoBadge" style="font-size:12px;color:#d97706;font-weight:900;">전체</span>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
+              <button class="f-chip on" id="btnOcrSonbo" type="button" style="padding:9px 0;font-weight:850;border-radius:10px;">손해보험 (13개사)</button>
+              <button class="f-chip" id="btnOcrSaengbo" type="button" style="padding:9px 0;font-weight:850;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험 (18개사)</button>
+            </div>
 
           <div class="co-grid" id="ocrCoSonbo" style="grid-template-columns:repeat(3,1fr);">
             <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
@@ -495,7 +507,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261108z"></script>
-<script src="app.js?v=20261108z"></script>
+<script src="assets/curated.js?v=20261108za"></script>
+<script src="app.js?v=20261108za"></script>
 </body>
 </html>
