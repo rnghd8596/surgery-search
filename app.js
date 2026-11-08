@@ -451,7 +451,6 @@ function start(data) {
   bindTierTab();
   bindNdaiTab();
   bindOcrTab();
-  initVoiceSearch();
 
   $$('.quick-shortcut-banner[data-go]').forEach(b => {
     b.addEventListener('click', () => switchTab(b.dataset.go));
@@ -2292,98 +2291,6 @@ function hl(text, q) {
   if (!nq) return esc(text);
   const re = new RegExp('(' + q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
   return esc(text).replace(re, '<mark>$1</mark>');
-}
-
-/* ───────────────────────── 5. 음성 인식 (Web Speech API) ───────────────────────── */
-function initVoiceSearch() {
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  function handleNoSpeech(btn) {
-    btn?.addEventListener('click', () => {
-      showToast('이 브라우저는 음성 인식을 지원하지 않습니다');
-    });
-  }
-
-  if (!SpeechRecognition) {
-    handleNoSpeech($('#btnVoiceSearchHome'));
-    handleNoSpeech($('#btnVoiceQuick'));
-    handleNoSpeech($('#btnVoiceTier'));
-    handleNoSpeech($('#btnVoiceNdai'));
-    return;
-  }
-
-  function startListening(targetInput, onResultCallback, activeBtn) {
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'ko-KR';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      showToast('🎙️ 말씀하세요… (예: 21년 메리츠 대장용종)');
-      activeBtn?.classList.add('recording');
-
-      recognition.onresult = (event) => {
-        const text = event.results[0][0].transcript.trim();
-        if (text) {
-          showToast(`인식됨: "${text}"`);
-          if (targetInput) {
-            targetInput.value = text;
-            targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-          }
-          if (onResultCallback) onResultCallback(text);
-        }
-      };
-
-      recognition.onerror = (err) => {
-        activeBtn?.classList.remove('recording');
-        if (err.error !== 'no-speech') {
-          showToast('음성 인식 오류가 발생했습니다');
-        }
-      };
-
-      recognition.onend = () => {
-        activeBtn?.classList.remove('recording');
-      };
-
-      recognition.start();
-    } catch (e) {
-      activeBtn?.classList.remove('recording');
-      showToast('음성 인식 시작 실패');
-    }
-  }
-
-  $('#btnVoiceSearchHome')?.addEventListener('click', () => {
-    startListening(null, (text) => {
-      switchTab('quick');
-      const qEl = $('#q-quick');
-      if (qEl) {
-        qEl.value = text;
-        $('#clearBtn-quick').hidden = false;
-        runQuickSearch(text);
-      }
-    }, $('#btnVoiceSearchHome'));
-  });
-
-  $('#btnVoiceQuick')?.addEventListener('click', () => {
-    startListening($('#q-quick'), (text) => {
-      $('#clearBtn-quick').hidden = false;
-      runQuickSearch(text);
-    }, $('#btnVoiceQuick'));
-  });
-
-  $('#btnVoiceTier')?.addEventListener('click', () => {
-    startListening($('#q-tier'), (text) => {
-      $('#clearBtn-tier').hidden = false;
-      runTierSearch(text);
-    }, $('#btnVoiceTier'));
-  });
-
-  $('#btnVoiceNdai')?.addEventListener('click', () => {
-    startListening($('#q-ndai'), (text) => {
-      $('#clearBtn-ndai').hidden = false;
-      runNdaiSearch(text);
-    }, $('#btnVoiceNdai'));
-  });
 }
 
 /* ───────────────────────── 4. 안내 ───────────────────────── */

@@ -181,7 +181,7 @@ html[data-theme="dark"] .i-sun{display:none}
 
 .tabs{
   max-width:920px;margin:0 auto;padding:8px 12px 10px;
-  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;width:100%;box-sizing:border-box;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:100%;box-sizing:border-box;
 }
 .tabs::-webkit-scrollbar{display:none}
 .tab{
@@ -210,7 +210,7 @@ html[data-theme="dark"] .tab.on{background:var(--brand-3);color:#8DBBFF}
   display:inline-block;margin:0 0 10px;padding:5px 12px;border-radius:999px;
   background:var(--brand-3);color:var(--brand);font-size:11.5px;font-weight:800;letter-spacing:.02em;
 }
-.hero-title{margin:0;font-size:clamp(27px,6vw,38px);font-weight:800;letter-spacing:-.04em;line-height:1.26}
+.hero-title{margin:0;font-size:clamp(22px,5.2vw,32px);font-weight:800;letter-spacing:-.04em;line-height:1.26;word-break:keep-all;}
 .hero-title .grad{
   background:linear-gradient(100deg,#3182F6,#7C5CFC 55%,#0FA97F);
   -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -246,14 +246,6 @@ html[data-theme="dark"] .tab.on{background:var(--brand-3);color:#8DBBFF}
   background:var(--line-2);color:var(--text-2);display:grid;place-items:center;transition:.18s;
 }
 .clear-btn:hover{background:var(--line);color:var(--text)}
-
-.voice-btn{
-  flex:0 0 auto;width:34px;height:34px;border:0;border-radius:10px;cursor:pointer;
-  background:transparent;color:var(--text-3);display:grid;place-items:center;transition:.18s;margin-right:2px;
-}
-.voice-btn:hover{color:var(--brand);background:var(--line-2)}
-.voice-btn.recording{color:#ef4444;background:rgba(239,68,68,0.12);animation:pulseMic 1s infinite}
-@keyframes pulseMic{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chips::-webkit-scrollbar{display:none}
@@ -572,8 +564,8 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 @media (max-width:640px){
   .main{padding:0 16px 32px}
   .topbar-inner{padding:12px 16px 0}
-  .tabs{padding:6px 10px 8px;gap:4px}
-  .tab{font-size:12px;padding:8px 1px;border-radius:10px}
+  .tabs{padding:6px 8px 8px;gap:3px;grid-template-columns:repeat(5,1fr)}
+  .tab{font-size:11.5px;padding:7px 1px;border-radius:9px;letter-spacing:-.04em}
   .hero{padding:18px 0 14px}
   .hero-sub{font-size:13px}
   .search-wrap{top:calc(var(--header-h, 96px) + 2px)}
