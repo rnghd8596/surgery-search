@@ -374,10 +374,14 @@ let idx = { name: [], syn: [], edi: [] };
 
 function buildIndex() {
   const D = state.D;
-  idx.name = D.g.map((g, i) => {
-    const nn = norm(g.n);
-    const ch = getChosung(g.n);
-    return { i, nn, ch, l: nn.length };
+  idx.name = [];
+  D.g.forEach((g, i) => {
+    const names = [g.n].concat(g.vs || []);
+    names.forEach(name => {
+      const nn = norm(name);
+      const ch = getChosung(name);
+      idx.name.push({ i, nn, ch, l: nn.length, isMain: name === g.n });
+    });
   });
 
   idx.syn = (window.CURATED?.synonyms || []).map(s => {
@@ -764,7 +768,7 @@ function runQuickSearch(q, parsed) {
   }
 
   let html = head;
-  html += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi)).join('');
+  html += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi, parsed)).join('');
   box.innerHTML = html;
   bindCardActions(box);
 }
@@ -873,32 +877,185 @@ function renderIdleQuick() {
   });
 }
 
-function cardQuickHTML(gi, q, matchedEdi) {
+
+/* ───────────────────────── 회사별·시기별 약관 개정 판정 엔진 ───────────────────────── */
+const REVISION_RULES = [
+  {
+    id: 'colon_polyp',
+    name: '대장용종 절제술 (내시경 폴립절제)',
+    match: (g) => (g.c || []).some(c => c.startsWith('K63') || c.startsWith('D12') || c.startsWith('K62')),
+    standardTier: 2,
+    standardLabel: '2종 (표준 1~5종 수술분류표 제88항-2)',
+    revisions: [
+      { co: '하나손해보험', ym: 202306, label: '하나손보 2023.06 개정' },
+      { co: '에이스손해보험', ym: 202309, label: '에이스손보 2023.09 개정' },
+      { co: '메리츠화재', ym: 202412, label: '메리츠화재 2024.12 개정' },
+      { co: '흥국화재', ym: 202509, label: '흥국화재 2025.09 개정' },
+      { co: 'KB손해보험', ym: 202601, label: 'KB손보 2026.01 개정(수술Ⅲ)' },
+      { co: '롯데손해보험', ym: 202601, label: '롯데손보 2026.01 개정' },
+      { co: '농협손해보험', ym: 202609, label: '농협손보 2026.09 개정' }
+    ],
+    evaluate: function(co, year, month) {
+      const coStr = (co || '').trim();
+      const revItem = this.revisions.find(r => coStr && coStr.includes(r.co.slice(0, 2)));
+
+      // 1. 개정 이력이 없는 회사이거나 생보사
+      if (coStr && !revItem) {
+        return {
+          tier: '2종',
+          hasDiff: false,
+          note: `${coStr}는 개정 없이 2종 유지 (표준 1~5종 약관)`,
+          boxHTML: ''
+        };
+      }
+
+      // 2. 개정 회사가 특정된 경우
+      if (coStr && revItem) {
+        const ymText = `${Math.floor(revItem.ym / 100)}년 ${revItem.ym % 100}월`;
+        if (!year) {
+          return {
+            tier: '1·2종',
+            hasDiff: true,
+            diffBadge: '[가입시기별 상이]',
+            note: `${revItem.co}는 ${ymText} 기점으로 2종 ➔ 1종 하향 개정`,
+            boxHTML: `
+              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">⚠️ ${revItem.co} 가입시기별 종수 기준</div>
+                <div>• <b>${ymText} 이전 계약</b> ➔ <b style="color:#2563eb;">2종 지급</b><br>• <b>${ymText} 이후 계약</b> ➔ <b style="color:#dc2626;">1종 적용</b> (개정약관)</div>
+              </div>`
+          };
+        }
+
+        const targetYm = year * 100 + (month || 12);
+        if (targetYm >= revItem.ym) {
+          return {
+            tier: '1종',
+            hasDiff: true,
+            diffBadge: '[개정약관 1종]',
+            note: `${revItem.co} ${ymText} 개정약관 적용 (1종)`,
+            boxHTML: `
+              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">✓ ${revItem.co} ${ymText} 이후 개정약관 (1종 확정)</div>
+                <div style="color:var(--text-2);">고객 가입 시점이 ${ymText} 이후이므로 1종에 해당합니다. (이전 계약은 2종)</div>
+              </div>`
+          };
+        } else {
+          return {
+            tier: '2종',
+            hasDiff: true,
+            diffBadge: '[개정 이전 2종]',
+            note: `${revItem.co} ${ymText} 이전 계약으로 2종 지급`,
+            boxHTML: `
+              <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+                <div style="font-weight:850;color:#2563eb;margin-bottom:3px;">✓ ${revItem.co} ${ymText} 이전 계약 (2종 확정)</div>
+                <div style="color:var(--text-2);">${ymText} 개정 전 가입 계약이므로 정상적으로 2종 수술비가 지급됩니다.</div>
+              </div>`
+          };
+        }
+      }
+
+      // 3. 회사/연도 미선택
+      return {
+        tier: '2종',
+        hasDiff: true,
+        diffBadge: '[가입시기별 상이]',
+        note: '표준약관 및 생보 전사·대형 손보사는 2종 (메리츠 등 7개 손보사 개정 특약만 1종)',
+        boxHTML: `
+          <div style="background:var(--surface);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+            <div style="font-weight:850;color:#dc2626;margin-bottom:4px;">⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳</div>
+            <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:6px;">
+              <div>• 하나손보 : 2023.06~</div>
+              <div>• 에이스손보 : 2023.09~</div>
+              <div>• 메리츠화재 : 2024.12~</div>
+              <div>• 흥국화재 : 2025.09~</div>
+              <div>• KB손보 : 2026.01~(수술Ⅲ)</div>
+              <div>• 롯데손보 : 2026.01~</div>
+              <div>• 농협손보 : 2026.09~</div>
+            </div>
+            <div style="color:#2563eb;font-weight:750;font-size:11.5px;">✓ 삼성화재 · 현대해상 · DB손보 및 생보사 전사 : <b>개정 없이 2종 유지</b></div>
+          </div>`
+      };
+    }
+  },
+  {
+    id: 'breast_hyper',
+    name: '유방비대증 수술',
+    match: (g) => (g.c || []).some(c => c.startsWith('N62')),
+    evaluate: function(co) {
+      const coStr = (co || '').trim();
+      if (coStr.includes('메리츠')) {
+        return {
+          tier: '1종',
+          hasDiff: true,
+          diffBadge: '[메리츠 1종]',
+          note: '메리츠화재 1-5종 수술분류표Ⅱ는 유방비대(N62) 수술을 1종으로 별도 명시',
+          boxHTML: ''
+        };
+      }
+      return {
+        tier: '3종',
+        hasDiff: false,
+        note: '표준 1~5종 수술분류표 제3항 유방절단수술 3종',
+        boxHTML: ''
+      };
+    }
+  },
+  {
+    id: 'gallstone',
+    name: '담석증 복강경수술',
+    match: (g) => (g.c || []).some(c => c.startsWith('K80')),
+    evaluate: function(co) {
+      const coStr = (co || '').trim();
+      if (coStr.includes('메리츠')) {
+        return {
+          tier: '2종',
+          hasDiff: true,
+          diffBadge: '[메리츠 2종]',
+          note: '메리츠화재 1-5종 수술분류표Ⅱ는 담석증(K80) 수술을 2종으로 별도 명시',
+          boxHTML: ''
+        };
+      }
+      return {
+        tier: '3종',
+        hasDiff: false,
+        note: '표준 1~5종 수술분류표 제36항 담낭·담도 관혈수술 3종',
+        boxHTML: ''
+      };
+    }
+  }
+];
+
+function evaluateSurgery(g, co, year, month) {
+  for (const rule of REVISION_RULES) {
+    if (rule.match(g)) {
+      return rule.evaluate(co, year, month);
+    }
+  }
+  const stdT = tierOf(g);
+  return {
+    tier: tierLabel(stdT),
+    hasDiff: false,
+    diffBadge: '',
+    note: '표준 1~5종 수술분류표 기준',
+    boxHTML: ''
+  };
+}
+
+function cardQuickHTML(gi, q, matchedEdi, parsed) {
   const g = state.D.g[gi];
   const t = tierOf(g);
-  const ex = curatedFor(g, window.CURATED?.exceptions);
   const procs = curatedFor(g, window.CURATED?.procs);
+
+  const co = parsed?.co || '';
+  const year = parsed?.year || null;
+  const month = parsed?.month || null;
+  const evalRes = evaluateSurgery(g, co, year, month);
 
   let ediBanner = '';
   if (matchedEdi) {
     ediBanner = `
       <div style="background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:10px;padding:8px 12px;margin:8px 0;font-size:12px;">
         <span style="font-weight:800;color:var(--brand)">✓ 수술코드 [${esc(matchedEdi.code)}] ${esc(matchedEdi.name)} 매칭</span>
-      </div>`;
-  }
-
-  let exHTML = '';
-  if (ex) {
-    exHTML = `
-      <div style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.3);border-radius:12px;padding:10px 14px;margin:10px 0 6px;">
-        <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:850;color:#d97706;">
-          <span style="background:#f59e0b;color:#fff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:900;">${esc(ex.val.exTier)}</span>
-          <span>${esc(ex.val.exLabel)}</span>
-        </div>
-        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">
-          • <b>2020년 이전 가입 (표준 1~5종)</b> ➔ <b style="color:#2563eb;">2종 지급</b><br>
-          • <b>2020년 이후 메리츠 · 롯데 등</b> ➔ <b style="color:#dc2626;">1종 하향 개정</b> (가입시기 확인 필수)
-        </div>
       </div>`;
   }
 
@@ -918,44 +1075,9 @@ function cardQuickHTML(gi, q, matchedEdi) {
       </div>`;
   }
 
-  const stdT = tierLabel(t);
-  let pre2020Tier = stdT;
-  let pre2020Note = '(표준 1~5종)';
-  let post2020Tier = stdT;
-  let post2020Note = '(동일 종수 유지)';
-  let post2020Color = '#2563eb';
-  let hasPeriodDiff = false;
-
-  if (ex) {
-    hasPeriodDiff = true;
-    pre2020Tier = ex.val.stdTier || '2종';
-    pre2020Note = '(생보 전사 · 표준약관)';
-    post2020Tier = '1종 또는 2종';
-    post2020Note = '(메리츠·롯데 1종 / 타사 2종)';
-    post2020Color = '#dc2626';
-  }
-
-  const periodBoxHTML = `
-    <div style="background:var(--surface);border:1.5px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};border-radius:11px;padding:9px 12px;margin:9px 0 6px;">
-      <div style="font-size:11px;font-weight:800;color:${hasPeriodDiff ? '#dc2626' : 'var(--text-3)'};margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-        <span>📅 가입시기별 판정 종수 ${hasPeriodDiff ? '(★ 시기별 종수 상이)' : ''}</span>
-        <span style="font-size:10.5px;color:var(--text-3);font-weight:600;">세부사항 안 열어도 즉시 확인</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
-        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid var(--border);">
-          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이전 가입</div>
-          <div style="font-size:14px;font-weight:900;color:#2563eb;margin-top:2px;">
-            ${pre2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${pre2020Note}</span>
-          </div>
-        </div>
-        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};">
-          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이후 가입</div>
-          <div style="font-size:14px;font-weight:900;color:${post2020Color};margin-top:2px;">
-            ${post2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${post2020Note}</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
+  const badgeDiffHTML = evalRes.diffBadge
+    ? `<span style="color:#dc2626;font-size:11.5px;font-weight:850;margin-left:6px;">${esc(evalRes.diffBadge)}</span>`
+    : '';
 
   return `
   <article class="card" data-gi="${gi}">
@@ -970,14 +1092,13 @@ function cardQuickHTML(gi, q, matchedEdi) {
       <div style="background:var(--surface-2);border-radius:14px;padding:12px 14px;margin-top:10px;border:1px solid var(--border);">
         <div style="font-size:11px;font-weight:750;color:var(--text-3);letter-spacing:-.01em;margin-bottom:4px;">1~5종 수술비 표준 판정</div>
         <div style="display:flex;align-items:center;gap:12px;margin:2px 0 4px;">
-          <span class="proc-tag ${'t' + (t.t || 2)}" style="font-size:16px;padding:5px 14px;border-radius:10px;min-width:54px;">${esc(tierLabel(t))}</span>
+          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:16px;padding:5px 14px;border-radius:10px;min-width:54px;">${esc(evalRes.tier)}</span>
           <div>
-            <div style="font-size:14px;font-weight:800;color:var(--text);">${esc(t.w || g.n + ' 수술')}</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">생명보험 전사 · 2020년 이전 손해보험 표준약관 기준</div>
+            <div style="font-size:14px;font-weight:800;color:var(--text);">${esc(t.w || g.n + ' 수술')} ${badgeDiffHTML}</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${esc(evalRes.note)}</div>
           </div>
         </div>
-        ${periodBoxHTML}
-        ${exHTML}
+        ${evalRes.boxHTML}
         ${procsHTML}
       </div>
 
@@ -1376,53 +1497,13 @@ function runTierSearch(q, family) {
 function cardTierHTML(gi, q, matchedEdi) {
   const g = state.D.g[gi];
   const t = tierOf(g);
-  const ex = curatedFor(g, window.CURATED?.exceptions);
   const procs = curatedFor(g, window.CURATED?.procs);
 
-  const gen = state.tGen;
   const year = state.tYear;
   const month = state.tMonth;
   const co = state.tCo;
 
-  let finalTier = tierLabel(t);
-  let finalNote = '2006~2019년 표준 1~5종 약관 기준';
-
-  const ymStr = year ? (month ? `${year}년 ${month}월` : `${year}년`) : '';
-
-  if (year !== null) {
-    if (year >= 2020) {
-      if (ex && (co.includes('메리츠') || co.includes('롯데') || !co)) {
-        finalTier = ex.val.exTier.split(' ')[0] || '1종';
-        finalNote = `${ymStr} 계약 · 2020년 개정약관 적용 (1종 하향 개정)`;
-      } else {
-        finalTier = tierLabel(t);
-        finalNote = `${ymStr} 계약 · 1~5종 약관 적용`;
-      }
-    } else if (year >= 2006) {
-      finalTier = ex ? (ex.val.stdTier || tierLabel(t)) : tierLabel(t);
-      finalNote = `${ymStr} 계약 · 2006~2019년 표준 1~5종 약관 적용 (2종 유지)`;
-    } else {
-      finalTier = t.t <= 2 ? '1종' : t.t === 3 ? '2종' : '3종';
-      finalNote = `${ymStr} 계약 · 2006년 이전 구 1~3종 약관 적용`;
-    }
-  } else if (gen === 'old') {
-    finalTier = t.t <= 2 ? '1종' : t.t === 3 ? '2종' : '3종';
-    finalNote = '2006년 이전 구 1~3종 약관 적용';
-  } else if (gen === 'recent') {
-    if (ex && (co.includes('메리츠') || co.includes('롯데') || !co)) {
-      finalTier = ex.val.exTier.split(' ')[0] || '1종';
-      finalNote = '2020년 이후 개정 약관 적용 (1종 하향 개정)';
-    } else {
-      finalTier = tierLabel(t);
-      finalNote = '2020년 이후 1~5종 약관 적용';
-    }
-  } else if (gen === 'std') {
-    finalTier = ex ? (ex.val.stdTier || tierLabel(t)) : tierLabel(t);
-    finalNote = '2006~2019년 표준 1~5종 약관 적용 (2종 유지)';
-  } else if (ex && (co && (co.includes('메리츠') || co.includes('롯데')))) {
-    finalTier = ex.val.exTier.split(' ')[0] || '1종';
-    finalNote = `[${co}] 2020년 이후 개정약관 적용 시 1종`;
-  }
+  const evalRes = evaluateSurgery(g, co, year, month);
 
   let ediBanner = '';
   if (matchedEdi) {
@@ -1448,80 +1529,9 @@ function cardTierHTML(gi, q, matchedEdi) {
       </div>`;
   }
 
-  let exCompareHTML = '';
-  if (ex) {
-    if (finalTier.includes('1')) {
-      exCompareHTML = `
-        <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.28);border-radius:11px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
-          <div style="font-weight:900;color:#dc2626;display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:12.5px;">
-            <span>⚠️ 가입시기 확인 필수: 2종 지급 가능</span>
-          </div>
-          <div style="color:var(--text);">
-            현재 선택 조건은 <b>2020년 이후 개정 약관(1종)</b> 기준입니다.<br>
-            • 고객의 가입시기가 <b>2020년 이전 계약</b>인 경우 ➔ <b style="color:#2563eb;font-size:13px;">[2종]</b>으로 지급됩니다!<br>
-            • 생명보험사 전사 및 2020년 이전 손보사는 <b>2종 유지</b> (가입시기 증권 대조 필수)
-          </div>
-        </div>`;
-    } else {
-      exCompareHTML = `
-        <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.28);border-radius:11px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
-          <div style="font-weight:900;color:#2563eb;display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:12.5px;">
-            <span>💡 가입시기별 종수 차이 안내</span>
-          </div>
-          <div style="color:var(--text);">
-            • <b>2020년 이전 가입 (표준 1~5종)</b> ➔ <b style="color:#2563eb;font-size:12.5px;">[2종] 지급</b><br>
-            • <b>2020년 이후 메리츠 · 롯데 등</b> ➔ <b style="color:#dc2626;font-size:12.5px;">[1종] 하향 개정</b> (2020년 이후 가입건은 1종 주의)
-          </div>
-        </div>`;
-    }
-  }
-
-  const stdT = tierLabel(t);
-  let pre2020Tier = stdT;
-  let pre2020Note = '(표준 1~5종)';
-  let post2020Tier = stdT;
-  let post2020Note = '(동일 종수 유지)';
-  let post2020Color = '#2563eb';
-  let hasPeriodDiff = false;
-
-  if (ex) {
-    hasPeriodDiff = true;
-    pre2020Tier = ex.val.stdTier || '2종';
-    pre2020Note = '(생보 전사 · 표준약관)';
-    post2020Tier = '1종 또는 2종';
-    post2020Note = '(메리츠·롯데 1종 / 타사 2종)';
-    post2020Color = '#dc2626';
-    if (co && (co.includes('메리츠') || co.includes('롯데'))) {
-      post2020Tier = '1종';
-      post2020Note = `(${co} 개정약관 1종 하향)`;
-    } else if (co) {
-      post2020Tier = '2종';
-      post2020Note = `(${co} 2종 유지)`;
-      post2020Color = '#2563eb';
-    }
-  }
-
-  const periodBoxHTML = `
-    <div style="background:var(--surface);border:1.5px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};border-radius:11px;padding:9px 12px;margin:9px 0 6px;">
-      <div style="font-size:11px;font-weight:800;color:${hasPeriodDiff ? '#dc2626' : 'var(--text-3)'};margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-        <span>📅 가입시기별 판정 종수 ${hasPeriodDiff ? '(★ 시기별 종수 상이)' : ''}</span>
-        <span style="font-size:10.5px;color:var(--text-3);font-weight:600;">세부사항 안 열어도 즉시 확인</span>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
-        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid var(--border);">
-          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이전 가입</div>
-          <div style="font-size:14px;font-weight:900;color:#2563eb;margin-top:2px;">
-            ${pre2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${pre2020Note}</span>
-          </div>
-        </div>
-        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};">
-          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이후 가입</div>
-          <div style="font-size:14px;font-weight:900;color:${post2020Color};margin-top:2px;">
-            ${post2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${post2020Note}</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
+  const badgeDiffHTML = evalRes.diffBadge
+    ? `<span style="color:#dc2626;font-size:11.5px;font-weight:850;margin-left:6px;">${esc(evalRes.diffBadge)}</span>`
+    : '';
 
   return `
   <article class="card" data-gi="${gi}">
@@ -1539,14 +1549,13 @@ function cardTierHTML(gi, q, matchedEdi) {
           <span style="font-size:11px;font-weight:700;color:var(--text-3);">${esc(co ? co : '전사 기준')}</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px;margin:3px 0 6px;">
-          <span class="proc-tag ${'t' + (parseInt(finalTier) || 2)}" style="font-size:17px;padding:6px 16px;border-radius:10px;min-width:56px;">${esc(finalTier)}</span>
+          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:17px;padding:6px 16px;border-radius:10px;min-width:56px;">${esc(evalRes.tier)}</span>
           <div>
-            <div style="font-size:14.5px;font-weight:850;color:var(--text);">${esc(g.n)} 수술</div>
-            <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(finalNote)}</div>
+            <div style="font-size:14.5px;font-weight:850;color:var(--text);">${esc(g.n)} 수술 ${badgeDiffHTML}</div>
+            <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(evalRes.note)}</div>
           </div>
         </div>
-        ${periodBoxHTML}
-        ${exCompareHTML}
+        ${evalRes.boxHTML}
         ${procsHTML}
       </div>
     </div>
@@ -2600,43 +2609,42 @@ function detailBodyHTML(gi) {
 function copyCard(gi) {
   const g = state.D.g[gi];
   const t = tierOf(g);
-  const { cos } = matchInfo(g);
   const procs = curatedFor(g, window.CURATED?.procs);
-  const top = procs ? procs.val.slice(0, 2).map(p => `${p.s} → ${p.t}`).join('\n  - ') : '';
-  const co = state.tCo || state.ndaiCo;
-  const hasCo = co && cos.has(co);
+  const topProc = procs && procs.val && procs.val.length > 0 ? procs.val[0] : null;
 
-  let text = '';
-  if (co) {
-    const ndaLines = formatNdaLinesForCo(g, co);
-    text = `[보험비서] ${co} 가입 고객 수술비 보장 안내
+  const co = state.tCo || state.ndaiCo || '';
+  const cosList = (state.tCos && state.tCos.length > 0) ? state.tCos : (co ? [co] : []);
 
-고객님, 가입하신 [${co}] 기준으로 [${g.n}] 수술비 보장 내역을 안내해 드립니다.
+  const procName = topProc ? topProc.s : (t.w || `${g.n} 수술`);
+  const kcdCode = g.c.slice(0, 3).join(', ');
+  const mainTier = tierLabel(t);
 
-· 질병코드 : ${g.c.slice(0, 3).join(', ')} (${g.n})
-· 1~5종 수술비 : ${tierLabel(t)} 해당 예상
-· ${co} N대 수술비 : ${hasCo ? '보장 해당\n  - ' + ndaLines.join('\n  - ') : 'N대 수술비 특약 미해당 (종수술비 청구 대상)'}${top ? '\n· 주요 수술별 종수 : \n  - ' + top : ''}
-
-필요 서류 : 진단서(질병분류코드·수술명 명시), 수술기록지, 진료비 세부산정내역서
-※ 정확한 지급액은 고객님 증권의 가입금액 및 현장 심사 기준에 따라 확정됩니다.
-
-- 보험비서 드림`;
+  let companyLines = '';
+  if (cosList.length > 0) {
+    companyLines = cosList.map(c => `✔️${c} ${mainTier} 수술비`).join('\n\n');
   } else {
-    text = `[보험비서] ${g.n}(${g.c.slice(0, 3).join(', ')}) 수술비 안내
-
-· 질병분류 : ${g.n} (${g.c.join(', ')})
-· 1~5종 수술비 : ${tierLabel(t)} 해당 예상${top ? '\n· 주요 수술별 종수 : \n  - ' + top : ''}
-
-필요 서류 : 진단서, 수술기록지, 진료비 세부산정내역서
-- 보험비서 드림`;
+    companyLines = `✔️가입 보험사 ${mainTier} 수술비`;
   }
 
+  const text = `OOO 고객님께서 가입하신
+수술비 보험 안내드립니다.
+
+[${g.n}(${kcdCode}) • ${procName}]
+
+${companyLines}
+
+🚨필요서류
+- 진료비영수증
+- 진료비세부내역서
+- 수술확인서(질병분류코드&수술명 확인)
+- 입퇴원확인서 또는 통원확인서`;
+
   if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(text).then(() => showToast('고객 안내문이 복사되었습니다'));
+    navigator.clipboard.writeText(text).then(() => showToast('카카오톡 안내문이 복사되었습니다'));
   } else {
     const ta = document.createElement('textarea');
     ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
-    showToast('고객 안내문이 복사되었습니다');
+    showToast('카카오톡 안내문이 복사되었습니다');
   }
 }
 
