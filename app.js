@@ -2404,7 +2404,7 @@ function detailBodyHTML(gi) {
     ${tipsHTML}
 
     <div class="sec">
-      <div class="sec-title"><span style="color:var(--brand);">⚖️ 동시·다발성 수술 판정 약관 3대 유형 비교 (실무 참고용)</span><div class="dotline"></div></div>
+      <div class="sec-title"><span style="color:var(--brand);">⚖️ 동시·다발성 수술 판정 약관 4대 유형 비교 (실무 참고용)</span><div class="dotline"></div></div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:12px;line-height:1.5;">
         <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;">
           ※ 보험사 및 가입 시기(상품 약관)에 따라 동일질병/동시수술 지급 규정이 상이하므로 고객 증권 약관을 반드시 대조하세요.
@@ -2413,10 +2413,10 @@ function detailBodyHTML(gi) {
         <div style="display:flex;flex-direction:column;gap:8px;">
           <!-- A형 -->
           <div style="background:var(--surface-2);border-left:3.5px solid #10b981;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#10b981;font-size:12.5px;margin-bottom:3px;">🅰️ A유형: [수술 1회당] 지급형 (미래에셋 등)</div>
+            <div style="font-weight:900;color:#10b981;font-size:12.5px;margin-bottom:3px;">🅰️ A유형: [수술 1회당] 순수 확대형 (미래에셋 등)</div>
             <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
-              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>2회(각각)</b><br>
-              • <b>다른질병/동일부위</b>: <b>2회(치료목적 독립 시)</b> | 다른질병/다른부위: <b>2회</b><br>
+              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>2회(각각 지급)</b><br>
+              • <b>다른질병/동일부위</b>: <b>2회(치료목적 독립 시)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
               <span style="font-size:11px;color:var(--text-3);">· 눈·귀·팔·다리 등 좌·우를 각각 다른 신체부위로 인정하여 양안/양측 수술 시 각각 지급 가능</span>
             </div>
           </div>
@@ -2426,7 +2426,7 @@ function detailBodyHTML(gi) {
             <div style="font-weight:900;color:#3b82f6;font-size:12.5px;margin-bottom:3px;">🅱️ B유형: [동일질병당 1회지급] 기본형 (현대해상 등)</div>
             <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
               • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>1회만(제한)</b><br>
-              • <b>다른질병/동일부위</b>: <b>2회(질병 다르면 인정)</b> | 다른질병/다른부위: <b>2회</b><br>
+              • <b>다른질병/동일부위</b>: <b>2회(질병 다르면 인정)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
               <span style="font-size:11px;color:var(--text-3);">· 동일 원인 질병이면 부위가 달라도 최고액 1개만 지급. (수술 후 365일 경과 시 새로운 질병 간주)</span>
             </div>
           </div>
@@ -2435,9 +2435,19 @@ function detailBodyHTML(gi) {
           <div style="background:var(--surface-2);border-left:3.5px solid #ef4444;border-radius:8px;padding:9px 11px;">
             <div style="font-weight:900;color:#ef4444;font-size:12.5px;margin-bottom:3px;">🆎 C유형: [동일질병 1회 + 동일부위 동시수술 제한] (라이나생명 등)</div>
             <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
-              • 동일질병/동일부위: 1회 | 동일질병/다른부위: 1회<br>
-              • <b>다른질병/동일부위</b>: <b>1회만(동일 장기군 제한)</b> | 다른질병/다른부위: <b>2회</b><br>
+              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>1회만(제한)</b><br>
+              • <b>다른질병/동일부위</b>: <b>1회만(동일 장기군 제한)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
               <span style="font-size:11px;color:#ef4444;font-weight:700;">· 【실무 예시】 동시에 위용종절제술 + 대장용종절제술 시행 시, 동일 복부장기 수술로 보아 1회만 지급!</span>
+            </div>
+          </div>
+
+          <!-- D형 -->
+          <div style="background:var(--surface-2);border-left:3.5px solid #8b5cf6;border-radius:8px;padding:9px 11px;">
+            <div style="font-weight:900;color:#8b5cf6;font-size:12.5px;margin-bottom:3px;">🆑 D유형: [수술 1회당 + 동일부위 동시수술 제한] (KB라이프 등)</div>
+            <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
+              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>2회(좌·우 별도 인정)</b><br>
+              • <b>다른질병/동일부위</b>: <b>1회만(높은 급여 1개만 지급)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
+              <span style="font-size:11px;color:#8b5cf6;font-weight:700;">· 【주의】 특약명은 [수술 1회당]이나, 세부규정 제2조②항에 동일 복부장기(위+대장 등) 동시 수술 시 1회만 지급 명시!</span>
             </div>
           </div>
         </div>
