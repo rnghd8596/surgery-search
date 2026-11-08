@@ -17,7 +17,7 @@
 <title>보험비서</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css?v=20261108f">
+<link rel="stylesheet" href="style.css?v=20261108j">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233182F6'/%3E%3Ctext x='32' y='43' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3E%ED%99%8D%3C/text%3E%3C/svg%3E">
 <script>
 window.onerror = function(msg, url, line, col, err) {
@@ -41,7 +41,7 @@ window.onerror = function(msg, url, line, col, err) {
   <div class="lock-card" id="lockCard">
     <div class="brand-mark">보</div>
     <h1 class="lock-title">보험비서</h1>
-    <p class="lock-sub">수술비 사전 <i></i> 보험 수술비 통합 솔루션</p>
+    <p class="lock-sub">수술비 사전 <i>·</i> 보험 수술비 통합 솔루션</p>
 
     <form id="lockForm" autocomplete="on">
       <div class="pw-field" id="pwField">
@@ -87,9 +87,10 @@ window.onerror = function(msg, url, line, col, err) {
     </div>
 
     <nav class="tabs" id="tabs" role="tablist">
-      <button class="tab on" data-tab="quick" role="tab">⚡ 빠른 검색</button>
-      <button class="tab" data-tab="detailed" role="tab">📋 정밀 검색</button>
-      <button class="tab" data-tab="riders" role="tab">N대 특별약관</button>
+      <button class="tab on" data-tab="quick" role="tab">⚡ 빠른검색</button>
+      <button class="tab" data-tab="tier" role="tab">📋 종수술비</button>
+      <button class="tab" data-tab="ndai" role="tab">🏢 N대질병</button>
+      <button class="tab" data-tab="ocr" role="tab">📸 사진으로 검색</button>
       <button class="tab" data-tab="about" role="tab">안내</button>
     </nav>
   </header>
@@ -101,13 +102,48 @@ window.onerror = function(msg, url, line, col, err) {
       <div class="hero" id="hero-quick">
         <p class="hero-eyebrow">빠른 수술비 검색</p>
         <h2 class="hero-title">수술명만 치면 <span class="grad">1초 만에 종수 판정</span></h2>
-        <p class="hero-sub">조건 선택 없이, 표준 종수와 예외만 가장 직관적으로 확인하세요</p>
+        <p class="hero-sub">목적에 맞는 메뉴를 터치하거나 바로 검색창에 입력하세요</p>
+      </div>
+
+      <!-- 4대 모드 바로가기 2x2 컬러 카드 (첫 화면에서 원터치 전환) -->
+      <div class="mode-select-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">
+        <button type="button" class="mode-card on" data-go="quick" style="background:rgba(49,130,246,0.08);border:2px solid #3182f6;border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
+          <div style="font-size:24px;">⚡</div>
+          <div>
+            <div style="font-size:12.5px;font-weight:900;color:#3182f6;">빠른검색</div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">1초 단답 판정</div>
+          </div>
+        </button>
+
+        <button type="button" class="mode-card" data-go="tier" style="background:rgba(16,185,129,0.08);border:1.5px solid rgba(16,185,129,0.35);border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
+          <div style="font-size:24px;">📋</div>
+          <div>
+            <div style="font-size:12.5px;font-weight:900;color:#10b981;">종수술비 정밀</div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">년·월/회사 판정</div>
+          </div>
+        </button>
+
+        <button type="button" class="mode-card" data-go="ndai" style="background:rgba(139,92,246,0.08);border:1.5px solid rgba(139,92,246,0.35);border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
+          <div style="font-size:24px;">🏢</div>
+          <div>
+            <div style="font-size:12.5px;font-weight:900;color:#8b5cf6;">N대질병 정밀</div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">몇대질병 단답</div>
+          </div>
+        </button>
+
+        <button type="button" class="mode-card" data-go="ocr" style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
+          <div style="font-size:24px;">📸</div>
+          <div>
+            <div style="font-size:12.5px;font-weight:900;color:#d97706;">사진으로 검색</div>
+            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">서류·증권 사진 1초 분석</div>
+          </div>
+        </button>
       </div>
 
       <div class="search-wrap">
         <div class="searchbox">
           <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-quick" type="search" placeholder="질병명 · 수술명 · 질병코드 · 수술코드 (예: 대장용종, Q7701, 백내장)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="빠른 검색어">
+          <input id="q-quick" type="search" placeholder="질병명 · 수술명 · 질병코드 · 수술코드 (예: 대장용종, Q7701, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="빠른 검색어">
           <button id="clearBtn-quick" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
@@ -117,54 +153,107 @@ window.onerror = function(msg, url, line, col, err) {
       <div id="results-quick" class="results" aria-live="polite"></div>
     </section>
 
-    <!-- ───────── 2. 정밀 검색 (가입시기 · 회사 지정) ───────── -->
-    <section id="pane-detailed" class="pane" hidden>
-      <div class="hero" id="hero-detailed">
-        <p class="hero-eyebrow">정밀 맞춤 검색</p>
-        <h2 class="hero-title">가입시기 · 회사별 <span class="grad">100% 맞춤 판정</span></h2>
-        <p class="hero-sub">고객 증권을 보면서 회사와 시기를 선택하고 오차 없이 확인하세요</p>
+    <!-- ───────── 2. 종수술비 정밀검색 (가입시기 년·월 & 회사별 맞춤 1~5종) ───────── -->
+    <section id="pane-tier" class="pane" hidden>
+      <div class="hero" id="hero-tier">
+        <p class="hero-eyebrow">1~5종 종수술비 정밀검색</p>
+        <h2 class="hero-title">가입시기(년·월) · 회사별 <span class="grad">맞춤 종수 확인</span></h2>
+        <p class="hero-sub">화면 칩으로 원터치 체크하거나, 검색창에 '2103 메리츠 용종' 직접 입력하세요</p>
       </div>
 
-      <!-- 스마트 증권 선택 바 -->
+      <!-- 종수술비 필터 바 -->
       <div class="smart-filter-card" style="margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow-1);">
         
-        <!-- 가입시기 -->
-        <div style="margin-bottom:10px;">
+        <!-- 가입시기 (년·월 계층형 원터치: 시기 -> 연도 -> 월) -->
+        <div style="margin-bottom:14px;">
           <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>📅 가입시기 (약관 세대):</span>
-            <span style="font-size:10.5px;color:var(--brand);font-weight:600;">※ 대장용종 1종 vs 2종 개정 반영</span>
+            <span>📅 가입시기 (년·월):</span>
+            <span id="tierDateBadge" style="font-size:11px;color:var(--brand);font-weight:800;">전체 / 미선택</span>
           </div>
-          <div class="f-chips-scroll" id="dPeriodChips" style="display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
-            <button class="f-chip on" data-period="all">전체 / 모름</button>
-            <button class="f-chip" data-period="std">표준 1~5종 (2006~2019)</button>
-            <button class="f-chip" data-period="recent">최근 개정 (2020년 이후)</button>
-            <button class="f-chip" data-period="old">구 1~3종 (2006년 이전)</button>
+
+          <!-- 1단계: 시기 구분 버튼 (스크롤 없이 4열 그리드) -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;" id="tGenChips">
+            <button class="f-chip on" data-gen="all" type="button" style="padding:6px 0;font-size:11px;">전체</button>
+            <button class="f-chip" data-gen="recent" type="button" style="padding:6px 0;font-size:11px;">2020년~</button>
+            <button class="f-chip" data-gen="std" type="button" style="padding:6px 0;font-size:11px;">06~19년</button>
+            <button class="f-chip" data-gen="old" type="button" style="padding:6px 0;font-size:11px;">06년이전</button>
+          </div>
+
+          <!-- 2단계: 연도 칩 그리드 (아래로 한눈에 펼쳐짐) -->
+          <div id="tierYearGrid" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;"></div>
+
+          <!-- 3단계: 월 칩 그리드 (선택사항, 6열 그리드) -->
+          <div id="tierMonthSection" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:10.5px;color:var(--text-3);font-weight:700;">월 선택 (선택사항):</span>
+              <span id="tierMonthReset" style="font-size:10.5px;color:var(--brand);font-weight:750;cursor:pointer;">[월 전체]</span>
+            </div>
+            <div id="tierMonthGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);">
+              <button class="f-chip m-chip on" data-m="" style="padding:4px 0;font-size:10.5px;grid-column:span 6;">월 전체 / 모름</button>
+              <button class="f-chip m-chip" data-m="1" style="padding:4px 0;font-size:10.5px;">1월</button>
+              <button class="f-chip m-chip" data-m="2" style="padding:4px 0;font-size:10.5px;">2월</button>
+              <button class="f-chip m-chip" data-m="3" style="padding:4px 0;font-size:10.5px;">3월</button>
+              <button class="f-chip m-chip" data-m="4" style="padding:4px 0;font-size:10.5px;">4월</button>
+              <button class="f-chip m-chip" data-m="5" style="padding:4px 0;font-size:10.5px;">5월</button>
+              <button class="f-chip m-chip" data-m="6" style="padding:4px 0;font-size:10.5px;">6월</button>
+              <button class="f-chip m-chip" data-m="7" style="padding:4px 0;font-size:10.5px;">7월</button>
+              <button class="f-chip m-chip" data-m="8" style="padding:4px 0;font-size:10.5px;">8월</button>
+              <button class="f-chip m-chip" data-m="9" style="padding:4px 0;font-size:10.5px;">9월</button>
+              <button class="f-chip m-chip" data-m="10" style="padding:4px 0;font-size:10.5px;">10월</button>
+              <button class="f-chip m-chip" data-m="11" style="padding:4px 0;font-size:10.5px;">11월</button>
+              <button class="f-chip m-chip" data-m="12" style="padding:4px 0;font-size:10.5px;">12월</button>
+            </div>
           </div>
         </div>
 
-        <!-- 가입회사 -->
-        <div style="margin-bottom:10px;">
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;">🏢 가입 보험사:</div>
-          <div class="f-chips-scroll" id="dCompanyChips" style="display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
-            <button class="f-chip on" data-co="">전체 / 모름</button>
+        <!-- 가입회사 (손해 13 / 생명 18) -->
+        <div>
+          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🏢 가입 보험사:</span>
+            <span id="tierCoBadge" style="font-size:11px;color:var(--brand);font-weight:800;">전체 / 미선택</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
+            <button class="f-chip on" id="btnTierSonbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;">손해보험 (13개사)</button>
+            <button class="f-chip" id="btnTierSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험 (18개사)</button>
+          </div>
+
+          <div class="co-grid" id="tierCoSonbo">
+            <button class="f-chip on" data-co="" style="grid-column:span 3;">전체 / 모름</button>
             <button class="f-chip" data-co="현대해상">현대해상</button>
             <button class="f-chip" data-co="삼성화재">삼성화재</button>
             <button class="f-chip" data-co="DB손해보험">DB손보</button>
             <button class="f-chip" data-co="KB손해보험">KB손보</button>
             <button class="f-chip" data-co="메리츠화재">메리츠</button>
-            <button class="f-chip" data-co="흥국화재">흥국화재</button>
             <button class="f-chip" data-co="한화손해보험">한화손보</button>
+            <button class="f-chip" data-co="흥국화재">흥국화재</button>
             <button class="f-chip" data-co="롯데손해보험">롯데손보</button>
+            <button class="f-chip" data-co="NH농협손해보험">농협손보</button>
+            <button class="f-chip" data-co="하나손해보험">하나손보</button>
+            <button class="f-chip" data-co="MG손해보험">MG손보</button>
+            <button class="f-chip" data-co="AIG손해보험">AIG손보</button>
           </div>
-        </div>
 
-        <!-- 특약 모드 -->
-        <div>
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;">📋 확인 특약:</div>
-          <div class="f-chips-scroll" id="dRiderModeChips" style="display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;">
-            <button class="f-chip on" data-mode="all">종수술비 + N대 전체</button>
-            <button class="f-chip" data-mode="tier">1~5종 수술비만</button>
-            <button class="f-chip" data-mode="ndai">N대 질병수술비만</button>
+          <div class="co-grid" id="tierCoSaengbo" style="display:none;">
+            <button class="f-chip on" data-co="" style="grid-column:span 3;">전체 / 모름</button>
+            <button class="f-chip" data-co="삼성생명">삼성생명</button>
+            <button class="f-chip" data-co="한화생명">한화생명</button>
+            <button class="f-chip" data-co="교보생명">교보생명</button>
+            <button class="f-chip" data-co="신한라이프">신한라이프</button>
+            <button class="f-chip" data-co="KB라이프생명">KB라이프</button>
+            <button class="f-chip" data-co="동양생명">동양생명</button>
+            <button class="f-chip" data-co="미래에셋생명">미래에셋</button>
+            <button class="f-chip" data-co="DB생명">DB생명</button>
+            <button class="f-chip" data-co="흥국생명">흥국생명</button>
+            <button class="f-chip" data-co="라이나생명">라이나</button>
+            <button class="f-chip" data-co="메트라이프생명">메트라이프</button>
+            <button class="f-chip" data-co="AIA생명">AIA생명</button>
+            <button class="f-chip" data-co="하나생명">하나생명</button>
+            <button class="f-chip" data-co="ABL생명">ABL생명</button>
+            <button class="f-chip" data-co="NH농협생명">농협생명</button>
+            <button class="f-chip" data-co="iM라이프">iM라이프</button>
+            <button class="f-chip" data-co="KDB생명">KDB생명</button>
+            <button class="f-chip" data-co="IBK연금보험">IBK연금</button>
           </div>
         </div>
 
@@ -173,20 +262,168 @@ window.onerror = function(msg, url, line, col, err) {
       <div class="search-wrap">
         <div class="searchbox">
           <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-detailed" type="search" placeholder="질병명 · 수술명 · 질병코드 · 수술코드 입력" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="정밀 검색어">
-          <button id="clearBtn-detailed" class="clear-btn" hidden aria-label="지우기">
+          <input id="q-tier" type="search" placeholder="수술명 · 질병명 (예: 21년3월 메리츠 대장용종, 2103 KB 맘모톰, Q7701)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="종수술비 검색어">
+          <button id="clearBtn-tier" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
       </div>
 
-      <div id="results-detailed" class="results" aria-live="polite"></div>
+      <div id="results-tier" class="results" aria-live="polite"></div>
     </section>
 
-    <!-- ───────── 3. N대 질병수술비 약관 목록 ───────── -->
-    <section id="pane-riders" class="pane" hidden></section>
+    <!-- ───────── 3. N대질병수술비 정밀검색 (손해 13 · 생명 18 전사 & 계층 트리) ───────── -->
+    <section id="pane-ndai" class="pane" hidden>
+      <div class="hero" id="hero-ndai">
+        <p class="hero-eyebrow">N대 질병수술비 정밀검색</p>
+        <h2 class="hero-title">123대 중 몇 대 질병인지 <span class="grad">1초 만에 확정</span></h2>
+        <p class="hero-sub">회사를 선택하고 몇 대 질병인지 확인하거나 약관 트리를 탐색하세요</p>
+      </div>
 
-    <!-- ───────── 4. 안내 ───────── -->
+      <!-- 상단 서브 모드 전환 -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;">
+        <button class="f-chip on" id="btnNdaiSearchTab" type="button" style="padding:9px 0;font-weight:850;font-size:13px;border-radius:12px;">🔍 N대 담보 판정 검색</button>
+        <button class="f-chip" id="btnNdaiTreeTab" type="button" style="padding:9px 0;font-weight:850;font-size:13px;border-radius:12px;background:var(--surface-2);color:var(--text-3);">📚 회사별 N대 약관 트리</button>
+      </div>
+
+      <!-- N대 가입·판매시기 & 회사 & N대숫자 필터 바 -->
+      <div class="smart-filter-card" style="margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow-1);">
+        
+        <!-- 1. 판매시기 (연도별 N대 자동 결정) -->
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>📅 판매·가입시기 (년도별 N대 자동 매칭):</span>
+            <span id="ndaiDateBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">전체 시기</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;" id="nGenChips">
+            <button class="f-chip on" data-ngen="all" type="button" style="padding:6px 0;font-size:11px;">전체</button>
+            <button class="f-chip" data-ngen="recent" type="button" style="padding:6px 0;font-size:11px;">2021년~</button>
+            <button class="f-chip" data-ngen="mid" type="button" style="padding:6px 0;font-size:11px;">18~20년</button>
+            <button class="f-chip" data-ngen="old" type="button" style="padding:6px 0;font-size:11px;">18년이전</button>
+          </div>
+          <div id="ndaiYearGrid" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;"></div>
+        </div>
+
+        <!-- 2. 보험회사 선택 -->
+        <div>
+          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🏢 보험회사 선택:</span>
+            <span id="ndaiCoBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">KB손해보험</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
+            <button class="f-chip on" id="btnNdaiSonbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;">손해보험</button>
+            <button class="f-chip" id="btnNdaiSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험</button>
+          </div>
+
+          <div class="co-grid" id="ndaiCoSonbo">
+            <button class="f-chip on" data-nco="KB손해보험">KB손보</button>
+            <button class="f-chip" data-nco="현대해상">현대해상</button>
+            <button class="f-chip" data-nco="삼성화재">삼성화재</button>
+            <button class="f-chip" data-nco="DB손해보험">DB손보</button>
+            <button class="f-chip" data-nco="메리츠화재">메리츠</button>
+            <button class="f-chip" data-nco="한화손해보험">한화손보</button>
+            <button class="f-chip" data-nco="흥국화재">흥국화재</button>
+            <button class="f-chip" data-nco="롯데손해보험">롯데손보</button>
+            <button class="f-chip" data-nco="NH농협손해보험">농협손보</button>
+            <button class="f-chip" data-nco="하나손해보험">하나손보</button>
+            <button class="f-chip" data-nco="" style="grid-column:span 2;">전체 / 미선택</button>
+          </div>
+
+          <div class="co-grid" id="ndaiCoSaengbo" style="display:none;">
+            <button class="f-chip on" data-nco="삼성생명">삼성생명</button>
+            <button class="f-chip" data-nco="한화생명">한화생명</button>
+            <button class="f-chip" data-nco="교보생명">교보생명</button>
+            <button class="f-chip" data-nco="동양생명">동양생명</button>
+            <button class="f-chip" data-nco="DB생명">DB생명</button>
+            <button class="f-chip" data-nco="흥국생명">흥국생명</button>
+            <button class="f-chip" data-nco="메트라이프생명">메트라이프</button>
+            <button class="f-chip" data-nco="" style="grid-column:span 2;">전체 / 미선택</button>
+          </div>
+        </div>
+
+        <!-- 3. N대 특약 숫자 선택 바 (자동 세팅 + 직접 원터치) -->
+        <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);">
+          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🔢 N대 특약 숫자 (증권에 적힌 특약):</span>
+            <span id="ndaiTierBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">전체 N대</span>
+          </div>
+          <div id="ndaiTierChips" style="display:flex;flex-wrap:wrap;gap:5px;">
+            <button class="f-chip on" data-ntier="" style="padding:5px 10px;font-size:11px;font-weight:800;">전체 N대</button>
+            <button class="f-chip" data-ntier="123대" style="padding:5px 10px;font-size:11px;font-weight:800;">123대</button>
+            <button class="f-chip" data-ntier="120대" style="padding:5px 10px;font-size:11px;font-weight:800;">120대</button>
+            <button class="f-chip" data-ntier="116대" style="padding:5px 10px;font-size:11px;font-weight:800;">116대</button>
+            <button class="f-chip" data-ntier="112대" style="padding:5px 10px;font-size:11px;font-weight:800;">112대</button>
+            <button class="f-chip" data-ntier="101대" style="padding:5px 10px;font-size:11px;font-weight:800;">101대</button>
+            <button class="f-chip" data-ntier="71대" style="padding:5px 10px;font-size:11px;font-weight:800;">71대</button>
+            <button class="f-chip" data-ntier="64대" style="padding:5px 10px;font-size:11px;font-weight:800;">64대</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 서브뷰 1: N대 판정 검색 -->
+      <div id="ndaiSearchSubView">
+        <div class="search-wrap">
+          <div class="searchbox">
+            <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
+            <input id="q-ndai" type="search" placeholder="질병명 · 수술명 · N대숫자 (예: 21년 현대 123대 맘모톰, 112대 KB 맘모톰, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="N대 검색어">
+            <button id="clearBtn-ndai" class="clear-btn" hidden aria-label="지우기">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="results-ndai" class="results" aria-live="polite"></div>
+      </div>
+
+      <!-- 서브뷰 2: 회사별 N대 약관 트리 -->
+      <div id="ndaiTreeSubView" style="display:none;">
+        <div id="riderTreeContainer"></div>
+      </div>
+
+    </section>
+
+    <!-- ───────── 4. 사진으로 검색하기 (서류·증권 사진 자동 분석) ───────── -->
+    <section id="pane-ocr" class="pane" hidden>
+      <div class="hero" id="hero-ocr">
+        <p class="hero-eyebrow">사진으로 검색하기</p>
+        <h2 class="hero-title">사진만 올리면 <span class="grad">알아서 자동 검색</span></h2>
+        <p class="hero-sub">병원 진단서, 영수증, 세부산정내역서 또는 보험 증권을 사진 찍어 올려주세요</p>
+      </div>
+
+      <!-- 안심 개인정보 보안 안내 배너 -->
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;font-size:12px;color:#059669;font-weight:750;line-height:1.45;">
+        <span style="font-size:16px;">🔒</span>
+        <span>첨부된 서류 및 증권 사진은 검색 판정에만 실시간 참고되며, 서버에 일절 저장되지 않고 즉시 안전하게 폐기됩니다.</span>
+      </div>
+
+      <div class="smart-filter-card" style="margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:var(--shadow-1);text-align:center;">
+        <div style="border:2px dashed var(--line);border-radius:14px;padding:26px 16px;background:var(--surface-2);cursor:pointer;" id="ocrDropZone">
+          <div style="font-size:38px;margin-bottom:8px;">📷</div>
+          <div style="font-size:14.5px;font-weight:850;color:var(--text);margin-bottom:4px;">병원 서류 또는 보험 증권 사진 첨부</div>
+          <div style="font-size:11.5px;color:var(--text-3);margin-bottom:14px;">진단서 · 수술확인서 · 세부산정내역서 · 증권 특약표</div>
+          <input type="file" id="ocrFileInput" accept="image/*,application/pdf" style="display:none;">
+          <button type="button" class="f-chip" id="btnSelectOcrFile" style="background:#d97706;color:#fff;font-weight:850;padding:9px 20px;border-radius:10px;border:0;font-size:12.5px;box-shadow:var(--shadow-1);">사진 촬영 / 앨범에서 선택</button>
+        </div>
+
+        <div id="ocrPreviewBox" style="display:none;margin-top:14px;text-align:left;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:12.5px;font-weight:850;color:#d97706;">📄 서류 판독 결과</span>
+            <button type="button" id="btnOcrReset" style="border:0;background:none;color:var(--text-3);font-size:11px;font-weight:750;cursor:pointer;">[다시 올리기]</button>
+          </div>
+          <div id="ocrResultCard" style="background:var(--surface-2);border-radius:12px;padding:12px;border:1px solid var(--border);font-size:12.5px;"></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:10px;">
+        <h3><span class="sec-dot"></span>자동 판독 지원 항목</h3>
+        <p>· <b>질병분류코드 (KCD)</b> : 진단서 상병명 및 C00~Z99 질병코드 자동 인식<br>
+           · <b>수술 수가코드 (EDI)</b> : 진료비 세부산정내역서의 Q7701, O1421, S5111 등 5자리 코드 추출<br>
+           · <b>보험 증권 담보표</b> : 가입 회사, 가입일자(년·월), N대 질병수술비 특약 크기 자동 인식</p>
+      </div>
+    </section>
+
+    <!-- ───────── 5. 안내 ───────── -->
     <section id="pane-about" class="pane" hidden></section>
   </main>
 
@@ -198,7 +435,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261108h"></script>
-<script src="app.js?v=20261108h"></script>
+<script src="assets/curated.js?v=20261108k"></script>
+<script src="app.js?v=20261108k"></script>
 </body>
 </html>

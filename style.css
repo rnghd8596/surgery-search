@@ -578,6 +578,43 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   .toast{bottom:24px;font-size:13px;padding:12px 16px;max-width:calc(100vw - 32px);white-space:normal;text-align:left}
   .nda-co{min-width:64px}
 }
+/* 그리드 및 모바일 최적화 헬퍼 */
+.f-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.f-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.card-actions button{white-space:nowrap}
+
+/* N대 트리 스타일 */
+.rider-tree-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-1);
+}
+.rider-tree-head{
+  padding:14px 16px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;background:var(--surface);user-select:none;
+}
+.rider-tree-head:hover{background:var(--surface-2)}
+.rider-tree-title{font-size:15px;font-weight:800;color:var(--text)}
+.rider-tree-sub{font-size:11.5px;color:var(--text-3);margin-top:2px}
+.rider-tree-body{
+  display:none;padding:12px 16px 16px;background:var(--surface-2);border-top:1px solid var(--border);
+}
+.sub-group-btn{
+  width:100%;text-align:left;padding:9px 12px;margin-bottom:6px;border-radius:10px;
+  background:var(--surface);border:1px solid var(--border);cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:13px;font-weight:750;color:var(--text);transition:.15s;
+}
+.sub-group-btn:hover{border-color:var(--brand);color:var(--brand)}
+.sub-group-diseases{
+  display:none;margin:-2px 0 10px;padding:8px 10px;border-radius:8px;
+  background:rgba(49,130,246,0.03);border:1px solid rgba(49,130,246,0.15);
+}
+.kcd-badge{
+  font-size:11px;font-weight:800;padding:2px 6px;border-radius:5px;
+  background:rgba(49,130,246,0.1);color:var(--brand);display:inline-block;
+}
+
 @media (min-width:900px){
   .hero{padding:38px 0 22px}
 }
