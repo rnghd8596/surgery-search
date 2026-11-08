@@ -69,7 +69,21 @@ const EDI_CODE_MAP = {
   'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '비해당(시술) 다수' }
 };
 
-/* ───────────────────────── 회사 약칭 & 자동 감지 매핑 (전사 31개사) ───────────────────────── */
+/* ───────────────────────── 회사 약칭 & 자동 감지 매핑 (전사 31개사 및 패밀리) ───────────────────────── */
+const COMPANY_FAMILIES = [
+  { key: 'db', name: 'DB', sonbo: 'DB손해보험', saengbo: 'DB생명' },
+  { key: '동부', name: '동부', sonbo: 'DB손해보험', saengbo: 'DB생명' },
+  { key: '삼성', name: '삼성', sonbo: '삼성화재', saengbo: '삼성생명' },
+  { key: '한화', name: '한화', sonbo: '한화손해보험', saengbo: '한화생명' },
+  { key: 'kb', name: 'KB', sonbo: 'KB손해보험', saengbo: 'KB라이프생명' },
+  { key: '케이비', name: 'KB', sonbo: 'KB손해보험', saengbo: 'KB라이프생명' },
+  { key: '흥국', name: '흥국', sonbo: '흥국화재', saengbo: '흥국생명' },
+  { key: '농협', name: '농협', sonbo: 'NH농협손해보험', saengbo: 'NH농협생명' },
+  { key: 'nh', name: 'NH', sonbo: 'NH농협손해보험', saengbo: 'NH농협생명' },
+  { key: '하나', name: '하나', sonbo: '하나손해보험', saengbo: '하나생명' },
+  { key: '라이나', name: '라이나', sonbo: '라이나손해보험', saengbo: '라이나생명' }
+];
+
 const COMPANY_ALIASES = [
   // 손해보험 (13개사)
   { name: '현대해상', type: 'sonbo', keys: ['현대해상', '현대', '현해'] },
@@ -107,71 +121,15 @@ const COMPANY_ALIASES = [
   { name: 'IBK연금보험', type: 'saengbo', keys: ['ibk연금보험', 'ibk연금', '기업은행연금', '아백연금'] }
 ];
 
-/* ───────────────────────── 날짜 파서 (모든 입력 형태 완벽 지원) ───────────────────────── */
-function parseSmartDate(rawText) {
-  let year = null;
-  let month = null;
-  let text = rawText;
+const ALL_SPECIFIC_COMPANY_KEYS = [];
+COMPANY_ALIASES.forEach(ca => {
+  ca.keys.forEach(k => {
+    ALL_SPECIFIC_COMPANY_KEYS.push({ key: k, ca });
+  });
+});
+ALL_SPECIFIC_COMPANY_KEYS.sort((a, b) => b.key.length - a.key.length);
 
-  // 1. 2021년 3월 / 21년 3월 / 21년3월
-  let m = text.match(/\b((?:19|20)?\d{2})년\s*([01]?\d)월/);
-  if (m) {
-    year = normalizeYear(m[1]);
-    month = parseInt(m[2], 10);
-    text = text.replace(m[0], ' ');
-  }
-  // 2. 2021.03 / 21.3 / 21.03 / 2021-3 / 2021/03
-  else if ((m = text.match(/\b((?:19|20)?\d{2})[.\-\/]\s*([01]?\d)\b/))) {
-    year = normalizeYear(m[1]);
-    month = parseInt(m[2], 10);
-    text = text.replace(m[0], ' ');
-  }
-  // 3. 202103 (6자리 YYYYMM)
-  else if ((m = text.match(/\b(19\d{2}|20\d{2})(0[1-9]|1[0-2])\b/))) {
-    year = parseInt(m[1], 10);
-    month = parseInt(m[2], 10);
-    text = text.replace(m[0], ' ');
-  }
-  // 4. 2103 (4자리 YYMM, 수술코드 제외 순수 숫자)
-  else if ((m = text.match(/(?<![A-Za-z0-9가-힣])\b(\d{2})(0[1-9]|1[0-2])\b(?![A-Za-z0-9가-힣])/))) {
-    const yy = parseInt(m[1], 10);
-    if (yy <= 30 || yy >= 80) {
-      year = normalizeYear(m[1]);
-      month = parseInt(m[2], 10);
-      text = text.replace(m[0], ' ');
-    }
-  }
-  // 5. 2021년 / 21년
-  else if ((m = text.match(/\b((?:19|20)?\d{2})년\b/))) {
-    year = normalizeYear(m[1]);
-    text = text.replace(m[0], ' ');
-  }
-  // 6. 2021 / 2005 (4자리 단독 연도, 수술코드나 KCD 제외)
-  else if ((m = text.match(/(?<![A-Za-z0-9])\b(19\d{2}|20\d{2})\b(?![A-Za-z0-9])/))) {
-    year = parseInt(m[1], 10);
-    text = text.replace(m[0], ' ');
-  }
-
-  let gen = null;
-  if (year !== null) {
-    if (year >= 2020) gen = 'recent';
-    else if (year >= 2006) gen = 'std';
-    else gen = 'old';
-  } else {
-    if (/(2006년\s*이전|구종수|구1~3종)/.test(text)) {
-      gen = 'old';
-      text = text.replace(/(2006년\s*이전|구종수|구1~3종)/g, ' ');
-    } else if (/(2006\s*~?\s*2019|표준)/.test(text)) {
-      gen = 'std';
-      text = text.replace(/(2006\s*~?\s*2019년?|표준)/g, ' ');
-    } else if (/(2020년?\s*이후|최근|개정)/.test(text)) {
-      gen = 'recent';
-      text = text.replace(/(2020년?\s*이후|최근|개정)/g, ' ');
-    }
-  }
-
-  return { year, month, gen, cleanText: text.trim() };
-}
+const ALL_FAMILY_KEYS = [...COMPANY_FAMILIES].sort((a, b) => b.key.length - a.key.length);
 
 function normalizeYear(yStr) {
   let y = parseInt(yStr, 10);
@@ -181,43 +139,127 @@ function normalizeYear(yStr) {
   return y;
 }
 
-/* ───────────────────────── 검색어에서 회사 및 가입시기 파싱 ───────────────────────── */
+/* ───────────────────────── 스마트 질의 파서 (순서·붙여쓰기 완전 자유) ───────────────────────── */
 function parseSmartQuery(raw) {
-  const dt = parseSmartDate(raw);
-  let text = dt.cleanText;
-  let foundCo = null;
-  let foundCoType = null;
-  let foundNtier = '';
+  if (!raw) return { cleanQ: '', co: null, cos: [], family: null, coType: null, gen: null, year: null, month: null, ntier: '' };
 
-  // N대 특약 숫자 검출 (예: 123대, 112대, 116대, 120대, 101대, 71대 등)
-  const mNtier = text.match(/\b(\d+대)\b/);
+  let text = String(raw).trim();
+  let foundYear = null;
+  let foundMonth = null;
+  let foundGen = null;
+  let foundNtier = '';
+  let foundCo = null;
+  let foundCos = [];
+  let foundFamily = null;
+  let foundCoType = null;
+
+  // 1. N대 특약 숫자 추출 (어느 위치에 있든 123대, 112대 등 검출)
+  const mNtier = text.match(/(\d+대)/);
   if (mNtier) {
     foundNtier = mNtier[1];
     text = text.replace(mNtier[0], ' ');
   }
 
-  // 회사명 검출 (31개사 및 약칭)
-  const words = text.split(/\s+/);
-  for (let i = 0; i < words.length; i++) {
-    const w = words[i].toLowerCase();
-    for (const ca of COMPANY_ALIASES) {
-      if (ca.keys.includes(w)) {
-        foundCo = ca.name;
-        foundCoType = ca.type;
-        words.splice(i, 1);
+  // 2. 가입시기 추출 (연도 + 월, 연도만, 4자리 YYYY, 2103 등 순서 및 위치 무관)
+  let mDate = text.match(/((?:19|20)?\d{2})년\s*([01]?\d)월?/);
+  if (mDate) {
+    foundYear = normalizeYear(mDate[1]);
+    if (mDate[2]) foundMonth = parseInt(mDate[2], 10);
+    text = text.replace(mDate[0], ' ');
+  } else {
+    mDate = text.match(/((?:19|20)?\d{2})년/);
+    if (mDate) {
+      foundYear = normalizeYear(mDate[1]);
+      text = text.replace(mDate[0], ' ');
+    } else {
+      mDate = text.match(/((?:19|20)?\d{2})[.\-\/]\s*([01]?\d)/);
+      if (mDate) {
+        foundYear = normalizeYear(mDate[1]);
+        foundMonth = parseInt(mDate[2], 10);
+        text = text.replace(mDate[0], ' ');
+      } else {
+        mDate = text.match(/(?<!\d)(19\d{2}|20\d{2})(0[1-9]|1[0-2])(?!\d)/);
+        if (mDate) {
+          foundYear = parseInt(mDate[1], 10);
+          foundMonth = parseInt(mDate[2], 10);
+          text = text.replace(mDate[0], ' ');
+        } else {
+          mDate = text.match(/(?<![A-Za-z0-9가-힣])(\d{2})(0[1-9]|1[0-2])(?![A-Za-z0-9가-힣])/);
+          if (mDate) {
+            const yy = parseInt(mDate[1], 10);
+            if (yy <= 30 || yy >= 80) {
+              foundYear = normalizeYear(mDate[1]);
+              foundMonth = parseInt(mDate[2], 10);
+              text = text.replace(mDate[0], ' ');
+            }
+          } else {
+            mDate = text.match(/(?<![A-Za-z])(19\d{2}|20\d{2})(?![A-Za-z0-9])/);
+            if (mDate) {
+              foundYear = parseInt(mDate[1], 10);
+              text = text.replace(mDate[0], ' ');
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (foundYear !== null) {
+    foundGen = foundYear >= 2020 ? 'recent' : (foundYear >= 2006 ? 'std' : 'old');
+  } else {
+    if (/(2006년?\s*이전|구종수|구1~3종)/i.test(text)) {
+      foundGen = 'old';
+      text = text.replace(/(2006년?\s*이전|구종수|구1~3종)/gi, ' ');
+    } else if (/(2006\s*~?\s*2019|표준)/i.test(text)) {
+      foundGen = 'std';
+      text = text.replace(/(2006\s*~?\s*2019년?|표준)/gi, ' ');
+    } else if (/(2020년?\s*이후|최근|개정)/i.test(text)) {
+      foundGen = 'recent';
+      text = text.replace(/(2020년?\s*이후|최근|개정)/gi, ' ');
+    }
+  }
+
+  // 3. 보험사 검출 (구체적 단일 회사 우선 매칭 -> 없으면 생·손보 패밀리 매칭)
+  const lowerText = text.toLowerCase();
+  for (const item of ALL_SPECIFIC_COMPANY_KEYS) {
+    const idxMatch = lowerText.indexOf(item.key.toLowerCase());
+    if (idxMatch >= 0) {
+      foundCo = item.ca.name;
+      foundCos = [item.ca.name];
+      foundCoType = item.ca.type;
+      text = text.slice(0, idxMatch) + ' ' + text.slice(idxMatch + item.key.length);
+      break;
+    }
+  }
+
+  if (!foundCo) {
+    for (const fam of ALL_FAMILY_KEYS) {
+      const idxMatch = lowerText.indexOf(fam.key.toLowerCase());
+      if (idxMatch >= 0) {
+        foundFamily = fam;
+        foundCo = fam.sonbo;
+        foundCos = [fam.sonbo, fam.saengbo];
+        foundCoType = 'family';
+        text = text.slice(0, idxMatch) + ' ' + text.slice(idxMatch + fam.key.length);
         break;
       }
     }
-    if (foundCo) break;
   }
 
+  // 불필요한 조사나 군더더기 단어 제거 (이후, 이전, 수술비, 보험, 특약, 청구)
+  text = text.replace(/(이후|이전|수술비|보험|특약|청구)/g, ' ');
+
+  const cleanQ = text.replace(/\s+/g, ' ').trim();
+
   return {
-    cleanQ: words.join(' ').trim(),
+    cleanQ,
     co: foundCo,
+    cos: foundCos,
+    family: foundFamily,
     coType: foundCoType,
-    gen: dt.gen,
-    year: dt.year,
-    month: dt.month,
+    gen: foundGen,
+    year: foundYear,
+    month: foundMonth,
     ntier: foundNtier
   };
 }
@@ -337,11 +379,14 @@ function buildIndex() {
     return { i, nn, ch, l: nn.length };
   });
 
-  idx.syn = (window.CURATED?.synonyms || []).map(s => ({
-    ...s,
-    nq: norm(s.q),
-    keys: (s.aliases || []).map(norm).concat(norm(s.q)),
-  }));
+  idx.syn = (window.CURATED?.synonyms || []).map(s => {
+    const qList = Array.isArray(s.q) ? s.q : [s.q];
+    const allKeys = qList.concat(s.aliases || []).concat(s.k ? [s.k] : []).map(norm).filter(Boolean);
+    return {
+      ...s,
+      keys: Array.from(new Set(allKeys)),
+    };
+  });
 
   idx.edi = state.E.rows.map((r, i) => ({
     i,
@@ -587,13 +632,10 @@ function search(rawQ) {
     });
   }
 
-  // 4. 별칭(synonyms) 정밀 매칭
-  const synExact = idx.syn.find(s => s.keys.some(k => k === nq) || nq === s.nq);
-  const synFuzzy = synExact || idx.syn.find(s => s.keys.some(k => k.includes(nq) || nq.includes(k)) || nq.includes(s.nq) || s.nq.includes(nq));
-  const syn = synExact || synFuzzy;
-
-  if (syn) {
-    const targets = syn.exactCodes || syn.main || syn.codes;
+  // 4. 별칭(synonyms) 광범위 정밀 매칭 (맘모톰, 인공관절, 유방, 대장용종 등)
+  const matchingSyns = idx.syn.filter(s => s.keys.some(k => k === nq || nq.includes(k) || k.includes(nq)));
+  matchingSyns.forEach(syn => {
+    const targets = syn.main || syn.codes || [];
     targets.forEach((cp, rank) => {
       for (const code in state.D.codeIndex) {
         if (code === cp || code.startsWith(cp)) {
@@ -601,31 +643,46 @@ function search(rawQ) {
         }
       }
     });
-  }
+  });
 
-  // 5. 질병명 텍스트 매칭
+  // 5. 질병명 텍스트 매칭 (다중 단어 및 부분 매칭)
   const isCho = /^[ㄱ-ㅎ]+$/.test(nq);
+  const terms = q.split(/\s+/).map(norm).filter(t => t.length > 0);
+
   idx.name.forEach(({ i, nn, ch }) => {
     if (isCho) {
-      if (ch === nq) add(i, 4);
-      else if (ch.startsWith(nq)) add(i, 5);
+      if (ch === nq) add(i, 2);
+      else if (ch.startsWith(nq)) add(i, 3);
       return;
     }
-    if (nn === nq) add(i, 1);
-    else if (nn.startsWith(nq)) add(i, 2.5);
-    else if (nn.includes(nq)) add(i, 4);
+    if (nn === nq) add(i, 0.2);
+    else if (nn.startsWith(nq)) add(i, 1.0);
+    else if (nn.includes(nq)) add(i, 1.5);
+    else if (terms.length > 1) {
+      const matchCount = terms.filter(t => nn.includes(t)).length;
+      if (matchCount === terms.length) add(i, 1.2);
+      else if (matchCount > 0) add(i, 2.5 + (terms.length - matchCount));
+    }
+  });
+
+  // 6. EDI 수가명(수술명)에서도 역방향 질병 매칭 (예: '인공관절', '치환술' 등)
+  idx.edi.forEach(r => {
+    if (r.nn.includes(nq) || (nq.length >= 3 && nq.includes(r.nn))) {
+      if (EDI_CODE_MAP[r.c]) {
+        EDI_CODE_MAP[r.c].codes.forEach(tc => {
+          for (const code in state.D.codeIndex) {
+            if (code === tc || code.startsWith(tc)) {
+              state.D.codeIndex[code].forEach(i => add(i, 1.0));
+            }
+          }
+        });
+      }
+    }
   });
 
   let giEntries = [...scores.entries()];
-  const hasHighConf = giEntries.some(([_, s]) => s < 2.5);
-  if (hasHighConf) {
-    giEntries = giEntries.filter(([_, s]) => s < 3.2);
-  }
-
-  const mainPrefixes = syn ? (syn.main || syn.codes.slice(0, 4)) : [];
-  const mainHit = (i) => mainPrefixes.length && state.D.g[i].c.some(c => mainPrefixes.some(p => c.toUpperCase().startsWith(p)));
   const gi = giEntries
-    .sort((a, b) => a[1] - b[1] || (mainHit(b[0]) - mainHit(a[0])) || (state.D.g[b[0]].m.length - state.D.g[a[0]].m.length))
+    .sort((a, b) => a[1] - b[1] || (state.D.g[b[0]].m.length - state.D.g[a[0]].m.length))
     .slice(0, MAX_NAME);
 
   const ediHits = [];
@@ -641,7 +698,8 @@ function search(rawQ) {
     }
   }
 
-  return { groups: gi.map(([i]) => i), edi: ediHits.slice(0, MAX_EDI), syn, q, matchedEdi };
+  const primarySyn = matchingSyns.length > 0 ? matchingSyns[0] : null;
+  return { groups: gi.map(([i]) => i), edi: ediHits.slice(0, MAX_EDI), syn: primarySyn, q, matchedEdi };
 }
 
 /* ───────────────────────── 1. 빠른 검색 ───────────────────────── */
@@ -652,7 +710,8 @@ function bindQuickTab() {
     state.quickQ = v;
     $('#clearBtn-quick').hidden = !v;
     if (!v.trim()) { renderIdleQuick(); return; }
-    runQuickSearch(v);
+    const parsed = parseSmartQuery(v);
+    runQuickSearch(parsed.cleanQ || v, parsed);
   }, 70));
 
   $('#clearBtn-quick').addEventListener('click', () => {
@@ -670,14 +729,26 @@ function bindQuickTab() {
   renderIdleQuick();
 }
 
-function runQuickSearch(q) {
+function runQuickSearch(q, parsed) {
   const res = search(q);
   const box = $('#results-quick');
   if (!res) { renderIdleQuick(); return; }
 
+  let subInfo = '';
+  if (parsed && (parsed.co || parsed.year || parsed.ntier)) {
+    const parts = [];
+    if (parsed.co) parts.push(`🏢 ${parsed.cos && parsed.cos.length > 1 ? parsed.cos.join(' · ') : parsed.co}`);
+    if (parsed.year) parts.push(`📅 ${parsed.year}년`);
+    if (parsed.ntier) parts.push(`🏷️ ${parsed.ntier}`);
+    subInfo = `<div style="font-size:12px;font-weight:750;color:var(--brand);margin-top:3px;">[${parts.join(' · ')} 인식]</div>`;
+  }
+
   const head = `
     <div class="res-head">
-      <div class="res-title"><em>${esc(q)}</em> 빠른 판정 결과</div>
+      <div>
+        <div class="res-title"><em>${esc(q)}</em> 빠른 판정 결과</div>
+        ${subInfo}
+      </div>
       <div class="res-count">분류 ${res.groups.length}건</div>
     </div>`;
 
@@ -686,7 +757,7 @@ function runQuickSearch(q) {
       <div class="empty">
         <span class="empty-emoji">🔍</span>
         <h3>“${esc(q)}”에 대한 결과가 없습니다</h3>
-        <p>질병코드 · 수술코드 · 질병명으로 다시 검색해 보세요.</p>
+        <p>질병명 · 수술명 · 질병코드로 다시 검색해 보세요.</p>
       </div>`;
     return;
   }
@@ -695,6 +766,58 @@ function runQuickSearch(q) {
   html += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi)).join('');
   box.innerHTML = html;
   bindCardActions(box);
+}
+
+/* ───────────────────────── 초보 설계사 필수 주의 팁 (맘모톰, 백내장, 인공관절, 대장용종 등) ───────────────────────── */
+function getBeginnerTips(g) {
+  const codes = (g.c || []).map(c => c.toUpperCase());
+  const tips = [];
+
+  if (codes.some(c => c.startsWith('D24') || c.startsWith('N60') || c.startsWith('N63') || c.startsWith('C50'))) {
+    tips.push({
+      badge: '⚠️ 초보 필수 주의',
+      color: '#d97706',
+      bg: 'rgba(245,158,11,0.09)',
+      border: 'rgba(245,158,11,0.3)',
+      title: '생검(조직검사) vs 절제술 구분 필수',
+      text: '단순 조직검사용 침생검(생검)은 수술비 비해당 또는 1종 소액 처리됩니다. 치료 목적의 “절제술” 단어가 수술확인서에 기재되었는지 꼭 확인하세요.'
+    });
+  }
+
+  if (codes.some(c => c.startsWith('H25') || c.startsWith('H26'))) {
+    tips.push({
+      badge: '⚠️ 초보 필수 주의',
+      color: '#d97706',
+      bg: 'rgba(245,158,11,0.09)',
+      border: 'rgba(245,158,11,0.3)',
+      title: '양안 동시 수술 시 1회 지급 주의',
+      text: '양쪽 눈을 같은 날 동시에 수술할 경우 약관상 1회만 지급되는 경우가 많습니다. 수술일자를 각각 달리하여 시행했는지 확인하세요.'
+    });
+  }
+
+  if (codes.some(c => c.startsWith('M17') || c.startsWith('M16') || c.startsWith('M15'))) {
+    tips.push({
+      badge: '⚠️ 초보 필수 주의',
+      color: '#2563eb',
+      bg: 'rgba(37,99,235,0.08)',
+      border: 'rgba(37,99,235,0.25)',
+      title: '치환술(4종) vs 세척술(3종) 종수 확인',
+      text: '인공관절 전치환술(4종)과 관절경 세척·활액막 절제(3종)는 종수가 완전히 다릅니다. 수술기록지에 삽입물(인공관절) 치환 여부를 확인하세요.'
+    });
+  }
+
+  if (codes.some(c => c.startsWith('K63') || c.startsWith('D12') || c.startsWith('K62'))) {
+    tips.push({
+      badge: '⚠️ 초보 필수 주의',
+      color: '#059669',
+      bg: 'rgba(16,185,129,0.08)',
+      border: 'rgba(16,185,129,0.25)',
+      title: '2020년 이후 개정 약관(1종) 확인',
+      text: '표준약관은 2종이나, 2020년 이후 메리츠·롯데 등 일부 손보사는 1종으로 하향 개정되었습니다. 고객 증권의 가입시기를 꼭 확인하세요.'
+    });
+  }
+
+  return tips;
 }
 
 function renderIdleQuick() {
@@ -1031,15 +1154,25 @@ function bindTierTab() {
 
     const parsed = parseSmartQuery(v);
 
-    // 회사 자동 세팅
+    // 회사 자동 세팅 (단일 or 생·손보 패밀리)
     if (parsed.co) {
-      state.tCo = parsed.co;
-      state.tCoTouched = true;
-      if (parsed.coType === 'saengbo') btnSaengbo.click();
-      else btnSonbo.click();
-      $$('#tierCoSonbo .f-chip, #tierCoSaengbo .f-chip').forEach(b => {
-        b.classList.toggle('on', b.dataset.co === parsed.co);
-      });
+      if (parsed.cos && parsed.cos.length > 1) {
+        state.tCos = [...parsed.cos];
+        state.tCo = parsed.cos.join(', ');
+        state.tCoTouched = true;
+        $$('#tierCoSonbo .f-chip, #tierCoSaengbo .f-chip').forEach(b => {
+          b.classList.toggle('on', parsed.cos.includes(b.dataset.co));
+        });
+      } else {
+        state.tCos = [parsed.co];
+        state.tCo = parsed.co;
+        state.tCoTouched = true;
+        if (parsed.coType === 'saengbo') btnSaengbo.click();
+        else btnSonbo.click();
+        $$('#tierCoSonbo .f-chip, #tierCoSaengbo .f-chip').forEach(b => {
+          b.classList.toggle('on', b.dataset.co === parsed.co);
+        });
+      }
     }
 
     // 시기/연도/월 자동 세팅
@@ -1061,7 +1194,7 @@ function bindTierTab() {
     }
 
     updateTierBadges();
-    runTierSearch(parsed.cleanQ || v);
+    runTierSearch(parsed.cleanQ || v, parsed.family);
   }, 70));
 
   $('#clearBtn-tier').addEventListener('click', () => {
@@ -1074,7 +1207,7 @@ function bindTierTab() {
   renderTierEmptyExample();
 }
 
-function runTierSearch(q) {
+function runTierSearch(q, family) {
   const box = $('#results-tier');
   if (!q || !q.trim()) {
     renderTierEmptyExample();
@@ -1087,19 +1220,37 @@ function runTierSearch(q) {
   }
 
   const dtText = state.tYear ? (state.tMonth ? `${state.tYear}년 ${state.tMonth}월` : `${state.tYear}년`) : ({ old: '2020년 이전', recent: '2020년 이후' }[state.tGen] || '2020년 이후');
-  const cLabel = state.tCo ? state.tCo : '전체';
+  const cLabel = state.tCos && state.tCos.length > 0 ? state.tCos.join(', ') : (state.tCo || '전체');
+
+  let familyBarHTML = '';
+  if (family) {
+    const isBoth = state.tCos.includes(family.sonbo) && state.tCos.includes(family.saengbo);
+    const isSonbo = state.tCos.length === 1 && state.tCos.includes(family.sonbo);
+    const isSaengbo = state.tCos.length === 1 && state.tCos.includes(family.saengbo);
+    familyBarHTML = `
+      <div class="fam-filter-bar" style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:12px;font-weight:800;color:var(--text);">🏢 ${esc(family.name)} 생보 · 손보 선택:</span>
+        <div style="display:flex;gap:5px;">
+          <button type="button" class="f-chip fam-btn ${isBoth ? 'on' : ''}" data-act="both" style="font-size:11.5px;padding:4px 9px;">둘 다 비교</button>
+          <button type="button" class="f-chip fam-btn ${isSonbo ? 'on' : ''}" data-act="sonbo" style="font-size:11.5px;padding:4px 9px;">${esc(family.sonbo)}만</button>
+          <button type="button" class="f-chip fam-btn ${isSaengbo ? 'on' : ''}" data-act="saengbo" style="font-size:11.5px;padding:4px 9px;">${esc(family.saengbo)}만</button>
+        </div>
+      </div>`;
+  }
 
   const head = `
     <div class="res-head">
       <div class="res-title"><em>${esc(q)}</em> 종수술비 정밀 결과 <span style="font-size:11.5px;color:var(--brand);font-weight:700;">[${esc(cLabel)} · ${esc(dtText)}]</span></div>
       <div class="res-count">분류 ${res.groups.length}건</div>
-    </div>`;
+    </div>
+    ${familyBarHTML}`;
 
   if (!res.groups.length && !res.edi.length) {
     box.innerHTML = head + `
       <div class="empty">
         <span class="empty-emoji">🔍</span>
         <h3>“${esc(q)}”에 대한 결과가 없습니다</h3>
+        <p>질병코드 · 수술코드 · 질병명으로 다시 검색해 보세요.</p>
       </div>`;
     return;
   }
@@ -1108,6 +1259,27 @@ function runTierSearch(q) {
   html += res.groups.slice(0, 15).map(i => cardTierHTML(i, q, res.matchedEdi)).join('');
   box.innerHTML = html;
   bindCardActions(box);
+
+  // 패밀리 버튼 클릭 바인딩
+  box.querySelectorAll('.fam-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const act = btn.dataset.act;
+      if (act === 'both') {
+        state.tCos = [family.sonbo, family.saengbo];
+      } else if (act === 'sonbo') {
+        state.tCos = [family.sonbo];
+      } else if (act === 'saengbo') {
+        state.tCos = [family.saengbo];
+      }
+      state.tCo = state.tCos.join(', ');
+      state.tCoTouched = true;
+      $$('#tierCoSonbo .f-chip, #tierCoSaengbo .f-chip').forEach(b => {
+        b.classList.toggle('on', state.tCos.includes(b.dataset.co));
+      });
+      updateTierBadges();
+      runTierSearch(q, family);
+    });
+  });
 }
 
 function cardTierHTML(gi, q, matchedEdi) {
@@ -1588,13 +1760,24 @@ function bindNdaiTab() {
 
     const parsed = parseSmartQuery(v);
     if (parsed.co) {
-      state.ndaiCo = parsed.co;
-      state.ndaiCoTouched = true;
-      if (parsed.coType === 'saengbo') btnSaengbo.click();
-      else btnSonbo.click();
-      $$('#ndaiCoSonbo .f-chip, #ndaiCoSaengbo .f-chip').forEach(b => {
-        b.classList.toggle('on', b.dataset.nco === parsed.co);
-      });
+      if (parsed.cos && parsed.cos.length > 1) {
+        state.ndaiCos = [...parsed.cos];
+        state.ndaiCo = parsed.cos.join(', ');
+        state.ndaiCoTouched = true;
+        $$('#ndaiCoSonbo .f-chip, #ndaiCoSaengbo .f-chip').forEach(b => {
+          b.classList.toggle('on', parsed.cos.includes(b.dataset.nco));
+        });
+      } else {
+        state.ndaiCos = [parsed.co];
+        state.ndaiCo = parsed.co;
+        state.ndaiCoTouched = true;
+        if (parsed.coType === 'saengbo') btnSaengbo.click();
+        else btnSonbo.click();
+        $$('#ndaiCoSonbo .f-chip, #ndaiCoSaengbo .f-chip').forEach(b => {
+          b.classList.toggle('on', b.dataset.nco === parsed.co);
+        });
+      }
+      renderDynamicNdaiTierChips();
     }
 
     if (parsed.year) {
@@ -1617,7 +1800,7 @@ function bindNdaiTab() {
     }
 
     updateNdaiBadges();
-    runNdaiSearch(parsed.cleanQ || v);
+    runNdaiSearch(parsed.cleanQ || v, parsed.family);
   }, 70));
 
   $('#clearBtn-ndai').addEventListener('click', () => {
@@ -1631,7 +1814,7 @@ function bindNdaiTab() {
   renderNdaiEmptyExample();
 }
 
-function runNdaiSearch(q) {
+function runNdaiSearch(q, family) {
   const box = $('#results-ndai');
   if (!q || !q.trim()) {
     renderNdaiEmptyExample();
@@ -1643,14 +1826,31 @@ function runNdaiSearch(q) {
     return;
   }
 
-  const cLabel = state.ndaiCo ? state.ndaiCo : '전체 회사';
+  const cLabel = state.ndaiCos && state.ndaiCos.length ? state.ndaiCos.join(', ') : (state.ndaiCo ? state.ndaiCo : '전체 회사');
   const tLabel = state.ndaiTier ? ` · ${state.ndaiTier}` : '';
+
+  let familyBarHTML = '';
+  if (family) {
+    const isBoth = state.ndaiCos.includes(family.sonbo) && state.ndaiCos.includes(family.saengbo);
+    const isSonbo = state.ndaiCos.length === 1 && state.ndaiCos.includes(family.sonbo);
+    const isSaengbo = state.ndaiCos.length === 1 && state.ndaiCos.includes(family.saengbo);
+    familyBarHTML = `
+      <div class="fam-filter-bar" style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="font-size:12px;font-weight:800;color:var(--text);">🏢 ${esc(family.name)} 생보 · 손보 선택:</span>
+        <div style="display:flex;gap:5px;">
+          <button type="button" class="f-chip fam-btn ${isBoth ? 'on' : ''}" data-act="both" style="font-size:11.5px;padding:4px 9px;">둘 다 비교</button>
+          <button type="button" class="f-chip fam-btn ${isSonbo ? 'on' : ''}" data-act="sonbo" style="font-size:11.5px;padding:4px 9px;">${esc(family.sonbo)}만</button>
+          <button type="button" class="f-chip fam-btn ${isSaengbo ? 'on' : ''}" data-act="saengbo" style="font-size:11.5px;padding:4px 9px;">${esc(family.saengbo)}만</button>
+        </div>
+      </div>`;
+  }
 
   const head = `
     <div class="res-head">
       <div class="res-title"><em>${esc(q)}</em> N대 수술비 판정 <span style="font-size:11.5px;color:#8b5cf6;font-weight:800;">[${esc(cLabel)}${esc(tLabel)}]</span></div>
       <div class="res-count">분류 ${res.groups.length}건</div>
-    </div>`;
+    </div>
+    ${familyBarHTML}`;
 
   if (!res.groups.length) {
     box.innerHTML = head + `
@@ -1665,6 +1865,28 @@ function runNdaiSearch(q) {
   html += res.groups.slice(0, 15).map(i => cardNdaiHTML(i, q)).join('');
   box.innerHTML = html;
   bindCardActions(box);
+
+  // 패밀리 버튼 클릭 바인딩
+  box.querySelectorAll('.fam-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const act = btn.dataset.act;
+      if (act === 'both') {
+        state.ndaiCos = [family.sonbo, family.saengbo];
+      } else if (act === 'sonbo') {
+        state.ndaiCos = [family.sonbo];
+      } else if (act === 'saengbo') {
+        state.ndaiCos = [family.saengbo];
+      }
+      state.ndaiCo = state.ndaiCos.join(', ');
+      state.ndaiCoTouched = true;
+      $$('#ndaiCoSonbo .f-chip, #ndaiCoSaengbo .f-chip').forEach(b => {
+        b.classList.toggle('on', state.ndaiCos.includes(b.dataset.nco));
+      });
+      renderDynamicNdaiTierChips();
+      updateNdaiBadges();
+      runNdaiSearch(q, family);
+    });
+  });
 }
 
 /* ───────────────────────── N대 담보 포맷터 ("123대질병에서 58대질병에 해당" 표준 단답형) ───────────────────────── */
@@ -2163,8 +2385,53 @@ function detailBodyHTML(gi) {
   const t = tierOf(g);
   const bunri = state.B?.[g.n] || [];
   const exc = state.X?.[g.n] || [];
+  const tips = getBeginnerTips(g);
+
+  let tipsHTML = '';
+  if (tips.length) {
+    tipsHTML = `
+      <div class="sec">
+        <div class="sec-title"><span style="color:#d97706;">⚠️ 보장제외 및 실무 유의사항</span><div class="dotline"></div></div>
+        ${tips.map(tip => `
+          <div style="background:${tip.bg};border:1px solid ${tip.border};border-radius:10px;padding:9px 12px;margin:6px 0;">
+            <div style="font-size:12px;font-weight:850;color:${tip.color};">${tip.badge}: ${esc(tip.title)}</div>
+            <div style="font-size:12px;color:var(--text-2);margin-top:3px;line-height:1.45;">${esc(tip.text)}</div>
+          </div>`).join('')}
+      </div>`;
+  }
 
   return `
+    ${tipsHTML}
+
+    <div class="sec">
+      <div class="sec-title"><span style="color:var(--brand);">⚖️ 다발성 · 동시수술 지급 횟수 판정 원칙</span><div class="dotline"></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border-left:3px solid #ef4444;">
+            <div style="font-weight:800;color:var(--text);font-size:11.5px;">1. 동일질병 / 동일부위</div>
+            <div style="color:#ef4444;font-weight:850;font-size:12px;margin:1px 0;">➔ 1회만 지급</div>
+            <div style="font-size:10.5px;color:var(--text-3);">높은 수술 1개만 인정</div>
+          </div>
+          <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border-left:3px solid #10b981;">
+            <div style="font-weight:800;color:var(--text);font-size:11.5px;">2. 동일질병 / 다른부위</div>
+            <div style="color:#10b981;font-weight:850;font-size:12px;margin:1px 0;">➔ 각각 지급 (2회)</div>
+            <div style="font-size:10.5px;color:var(--text-3);">양측 또는 별도 부위</div>
+          </div>
+          <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border-left:3px solid #ef4444;">
+            <div style="font-weight:800;color:var(--text);font-size:11.5px;">3. 다른질병 / 동일부위</div>
+            <div style="color:#ef4444;font-weight:850;font-size:12px;margin:1px 0;">➔ 1회만 지급</div>
+            <div style="font-size:10.5px;color:var(--text-3);">높은 종수 1개 적용</div>
+          </div>
+          <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border-left:3px solid #10b981;">
+            <div style="font-weight:800;color:var(--text);font-size:11.5px;">4. 다른질병 / 다른부위</div>
+            <div style="color:#10b981;font-weight:850;font-size:12px;margin:1px 0;">➔ 각각 전액 (2회)</div>
+            <div style="font-size:10.5px;color:var(--text-3);">각각의 수술비 전액</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-3);padding-top:2px;">※ 연간 1회한(365일 제한) 특약 및 동일 입원기간 동시수술 제한 약관 여부 대조 필수</div>
+      </div>
+    </div>
+
     <div class="sec">
       <div class="sec-title"><span>약관 및 심사 근거</span><div class="dotline"></div></div>
       <p style="font-size:12.5px;color:var(--text-2);line-height:1.55;margin:0;">
