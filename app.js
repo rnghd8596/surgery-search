@@ -149,52 +149,68 @@ async function decryptFile(key, file) {
   return JSON.parse(new TextDecoder().decode(decomp));
 }
 
-async function loadAll(pw) {
-  const metaRes = await fetch('assets/data/meta.json', { cache: 'no-store' });
-  if (!metaRes.ok) throw new Error('메타데이터 로드 실패');
-  const meta = await metaRes.json();
-  const key = await deriveKey(pw, meta.salt, meta.iter);
+const bytesToB64 = (u8) => btoa(String.fromCharCode(...u8));
 
-  const [diseases, edi, exc, bunri] = await Promise.all([
-    decryptFile(key, meta.files.diseases),
-    decryptFile(key, meta.files.edi),
-    decryptFile(key, meta.files.exc),
-    decryptFile(key, meta.files.bunri),
-  ]);
-  return { diseases, edi, exc, bunri, meta };
+async function unlockWithKey(key) {
+  const m = state.M;
+  const [diseases, edi, exc, bunri] = await Promise.all(
+    m.files.map(f => decryptFile(key, f.f))
+  );
+  return { diseases, edi, exc, bunri };
 }
 
-/* ───────────────────────── 로그인/잠금 ───────────────────────── */
-const pwEl = $('#pw');
-const lockBtn = $('#unlockBtn');
-function setLockBusy(b) {
-  lockBtn.disabled = b;
-  lockBtn.querySelector('span').textContent = b ? '데이터 복호화 중…' : '잠금 해제';
-}
-
-(async function trySavedPw() {
-  let pw = null;
-  try { pw = sessionStorage.getItem('hb.k'); } catch (_) {}
-  if (!pw) return;
-  setLockBusy(true);
+/* ───────────────────────── 부트스트랩 ───────────────────────── */
+(async function boot() {
   try {
-    const data = await loadAll(pw);
-    start(data);
-  } catch (err) {
-    sessionStorage.removeItem('hb.k');
-    setLockBusy(false);
+    const r = await fetch('assets/data/manifest.json', { cache: 'no-store' });
+    state.M = await r.json();
+  } catch (e) {
+    $('#pwErr').textContent = '데이터 매니페스트를 불러오지 못했습니다. 웹서버 주소로 접속해 주세요.';
+    $('#pwErr').classList.add('show');
+    return;
+  }
+
+  const saved = (() => { try { return sessionStorage.getItem('hb.k'); } catch (_) { return null; } })();
+  if (saved) {
+    try {
+      setLockBusy(true, '세션 복원 중');
+      const raw = b64ToBytes(saved);
+      const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, true, ['decrypt']);
+      const data = await unlockWithKey(key);
+      start(data);
+      return;
+    } catch (_) {
+      try { sessionStorage.removeItem('hb.k'); } catch (_) {}
+      setLockBusy(false);
+    }
   }
 })();
 
+const LOCK_BTN_HTML = $('#unlockBtn').innerHTML;
+function setLockBusy(busy, label) {
+  const b = $('#unlockBtn');
+  b.disabled = busy;
+  b.innerHTML = busy
+    ? '<span class="spin"></span><span>' + esc(label || '잠금 해제 중') + '…</span>'
+    : LOCK_BTN_HTML;
+}
+
 $('#lockForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const pw = pwEl.value.trim();
+  const pwEl = $('#pw');
+  const pw = pwEl.value;
   if (!pw) { pwEl.focus(); return; }
-  setLockBusy(true);
   $('#pwErr').classList.remove('show');
+  setLockBusy(true, '잠금 해제 중');
+  await new Promise(r => setTimeout(r, 30));
   try {
-    const data = await loadAll(pw);
-    try { sessionStorage.setItem('hb.k', pw); } catch (_) {}
+    const key = await deriveKey(pw, state.M.salt, state.M.iter);
+    const data = await unlockWithKey(key);
+    try {
+      const jwk = await crypto.subtle.exportKey('raw', key);
+      sessionStorage.setItem('hb.k', bytesToB64(new Uint8Array(jwk)));
+    } catch (_) {}
+    $('#lock').style.transition = 'opacity .45s ease, transform .45s ease';
     start(data);
   } catch (err) {
     setLockBusy(false);
