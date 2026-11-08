@@ -2909,8 +2909,7 @@ function copyCard(gi) {
         coBlocks.push(`✔️${coName} N대 질병수술비 (${cleanNda})`);
       }
 
-      return coBlocks.join('
-');
+      return coBlocks.join('\n');
     });
   } else {
     // 회사를 선택하지 않은 일반 조회 시
@@ -2922,8 +2921,7 @@ function copyCard(gi) {
     if (ndaCheck && ndaCheck.length > 0) {
       coBlocks.push(`✔️N대 질병수술비: 주요 손해보험사 N대 질병수술비 해당`);
     }
-    companyLines = [coBlocks.join('
-')];
+    companyLines = [coBlocks.join('\n')];
   }
 
   const text = `OOO 고객님께서 가입하신
@@ -2931,9 +2929,7 @@ function copyCard(gi) {
 
 [${g.n}(${kcdCode}) • ${procName}]
 
-${companyLines.join('
-
-')}
+${companyLines.join('\n\n')}
 
 🚨필요서류
 - 진료비영수증
