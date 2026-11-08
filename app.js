@@ -1,3 +1,148 @@
+
+/* ───────────────────────── 질수(기본질병수술) & N대 판정 요약 ───────────────────────── */
+function getBasicSurgerySummary(g) {
+  if (!g) return null;
+  const codes = g.c || [];
+  const name = g.n || '';
+  const vs = g.vs || [];
+
+  // 1. 요실금 (N39.3, N39.4, R32)
+  if (codes.some(c => c.startsWith('N39.3') || c.startsWith('N39.4') || c.startsWith('R32')) || name.includes('요실금')) {
+    return {
+      status: 'no',
+      badge: '❌ 정액 전사 보상제외 (면책)',
+      badgeColor: '#ef4444',
+      badgeBg: 'rgba(239, 68, 68, 0.1)',
+      border: 'rgba(239, 68, 68, 0.25)',
+      bg: 'rgba(239, 68, 68, 0.05)',
+      title: '기본 질병수술비 (정액)',
+      summary: '전사 면책: 비뇨기계 기능장애(N39.3, N39.4) 보상 제외',
+      tierSummary: '1~5종: ⭕ 2종(TOT·TVT 1종 or 인공괄약근 2종) 지급',
+      hasDetail: true
+    };
+  }
+
+  // 2. 치핵·항문질환 (K60~K64)
+  if (codes.some(c => c.startsWith('K60') || c.startsWith('K61') || c.startsWith('K62') || c.startsWith('K64')) || name.includes('치핵') || name.includes('치루') || name.includes('치열')) {
+    return {
+      status: 'no',
+      badge: '❌ 정액 전사 보상제외 (면책)',
+      badgeColor: '#ef4444',
+      badgeBg: 'rgba(239, 68, 68, 0.1)',
+      border: 'rgba(239, 68, 68, 0.25)',
+      bg: 'rgba(239, 68, 68, 0.05)',
+      title: '기본 질병수술비 (정액)',
+      summary: '전사 면책: 직장·항문질환(K60~K64) 보상 제외 (치핵전용특약만 가능)',
+      tierSummary: '1~5종: ⭕ 제53항 치핵·치루 근치수술 1종 전사 지급',
+      hasDetail: true
+    };
+  }
+
+  // 3. 제왕절개·출산 (O80~O84)
+  if (codes.some(c => c.startsWith('O82') || c.startsWith('O80') || c.startsWith('O84')) || name.includes('제왕절개') || vs.some(v => v.includes('제왕절개') || v.includes('출산') || v.includes('분만'))) {
+    return {
+      status: 'no',
+      badge: '❌ 정액 전사 보상제외 (면책)',
+      badgeColor: '#ef4444',
+      badgeBg: 'rgba(239, 68, 68, 0.1)',
+      border: 'rgba(239, 68, 68, 0.25)',
+      bg: 'rgba(239, 68, 68, 0.05)',
+      title: '기본 질병수술비 (정액)',
+      summary: '전사 면책: 임신·출산·제왕절개(O코드) 보상 제외',
+      tierSummary: '1~5종: ⭕ 제54항 제왕절개만출술 1종 지급',
+      hasDetail: true
+    };
+  }
+
+  // 4. 체외충격파쇄석술 (ESWL / N20~N23)
+  if (codes.some(c => ['N20', 'N21', 'N22', 'N23'].some(t => c.startsWith(t))) || name.includes('결석') || vs.some(v => v.includes('쇄석') || v.includes('ESWL'))) {
+    return {
+      status: 'no',
+      badge: '❌ 원칙 부지급 (약관별 상이)',
+      badgeColor: '#d97706',
+      badgeBg: 'rgba(217, 119, 6, 0.1)',
+      border: 'rgba(217, 119, 6, 0.25)',
+      bg: 'rgba(217, 119, 6, 0.05)',
+      title: '기본 질병수술비 (정액)',
+      summary: '절단·절제 미충족: 삼성·KB·현대 등 제외 (DB 등 일부 증권 확인)',
+      tierSummary: '1~5종: ⭕ 생보/메리츠/삼성/KB 제87항 2종 (현대 일반형 1종, 질병수술Ⅱ 2종)',
+      hasDetail: true
+    };
+  }
+
+  // 5. 백내장 (H25, H26)
+  if (codes.some(c => c.startsWith('H25') || c.startsWith('H26')) || name.includes('백내장') || vs.some(v => v.includes('다초점') || v.includes('인공수정체'))) {
+    return {
+      status: 'warning',
+      badge: '⚠️ 가입 특약명 확인 필수',
+      badgeColor: '#d97706',
+      badgeBg: 'rgba(217, 119, 6, 0.1)',
+      border: 'rgba(217, 119, 6, 0.25)',
+      bg: 'rgba(217, 119, 6, 0.05)',
+      title: '기본 질병수술비 (정액)',
+      summary: '삼성 질수Ⅳ 및 KB 질수(백내장제외) 등 제외형 특약 주의',
+      tierSummary: '1~5종: ⭕ 제71항 백내장·수정체 관혈수술 1종 (다초점·단초점 무관)',
+      hasDetail: true
+    };
+  }
+
+  // 6. 통상 질환 (정상 지급)
+  return {
+    status: 'yes',
+    badge: '⭕ 정상 보장 가능',
+    badgeColor: '#10b981',
+    badgeBg: 'rgba(16, 185, 129, 0.1)',
+    border: 'rgba(16, 185, 129, 0.25)',
+    bg: 'rgba(16, 185, 129, 0.05)',
+    title: '기본 질병수술비 (정액)',
+    summary: '표준약관상 기구를 사용한 생체 절단·절제 충족 시 정상 지급',
+    tierSummary: '1~5종: ⭕ 수술분류표 기준 해당 종수 지급',
+    hasDetail: false
+  };
+}
+
+function getNdaiVerdictSummary(g) {
+  if (!g) return { badge: '확인 필요', summary: 'N대 담보 확인', badgeColor: 'var(--text-3)', bg: 'var(--surface-2)', border: 'var(--border)' };
+  const { cos } = matchInfo(g);
+  if (cos.size > 0) {
+    const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험'];
+    const matchedMajors = majorCos.filter(m => Array.from(cos.keys()).some(k => k.includes(m.slice(0, 2))));
+    const count = cos.size;
+    const majorText = matchedMajors.length >= 3 ? `주요 5대 손보사 및 ${count}개사 해당` : `${count}개 보험사 해당`;
+    return {
+      covered: true,
+      badge: `⭕ ${count}개사 N대 해당`,
+      badgeColor: '#8b5cf6',
+      bg: 'rgba(139, 92, 246, 0.05)',
+      border: 'rgba(139, 92, 246, 0.25)',
+      summary: majorText
+    };
+  } else {
+    return {
+      covered: false,
+      badge: '⚠️ N대 특약 미해당',
+      badgeColor: 'var(--text-3)',
+      bg: 'var(--surface-2)',
+      border: 'var(--border)',
+      summary: '주요 손보사 N대 특약 분류표 미포함 (종수술비 청구)'
+    };
+  }
+}
+
+function renderBasicSurgeryBox(info) {
+  if (!info) return '';
+  return `
+    <div class="basic-surg-summary-card" style="background:${info.bg};border:1px solid ${info.border};border-radius:10px;padding:9px 12px;margin:8px 0 4px 0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:4px;">
+        <span style="font-size:12px;font-weight:900;color:var(--text);">💡 기본 질병수술비(정액) 판정</span>
+        <span style="font-size:11px;font-weight:850;color:${info.badgeColor};background:var(--surface);padding:2px 7px;border-radius:5px;border:1px solid ${info.border};">${esc(info.badge)}</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--text);font-weight:750;line-height:1.45;">${esc(info.summary)}</div>
+      <div style="font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.4;">${esc(info.tierSummary)}</div>
+      ${info.hasDetail ? `<div style="font-size:10.5px;color:var(--brand);margin-top:4px;font-weight:750;">↳ 회사별 상세 약관 원문은 아래 [세부 근거 ∨]에서 확인 가능</div>` : ''}
+    </div>`;
+}
+
 /* ══════════════════════════════════════════════════════════
    보험비서 수술비 사전 — app.js (v20261108j)
    하이브리드 스마트 검색 · 종수술비 & N대 질병수술비 분리 완성형
@@ -2058,6 +2203,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
   const month = parsed?.month || null;
   const evalRes = evaluateSurgery(g, cosList, year, month);
 
+  const basicSurg = getBasicSurgerySummary(g);
+  const ndaiVerdict = getNdaiVerdictSummary(g);
+
   let ediBanner = '';
   if (matchedEdi) {
     ediBanner = `
@@ -2066,25 +2214,25 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
       </div>`;
   }
 
+  const diffPillHTML = evalRes.diffBadge
+    ? `<span class="judge-diff-pill" style="font-size:10.5px;padding:2px 6px;">⚠️ ${esc(evalRes.diffBadge.replace(/[\[\]]/g, ''))}</span>`
+    : '';
+
   let procsHTML = '';
   if (procs && procs.val && procs.val.length > 0) {
     procsHTML = `
-      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
-        <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;">기타 수술 방식별 종수:</div>
-        <div style="display:flex;flex-direction:column;gap:5px;">
+      <div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">
+        <div style="font-size:11px;font-weight:750;color:var(--text-3);margin-bottom:4px;">수술 방식별 종수:</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
           ${procs.val.map(p => `
-            <div style="display:flex;align-items:center;gap:8px;font-size:12px;">
-              <span class="proc-tag ${'t' + (parseInt(p.t) || 2)}" style="font-size:11px;padding:2px 6px;min-width:38px;">${esc(p.t)}</span>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;">
+              <span class="proc-tag ${'t' + (parseInt(p.t) || 2)}" style="font-size:10.5px;padding:1px 5px;min-width:32px;text-align:center;">${esc(p.t)}</span>
               <span style="font-weight:750;color:var(--text);">${esc(p.s)}</span>
-              ${p.n ? `<span style="font-size:10.5px;color:var(--text-3);margin-left:auto;">${esc(p.n)}</span>` : ''}
+              ${p.n ? `<span style="font-size:10px;color:var(--text-3);margin-left:auto;">${esc(p.n)}</span>` : ''}
             </div>`).join('')}
         </div>
       </div>`;
   }
-
-  const diffPillHTML = evalRes.diffBadge
-    ? `<span class="judge-diff-pill">⚠️ ${esc(evalRes.diffBadge.replace(/[\[\]]/g, ''))}</span>`
-    : '';
 
   return `
   <article class="card" data-gi="${gi}">
@@ -2096,25 +2244,48 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
 
       ${ediBanner}
 
-      <div class="judge-box">
-        <div class="judge-head-meta">
-          <span class="meta-type" style="color:var(--text-3);">1~5종 수술비 표준 판정</span>
-          <span class="meta-co">표준약관</span>
+      <!-- 빠른검색 3대 핵심 담보 판정 (질수 · 종수 · N대) -->
+      <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px 0;">
+        <!-- 1. 질수 (기본 질병수술비/정액) -->
+        <div class="qvb-row" style="background:${basicSurg.bg};border:1px solid ${basicSurg.border};border-radius:10px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+            <span style="font-size:12px;font-weight:900;color:var(--text);white-space:nowrap;">💡 질수 (기본질병수술)</span>
+            <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(basicSurg.summary)}</span>
+          </div>
+          <span style="font-size:11px;font-weight:850;color:${basicSurg.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${basicSurg.border};white-space:nowrap;flex-shrink:0;">${esc(basicSurg.badge)}</span>
         </div>
-        <div class="judge-main-row">
-          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)} judge-tier-badge">${esc(evalRes.tier)}</span>
-          <div class="judge-main-info">
-            <div class="judge-proc-title">${esc(t.w || g.n + ' 수술')}</div>
+
+        <!-- 2. 종수 (1~5종 종수술비) -->
+        <div class="qvb-row" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+            <span style="font-size:12px;font-weight:900;color:var(--text);white-space:nowrap;">📋 종수 (1~5종 종수술)</span>
+            <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(t.w || g.n + ' 수술')} <span style="color:var(--text-3);font-size:10.5px;">(${esc(evalRes.note)})</span></span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
             ${diffPillHTML}
-            <div class="judge-sub-note">${esc(evalRes.note)}</div>
+            <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:11.5px;font-weight:900;padding:3px 8px;border-radius:5px;">${esc(evalRes.tier)}</span>
           </div>
         </div>
-        ${evalRes.boxHTML}
-        ${procsHTML}
+
+        <!-- 3. N대 (N대 질병수술비) -->
+        <div class="qvb-row" style="background:${ndaiVerdict.bg};border:1px solid ${ndaiVerdict.border};border-radius:10px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+            <span style="font-size:12px;font-weight:900;color:var(--text);white-space:nowrap;">🏢 N대 (N대 질병수술)</span>
+            <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(ndaiVerdict.summary)}</span>
+          </div>
+          <span style="font-size:11px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
+        </div>
+      </div>
+
+      ${evalRes.boxHTML}
+      ${procsHTML}
+
+      <div style="font-size:11px;color:var(--brand);font-weight:750;text-align:center;margin:6px 0;background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.18);border-radius:8px;padding:5px 8px;">
+        🔍 상세 약관 원문은 아래 [세부 근거 ∨], 회사별 비교는 아래 [정밀 진단 →] 확인
       </div>
 
       <!-- 정밀 진단 바로가기 버튼 2종 -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-jump-tier" data-q="${esc(g.n)}" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:7px 8px;font-size:11px;font-weight:850;color:#10b981;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
           <span>📋 종수술비 정밀 →</span>
         </button>
@@ -2596,6 +2767,19 @@ function cardTierHTML(gi, q, matchedEdi) {
         </div>
         ${evalRes.boxHTML}
         ${procsHTML}
+      </div>
+
+      <!-- 질병수술비 확인 및 N대질병 바로가기 버튼 2종 -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
+        <button type="button" class="btn-toggle-basic-surg" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:7px 8px;font-size:11px;font-weight:850;color:#d97706;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
+          <span>💡 질병수술비 요약 ▾</span>
+        </button>
+        <button type="button" class="btn-jump-ndai" data-q="${esc(g.n)}" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:7px 8px;font-size:11px;font-weight:850;color:#8b5cf6;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
+          <span>🏢 N대질병 정밀 →</span>
+        </button>
+      </div>
+      <div class="basic-surg-drawer" style="display:none;margin-top:8px;">
+        ${renderBasicSurgeryBox(getBasicSurgerySummary(g))}
       </div>
     </div>
 
@@ -3289,6 +3473,19 @@ function cardNdaiHTML(gi, q) {
         <h3 class="card-name">${hl(g.n, q)}</h3>
       </div>
       ${contentHTML}
+
+      <!-- 질병수술비 확인 및 종수술비 바로가기 버튼 2종 -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
+        <button type="button" class="btn-toggle-basic-surg" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:7px 8px;font-size:11px;font-weight:850;color:#d97706;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
+          <span>💡 질병수술비 요약 ▾</span>
+        </button>
+        <button type="button" class="btn-jump-tier" data-q="${esc(g.n)}" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:7px 8px;font-size:11px;font-weight:850;color:#10b981;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;">
+          <span>📋 종수술비 정밀 →</span>
+        </button>
+      </div>
+      <div class="basic-surg-drawer" style="display:none;margin-top:8px;">
+        ${renderBasicSurgeryBox(getBasicSurgerySummary(g))}
+      </div>
     </div>
 
     <div class="card-actions">
@@ -3655,6 +3852,22 @@ function bindCardActions(box) {
       const card = btn.closest('.card');
       const gi = card.dataset.gi;
       copyCard(gi);
+    });
+  });
+
+  // 질병수술비 요약 인라인 토글
+  $$('.btn-toggle-basic-surg', box).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.card');
+      const drawer = card ? $('.basic-surg-drawer', card) : null;
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'block' : 'none';
+      const label = $('span', btn);
+      if (label) {
+        label.textContent = isHidden ? '💡 질병수술비 요약 ▴' : '💡 질병수술비 요약 ▾';
+      }
     });
   });
 
