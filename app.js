@@ -235,14 +235,6 @@ function search(qraw) {
     const terms = [...new Set([syn.k, ...syn.q])].map(norm).filter(t => t.length >= 2);
     idx.name.forEach(({ i, nn }) => { if (terms.some(t => nn.includes(t))) add(i, 6); });
   }
-  // 별칭의 대표 코드(앞쪽 4개)는 최우선
-  if (syn) {
-    (syn.main || syn.codes.slice(0, 4)).forEach(cp => {
-      for (const code in state.D.codeIndex) {
-        if (code.startsWith(cp)) state.D.codeIndex[code].forEach(i => add(i, 5));
-      }
-    });
-  }
   // 코드만 맞는 별칭 결과는 뒤로
   if (syn) {
     syn.codes.forEach(cp => {
@@ -252,7 +244,12 @@ function search(qraw) {
     });
   }
 
-  const gi = [...scores.entries()].sort((a, b) => a[1] - b[1] || (state.D.g[b[0]].m.length - state.D.g[a[0]].m.length)).slice(0, MAX_NAME);
+  // 대표 코드(앞쪽 4개) 해당 여부는 동점일 때 우선
+  const mainPrefixes = syn ? (syn.main || syn.codes.slice(0, 4)) : [];
+  const mainHit = (i) => mainPrefixes.length && state.D.g[i].c.some(c => mainPrefixes.some(p => c.toUpperCase().startsWith(p)));
+  const gi = [...scores.entries()]
+    .sort((a, b) => a[1] - b[1] || (mainHit(b[0]) - mainHit(a[0])) || (state.D.g[b[0]].m.length - state.D.g[a[0]].m.length))
+    .slice(0, MAX_NAME);
 
   const ediHits = [];
   for (const r of idx.edi) {
