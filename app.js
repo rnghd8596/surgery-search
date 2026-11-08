@@ -879,6 +879,14 @@ function renderIdleQuick() {
 
 
 /* ───────────────────────── 회사별·시기별 약관 개정 판정 엔진 ───────────────────────── */
+function parseCosList(coInput) {
+  if (Array.isArray(coInput)) return coInput.map(s => String(s).trim()).filter(Boolean);
+  if (typeof coInput === 'string' && coInput.trim()) {
+    return coInput.split(',').map(s => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 const REVISION_RULES = [
   {
     id: 'colon_polyp',
@@ -895,22 +903,47 @@ const REVISION_RULES = [
       { co: '롯데손해보험', ym: 202601, label: '롯데손보 2026.01 개정' },
       { co: '농협손해보험', ym: 202609, label: '농협손보 2026.09 개정' }
     ],
-    evaluate: function(co, year, month) {
-      const coStr = (co || '').trim();
-      const revItem = this.revisions.find(r => coStr && coStr.includes(r.co.slice(0, 2)));
+    evaluate: function(cosInput, year, month) {
+      const cosList = parseCosList(cosInput);
 
-      // 1. 개정 이력이 없는 회사이거나 생보사
-      if (coStr && !revItem) {
+      // A. 회사가 선택되지 않은 경우 (전사 기준)
+      if (cosList.length === 0) {
         return {
           tier: '2종',
-          hasDiff: false,
-          note: `${coStr}는 개정 없이 2종 유지 (표준 1~5종 약관)`,
-          boxHTML: ''
+          hasDiff: true,
+          diffBadge: '[가입시기별 상이]',
+          note: '표준약관 및 생보 전사·대형 손보사는 2종 (메리츠 등 7개 손보사 개정 특약만 1종)',
+          boxHTML: `
+            <div style="background:var(--surface);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+              <div style="font-weight:850;color:#dc2626;margin-bottom:4px;">⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳</div>
+              <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:6px;">
+                <div>• 하나손보 : 2023.06~</div>
+                <div>• 에이스손보 : 2023.09~</div>
+                <div>• 메리츠화재 : 2024.12~</div>
+                <div>• 흥국화재 : 2025.09~</div>
+                <div>• KB손보 : 2026.01~(수술Ⅲ)</div>
+                <div>• 롯데손보 : 2026.01~</div>
+                <div>• 농협손보 : 2026.09~</div>
+              </div>
+              <div style="color:#2563eb;font-weight:750;font-size:11.5px;">✓ 삼성화재 · 현대해상 · DB손보 및 생보사 전사 : <b>개정 없이 2종 유지</b></div>
+            </div>`
         };
       }
 
-      // 2. 개정 회사가 특정된 경우
-      if (coStr && revItem) {
+      // B. 단일 회사 선택
+      if (cosList.length === 1) {
+        const coStr = cosList[0];
+        const revItem = this.revisions.find(r => coStr.includes(r.co.slice(0, 2)));
+
+        if (!revItem) {
+          return {
+            tier: '2종',
+            hasDiff: false,
+            note: `${coStr}는 개정 없이 2종 유지 (표준 1~5종 약관)`,
+            boxHTML: ''
+          };
+        }
+
         const ymText = `${Math.floor(revItem.ym / 100)}년 ${revItem.ym % 100}월`;
         if (!year) {
           return {
@@ -954,26 +987,73 @@ const REVISION_RULES = [
         }
       }
 
-      // 3. 회사/연도 미선택
+      // C. 여러 회사 복수 선택 (전체 선택된 회사별 개별 대조!)
+      const coResults = cosList.map(coName => {
+        const revItem = this.revisions.find(r => coName.includes(r.co.slice(0, 2)));
+        if (!revItem) {
+          return {
+            co: coName,
+            tier: '2종',
+            note: '개정 없이 2종 유지',
+            isRevised: false
+          };
+        }
+        const ymText = `${Math.floor(revItem.ym / 100)}년 ${revItem.ym % 100}월`;
+        if (!year) {
+          return {
+            co: coName,
+            tier: '1·2종',
+            note: `${ymText} 개정 (이전 2종/이후 1종)`,
+            isRevised: true
+          };
+        }
+        const targetYm = year * 100 + (month || 12);
+        if (targetYm >= revItem.ym) {
+          return {
+            co: coName,
+            tier: '1종',
+            note: `${ymText} 개정약관 적용`,
+            isRevised: true
+          };
+        } else {
+          return {
+            co: coName,
+            tier: '2종',
+            note: `${ymText} 이전 계약 (2종 유지)`,
+            isRevised: false
+          };
+        }
+      });
+
+      const hasAnyRev = coResults.some(r => r.isRevised);
+      const allSameTier = coResults.every(r => r.tier === coResults[0].tier);
+      const summaryTier = allSameTier ? coResults[0].tier : '회사별 상이';
+
+      const multiCompareHTML = `
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;">
+          <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🏢 선택하신 ${cosList.length}개 보험사 판정 비교:</span>
+            ${year ? `<span style="font-size:11px;color:var(--brand);font-weight:800;">${year}년 계약 기준</span>` : ''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            ${coResults.map(cr => `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:var(--surface-2);border-radius:7px;font-size:12px;border:1px solid var(--border);">
+                <span style="font-weight:800;color:var(--text);">${esc(cr.co)}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:11px;color:var(--text-3);">${esc(cr.note)}</span>
+                  <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:${cr.tier === '1종' ? '#dc2626' : cr.tier === '1·2종' ? '#ea580c' : '#2563eb'};color:#fff;">${esc(cr.tier)}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
+
       return {
-        tier: '2종',
-        hasDiff: true,
-        diffBadge: '[가입시기별 상이]',
-        note: '표준약관 및 생보 전사·대형 손보사는 2종 (메리츠 등 7개 손보사 개정 특약만 1종)',
-        boxHTML: `
-          <div style="background:var(--surface);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-            <div style="font-weight:850;color:#dc2626;margin-bottom:4px;">⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳</div>
-            <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:6px;">
-              <div>• 하나손보 : 2023.06~</div>
-              <div>• 에이스손보 : 2023.09~</div>
-              <div>• 메리츠화재 : 2024.12~</div>
-              <div>• 흥국화재 : 2025.09~</div>
-              <div>• KB손보 : 2026.01~(수술Ⅲ)</div>
-              <div>• 롯데손보 : 2026.01~</div>
-              <div>• 농협손보 : 2026.09~</div>
-            </div>
-            <div style="color:#2563eb;font-weight:750;font-size:11.5px;">✓ 삼성화재 · 현대해상 · DB손보 및 생보사 전사 : <b>개정 없이 2종 유지</b></div>
-          </div>`
+        tier: summaryTier,
+        hasDiff: hasAnyRev,
+        diffBadge: hasAnyRev ? '[회사별 상이]' : '',
+        note: `선택하신 ${cosList.length}개 보험사별 약관 비교 결과`,
+        boxHTML: multiCompareHTML
       };
     }
   },
@@ -981,8 +1061,34 @@ const REVISION_RULES = [
     id: 'breast_hyper',
     name: '유방비대증 수술',
     match: (g) => (g.c || []).some(c => c.startsWith('N62')),
-    evaluate: function(co) {
-      const coStr = (co || '').trim();
+    evaluate: function(cosInput) {
+      const cosList = parseCosList(cosInput);
+      if (cosList.length > 1) {
+        const coResults = cosList.map(co => ({
+          co,
+          tier: co.includes('메리츠') ? '1종' : '3종',
+          note: co.includes('메리츠') ? '메리츠 개정약관 1종' : '표준 약관 3종'
+        }));
+        return {
+          tier: coResults.every(r => r.tier === '3종') ? '3종' : '회사별 상이',
+          hasDiff: coResults.some(r => r.tier === '1종'),
+          diffBadge: coResults.some(r => r.tier === '1종') ? '[회사별 상이]' : '',
+          note: `선택하신 ${cosList.length}개 보험사별 약관 비교`,
+          boxHTML: `
+            <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;">
+              <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;">🏢 선택하신 ${cosList.length}개사 판정 비교:</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                ${coResults.map(cr => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:var(--surface-2);border-radius:7px;font-size:12px;border:1px solid var(--border);">
+                    <span style="font-weight:800;color:var(--text);">${esc(cr.co)}</span>
+                    <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:${cr.tier === '1종' ? '#dc2626' : '#2563eb'};color:#fff;">${esc(cr.tier)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>`
+        };
+      }
+      const coStr = cosList[0] || '';
       if (coStr.includes('메리츠')) {
         return {
           tier: '1종',
@@ -995,6 +1101,7 @@ const REVISION_RULES = [
       return {
         tier: '3종',
         hasDiff: false,
+        diffBadge: '',
         note: '표준 1~5종 수술분류표 제3항 유방절단수술 3종',
         boxHTML: ''
       };
@@ -1004,8 +1111,34 @@ const REVISION_RULES = [
     id: 'gallstone',
     name: '담석증 복강경수술',
     match: (g) => (g.c || []).some(c => c.startsWith('K80')),
-    evaluate: function(co) {
-      const coStr = (co || '').trim();
+    evaluate: function(cosInput) {
+      const cosList = parseCosList(cosInput);
+      if (cosList.length > 1) {
+        const coResults = cosList.map(co => ({
+          co,
+          tier: co.includes('메리츠') ? '2종' : '3종',
+          note: co.includes('메리츠') ? '메리츠 개정약관 2종' : '표준 약관 3종'
+        }));
+        return {
+          tier: coResults.every(r => r.tier === '3종') ? '3종' : '회사별 상이',
+          hasDiff: coResults.some(r => r.tier === '2종'),
+          diffBadge: coResults.some(r => r.tier === '2종') ? '[회사별 상이]' : '',
+          note: `선택하신 ${cosList.length}개 보험사별 약관 비교`,
+          boxHTML: `
+            <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;">
+              <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;">🏢 선택하신 ${cosList.length}개사 판정 비교:</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                ${coResults.map(cr => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:var(--surface-2);border-radius:7px;font-size:12px;border:1px solid var(--border);">
+                    <span style="font-weight:800;color:var(--text);">${esc(cr.co)}</span>
+                    <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:#2563eb;color:#fff;">${esc(cr.tier)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>`
+        };
+      }
+      const coStr = cosList[0] || '';
       if (coStr.includes('메리츠')) {
         return {
           tier: '2종',
@@ -1018,6 +1151,7 @@ const REVISION_RULES = [
       return {
         tier: '3종',
         hasDiff: false,
+        diffBadge: '',
         note: '표준 1~5종 수술분류표 제36항 담낭·담도 관혈수술 3종',
         boxHTML: ''
       };
@@ -1025,18 +1159,22 @@ const REVISION_RULES = [
   }
 ];
 
-function evaluateSurgery(g, co, year, month) {
+function evaluateSurgery(g, cosInput, year, month) {
   for (const rule of REVISION_RULES) {
     if (rule.match(g)) {
-      return rule.evaluate(co, year, month);
+      return rule.evaluate(cosInput, year, month);
     }
   }
   const stdT = tierOf(g);
+  const cosList = parseCosList(cosInput);
+  const noteText = cosList.length > 1
+    ? `선택하신 ${cosList.length}개사 공통: ${tierLabel(stdT)} (표준 1~5종 약관)`
+    : '표준 1~5종 수술분류표 기준';
   return {
     tier: tierLabel(stdT),
     hasDiff: false,
     diffBadge: '',
-    note: '표준 1~5종 수술분류표 기준',
+    note: noteText,
     boxHTML: ''
   };
 }
@@ -1046,10 +1184,12 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
   const t = tierOf(g);
   const procs = curatedFor(g, window.CURATED?.procs);
 
-  const co = parsed?.co || '';
+  const cosList = (parsed?.cos && parsed.cos.length > 0)
+    ? parsed.cos
+    : (parsed?.co ? [parsed.co] : []);
   const year = parsed?.year || null;
   const month = parsed?.month || null;
-  const evalRes = evaluateSurgery(g, co, year, month);
+  const evalRes = evaluateSurgery(g, cosList, year, month);
 
   let ediBanner = '';
   if (matchedEdi) {
@@ -1502,8 +1642,11 @@ function cardTierHTML(gi, q, matchedEdi) {
   const year = state.tYear;
   const month = state.tMonth;
   const co = state.tCo;
+  const cosList = (state.tCos && state.tCos.length > 0)
+    ? state.tCos
+    : (co ? co.split(',').map(s => s.trim()).filter(Boolean) : []);
 
-  const evalRes = evaluateSurgery(g, co, year, month);
+  const evalRes = evaluateSurgery(g, cosList, year, month);
 
   let ediBanner = '';
   if (matchedEdi) {
