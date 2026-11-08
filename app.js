@@ -91,25 +91,25 @@ const COMPARISON_PAIRS = [
     items: [
       {
         name: '체외충격파치료 (ESWT)',
-        badge: '❌ 수술비 전사 비해당',
+        badge: '❌ 수술비 비해당',
         badgeColor: '#fff',
         badgeBg: '#dc2626',
         borderColor: '#ef4444',
         boxBg: 'rgba(239, 68, 68, 0.06)',
-        target: '관절·근육·인대 통증 (족저근막염, 석회건염, 테니스엘보 등)',
-        nature: '외래 물리치료 / 통증 처치 (*약관 분류표 본문 제외 명시)',
-        payout: '수술비 전사 면책 (*약관상 ESWT 명시적 제외) · 실손만 청구 가능'
+        target: '관절·근육 통증 (족저근막염 등)',
+        nature: '외래 물리치료 (*약관 본문 제외 명시)',
+        payout: '수술비 전사 면책 (*ESWT 제외) · 실손만 청구'
       },
       {
         name: '체외충격파쇄석술 (ESWL)',
-        badge: '⭕ 생보 2종 / 손보 1·2종',
+        badge: '⭕ 2종 (현대 1·2종)',
         badgeColor: '#fff',
         badgeBg: '#2563eb',
         borderColor: '#2563eb',
         boxBg: 'rgba(37, 99, 235, 0.06)',
-        target: '신장 및 요관 결석 파쇄 배출 (KCD: N20~N23)',
-        nature: '체외 충격파로 체내 결석 분쇄 (생보 37항 / 손보 85·87항)',
-        payout: '생보 2종 · 메리츠 87항 2종 (60일내 1회) · 현대해상 특약별 1종 또는 2종'
+        target: '신장·요관 결석 파쇄 배출 (N20)',
+        nature: '체외 충격파 결석 분쇄 (생보 37항 / 손보 85항)',
+        payout: '표준 2종 (60일내 1회) · 현대해상 특약별 1·2종'
       }
     ]
   },
@@ -125,20 +125,20 @@ const COMPARISON_PAIRS = [
         badgeBg: '#dc2626',
         borderColor: '#ef4444',
         boxBg: 'rgba(239, 68, 68, 0.06)',
-        target: '디스크·협착증 신경 염증',
-        nature: '주사기 바늘 약물 주입 (천자·주사)',
-        payout: '약관상 명시적 제외 (실손의료비만 가능)'
+        target: '디스크·협착 신경 염증',
+        nature: '주사기 약물 주입 (천자·주사)',
+        payout: '약관상 명시적 제외 (실손만 가능)'
       },
       {
         name: '신경성형술 (RACZ)',
-        badge: '⚠️ 원칙적 비해당 (분쟁)',
+        badge: '⚠️ 원칙 비해당',
         badgeColor: '#fff',
         badgeBg: '#ea580c',
         borderColor: '#ea580c',
         boxBg: 'rgba(234, 88, 12, 0.06)',
-        target: '척추관 신경 유착 및 부종',
-        nature: '특수 카테터 약물세척 및 유착 박리',
-        payout: '절제 조작 없어 수술비 부지급(실손 비급여 가능)'
+        target: '척추관 신경 유착·부종',
+        nature: '특수 카테터 약물 세척·박리',
+        payout: '절제 없어 수술비 부지급 (실손 비급여)'
       },
       {
         name: '수핵절제술 / 감압술',
@@ -148,8 +148,95 @@ const COMPARISON_PAIRS = [
         borderColor: '#2563eb',
         boxBg: 'rgba(37, 99, 235, 0.06)',
         target: '돌출 추간판(디스크) 파편',
-        nature: '내시경/관혈 병적 조직 절단·절제',
-        payout: '종수술비 [3종] + N대 질병수술비 지급'
+        nature: '내시경/관혈 조직 절단·절제',
+        payout: '종수술비 [3종] + N대 수술비 지급'
+      }
+    ]
+  },
+  {
+    id: 'delivery_normal_vs_csec',
+    keys: ['출산', '분만', '자연분만', '질식분만', '정상분만', '제왕절개', '제왕절개술', '제왕', '회음절개', '회음부절개', '임신출산', '분만수술'],
+    title: '⚡ 임신·출산 분만 수술비 직관 비교: 자연분만 vs 제왕절개',
+    items: [
+      {
+        name: '자연분만 (회음절개)',
+        badge: '❌ 수술비 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '정상 질식 분만 및 회음부 절개 (O80)',
+        nature: '정상 생리적 분만 (질병·상해 아님)',
+        payout: '수술비·실손의료비 전사 면책 (부지급)'
+      },
+      {
+        name: '제왕절개 (만출술)',
+        badge: '⭕ 1~5종 1종 지급',
+        badgeColor: '#fff',
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '복부 및 자궁 절개 분만 (O82)',
+        nature: '복부절개 태아 만출술 (표준 54항)',
+        payout: '1~5종 [제54항 1종] 지급 (실손·기본질병 제외)'
+      }
+    ]
+  },
+  {
+    id: 'cataract_vs_lasik',
+    keys: ['다초점', '다초점렌즈', '다초점인공수정체', '다초점렌즈삽입술', '단초점', '단초점렌즈', '인공수정체', '라식', '라섹', '스마일라식', '렌즈삽입술', 'icl', '시력교정', '시력교정술'],
+    title: '⚡ 안과 시술·수술 직관 비교: 라식/라섹 vs 백내장 다초점/단초점',
+    items: [
+      {
+        name: '라식·라섹 시력교정',
+        badge: '❌ 수술비 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '근시·원시·난시 시력교정',
+        nature: '안경 대체 목적 각막 절삭',
+        payout: '약관상 "시력교정술" 전사 면책 (수술비·실손 불가)'
+      },
+      {
+        name: '백내장 렌즈삽입술',
+        badge: '⭕ 1~5종 1종 지급',
+        badgeColor: '#fff',
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '혼탁 수정체 유화 및 인공수정체 삽입 (H25)',
+        nature: '수정체 관혈수술 (표준 제71항)',
+        payout: '다초점·단초점 무관 [1종] 지급 (16년이후 실손 렌즈비 제외)'
+      }
+    ]
+  },
+  {
+    id: 'implant_vs_bonegraft',
+    keys: ['임플란트', '치조골', '치조골이식', '치조골이식술', '골이식', '골이식술', '뼈이식', '치아식립'],
+    title: '⚡ 치과 시술 직관 비교: 단순 임플란트 vs 치조골이식술',
+    items: [
+      {
+        name: '단순 임플란트 식립',
+        badge: '❌ 수술비 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '상실 치아 픽스처(나사) 식립',
+        nature: '약관상 "치아 관련 처치" 제외 규정',
+        payout: '종수술비·질병수술비 부지급 (치아보험만 가능)'
+      },
+      {
+        name: '치조골이식술 (골이식)',
+        badge: '⭕ 1~5종 2종 지급',
+        badgeColor: '#fff',
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '잇몸 뼈 결손부 동종·자가골 이식 (K08.1)',
+        nature: '골이식술 (표준 1~5종 제33항)',
+        payout: '1~5종 [제33항 골이식술 2종] 정상 지급'
       }
     ]
   },
@@ -160,30 +247,30 @@ const COMPARISON_PAIRS = [
     items: [
       {
         name: '단순 침생검 (Needle Biopsy)',
-        badge: '❌ 수술비 비해당',
+        badge: '❌ 검사 비해당',
         badgeColor: '#fff',
         badgeBg: '#dc2626',
         borderColor: '#ef4444',
         boxBg: 'rgba(239, 68, 68, 0.06)',
-        target: '유방·갑상선 혹 조직 채취',
-        nature: '진단 목적의 소량 채취 검사',
-        payout: '치료 목적 아니므로 수술비 부지급 (실손 검사비 청구)'
+        target: '유방·갑상선 의심 종양',
+        nature: '진단 목적 조직 일부 채취 (검사)',
+        payout: '치료 목적 수술 아님 (수술비 전사 면책)'
       },
       {
         name: '맘모톰 절제술 (진공보조절제)',
-        badge: '⭕ 2종 지급',
+        badge: '⭕ 2종 수술비 지급',
         badgeColor: '#fff',
         badgeBg: '#2563eb',
         borderColor: '#2563eb',
         boxBg: 'rgba(37, 99, 235, 0.06)',
-        target: '유방 섬유선종·양성종양 (D24)',
-        nature: '치료 목적 병변 완전 절제',
-        payout: '종수술비 [2종] + N대 질병수술비 지급'
+        target: '유방 섬유선종·양성종양',
+        nature: '진공 흡입 바늘로 종양 전체 절제',
+        payout: '표준 1~5종 [2종] 지급 (단순검사 제외)'
       }
     ]
   },
   {
-    id: 'suture_simple_vs_muscle',
+    id: 'suture_vs_debridement',
     keys: ['단순봉합', '창상봉합', '피부봉합', '봉합술', '꿰맴', '상처봉합'],
     title: '⚡ 상처 봉합 직관 비교: 단순 피부봉합 vs 근봉합술 / 변연절제술',
     items: [
@@ -367,25 +454,25 @@ function findExcludedProcedure(normQ) {
 function renderComparisonPairHTML(pair) {
   const is3Cols = pair.items.length === 3;
   return `
-    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:var(--shadow-1);animation:fadeIn .2s ease;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:13px;font-weight:900;color:var(--brand);">${esc(pair.title)}</span>
-        <span style="font-size:11px;color:var(--text-3);font-weight:700;">비슷한 시술 직관 비교</span>
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:11px;margin-bottom:12px;box-shadow:var(--shadow-1);animation:fadeIn .2s ease;overflow:hidden;box-sizing:border-box;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:4px;">
+        <span style="font-size:12.5px;font-weight:900;color:var(--brand);">${esc(pair.title)}</span>
+        <span style="font-size:10.5px;color:var(--text-3);font-weight:700;">비슷한 시술 직관 비교</span>
       </div>
-      <div style="display:grid;grid-template-columns:${is3Cols ? 'repeat(auto-fit, minmax(105px, 1fr))' : '1fr 1fr'};gap:8px;">
+      <div style="display:grid;grid-template-columns:${is3Cols ? 'repeat(3, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))'};gap:6px;">
         ${pair.items.map(it => `
-          <div style="background:${it.boxBg};border:1.5px solid ${it.borderColor};border-radius:12px;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;">
-            <div>
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;flex-wrap:wrap;">
-                <span style="font-size:12.5px;font-weight:900;color:var(--text);">${esc(it.name)}</span>
-                <span style="background:${it.badgeBg};color:${it.badgeColor};font-size:10px;font-weight:900;padding:2px 5px;border-radius:6px;white-space:nowrap;">${esc(it.badge)}</span>
+          <div style="background:${it.boxBg};border:1.5px solid ${it.borderColor};border-radius:10px;padding:7px 5px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:5px;min-width:0;overflow:hidden;box-sizing:border-box;">
+            <div style="min-width:0;">
+              <div style="margin-bottom:4px;min-width:0;">
+                <div style="font-size:11px;font-weight:900;color:var(--text);line-height:1.25;margin-bottom:3px;word-break:keep-all;">${esc(it.name)}</div>
+                <span style="display:inline-block;background:${it.badgeBg};color:${it.badgeColor};font-size:9px;font-weight:850;padding:2px 4px;border-radius:4px;line-height:1.15;word-break:keep-all;max-width:100%;box-sizing:border-box;white-space:normal;">${esc(it.badge)}</span>
               </div>
-              <div style="font-size:11px;color:var(--text-2);line-height:1.45;margin-top:4px;">
+              <div style="font-size:10px;color:var(--text-2);line-height:1.35;margin-top:3px;word-break:keep-all;">
                 • <b>대상</b>: ${esc(it.target)}<br>
                 • <b>성격</b>: ${esc(it.nature)}
               </div>
             </div>
-            <div style="font-size:11.5px;color:var(--text);font-weight:850;border-top:1px dashed ${it.borderColor};padding-top:6px;margin-top:2px;">
+            <div style="font-size:10px;color:var(--text);font-weight:850;border-top:1px dashed ${it.borderColor};padding-top:4px;margin-top:2px;line-height:1.25;word-break:keep-all;min-width:0;">
               👉 ${esc(it.payout)}
             </div>
           </div>
@@ -3595,6 +3682,138 @@ function bindCardActions(box) {
   });
 }
 
+
+/* ───────────────────────── 5대 손보사 약관 원문 세부 규정 (보상제외·수술정의) ───────────────────────── */
+const COMPANY_RULES_DETAIL = {
+  eswl: {
+    title: '체외충격파쇄석술 (ESWL) 회사별 약관 원문 규정',
+    items: [
+      {
+        co: '현대해상',
+        std: '정액 부지급 / 종수술비 2종(특약별 1종)',
+        quote: '• 정액 질병수술보장특약 제3조 ⑤항 7호: [제1항~제3항에 해당하지 않는 시술(체외 충격파 쇄석술 등)은 제외]\n• 1-5종수술Ⅳ/질병수술Ⅱ 별표: [제85항 체외충격파쇄석술(E.S.W.L) 2종] (*체외충격파치료술 ESWT는 제외, 60일 내 1회)'
+      },
+      {
+        co: '삼성화재',
+        std: '정액 부지급 / 종수술비 2종',
+        quote: '• 질병수술비 제3조 7호: [기타 수술 정의에 해당하지 않는 시술 (체외 충격파 쇄석술 등)] 명시적 제외\n• 1~5종 수술분류표: [제87항 체외충격파쇄석술 2종] (60일 이내 1회 한)'
+      },
+      {
+        co: 'KB손해보험',
+        std: '정액 부지급 / 종수술비 2종',
+        quote: '• 질병수술비 제3조: [체외 충격파 쇄석술 및 변연절제 동반치 않은 단순 창상봉합술 등 제외]\n• 1~5종 수술분류표: [제87항 체외충격파쇄석술 2종] 지급'
+      },
+      {
+        co: 'DB손해보험',
+        std: '정액 질병수술비 지급 가능 / 종수술비 2종',
+        quote: '• 질병수술비 약관: 수술 정의 예시에 쇄석술 제외 문구 없음 (단, 1년 내 동일질병 1회 등 지급 규정 확인)\n• 1~5종 수술분류표: [제87항 체외충격파쇄석술 2종] 지급'
+      },
+      {
+        co: '메리츠화재',
+        std: '정액 수술정의 확인 / 종수술비 2종',
+        quote: '• 1-5종 수술분류표Ⅱ 제87항: [체외충격파쇄석술(E.S.W.L) 2종] (60일 내 1회 간주) *체외충격파치료술(E.S.W.T)은 제외'
+      }
+    ]
+  },
+  hemorrhoid_incontinence: {
+    title: '치핵·요실금 회사별 질병수술비 보상제외 vs 종수술비 규정',
+    items: [
+      {
+        co: '손보사 공통 (기본 질병수술비)',
+        std: '정액 기본수술비 전사 면책',
+        quote: '• 제4조(보상하지 않는 손해): [한국표준질병사인분류상 직장 또는 항문질환(K60~K62, K64) 및 비뇨기계 기능장애(요실금 N39.3, N39.4, R32)는 보상하지 아니합니다.]\n※ 치핵/요실금 포함 전용 특약 가입 증권만 정액 지급'
+      },
+      {
+        co: '손보사 공통 (1~5종 종수술비)',
+        std: '1~5종 종수술비 전사 1종 지급',
+        quote: '• 1~5종 수술분류표 제53항: [치핵, 치열, 치루 근치수술] → 1종 지급\n• 1~5종 수술분류표 제55항: [요실금 수술 (TOT, TVT 등 경질적 테이프 고정술)] → 1종 지급'
+      },
+      {
+        co: '현대해상 (특약별 유의)',
+        std: '일반형(제외) vs 질병수술Ⅱ(1종)',
+        quote: '• 과거 일반형 1~5종: 치핵 및 제왕절개 보장 제외 조항 존재\n• 회당지급형 및 질병수술Ⅱ: 치핵 1종, 요실금 1종 정상 보장'
+      }
+    ]
+  },
+  csection: {
+    title: '제왕절개 (O82) 질병수술비 면책 vs 종수술비 1종 규정',
+    items: [
+      {
+        co: '기본 질병수술비 (손보 공통)',
+        std: '정액 질병수술비 면책 (부지급)',
+        quote: '• 제4조(보상하지 않는 손해): [임신, 출산(제왕절개를 포함합니다), 산후기로 수술한 경우 보상하지 않습니다.] (O코드 면책)'
+      },
+      {
+        co: '1~5종 종수술비 (생·손보 공통)',
+        std: '1~5종 수술비 제54항 1종 지급',
+        quote: '• 1~5종 수술분류표 제54항: [제왕절개만출술(Cesarean Section)] → 1종 지급\n※ 단, 현대해상 과거 일반형 등 일부 옛날 특약은 제왕절개 제외 조항 확인 필요'
+      },
+      {
+        co: '실손의료비 (전 세대 공통)',
+        std: '실손의료비 전사 면책',
+        quote: '• 표준약관상 임신·출산(O00~O99) 및 제왕절개 수술비·입원비 전액 면책 (단, 질병치료 목적 임신 합병증 일부 세대 검토)'
+      }
+    ]
+  },
+  cataract: {
+    title: '백내장 (H25/H26) 인공수정체삽입술 회사별·특약별 규정',
+    items: [
+      {
+        co: '1~5종 종수술비 (전 보험사 공통)',
+        std: '다초점·단초점 무관 1종 정상 지급',
+        quote: '• 1~5종 수술분류표 제71항: [백내장(白內障), 수정체(水晶體) 관혈수술] → 1종 지급\n※ 렌즈가 다초점인지 단초점인지 여부와 상관없이 1종 수술비 정상 지급'
+      },
+      {
+        co: '삼성화재 / KB손보 (정액 수술비)',
+        std: '특약명 확인 필수 (백내장 제외형 주의)',
+        quote: '• 삼성화재 질병수술비Ⅳ: [수정체의 장애(H25~H28)] 보상 제외\n• KB손해보험: [질병수술비(백내장제외)] 특약 분리 운영 → 가입 특약명 증권 확인 필수'
+      },
+      {
+        co: '실손의료비 (2016.01 개정)',
+        std: '비급여 다초점 렌즈비 제외',
+        quote: '• 2016년 1월 이후 가입 실손: 안경·콘택트렌즈 대체 비급여 인공수정체 재료대 보상 제외 (급여 단초점 기준만 보상)\n• 세극등현미경 검사 백내장 혼탁도 입증 및 대법원 입원 판례 기준 적용'
+      }
+    ]
+  }
+};
+
+function getCompanyExclusionsHTML(g) {
+  if (!g) return '';
+  const codes = g.c || [];
+  const name = g.n || '';
+  const vs = g.vs || [];
+
+  let matched = null;
+  if (codes.some(c => ['N20', 'N21', 'N22', 'N23'].some(t => c.startsWith(t))) || name.includes('결석') || vs.some(v => v.includes('쇄석'))) {
+    matched = COMPANY_RULES_DETAIL.eswl;
+  } else if (codes.some(c => c.startsWith('K64') || c.startsWith('K60') || c.startsWith('N39.3') || c.startsWith('N39.4')) || name.includes('치핵') || name.includes('요실금')) {
+    matched = COMPANY_RULES_DETAIL.hemorrhoid_incontinence;
+  } else if (codes.some(c => c.startsWith('O82') || c.startsWith('O80')) || name.includes('제왕절개') || vs.some(v => v.includes('출산') || v.includes('분만'))) {
+    matched = COMPANY_RULES_DETAIL.csection;
+  } else if (codes.some(c => c.startsWith('H25') || c.startsWith('H26')) || name.includes('백내장') || vs.some(v => v.includes('다초점'))) {
+    matched = COMPANY_RULES_DETAIL.cataract;
+  }
+
+  if (!matched) return '';
+
+  return `
+    <div class="sec" style="margin-top:10px;">
+      <div class="sec-title"><span style="color:var(--brand);font-weight:900;">🏛️ ${esc(matched.title)}</span><div class="dotline"></div></div>
+      <div style="display:flex;flex-direction:column;gap:7px;">
+        ${matched.items.map(it => `
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:4px;">
+              <span style="font-size:12px;font-weight:900;color:var(--text);">${esc(it.co)}</span>
+              <span style="font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 6px;border-radius:5px;">${esc(it.std)}</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.45;white-space:pre-line;">${esc(it.quote)}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
 function detailBodyHTML(gi) {
   const g = state.D.g[gi];
   const t = tierOf(g);
@@ -3617,6 +3836,7 @@ function detailBodyHTML(gi) {
 
   return `
     ${tipsHTML}
+    ${getCompanyExclusionsHTML(g)}
 
     <div class="sec">
       <div class="sec-title"><span>약관 및 심사 근거</span><div class="dotline"></div></div>
