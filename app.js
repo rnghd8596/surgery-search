@@ -918,6 +918,45 @@ function cardQuickHTML(gi, q, matchedEdi) {
       </div>`;
   }
 
+  const stdT = tierLabel(t);
+  let pre2020Tier = stdT;
+  let pre2020Note = '(표준 1~5종)';
+  let post2020Tier = stdT;
+  let post2020Note = '(동일 종수 유지)';
+  let post2020Color = '#2563eb';
+  let hasPeriodDiff = false;
+
+  if (ex) {
+    hasPeriodDiff = true;
+    pre2020Tier = ex.val.stdTier || '2종';
+    pre2020Note = '(생보 전사 · 표준약관)';
+    post2020Tier = '1종 또는 2종';
+    post2020Note = '(메리츠·롯데 1종 / 타사 2종)';
+    post2020Color = '#dc2626';
+  }
+
+  const periodBoxHTML = `
+    <div style="background:var(--surface);border:1.5px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};border-radius:11px;padding:9px 12px;margin:9px 0 6px;">
+      <div style="font-size:11px;font-weight:800;color:${hasPeriodDiff ? '#dc2626' : 'var(--text-3)'};margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+        <span>📅 가입시기별 판정 종수 ${hasPeriodDiff ? '(★ 시기별 종수 상이)' : ''}</span>
+        <span style="font-size:10.5px;color:var(--text-3);font-weight:600;">세부사항 안 열어도 즉시 확인</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
+        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid var(--border);">
+          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이전 가입</div>
+          <div style="font-size:14px;font-weight:900;color:#2563eb;margin-top:2px;">
+            ${pre2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${pre2020Note}</span>
+          </div>
+        </div>
+        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};">
+          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이후 가입</div>
+          <div style="font-size:14px;font-weight:900;color:${post2020Color};margin-top:2px;">
+            ${post2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${post2020Note}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
   return `
   <article class="card" data-gi="${gi}">
     <div class="card-head">
@@ -937,6 +976,7 @@ function cardQuickHTML(gi, q, matchedEdi) {
             <div style="font-size:11px;color:var(--text-3);margin-top:2px;">생명보험 전사 · 2020년 이전 손해보험 표준약관 기준</div>
           </div>
         </div>
+        ${periodBoxHTML}
         ${exHTML}
         ${procsHTML}
       </div>
@@ -1436,6 +1476,53 @@ function cardTierHTML(gi, q, matchedEdi) {
     }
   }
 
+  const stdT = tierLabel(t);
+  let pre2020Tier = stdT;
+  let pre2020Note = '(표준 1~5종)';
+  let post2020Tier = stdT;
+  let post2020Note = '(동일 종수 유지)';
+  let post2020Color = '#2563eb';
+  let hasPeriodDiff = false;
+
+  if (ex) {
+    hasPeriodDiff = true;
+    pre2020Tier = ex.val.stdTier || '2종';
+    pre2020Note = '(생보 전사 · 표준약관)';
+    post2020Tier = '1종 또는 2종';
+    post2020Note = '(메리츠·롯데 1종 / 타사 2종)';
+    post2020Color = '#dc2626';
+    if (co && (co.includes('메리츠') || co.includes('롯데'))) {
+      post2020Tier = '1종';
+      post2020Note = `(${co} 개정약관 1종 하향)`;
+    } else if (co) {
+      post2020Tier = '2종';
+      post2020Note = `(${co} 2종 유지)`;
+      post2020Color = '#2563eb';
+    }
+  }
+
+  const periodBoxHTML = `
+    <div style="background:var(--surface);border:1.5px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};border-radius:11px;padding:9px 12px;margin:9px 0 6px;">
+      <div style="font-size:11px;font-weight:800;color:${hasPeriodDiff ? '#dc2626' : 'var(--text-3)'};margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+        <span>📅 가입시기별 판정 종수 ${hasPeriodDiff ? '(★ 시기별 종수 상이)' : ''}</span>
+        <span style="font-size:10.5px;color:var(--text-3);font-weight:600;">세부사항 안 열어도 즉시 확인</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;">
+        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid var(--border);">
+          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이전 가입</div>
+          <div style="font-size:14px;font-weight:900;color:#2563eb;margin-top:2px;">
+            ${pre2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${pre2020Note}</span>
+          </div>
+        </div>
+        <div style="background:var(--surface-2);padding:7px 9px;border-radius:8px;border:1px solid ${hasPeriodDiff ? 'rgba(239,68,68,0.3)' : 'var(--border)'};">
+          <div style="font-size:10.5px;color:var(--text-3);font-weight:700;">2020년 이후 가입</div>
+          <div style="font-size:14px;font-weight:900;color:${post2020Color};margin-top:2px;">
+            ${post2020Tier} <span style="font-size:10px;font-weight:600;color:var(--text-2);">${post2020Note}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
   return `
   <article class="card" data-gi="${gi}">
     <div class="card-head">
@@ -1458,6 +1545,7 @@ function cardTierHTML(gi, q, matchedEdi) {
             <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(finalNote)}</div>
           </div>
         </div>
+        ${periodBoxHTML}
         ${exCompareHTML}
         ${procsHTML}
       </div>
@@ -2482,61 +2570,6 @@ function detailBodyHTML(gi) {
 
   return `
     ${tipsHTML}
-
-    <div class="sec">
-      <div class="sec-title"><span style="color:var(--brand);">⚖️ 동시·다발성 수술 판정 약관 4대 유형 비교 (실무 참고용)</span><div class="dotline"></div></div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:12px;line-height:1.5;">
-        <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;">
-          ※ 보험사 및 가입 시기(상품 약관)에 따라 동일질병/동시수술 지급 규정이 상이하므로 고객 증권 약관을 반드시 대조하세요.
-        </div>
-        
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <!-- A형 -->
-          <div style="background:var(--surface-2);border-left:3.5px solid #10b981;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#10b981;font-size:12.5px;margin-bottom:3px;">🅰️ A유형: [수술 1회당] 순수 확대형 (미래에셋생명, 농협손해보험 등)</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
-              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>2회(각각 지급)</b><br>
-              • <b>다른질병/동일부위</b>: <b>2회(치료목적 독립 시)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
-              <span style="font-size:11px;color:var(--text-3);">· [수술 1회당] 약관으로 동일부위 제한 예시가 없어 독립적 수술 각각 인정 (양측·양안 수술 각각 지급)</span>
-            </div>
-          </div>
-
-          <!-- B형 -->
-          <div style="background:var(--surface-2);border-left:3.5px solid #3b82f6;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#3b82f6;font-size:12.5px;margin-bottom:3px;">🅱️ B유형: [동일질병당 1회지급] 기본형 (현대해상 등)</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
-              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>1회만(제한)</b><br>
-              • <b>다른질병/동일부위</b>: <b>2회(질병 다르면 인정)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
-              <span style="font-size:11px;color:var(--text-3);">· 동일 원인 질병이면 부위가 달라도 최고액 1개만 지급. (수술 후 365일 경과 시 새로운 질병 간주)</span>
-            </div>
-          </div>
-
-          <!-- C형 -->
-          <div style="background:var(--surface-2);border-left:3.5px solid #ef4444;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#ef4444;font-size:12.5px;margin-bottom:3px;">🆎 C유형: [동일질병 1회 + 동일부위 동시수술 제한] (라이나생명, 흥국생명 등)</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
-              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>1회만(제한)</b><br>
-              • <b>다른질병/동일부위</b>: <b>1회만(동일 장기군 제한)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
-              <span style="font-size:11px;color:#ef4444;font-weight:700;">· 【실무 예시】 동시에 위용종절제술 + 대장용종절제술 시행 시, 동일 복부장기 수술로 보아 1회만 지급! (동일질병=KCD 3자리 기준)</span>
-            </div>
-          </div>
-
-          <!-- D형 -->
-          <div style="background:var(--surface-2);border-left:3.5px solid #8b5cf6;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#8b5cf6;font-size:12.5px;margin-bottom:3px;">🆑 D유형: [수술 1회당 + 동일부위 동시수술 제한] (KB라이프 등)</div>
-            <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
-              • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>2회(좌·우 별도 인정)</b><br>
-              • <b>다른질병/동일부위</b>: <b>1회만(높은 급여 1개만 지급)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
-              <span style="font-size:11px;color:#8b5cf6;font-weight:700;">· 【주의】 특약명은 [수술 1회당]이나, 세부규정에 [위+대장용종 동시 시행 시 복부장기 동일부위로 1회만 지급] 공식 예시 명시!</span>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:8px;font-size:11px;color:var(--text-3);padding-top:6px;border-top:1px dashed var(--line);">
-          ⚠️ 정확한 지급 횟수는 가입하신 특약명과 약관의 <b>[보험금 지급에 관한 세부규정]</b> 및 <b>[동일 신체부위 정의]</b> 조항에 따라 달라질 수 있으므로, 청구 전 해당 증권 약관을 반드시 재확인하시기 바랍니다.
-        </div>
-      </div>
-    </div>
 
     <div class="sec">
       <div class="sec-title"><span>약관 및 심사 근거</span><div class="dotline"></div></div>
