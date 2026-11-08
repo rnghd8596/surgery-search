@@ -471,7 +471,7 @@ function cardHTML(gi, q) {
 
 function altNames(g) {
   const base = norm(g.n);
-  const others = (g.vs || []).filter(n => n !== g.n && norm(n) !== base).slice(0, 3);
+  const others = (g.vs || []).filter(n => n !== g.n && norm(n) !== base && n.length <= 26 && !n.includes('제외')).slice(0, 3);
   if (!others.length) return '';
   return `<p class="card-alt">같은 코드 다른 명칭 · ${others.map(esc).join(', ')}</p>`;
 }
@@ -601,23 +601,25 @@ function relatedEdi(g, limit) {
   const clean = (t) => t.replace(/(으로|에서|의|을|를|에|로|와|과)$/, '');
   const pick = (arr, min) => arr.map(clean).filter(t => t.length >= min && !STOP.has(t) && !GENERIC.has(t));
 
-  let tokens = pick(g.n.split(/[^가-힣A-Za-z0-9]+/), 2);
+  const nameTokens = [...new Set(pick(g.n.split(/[^가-힣A-Za-z0-9]+/), 2))].sort((a, b) => b.length - a.length).slice(0, 6);
   const procs = curatedFor(g, window.CURATED?.procs);
-  if (procs) tokens = tokens.concat(pick(procs.val.flatMap(p => p.s.split(/[^가-힣A-Za-z0-9]+/)), 3));
-  tokens = [...new Set(tokens)].sort((a, b) => b.length - a.length).slice(0, 8);
-  if (!tokens.length) return [];
+  const procTokens = procs
+    ? [...new Set(pick(procs.val.flatMap(p => p.s.split(/[^가-힣A-Za-z0-9]+/)), 3))].sort((a, b) => b.length - a.length).slice(0, 4)
+    : [];
+  if (!nameTokens.length && !procTokens.length) return [];
 
   const scored = [];
   for (const r of idx.ediSurg) {
-    let hit = 0, len = 0;
-    for (const tk of tokens) {
-      if (r.nn.includes(norm(tk))) { hit++; len += tk.length; }
-    }
-    if (hit) scored.push({ i: r.i, sc: hit * 10 + len });
+    let nHit = 0, pHit = 0, len = 0;
+    for (const tk of nameTokens) if (r.nn.includes(norm(tk))) { nHit++; len += tk.length; }
+    for (const tk of procTokens) if (r.nn.includes(norm(tk))) { pHit++; len += tk.length; }
+    if (nHit || pHit) scored.push({ i: r.i, sc: nHit * 12 + pHit * 3 + len, nHit });
   }
   scored.sort((a, b) => b.sc - a.sc);
+  const named = scored.filter(h => h.nHit > 0);
+  const pool = named.length >= 4 ? named : scored;
   const seen = new Set(), out = [];
-  for (const h of scored) {
+  for (const h of pool) {
     const code = state.E.rows[h.i][0];
     if (seen.has(code)) continue;
     seen.add(code); out.push({ i: h.i });
