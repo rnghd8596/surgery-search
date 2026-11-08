@@ -104,10 +104,17 @@ window.onerror = function(msg, url, line, col, err) {
         <p class="hero-sub" style="font-size:13px;color:var(--text-3);margin:0;">질병명·수술명을 검색하거나, 아래 메뉴를 선택하세요</p>
       </div>
 
+      <!-- 검색 공식 가이드 (자유 검색 예시) -->
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:10px;text-align:left;">
+        <div style="font-size:12px;font-weight:850;color:var(--brand);margin-bottom:2px;">💡 아는 정보만 자유롭게 입력하세요:</div>
+        <div style="font-size:12.5px;font-weight:800;color:var(--text);line-height:1.4;">[가입시기] + [보험사] + [질병명·코드] + [수술명·코드]</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">예시: 21년3월 메리츠 대장용종, 2103 KB 맘모톰, Q7701</div>
+      </div>
+
       <div class="search-wrap" style="margin-bottom:12px;">
         <div class="searchbox">
           <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-quick" type="search" placeholder="질병명 · 수술명 · 질병코드 입력 (예: 대장용종, 맘모톰, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="빠른 검색어">
+          <input id="q-quick" type="search" placeholder="검색어 입력 (예: 대장용종, KB 맘모톰, Q7701)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="빠른 검색어">
           <button id="clearBtn-quick" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
@@ -155,37 +162,42 @@ window.onerror = function(msg, url, line, col, err) {
 
     <!-- ───────── 2. 종수술비 정밀검색 (가입시기 년·월 & 회사별 맞춤 1~5종) ───────── -->
     <section id="pane-tier" class="pane" hidden>
+      <!-- 검색 공식 가이드 (종수술비 검색창 위) -->
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:10px;text-align:left;">
+        <div style="font-size:12px;font-weight:850;color:#10b981;margin-bottom:2px;">💡 아는 정보만 자유롭게 입력하세요:</div>
+        <div style="font-size:12.5px;font-weight:800;color:var(--text);line-height:1.4;">[가입시기] + [보험사] + [질병명·코드] + [수술명·코드]</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">예시: 21년3월 메리츠 대장용종, 2103 KB 맘모톰, Q7701</div>
+      </div>
+
       <!-- 최상단 검색창 -->
       <div class="search-wrap" style="margin-bottom:12px;">
         <div class="searchbox">
           <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-tier" type="search" placeholder="수술명 · 질병명 (예: 21년3월 메리츠 대장용종, 2103 KB 맘모톰, Q7701)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="종수술비 검색어">
+          <input id="q-tier" type="search" placeholder="검색어 입력 (예: 2103 메리츠 대장용종, Q7701)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="종수술비 검색어">
           <button id="clearBtn-tier" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
       </div>
 
-      <!-- 종수술비 필터 바 -->
-      <div class="smart-filter-card" style="margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow-1);">
-        
-        <!-- 가입시기 (년·월 계층형 원터치: 시기 -> 연도 -> 월) -->
-        <div style="margin-bottom:14px;">
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>📅 가입시기 (년·월):</span>
-            <span id="tierDateBadge" style="font-size:11px;color:var(--brand);font-weight:800;">2020년 이후</span>
+      <!-- 1. 가입시기 아코디언 바 (기본 접힘, 클릭 시 세부 년·월 전개) -->
+      <div style="margin-bottom:10px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-1);">
+        <button type="button" id="btnToggleTierDate" style="width:100%;padding:13px 16px;background:var(--surface);border:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">📅</span>
+            <span style="font-size:14px;font-weight:900;color:var(--text);">가입시기:</span>
+            <span id="tierDateBadge" style="font-size:13.5px;font-weight:900;color:var(--brand);">2020년 이후</span>
           </div>
+          <span id="tierDateToggleIcon" style="font-size:12px;color:var(--text-3);font-weight:800;">펼치기 ∨</span>
+        </button>
 
-          <!-- 1단계: 시기 구분 버튼 (2020년 이전 / 2020년 이후 2분할) -->
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px;" id="tGenChips">
+        <div id="tierDateBody" style="display:none;padding:12px 14px;background:var(--surface);border-top:1px dashed var(--line);">
+          <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;">계약 체결 시기를 선택하세요:</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;" id="tGenChips">
             <button class="f-chip" data-gen="old" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이전</button>
             <button class="f-chip on" data-gen="recent" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이후</button>
           </div>
-
-          <!-- 2단계: 연도 칩 그리드 (아래로 한눈에 펼쳐짐) -->
           <div id="tierYearGrid" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;"></div>
-
-          <!-- 3단계: 월 칩 그리드 (선택사항, 6열 그리드) -->
           <div id="tierMonthSection" style="display:none;">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
               <span style="font-size:10.5px;color:var(--text-3);font-weight:700;">월 선택 (선택사항):</span>
@@ -208,17 +220,24 @@ window.onerror = function(msg, url, line, col, err) {
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- 가입회사 (손해 13 / 생명 18) -->
-        <div>
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>🏢 가입 보험사:</span>
-            <span id="tierCoBadge" style="font-size:11px;color:var(--brand);font-weight:800;">전체</span>
+      <!-- 2. 가입 보험사 아코디언 바 (기본 접힘, 클릭 시 31개사 전개) -->
+      <div style="margin-bottom:14px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-1);">
+        <button type="button" id="btnToggleTierCo" style="width:100%;padding:13px 16px;background:var(--surface);border:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">🏢</span>
+            <span style="font-size:14px;font-weight:900;color:var(--text);">가입 보험사:</span>
+            <span id="tierCoBadge" style="font-size:13.5px;font-weight:900;color:var(--brand);">전체</span>
           </div>
+          <span id="tierCoToggleIcon" style="font-size:12px;color:var(--text-3);font-weight:800;">펼치기 ∨</span>
+        </button>
 
+        <div id="tierCoBody" style="display:none;padding:12px 14px;background:var(--surface);border-top:1px dashed var(--line);">
+          <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;">가입하신 보험사를 선택하세요 (다중 선택 가능):</div>
           <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
-            <button class="f-chip on" id="btnTierSonbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;">손해보험 (13개사)</button>
-            <button class="f-chip" id="btnTierSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험 (18개사)</button>
+            <button class="f-chip on" id="btnTierSonbo" type="button" style="padding:8px 0;font-weight:850;border-radius:10px;background:var(--surface);color:var(--text);border:1.5px solid var(--text);">손해보험</button>
+            <button class="f-chip" id="btnTierSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);border:1px solid var(--border);">생명보험</button>
           </div>
 
           <div class="co-grid" id="tierCoSonbo">
@@ -259,7 +278,6 @@ window.onerror = function(msg, url, line, col, err) {
             <button class="f-chip" data-co="IBK연금보험">IBK연금</button>
           </div>
         </div>
-
       </div>
 
       <div id="results-tier" class="results" aria-live="polite"></div>
@@ -267,11 +285,18 @@ window.onerror = function(msg, url, line, col, err) {
 
     <!-- ───────── 3. N대질병수술비 정밀검색 (손해 13 · 생명 18 전사 & 계층 트리) ───────── -->
     <section id="pane-ndai" class="pane" hidden>
+      <!-- 검색 공식 가이드 (N대 검색창 위) -->
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:10px;text-align:left;">
+        <div style="font-size:12px;font-weight:850;color:#8b5cf6;margin-bottom:2px;">💡 아는 정보만 자유롭게 입력하세요:</div>
+        <div style="font-size:12.5px;font-weight:800;color:var(--text);line-height:1.4;">[가입시기] + [보험사] + [질병명·코드] + [수술명·N대숫자]</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">예시: 21년 현대 123대 맘모톰, 112대 KB 대장용종, N23</div>
+      </div>
+
       <!-- 최상단 N대 검색창 -->
       <div class="search-wrap" style="margin-bottom:12px;" id="ndaiSearchWrap">
         <div class="searchbox">
           <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-ndai" type="search" placeholder="질병명 · 수술명 · N대숫자 (예: 21년 현대 123대 맘모톰, 112대 KB 맘모톰, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="N대 검색어">
+          <input id="q-ndai" type="search" placeholder="검색어 입력 (예: 현대 123대 맘모톰, N23, 대장용종)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="N대 검색어">
           <button id="clearBtn-ndai" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
@@ -284,32 +309,43 @@ window.onerror = function(msg, url, line, col, err) {
         <button class="f-chip" id="btnNdaiTreeTab" type="button" style="padding:9px 0;font-weight:850;font-size:13px;border-radius:12px;background:var(--surface-2);color:var(--text-3);">📚 회사별 N대 약관 트리</button>
       </div>
 
-      <!-- N대 가입·판매시기 & 회사 & N대숫자 필터 바 -->
-      <div class="smart-filter-card" style="margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow-1);">
-        
-        <!-- 1. 판매시기 (연도별 N대 자동 결정) -->
-        <div style="margin-bottom:12px;">
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>📅 판매·가입시기:</span>
-            <span id="ndaiDateBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">2020년 이후</span>
+      <!-- 1. N대 판매·가입시기 아코디언 바 (기본 접힘, 클릭 시 전개) -->
+      <div style="margin-bottom:10px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-1);">
+        <button type="button" id="btnToggleNdaiDate" style="width:100%;padding:13px 16px;background:var(--surface);border:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">📅</span>
+            <span style="font-size:14px;font-weight:900;color:var(--text);">판매·가입시기:</span>
+            <span id="ndaiDateBadge" style="font-size:13.5px;font-weight:900;color:#8b5cf6;">2020년 이후</span>
           </div>
+          <span id="ndaiDateToggleIcon" style="font-size:12px;color:var(--text-3);font-weight:800;">펼치기 ∨</span>
+        </button>
+
+        <div id="ndaiDateBody" style="display:none;padding:12px 14px;background:var(--surface);border-top:1px dashed var(--line);">
+          <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;">판매·가입 시기를 선택하세요:</div>
           <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px;" id="nGenChips">
             <button class="f-chip" data-ngen="old" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이전</button>
             <button class="f-chip on" data-ngen="recent" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이후</button>
           </div>
           <div id="ndaiYearGrid" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;"></div>
         </div>
+      </div>
 
-        <!-- 2. 보험회사 선택 -->
-        <div>
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>🏢 보험회사 선택:</span>
-            <span id="ndaiCoBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">KB손해보험</span>
+      <!-- 2. N대 보험회사 선택 & 특약 숫자 아코디언 바 (기본 접힘, 클릭 시 전개) -->
+      <div style="margin-bottom:14px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-1);">
+        <button type="button" id="btnToggleNdaiCo" style="width:100%;padding:13px 16px;background:var(--surface);border:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">🏢</span>
+            <span style="font-size:14px;font-weight:900;color:var(--text);">보험회사 선택:</span>
+            <span id="ndaiCoBadge" style="font-size:13.5px;font-weight:900;color:#8b5cf6;">KB손해보험</span>
           </div>
+          <span id="ndaiCoToggleIcon" style="font-size:12px;color:var(--text-3);font-weight:800;">펼치기 ∨</span>
+        </button>
 
+        <div id="ndaiCoBody" style="display:none;padding:12px 14px;background:var(--surface);border-top:1px dashed var(--line);">
+          <div style="font-size:11.5px;color:var(--text-3);margin-bottom:8px;">가입하신 보험사를 선택하세요 (다중 선택 가능):</div>
           <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
-            <button class="f-chip on" id="btnNdaiSonbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;">손해보험</button>
-            <button class="f-chip" id="btnNdaiSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험</button>
+            <button class="f-chip on" id="btnNdaiSonbo" type="button" style="padding:8px 0;font-weight:850;border-radius:10px;background:var(--surface);color:var(--text);border:1.5px solid var(--text);">손해보험</button>
+            <button class="f-chip" id="btnNdaiSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);border:1px solid var(--border);">생명보험</button>
           </div>
 
           <div class="co-grid" id="ndaiCoSonbo">
@@ -349,26 +385,16 @@ window.onerror = function(msg, url, line, col, err) {
             <button class="f-chip" data-nco="KDB생명">KDB생명</button>
             <button class="f-chip" data-nco="IBK연금보험">IBK연금</button>
           </div>
-        </div>
 
-        <!-- 3. N대 특약 숫자 선택 바 (자동 세팅 + 직접 원터치) -->
-        <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);">
-          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>🔢 N대 특약 숫자 (증권에 적힌 특약):</span>
-            <span id="ndaiTierBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">전체 N대</span>
-          </div>
-          <div id="ndaiTierChips" style="display:flex;flex-wrap:wrap;gap:5px;">
-            <button class="f-chip on" data-ntier="" style="padding:5px 10px;font-size:11px;font-weight:800;">전체 N대</button>
-            <button class="f-chip" data-ntier="123대" style="padding:5px 10px;font-size:11px;font-weight:800;">123대</button>
-            <button class="f-chip" data-ntier="120대" style="padding:5px 10px;font-size:11px;font-weight:800;">120대</button>
-            <button class="f-chip" data-ntier="116대" style="padding:5px 10px;font-size:11px;font-weight:800;">116대</button>
-            <button class="f-chip" data-ntier="112대" style="padding:5px 10px;font-size:11px;font-weight:800;">112대</button>
-            <button class="f-chip" data-ntier="101대" style="padding:5px 10px;font-size:11px;font-weight:800;">101대</button>
-            <button class="f-chip" data-ntier="71대" style="padding:5px 10px;font-size:11px;font-weight:800;">71대</button>
-            <button class="f-chip" data-ntier="64대" style="padding:5px 10px;font-size:11px;font-weight:800;">64대</button>
+          <!-- 3. N대 특약 숫자 선택 바 (자동 세팅 + 직접 원터치) -->
+          <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);">
+            <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+              <span>🔢 N대 특약 숫자 (증권에 적힌 특약):</span>
+              <span id="ndaiTierBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">전체 N대</span>
+            </div>
+            <div id="ndaiTierChips" style="display:flex;flex-wrap:wrap;gap:5px;"></div>
           </div>
         </div>
-
       </div>
 
       <!-- 서브뷰 1: N대 판정 검색 결과 -->
@@ -406,76 +432,85 @@ window.onerror = function(msg, url, line, col, err) {
           <button type="button" class="f-chip" id="btnSelectOcrFile" style="background:#d97706;color:#fff;font-weight:850;padding:9px 20px;border-radius:10px;border:0;font-size:12.5px;box-shadow:var(--shadow-1);">사진 촬영 / 앨범에서 선택 (여러 장 가능)</button>
         </div>
 
-        <!-- 병원 서류 전용: 가입시기 & 보험회사 선택 (대형 강조 배너 & 명확한 단계별 가이드) -->
-        <div style="margin-top:16px;padding:16px 14px;background:rgba(217,119,6,0.06);border:1.5px solid rgba(217,119,6,0.3);border-radius:16px;text-align:left;">
-          
-          <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
-            <span style="font-size:22px;line-height:1;">💡</span>
-            <div>
-              <div style="font-size:14.5px;font-weight:900;color:#b45309;">병원 서류(진단서 · 영수증)만 올리시는 경우</div>
-              <div style="font-size:12px;color:var(--text-2);margin-top:3px;line-height:1.45;">서류에는 가입 정보가 없으므로, 정확한 수술비 판정을 위해 아래 <b>가입시기</b>와 <b>보험회사</b>를 꼭 선택해 주세요!</div>
+        <!-- 병원 서류 전용 접이식 토글 헤더 (기본 접힘) -->
+        <div style="margin-top:14px;border:1px solid rgba(217,119,6,0.3);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow-1);">
+          <button type="button" id="btnToggleOcrDetail" style="width:100%;padding:13px 14px;background:rgba(217,119,6,0.06);border:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;text-align:left;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:18px;">💡</span>
+              <div>
+                <span style="font-size:13px;font-weight:850;color:#b45309;">병원 서류만 올리는 경우 (가입시기 · 회사 선택)</span>
+                <span id="ocrSummaryBadge" style="font-size:11px;color:var(--text-3);margin-left:4px;">[미선택 · 전체]</span>
+              </div>
             </div>
-          </div>
+            <span id="ocrToggleIcon" style="font-size:12px;color:#d97706;font-weight:800;">펼치기 ∨</span>
+          </button>
 
-          <div style="padding-top:10px;border-top:1px dashed rgba(217,119,6,0.25);">
+          <!-- 접혀 있는 세부 옵션 본문 (기본 display: none) -->
+          <div id="ocrDetailBody" style="display:none;padding:14px;background:var(--surface);border-top:1px dashed rgba(217,119,6,0.25);text-align:left;">
+            <div style="font-size:11.5px;color:var(--text-2);margin-bottom:12px;line-height:1.45;">
+              진단서·영수증에는 가입 정보가 없으므로, 정확한 수술비 판정을 위해 가입시기와 회사를 지정할 수 있습니다:
+            </div>
+
             <!-- 1. 가입시기 -->
-            <div style="font-size:12.5px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
               <span>📅 1. 가입시기 선택:</span>
-              <span id="ocrDateBadge" style="font-size:12px;color:#d97706;font-weight:900;">2020년 이후</span>
+              <span id="ocrDateBadge" style="font-size:11.5px;color:#d97706;font-weight:900;">2020년 이후</span>
             </div>
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px;" id="ocrGenChips">
-              <button class="f-chip" data-ocrgen="old" type="button" style="padding:10px 0;font-size:13px;font-weight:850;border-radius:10px;">2020년 이전</button>
-              <button class="f-chip on" data-ocrgen="recent" type="button" style="padding:10px 0;font-size:13px;font-weight:850;border-radius:10px;">2020년 이후</button>
+              <button class="f-chip" data-ocrgen="old" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:10px;">2020년 이전</button>
+              <button class="f-chip on" data-ocrgen="recent" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:10px;">2020년 이후</button>
             </div>
 
             <!-- 2. 가입 보험사 -->
-            <div style="font-size:12.5px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
               <span>🏢 2. 가입 보험사 선택:</span>
-              <span id="ocrCoBadge" style="font-size:12px;color:#d97706;font-weight:900;">전체</span>
+              <span id="ocrCoBadge" style="font-size:11.5px;color:#d97706;font-weight:900;">전체</span>
             </div>
 
             <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
-              <button class="f-chip on" id="btnOcrSonbo" type="button" style="padding:9px 0;font-weight:850;border-radius:10px;">손해보험 (13개사)</button>
-              <button class="f-chip" id="btnOcrSaengbo" type="button" style="padding:9px 0;font-weight:850;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험 (18개사)</button>
+              <button class="f-chip on" id="btnOcrSonbo" type="button" style="padding:8px 0;font-weight:850;border-radius:10px;background:var(--surface);color:var(--text);border:1.5px solid var(--text);">손해보험</button>
+              <button class="f-chip" id="btnOcrSaengbo" type="button" style="padding:8px 0;font-weight:850;border-radius:10px;background:var(--surface-2);color:var(--text-3);border:1px solid var(--border);">생명보험</button>
             </div>
 
-          <div class="co-grid" id="ocrCoSonbo" style="grid-template-columns:repeat(3,1fr);">
-            <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
-            <button class="f-chip" data-ocrco="현대해상">현대해상</button>
-            <button class="f-chip" data-ocrco="삼성화재">삼성화재</button>
-            <button class="f-chip" data-ocrco="DB손해보험">DB손보</button>
-            <button class="f-chip" data-ocrco="KB손해보험">KB손보</button>
-            <button class="f-chip" data-ocrco="메리츠화재">메리츠</button>
-            <button class="f-chip" data-ocrco="한화손해보험">한화손보</button>
-            <button class="f-chip" data-ocrco="흥국화재">흥국화재</button>
-            <button class="f-chip" data-ocrco="롯데손해보험">롯데손보</button>
-            <button class="f-chip" data-ocrco="NH농협손해보험">농협손보</button>
-            <button class="f-chip" data-ocrco="하나손해보험">하나손보</button>
-            <button class="f-chip" data-ocrco="MG손해보험">MG손보</button>
-            <button class="f-chip" data-ocrco="AIG손해보험">AIG손보</button>
-          </div>
+            <div class="co-grid" id="ocrCoSonbo" style="grid-template-columns:repeat(3,1fr);">
+              <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
+              <button class="f-chip" data-ocrco="현대해상">현대해상</button>
+              <button class="f-chip" data-ocrco="삼성화재">삼성화재</button>
+              <button class="f-chip" data-ocrco="DB손해보험">DB손보</button>
+              <button class="f-chip" data-ocrco="KB손해보험">KB손보</button>
+              <button class="f-chip" data-ocrco="메리츠화재">메리츠</button>
+              <button class="f-chip" data-ocrco="한화손해보험">한화손보</button>
+              <button class="f-chip" data-ocrco="흥국화재">흥국화재</button>
+              <button class="f-chip" data-ocrco="롯데손해보험">롯데손보</button>
+              <button class="f-chip" data-ocrco="NH농협손해보험">농협손보</button>
+              <button class="f-chip" data-ocrco="하나손해보험">하나손보</button>
+              <button class="f-chip" data-ocrco="MG손해보험">MG손보</button>
+              <button class="f-chip" data-ocrco="AIG손해보험">AIG손보</button>
+            </div>
 
-          <div class="co-grid" id="ocrCoSaengbo" style="display:none;grid-template-columns:repeat(3,1fr);">
-            <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
-            <button class="f-chip" data-ocrco="삼성생명">삼성생명</button>
-            <button class="f-chip" data-ocrco="한화생명">한화생명</button>
-            <button class="f-chip" data-ocrco="교보생명">교보생명</button>
-            <button class="f-chip" data-ocrco="신한라이프">신한라이프</button>
-            <button class="f-chip" data-ocrco="KB라이프생명">KB라이프</button>
-            <button class="f-chip" data-ocrco="동양생명">동양생명</button>
-            <button class="f-chip" data-ocrco="미래에셋생명">미래에셋</button>
-            <button class="f-chip" data-ocrco="DB생명">DB생명</button>
-            <button class="f-chip" data-ocrco="흥국생명">흥국생명</button>
-            <button class="f-chip" data-ocrco="라이나생명">라이나</button>
-            <button class="f-chip" data-ocrco="메트라이프생명">메트라이프</button>
-            <button class="f-chip" data-ocrco="AIA생명">AIA생명</button>
-            <button class="f-chip" data-ocrco="하나생명">하나생명</button>
-            <button class="f-chip" data-ocrco="ABL생명">ABL생명</button>
-            <button class="f-chip" data-ocrco="NH농협생명">농협생명</button>
-            <button class="f-chip" data-ocrco="iM라이프">iM라이프</button>
-            <button class="f-chip" data-ocrco="KDB생명">KDB생명</button>
-            <button class="f-chip" data-ocrco="IBK연금보험">IBK연금</button>
+            <div class="co-grid" id="ocrCoSaengbo" style="display:none;grid-template-columns:repeat(3,1fr);">
+              <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
+              <button class="f-chip" data-ocrco="삼성생명">삼성생명</button>
+              <button class="f-chip" data-ocrco="한화생명">한화생명</button>
+              <button class="f-chip" data-ocrco="교보생명">교보생명</button>
+              <button class="f-chip" data-ocrco="신한라이프">신한라이프</button>
+              <button class="f-chip" data-ocrco="KB라이프생명">KB라이프</button>
+              <button class="f-chip" data-ocrco="동양생명">동양생명</button>
+              <button class="f-chip" data-ocrco="미래에셋생명">미래에셋</button>
+              <button class="f-chip" data-ocrco="DB생명">DB생명</button>
+              <button class="f-chip" data-ocrco="흥국생명">흥국생명</button>
+              <button class="f-chip" data-ocrco="라이나생명">라이나</button>
+              <button class="f-chip" data-ocrco="메트라이프생명">메트라이프</button>
+              <button class="f-chip" data-ocrco="AIA생명">AIA생명</button>
+              <button class="f-chip" data-ocrco="하나생명">하나생명</button>
+              <button class="f-chip" data-ocrco="ABL생명">ABL생명</button>
+              <button class="f-chip" data-ocrco="NH농협생명">농협생명</button>
+              <button class="f-chip" data-ocrco="iM라이프">iM라이프</button>
+              <button class="f-chip" data-ocrco="KDB생명">KDB생명</button>
+              <button class="f-chip" data-ocrco="IBK연금보험">IBK연금</button>
+            </div>
           </div>
+        </div>
         </div>
 
         <div id="ocrPreviewBox" style="display:none;margin-top:14px;text-align:left;">
@@ -507,7 +542,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261108za"></script>
-<script src="app.js?v=20261108za"></script>
+<script src="assets/curated.js?v=20261108zb"></script>
+<script src="app.js?v=20261108zb"></script>
 </body>
 </html>

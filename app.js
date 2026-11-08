@@ -841,6 +841,25 @@ function renderYearGrid(gen) {
 function bindTierTab() {
   const qTierEl = $('#q-tier');
 
+  // 접이식 아코디언 바 토글 (가입시기 & 가입회사)
+  const btnToggleTierDate = $('#btnToggleTierDate');
+  const tierDateBody = $('#tierDateBody');
+  const tierDateToggleIcon = $('#tierDateToggleIcon');
+  btnToggleTierDate?.addEventListener('click', () => {
+    const isHidden = tierDateBody.style.display === 'none';
+    tierDateBody.style.display = isHidden ? 'block' : 'none';
+    if (tierDateToggleIcon) tierDateToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+  });
+
+  const btnToggleTierCo = $('#btnToggleTierCo');
+  const tierCoBody = $('#tierCoBody');
+  const tierCoToggleIcon = $('#tierCoToggleIcon');
+  btnToggleTierCo?.addEventListener('click', () => {
+    const isHidden = tierCoBody.style.display === 'none';
+    tierCoBody.style.display = isHidden ? 'block' : 'none';
+    if (tierCoToggleIcon) tierCoToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+  });
+
   // 1단계: 시기 구분 버튼 (전체, 2020년~, 06~19년, 06년이전)
   $$('#tGenChips .f-chip').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1271,6 +1290,25 @@ function bindNdaiTab() {
   const searchView = $('#ndaiSearchSubView');
   const treeView = $('#ndaiTreeSubView');
 
+  // 접이식 아코디언 바 토글 (판매시기 & 가입회사)
+  const btnToggleNdaiDate = $('#btnToggleNdaiDate');
+  const ndaiDateBody = $('#ndaiDateBody');
+  const ndaiDateToggleIcon = $('#ndaiDateToggleIcon');
+  btnToggleNdaiDate?.addEventListener('click', () => {
+    const isHidden = ndaiDateBody.style.display === 'none';
+    ndaiDateBody.style.display = isHidden ? 'block' : 'none';
+    if (ndaiDateToggleIcon) ndaiDateToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+  });
+
+  const btnToggleNdaiCo = $('#btnToggleNdaiCo');
+  const ndaiCoBody = $('#ndaiCoBody');
+  const ndaiCoToggleIcon = $('#ndaiCoToggleIcon');
+  btnToggleNdaiCo?.addEventListener('click', () => {
+    const isHidden = ndaiCoBody.style.display === 'none';
+    ndaiCoBody.style.display = isHidden ? 'block' : 'none';
+    if (ndaiCoToggleIcon) ndaiCoToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+  });
+
   btnSearchTab.addEventListener('click', () => {
     state.ndaiMode = 'search';
     btnSearchTab.classList.add('on'); btnTreeTab.classList.remove('on');
@@ -1604,6 +1642,24 @@ function bindOcrTab() {
   let ocrGen = 'recent';
   let ocrCo = '';
 
+  const btnToggle = $('#btnToggleOcrDetail');
+  const detailBody = $('#ocrDetailBody');
+  const toggleIcon = $('#ocrToggleIcon');
+  const summaryBadge = $('#ocrSummaryBadge');
+
+  btnToggle?.addEventListener('click', () => {
+    const isHidden = detailBody.style.display === 'none';
+    detailBody.style.display = isHidden ? 'block' : 'none';
+    if (toggleIcon) toggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+  });
+
+  function updateOcrSummary() {
+    if (!summaryBadge) return;
+    const dt = ocrGen === 'recent' ? '2020년 이후' : '2020년 이전';
+    const co = ocrCo || '전체';
+    summaryBadge.textContent = `[${co} · ${dt}]`;
+  }
+
   $$('#ocrGenChips .f-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       $$('#ocrGenChips .f-chip').forEach(b => b.classList.remove('on'));
@@ -1611,6 +1667,7 @@ function bindOcrTab() {
       ocrGen = btn.dataset.ocrgen;
       const badge = $('#ocrDateBadge');
       if (badge) badge.textContent = ocrGen === 'recent' ? '2020년 이후' : '2020년 이전';
+      updateOcrSummary();
     });
   });
 
@@ -1621,16 +1678,20 @@ function bindOcrTab() {
 
   btnOcrSonbo?.addEventListener('click', () => {
     btnOcrSonbo.classList.add('on'); btnOcrSaengbo?.classList.remove('on');
-    btnOcrSonbo.style.background = 'var(--text)'; btnOcrSonbo.style.color = 'var(--bg)';
-    if (btnOcrSaengbo) { btnOcrSaengbo.style.background = 'var(--surface-2)'; btnOcrSaengbo.style.color = 'var(--text-3)'; }
+    btnOcrSonbo.style.background = 'var(--surface)'; btnOcrSonbo.style.color = 'var(--text)'; btnOcrSonbo.style.border = '1.5px solid var(--text)';
+    if (btnOcrSaengbo) {
+      btnOcrSaengbo.style.background = 'var(--surface-2)'; btnOcrSaengbo.style.color = 'var(--text-3)'; btnOcrSaengbo.style.border = '1px solid var(--border)';
+    }
     if (ocrCoSonbo) ocrCoSonbo.style.display = 'grid';
     if (ocrCoSaengbo) ocrCoSaengbo.style.display = 'none';
   });
 
   btnOcrSaengbo?.addEventListener('click', () => {
     btnOcrSaengbo.classList.add('on'); btnOcrSonbo?.classList.remove('on');
-    btnOcrSaengbo.style.background = 'var(--text)'; btnOcrSaengbo.style.color = 'var(--bg)';
-    if (btnOcrSonbo) { btnOcrSonbo.style.background = 'var(--surface-2)'; btnOcrSonbo.style.color = 'var(--text-3)'; }
+    btnOcrSaengbo.style.background = 'var(--surface)'; btnOcrSaengbo.style.color = 'var(--text)'; btnOcrSaengbo.style.border = '1.5px solid var(--text)';
+    if (btnOcrSonbo) {
+      btnOcrSonbo.style.background = 'var(--surface-2)'; btnOcrSonbo.style.color = 'var(--text-3)'; btnOcrSonbo.style.border = '1px solid var(--border)';
+    }
     if (ocrCoSaengbo) ocrCoSaengbo.style.display = 'grid';
     if (ocrCoSonbo) ocrCoSonbo.style.display = 'none';
   });
@@ -1642,6 +1703,7 @@ function bindOcrTab() {
       ocrCo = btn.dataset.ocrco || '';
       const badge = $('#ocrCoBadge');
       if (badge) badge.textContent = ocrCo || '전체';
+      updateOcrSummary();
     });
   });
 
