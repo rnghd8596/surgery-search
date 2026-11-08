@@ -3298,8 +3298,6 @@ function renderAbout() {
     </div>`;
 }
 
-})();
-
 /* ───────────────────────── N대 특약 질병코드 인터랙티브 서랍 바인딩 ───────────────────────── */
 function bindNdaiCodeExpand(container) {
   if (!container) return;
@@ -3377,3 +3375,5 @@ function bindNdaiCodeExpand(container) {
     });
   });
 }
+
+})();
