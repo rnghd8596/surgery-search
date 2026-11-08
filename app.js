@@ -1020,13 +1020,19 @@ const REVISION_RULES = [
           diffBadge: '[2026 현대해상 담보별 상이]',
           note: '악성신생물 관혈 근치수술 5종 (2026년 이후 현대해상은 가입 담보에 따라 4종 또는 5종)',
           boxHTML: `
-            <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.35);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
-              <div style="font-weight:850;color:#dc2626;margin-bottom:5px;">⚠️ 2026년 현대해상 가입자부터는 담보별 상이하니 필수확인</div>
-              <div style="color:var(--text);font-size:11.5px;display:flex;flex-direction:column;gap:3px;">
-                <div>• <b>현대해상 2026년 이전 계약 및 타사 전사</b> : 관혈적 근치수술 시 <b style="color:#2563eb;">5종 지급</b></div>
-                <div>• <b>현대해상 2026년 이후 가입자</b> : 가입 담보에 따라 <b style="color:#dc2626;">4종 또는 5종 상이</b></div>
-                <div style="color:var(--text-3);font-size:11px;margin-top:2px;">(※ 무조건 하향이 아니며, 담보 가입에 따라 다름 — 질병수술Ⅳ 특약은 4종 / 기존 질병수술 특약은 5종)</div>
+            <div class="rev-alert-box">
+              <div class="rab-title">⚠️ 2026년 현대해상 가입자 담보별 상이 (필수확인)</div>
+              <div class="rab-card">
+                <div class="rab-row">
+                  <span class="rab-label">2026년 이전 계약 및 타사 전사</span>
+                  <span class="rab-val blue">5종 지급 (관혈근치)</span>
+                </div>
+                <div class="rab-row">
+                  <span class="rab-label">2026년 이후 현대해상 가입자</span>
+                  <span class="rab-val red">4종 또는 5종 상이</span>
+                </div>
               </div>
+              <div class="rab-desc">※ 무조건 하향이 아니며, 담보 가입에 따라 다름 — 질병수술Ⅳ 특약은 <b>4종</b> / 기존 질병수술 특약은 <b>5종</b></div>
             </div>`
         };
       }
@@ -1052,13 +1058,19 @@ const REVISION_RULES = [
             diffBadge: '[담보별 상이]',
             note: '2026년 이전 5종 / 2026년 이후 가입자는 담보에 따라 4종 또는 5종 상이',
             boxHTML: `
-              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.35);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
-                <div style="font-weight:850;color:#dc2626;margin-bottom:5px;">⚠️ 2026년 현대해상 가입자부터는 담보별 상이하니 필수확인</div>
-                <div style="color:var(--text);font-size:11.5px;display:flex;flex-direction:column;gap:3px;">
-                  <div>• <b>2026년 이전 계약</b> ➔ <b style="color:#2563eb;">5종 지급</b> (관혈 근치수술)</div>
-                  <div>• <b>2026년 이후 가입자</b> ➔ 담보에 따라 <b style="color:#dc2626;">4종 또는 5종 상이</b></div>
-                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">(※ 질병수술Ⅳ 특약 가입 시 4종 하향 / 기존 1~5종 특약 가입 시 5종)</div>
+              <div class="rev-alert-box">
+                <div class="rab-title">⚠️ 현대해상 가입시기별 담보 확인 (필수)</div>
+                <div class="rab-card">
+                  <div class="rab-row">
+                    <span class="rab-label">2026년 이전 계약</span>
+                    <span class="rab-val blue">5종 지급 (관혈근치)</span>
+                  </div>
+                  <div class="rab-row">
+                    <span class="rab-label">2026년 이후 가입자</span>
+                    <span class="rab-val red">4종 또는 5종 상이</span>
+                  </div>
                 </div>
+                <div class="rab-desc">※ 질병수술Ⅳ 특약 가입 시 <b>4종 하향</b> / 기존 1~5종 특약 가입 시 <b>5종</b></div>
               </div>`
           };
         }
@@ -1071,13 +1083,19 @@ const REVISION_RULES = [
             diffBadge: '[담보별 상이]',
             note: '2026년 가입자: 담보에 따라 4종 또는 5종 상이',
             boxHTML: `
-              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.35);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
-                <div style="font-weight:850;color:#dc2626;margin-bottom:5px;">⚠️ 2026년 현대해상 가입자부터는 담보별 상이하니 필수확인</div>
-                <div style="color:var(--text);font-size:11.5px;display:flex;flex-direction:column;gap:3px;">
-                  <div>• <b>질병수술Ⅳ 특약 가입 시</b> ➔ <b style="color:#dc2626;">4종 적용</b> (하향 개정)</div>
-                  <div>• <b>기존 1~5종 질병수술 특약 가입 시</b> ➔ <b style="color:#2563eb;">5종 적용</b></div>
-                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">(고객 증권에 적힌 세부 특약명이 '질병수술Ⅳ'인지 필수 확인 필요)</div>
+              <div class="rev-alert-box">
+                <div class="rab-title">⚠️ 2026년 현대해상 가입자 담보별 상이</div>
+                <div class="rab-card">
+                  <div class="rab-row">
+                    <span class="rab-label">질병수술Ⅳ 특약 가입 시</span>
+                    <span class="rab-val red">4종 적용 (하향)</span>
+                  </div>
+                  <div class="rab-row">
+                    <span class="rab-label">기존 1~5종 질병수술 가입 시</span>
+                    <span class="rab-val blue">5종 적용 (유지)</span>
+                  </div>
                 </div>
+                <div class="rab-desc">※ 고객 증권에 적힌 세부 특약명이 '질병수술Ⅳ'인지 필수 확인 필요</div>
               </div>`
           };
         } else {
@@ -1087,9 +1105,9 @@ const REVISION_RULES = [
             diffBadge: '[개정 이전 5종]',
             note: '현대해상 2026년 이전 계약으로 5종 정상 지급',
             boxHTML: `
-              <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
-                <div style="font-weight:850;color:#2563eb;margin-bottom:3px;">✓ 현대해상 2026년 이전 계약 (5종 확정)</div>
-                <div style="color:var(--text-2);font-size:11.5px;">2026년 개정 전 가입 계약이므로 정상적으로 악성신생물 5종 수술비가 지급됩니다.</div>
+              <div class="rev-alert-box blue">
+                <div class="rab-title">✓ 현대해상 2026년 이전 계약 (5종 확정)</div>
+                <div class="rab-desc" style="color:var(--text-2);margin-top:2px;">2026년 개정 전 가입 계약이므로 정상적으로 악성신생물 5종 수술비가 지급됩니다.</div>
               </div>`
           };
         }
@@ -1170,18 +1188,19 @@ const REVISION_RULES = [
           diffBadge: '[가입시기별 상이]',
           note: '표준약관 및 생보 전사·대형 손보사는 2종 (메리츠 등 7개 손보사 개정 특약만 1종)',
           boxHTML: `
-            <div style="background:var(--surface);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-              <div style="font-weight:850;color:#dc2626;margin-bottom:4px;">⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳</div>
-              <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:6px;">
-                <div>• 하나손보 : 2023.06~</div>
-                <div>• 예별(구 MG) : 2023.09~</div>
-                <div>• 메리츠화재 : 2024.12~</div>
-                <div>• 흥국화재 : 2025.09~</div>
-                <div>• KB손보 : 2026.01~(수술Ⅲ)</div>
-                <div>• 롯데손보 : 2026.01~</div>
-                <div>• 농협손보 : 2026.09~</div>
+            <div class="rev-alert-box">
+              <div class="rab-title">⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳</div>
+              <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin:6px 0;background:var(--surface);padding:8px 10px;border-radius:9px;border:1px solid var(--border);">
+                <div>• 하나손보 (2023.06~)</div>
+                <div>• 예별손보 (2023.09~)</div>
+                <div>• 메리츠화재 (2024.12~)</div>
+                <div>• 흥국화재 (2025.09~)</div>
+                <div>• KB손보 (2026.01~)</div>
+                <div>• 롯데손보 (2026.01~)</div>
+                <div>• 농협손보 (2026.09~)</div>
+                <div style="color:#2563eb;font-weight:750;">• 타사 전사 2종 유지</div>
               </div>
-              <div style="color:#2563eb;font-weight:750;font-size:11.5px;">✓ 삼성화재 · 현대해상 · DB손보 및 생보사 전사 : <b>개정 없이 2종 유지</b></div>
+              <div class="rab-desc">✓ 삼성화재 · 현대해상 · DB손보 및 생보사 전사 : <b>개정 없이 2종 유지</b></div>
             </div>`
         };
       }
@@ -1209,9 +1228,19 @@ const REVISION_RULES = [
             diffBadge: '[가입시기별 상이]',
             note: `${revItem.co}는 ${ymText} 기점으로 2종 ➔ 1종 하향 개정`,
             boxHTML: `
-              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">⚠️ ${revItem.co} 가입시기별 종수 기준</div>
-                <div>• <b>${ymText} 이전 계약</b> ➔ <b style="color:#2563eb;">2종 지급</b><br>• <b>${ymText} 이후 계약</b> ➔ <b style="color:#dc2626;">1종 적용</b> (개정약관)</div>
+              <div class="rev-alert-box">
+                <div class="rab-title">⚠️ ${revItem.co} 가입시기별 종수 기준</div>
+                <div class="rab-card">
+                  <div class="rab-row">
+                    <span class="rab-label">${ymText} 이전 계약</span>
+                    <span class="rab-val blue">2종 지급</span>
+                  </div>
+                  <div class="rab-row">
+                    <span class="rab-label">${ymText} 이후 계약</span>
+                    <span class="rab-val red">1종 적용</span>
+                  </div>
+                </div>
+                <div class="rab-desc">※ ${ymText} 이후 개정약관 가입 고객은 1종으로 하향 지급됩니다.</div>
               </div>`
           };
         }
@@ -1224,9 +1253,9 @@ const REVISION_RULES = [
             diffBadge: '[개정약관 1종]',
             note: `${revItem.co} ${ymText} 개정약관 적용 (1종)`,
             boxHTML: `
-              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">✓ ${revItem.co} ${ymText} 이후 개정약관 (1종 확정)</div>
-                <div style="color:var(--text-2);">고객 가입 시점이 ${ymText} 이후이므로 1종에 해당합니다. (이전 계약은 2종)</div>
+              <div class="rev-alert-box">
+                <div class="rab-title">✓ ${revItem.co} ${ymText} 이후 개정약관 (1종 확정)</div>
+                <div class="rab-desc" style="color:var(--text-2);margin-top:2px;">고객 가입 시점이 ${ymText} 이후이므로 1종에 해당합니다. (이전 계약은 2종)</div>
               </div>`
           };
         } else {
@@ -1236,9 +1265,9 @@ const REVISION_RULES = [
             diffBadge: '[개정 이전 2종]',
             note: `${revItem.co} ${ymText} 이전 계약으로 2종 지급`,
             boxHTML: `
-              <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-                <div style="font-weight:850;color:#2563eb;margin-bottom:3px;">✓ ${revItem.co} ${ymText} 이전 계약 (2종 확정)</div>
-                <div style="color:var(--text-2);">${ymText} 개정 전 가입 계약이므로 정상적으로 2종 수술비가 지급됩니다.</div>
+              <div class="rev-alert-box blue">
+                <div class="rab-title">✓ ${revItem.co} ${ymText} 이전 계약 (2종 확정)</div>
+                <div class="rab-desc" style="color:var(--text-2);margin-top:2px;">${ymText} 개정 전 가입 계약이므로 정상적으로 2종 수술비가 지급됩니다.</div>
               </div>`
           };
         }
@@ -1288,18 +1317,18 @@ const REVISION_RULES = [
       const summaryTier = allSameTier ? coResults[0].tier : '회사별 상이';
 
       const multiCompareHTML = `
-        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;">
-          <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+        <div class="co-compare-box">
+          <div class="co-compare-title" style="display:flex;align-items:center;justify-content:space-between;">
             <span>🏢 선택하신 ${cosList.length}개 보험사 판정 비교:</span>
             ${year ? `<span style="font-size:11px;color:var(--brand);font-weight:800;">${year}년 계약 기준</span>` : ''}
           </div>
-          <div style="display:flex;flex-direction:column;gap:5px;">
+          <div class="co-compare-list">
             ${coResults.map(cr => `
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:var(--surface-2);border-radius:7px;font-size:12px;border:1px solid var(--border);">
-                <span style="font-weight:800;color:var(--text);">${esc(cr.co)}</span>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <span style="font-size:11px;color:var(--text-3);">${esc(cr.note)}</span>
-                  <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:${cr.tier === '1종' ? '#dc2626' : cr.tier === '1·2종' ? '#ea580c' : '#2563eb'};color:#fff;">${esc(cr.tier)}</span>
+              <div class="co-compare-row">
+                <span class="co-compare-name">${esc(cr.co)}</span>
+                <div class="co-compare-meta">
+                  <span class="co-compare-note">${esc(cr.note)}</span>
+                  <span class="proc-tag ${'t' + (parseInt(cr.tier) || 2)}" style="font-size:11px;padding:2px 7px;min-width:38px;">${esc(cr.tier)}</span>
                 </div>
               </div>
             `).join('')}
@@ -1473,27 +1502,31 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
       </div>`;
   }
 
-  const badgeDiffHTML = evalRes.diffBadge
-    ? `<span style="color:#dc2626;font-size:11.5px;font-weight:850;margin-left:6px;">${esc(evalRes.diffBadge)}</span>`
+  const diffPillHTML = evalRes.diffBadge
+    ? `<span class="judge-diff-pill">⚠️ ${esc(evalRes.diffBadge.replace(/[\[\]]/g, ''))}</span>`
     : '';
 
   return `
   <article class="card" data-gi="${gi}">
     <div class="card-head">
       <div class="card-top">
+        <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
         <h3 class="card-name">${hl(g.n, q)}</h3>
-        <span class="kcd-badge">${g.c.slice(0, 3).join(', ')}</span>
       </div>
 
       ${ediBanner}
 
-      <div style="background:var(--surface-2);border-radius:14px;padding:12px 14px;margin-top:10px;border:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:750;color:var(--text-3);letter-spacing:-.01em;margin-bottom:4px;">1~5종 수술비 표준 판정</div>
-        <div style="display:flex;align-items:center;gap:12px;margin:2px 0 4px;">
-          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:16px;padding:5px 14px;border-radius:10px;min-width:54px;">${esc(evalRes.tier)}</span>
-          <div>
-            <div style="font-size:14px;font-weight:800;color:var(--text);">${esc(t.w || g.n + ' 수술')} ${badgeDiffHTML}</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${esc(evalRes.note)}</div>
+      <div class="judge-box">
+        <div class="judge-head-meta">
+          <span class="meta-type" style="color:var(--text-3);">1~5종 수술비 표준 판정</span>
+          <span class="meta-co">표준약관</span>
+        </div>
+        <div class="judge-main-row">
+          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)} judge-tier-badge">${esc(evalRes.tier)}</span>
+          <div class="judge-main-info">
+            <div class="judge-proc-title">${esc(t.w || g.n + ' 수술')}</div>
+            ${diffPillHTML}
+            <div class="judge-sub-note">${esc(evalRes.note)}</div>
           </div>
         </div>
         ${evalRes.boxHTML}
@@ -1537,26 +1570,18 @@ function updateTierBadges() {
   const cBadge = $('#tierCoBadge');
 
   if (dBadge) {
-    if (state.tDateTouched) {
-      let dtText = '전체';
-      if (state.tYear && state.tMonth) {
-        dtText = `${state.tYear}년 ${state.tMonth}월`;
-      } else if (state.tYear) {
-        dtText = `${state.tYear}년`;
-      }
-      dBadge.textContent = `: ${dtText}`;
-    } else {
-      dBadge.textContent = '';
+    let dtText = '전체';
+    if (state.tYear && state.tMonth) {
+      dtText = `${state.tYear}년 ${state.tMonth}월`;
+    } else if (state.tYear) {
+      dtText = `${state.tYear}년`;
     }
+    dBadge.textContent = `: ${dtText}`;
   }
 
   if (cBadge) {
-    if (state.tCoTouched) {
-      const coText = state.tCos && state.tCos.length > 0 ? state.tCos.join(', ') : (state.tCo || '전체');
-      cBadge.textContent = `: ${coText}`;
-    } else {
-      cBadge.textContent = '';
-    }
+    const coText = state.tCos && state.tCos.length > 0 ? state.tCos.join(', ') : (state.tCo || '전체');
+    cBadge.textContent = `: ${coText}`;
   }
 }
 
@@ -1945,30 +1970,31 @@ function cardTierHTML(gi, q, matchedEdi) {
       </div>`;
   }
 
-  const badgeDiffHTML = evalRes.diffBadge
-    ? `<span style="color:#dc2626;font-size:11.5px;font-weight:850;margin-left:6px;">${esc(evalRes.diffBadge)}</span>`
+  const diffPillHTML = evalRes.diffBadge
+    ? `<span class="judge-diff-pill">⚠️ ${esc(evalRes.diffBadge.replace(/[\[\]]/g, ''))}</span>`
     : '';
 
   return `
   <article class="card" data-gi="${gi}">
     <div class="card-head">
       <div class="card-top">
+        <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
         <h3 class="card-name">${hl(g.n, q)}</h3>
-        <span class="kcd-badge">${g.c.slice(0, 3).join(', ')}</span>
       </div>
 
       ${ediBanner}
 
-      <div style="background:var(--surface-2);border-radius:14px;padding:12px 14px;margin-top:10px;border:1px solid var(--border);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:11px;font-weight:800;color:var(--brand);">1~5종 종수술비 정밀 판정</span>
-          <span style="font-size:11px;font-weight:700;color:var(--text-3);">${esc(co ? co : '전사 기준')}</span>
+      <div class="judge-box">
+        <div class="judge-head-meta">
+          <span class="meta-type">1~5종 종수술비 정밀 판정</span>
+          <span class="meta-co">${esc(co ? co : '전사 기준')}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;margin:3px 0 6px;">
-          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:17px;padding:6px 16px;border-radius:10px;min-width:56px;">${esc(evalRes.tier)}</span>
-          <div>
-            <div style="font-size:14.5px;font-weight:850;color:var(--text);">${esc(g.n)} 수술 ${badgeDiffHTML}</div>
-            <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(evalRes.note)}</div>
+        <div class="judge-main-row">
+          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)} judge-tier-badge">${esc(evalRes.tier)}</span>
+          <div class="judge-main-info">
+            <div class="judge-proc-title">${esc(g.n)} 수술</div>
+            ${diffPillHTML}
+            <div class="judge-sub-note">${esc(evalRes.note)}</div>
           </div>
         </div>
         ${evalRes.boxHTML}
@@ -2220,16 +2246,6 @@ function bindNdaiTab() {
     if (ndaiCoToggleIcon) ndaiCoToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
   });
 
-  const btnToggleNdaiTree = $('#btnToggleNdaiTree');
-  const ndaiTreeBody = $('#ndaiTreeBody');
-  const ndaiTreeToggleIcon = $('#ndaiTreeToggleIcon');
-  btnToggleNdaiTree?.addEventListener('click', () => {
-    const isHidden = ndaiTreeBody.style.display === 'none';
-    ndaiTreeBody.style.display = isHidden ? 'block' : 'none';
-    if (ndaiTreeToggleIcon) ndaiTreeToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
-    if (isHidden) renderNdaiTree();
-  });
-
   function resetNdaiFilters() {
     state.ndaiCos = [];
     state.ndaiCo = '';
@@ -2462,6 +2478,7 @@ function runNdaiSearch(q, family) {
   html += res.groups.slice(0, 15).map(i => cardNdaiHTML(i, q)).join('');
   box.innerHTML = html;
   bindCardActions(box);
+  bindNdaiCodeExpand(box);
 
   // 패밀리 버튼 클릭 바인딩
   box.querySelectorAll('.fam-btn').forEach(btn => {
@@ -2486,10 +2503,10 @@ function runNdaiSearch(q, family) {
   });
 }
 
-/* ───────────────────────── N대 담보 포맷터 ("123대질병에서 58대질병에 해당" 표준 단답형) ───────────────────────── */
-function formatNdaLinesForCo(g, co, nTier) {
+/* ───────────────────────── N대 담보 포맷터 (특약별 질병코드 연동형) ───────────────────────── */
+function formatNdaItemsForCo(g, co, nTier) {
   const riders = state.D.riders;
-  const groups = new Map(); // subClean -> Set of mainTiers
+  const groups = new Map(); // subClean -> { tiersSet: Set, ri, si, co, subClean }
 
   for (const mstr of (g.m || [])) {
     const [ri, si] = mstr.split('.').map(Number);
@@ -2513,20 +2530,30 @@ function formatNdaLinesForCo(g, co, nTier) {
     subClean = subClean.replace(/(\d+대)(질병|생활질환|특정질병)/, '$1 $2').trim();
     if (!subClean) subClean = sub.trim();
 
-    if (!groups.has(subClean)) groups.set(subClean, new Set());
-    if (mainTier) groups.get(subClean).add(mainTier);
+    if (!groups.has(subClean)) {
+      groups.set(subClean, { tiersSet: new Set(), ri, si, co: r.co, subClean });
+    }
+    if (mainTier) groups.get(subClean).tiersSet.add(mainTier);
   }
 
-  const lines = [];
-  for (const [subClean, tiersSet] of groups.entries()) {
-    const tiers = Array.from(tiersSet).sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0));
-    if (tiers.length > 0) {
-      lines.push(`${tiers.join(' · ')} 질병 중 <b>[${esc(subClean)}]</b> 해당`);
-    } else {
-      lines.push(`N대 질병 중 <b>[${esc(subClean)}]</b> 해당`);
-    }
+  const items = [];
+  for (const [subClean, info] of groups.entries()) {
+    const tiers = Array.from(info.tiersSet).sort((a, b) => (parseInt(b) || 0) - (parseInt(a) || 0));
+    const tierText = tiers.length > 0 ? `${tiers.join(' · ')} 질병 중` : 'N대 질병 중';
+    items.push({
+      tierText,
+      subClean,
+      ri: info.ri,
+      si: info.si,
+      co: info.co
+    });
   }
-  return lines;
+  return items;
+}
+
+function formatNdaLinesForCo(g, co, nTier) {
+  const items = formatNdaItemsForCo(g, co, nTier);
+  return items.map(it => `${it.tierText} [${it.subClean}] 해당`);
 }
 
 function cardNdaiHTML(gi, q) {
@@ -2540,10 +2567,10 @@ function cardNdaiHTML(gi, q) {
   if (cosList.length > 0) {
     const tierBadge = nTier ? ` ${nTier}` : '';
     const blocks = cosList.map(c => {
-      const lines = formatNdaLinesForCo(g, c, nTier);
-      if (lines.length > 0) {
+      const items = formatNdaItemsForCo(g, c, nTier);
+      if (items.length > 0) {
         let multiNotice = '';
-        if (lines.length > 1) {
+        if (items.length > 1) {
           multiNotice = `
             <div style="font-size:11px;color:#d97706;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:6px 10px;margin-top:6px;font-weight:700;">
               ⚠️ 질병코드(${g.c.slice(0, 3).join(', ')})에 따라 담보 구분이 다를 수 있습니다. 진단서의 최종 코드를 확인하세요.
@@ -2552,12 +2579,24 @@ function cardNdaiHTML(gi, q) {
 
         return `
           <div class="ndai-res-box covered" style="border-left:4px solid #8b5cf6;margin-bottom:8px;background:var(--surface);">
-            <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;display:flex;align-items:center;justify-content:space-between;">
+            <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <span>✓ [${esc(c)}${esc(tierBadge)}] N대 질병수술비</span>
               <span style="font-size:11px;background:rgba(139,92,246,0.12);color:#8b5cf6;padding:2px 7px;border-radius:6px;font-weight:800;">보장 해당</span>
             </div>
-            <div style="margin:8px 0;display:flex;flex-direction:column;gap:5px;">
-              ${lines.map(l => `<div style="font-size:12.5px;color:var(--text);background:var(--surface-2);padding:7px 11px;border-radius:8px;border:1px solid var(--border);font-weight:750;">• ${l}</div>`).join('')}
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              ${items.map(it => `
+                <div class="ndai-item-block">
+                  <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co)}" data-sub="${esc(it.subClean)}">
+                    <div class="nir-left">
+                      <span class="nir-bullet">•</span>
+                      <span class="nir-tier-text">${esc(it.tierText)}</span>
+                      <span class="nir-sub-underline"><u>[${esc(it.subClean)}]</u></span>
+                    </div>
+                    <span class="nir-toggle-tag">질병코드 보기 ▾</span>
+                  </div>
+                  <div class="ndai-codes-drawer" style="display:none;"></div>
+                </div>
+              `).join('')}
             </div>
             ${multiNotice}
           </div>`;
@@ -2581,26 +2620,39 @@ function cardNdaiHTML(gi, q) {
         <div style="font-size:11px;color:var(--text-3);margin-top:4px;">각 회사별 증권에 기재된 가입금액 한도로 각각 지급됩니다.</div>
       </div>`;
   } else {
-    const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험'];
+    const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험', 'NH농협손해보험'];
     const otherCos = Array.from(cos.keys()).filter(c => !majorCos.some(m => c.includes(m.slice(0, 2))));
     const previewCos = [...majorCos, ...otherCos];
-    const previewLines = [];
+    const previewItems = [];
     previewCos.forEach(c => {
-      if (previewLines.length >= 6) return;
-      const lines = formatNdaLinesForCo(g, c, nTier);
-      if (lines.length > 0) previewLines.push(`• <b>${esc(c)}</b>: ${lines[0]}`);
+      if (previewItems.length >= 8) return;
+      const items = formatNdaItemsForCo(g, c, nTier);
+      if (items.length > 0) previewItems.push(items[0]);
     });
 
-    if (previewLines.length > 0) {
+    if (previewItems.length > 0) {
       contentHTML = `
         <div class="ndai-res-box covered" style="border-left:4px solid #8b5cf6;margin-top:8px;background:var(--surface);">
-          <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;margin-bottom:6px;">
+          <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;margin-bottom:8px;">
             <span>✓ 주요 ${cos.size}개 보험사 N대 질병수술비 보장 해당</span>
           </div>
-          <div style="display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--text);margin-bottom:6px;">
-            ${previewLines.map(l => `<div style="background:var(--surface-2);padding:6px 10px;border-radius:7px;border:1px solid var(--border);">${l}</div>`).join('')}
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px;">
+            ${previewItems.map(it => `
+              <div class="ndai-item-block">
+                <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co)}" data-sub="${esc(it.subClean)}">
+                  <div class="nir-left">
+                    <span class="nir-bullet">•</span>
+                    <b class="nir-co-name">${esc(it.co)}:</b>
+                    <span class="nir-tier-text">${esc(it.tierText)}</span>
+                    <span class="nir-sub-underline"><u>[${esc(it.subClean)}]</u></span>
+                  </div>
+                  <span class="nir-toggle-tag">질병코드 보기 ▾</span>
+                </div>
+                <div class="ndai-codes-drawer" style="display:none;"></div>
+              </div>
+            `).join('')}
           </div>
-          <div style="font-size:11px;color:var(--text-3);">상단에서 보험사를 선택하시면 해당 회사의 증권 특약별 상세 판정을 비교할 수 있습니다.</div>
+          <div style="font-size:11px;color:var(--text-3);padding-left:2px;">상단에서 보험사를 선택하시면 해당 회사의 증권 특약별 상세 판정을 비교할 수 있습니다.</div>
         </div>`;
     } else {
       contentHTML = `
@@ -2619,8 +2671,8 @@ function cardNdaiHTML(gi, q) {
   <article class="card" data-gi="${gi}">
     <div class="card-head">
       <div class="card-top">
+        <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
         <h3 class="card-name">${hl(g.n, q)}</h3>
-        <span class="kcd-badge">${g.c.slice(0, 3).join(', ')}</span>
       </div>
       ${contentHTML}
     </div>
@@ -3247,3 +3299,81 @@ function renderAbout() {
 }
 
 })();
+
+/* ───────────────────────── N대 특약 질병코드 인터랙티브 서랍 바인딩 ───────────────────────── */
+function bindNdaiCodeExpand(container) {
+  if (!container) return;
+  container.querySelectorAll('.btn-expand-ndai-codes').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const ri = parseInt(btn.dataset.ri, 10);
+      const si = parseInt(btn.dataset.si, 10);
+      const co = btn.dataset.co || '';
+      const sub = btn.dataset.sub || '';
+      const block = btn.closest('.ndai-item-block');
+      if (!block) return;
+      const drawer = block.querySelector('.ndai-codes-drawer');
+      if (!drawer) return;
+      const toggleTag = btn.querySelector('.nir-toggle-tag');
+
+      const isOpen = drawer.style.display === 'block';
+      if (isOpen) {
+        drawer.style.display = 'none';
+        if (toggleTag) toggleTag.textContent = '질병코드 보기 ▾';
+        return;
+      }
+
+      // targetKey 질병 검색
+      const targetKey = ri + '.' + si;
+      const matchedG = (state.D?.g || []).filter(g => g.m && g.m.includes(targetKey));
+
+      let drawerHTML = '';
+      if (!matchedG.length) {
+        drawerHTML = `<div style="padding:8px 10px;font-size:11.5px;color:var(--text-3);background:var(--surface);border-radius:8px;">해당 담보의 질병코드 데이터 로딩 중</div>`;
+      } else {
+        drawerHTML = `
+          <div class="ncd-box">
+            <div class="ncd-head">
+              <span class="ncd-title">📋 <b>[${esc(co)}] ${esc(sub)}</b> 수록 질병코드 (${matchedG.length}개):</span>
+              <button type="button" class="ncd-close-btn">접기 ∧</button>
+            </div>
+            <div class="ncd-grid">
+              ${matchedG.map(item => `
+                <div class="ncd-item" data-q="${esc(item.n)}">
+                  <span class="kcd-badge-sm">${item.c && item.c[0] ? esc(item.c[0]) : 'KCD'}</span>
+                  <span class="ncd-name" title="${esc(item.n)}">${esc(item.n)}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>`;
+      }
+
+      drawer.innerHTML = drawerHTML;
+      drawer.style.display = 'block';
+      if (toggleTag) toggleTag.textContent = '질병코드 닫기 ∧';
+
+      const closeBtn = drawer.querySelector('.ncd-close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          drawer.style.display = 'none';
+          if (toggleTag) toggleTag.textContent = '질병코드 보기 ▾';
+        });
+      }
+
+      drawer.querySelectorAll('.ncd-item').forEach(itemEl => {
+        itemEl.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const qName = itemEl.dataset.q;
+          const qInput = $('#q-ndai');
+          if (qInput) {
+            qInput.value = qName;
+            $('#clearBtn-ndai').hidden = false;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            runNdaiSearch(qName);
+          }
+        });
+      });
+    });
+  });
+}
