@@ -470,7 +470,8 @@ function cardHTML(gi, q) {
 }
 
 function altNames(g) {
-  const others = (g.vs || []).filter(n => n !== g.n).slice(0, 3);
+  const base = norm(g.n);
+  const others = (g.vs || []).filter(n => n !== g.n && norm(n) !== base).slice(0, 3);
   if (!others.length) return '';
   return `<p class="card-alt">같은 코드 다른 명칭 · ${others.map(esc).join(', ')}</p>`;
 }
@@ -595,23 +596,28 @@ function mdBold(s) {
 }
 
 function relatedEdi(g, limit) {
-  const stop = new Set(['및', '의', '기타', '상세불명', '달리', '분류된', '질환', '장애', '신생물', '양성', '악성', '동반', '포함', '주', '급성', '만성', '기타의', '에서의', '관련', '경우', '상세', '불명', '특정']);
-  const tokens = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 2 && !stop.has(t));
+  const STOP = new Set(['및', '의', '기타', '상세불명', '달리', '분류된', '질환', '장애', '신생물', '양성', '악성', '동반', '포함', '주', '급성', '만성', '기타의', '에서의', '관련', '경우', '상세', '불명', '특정']);
+  const GENERIC = new Set(['절제', '수술', '적출', '봉합', '성형', '제거', '절개', '이물', '검사', '조영', '치료', '시술']);
+  const clean = (t) => t.replace(/(으로|에서|의|을|를|에|로|와|과)$/, '');
+  const pick = (arr, min) => arr.map(clean).filter(t => t.length >= min && !STOP.has(t) && !GENERIC.has(t));
+
+  let tokens = pick(g.n.split(/[^가-힣A-Za-z0-9]+/), 2);
   const procs = curatedFor(g, window.CURATED?.procs);
-  const extra = procs
-    ? procs.val.flatMap(p => p.s.split(/[^가-힣A-Za-z0-9]+/)).filter(t => t.length >= 3 && !stop.has(t))
-    : [];
-  const all = [...new Set([...tokens, ...extra])];
-  if (!all.length) return [];
-  const hits = [];
+  if (procs) tokens = tokens.concat(pick(procs.val.flatMap(p => p.s.split(/[^가-힣A-Za-z0-9]+/)), 3));
+  tokens = [...new Set(tokens)].sort((a, b) => b.length - a.length).slice(0, 8);
+  if (!tokens.length) return [];
+
+  const scored = [];
   for (const r of idx.ediSurg) {
-    for (const tk of all) {
-      if (r.nn.includes(norm(tk))) { hits.push({ i: r.i, w: tk.length }); break; }
+    let hit = 0, len = 0;
+    for (const tk of tokens) {
+      if (r.nn.includes(norm(tk))) { hit++; len += tk.length; }
     }
+    if (hit) scored.push({ i: r.i, sc: hit * 10 + len });
   }
-  hits.sort((a, b) => b.w - a.w);
+  scored.sort((a, b) => b.sc - a.sc);
   const seen = new Set(), out = [];
-  for (const h of hits) {
+  for (const h of scored) {
     const code = state.E.rows[h.i][0];
     if (seen.has(code)) continue;
     seen.add(code); out.push({ i: h.i });
