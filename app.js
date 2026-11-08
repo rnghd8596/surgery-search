@@ -895,13 +895,13 @@ const REVISION_RULES = [
     standardTier: 2,
     standardLabel: '2종 (표준 1~5종 수술분류표 제88항-2)',
     revisions: [
-      { co: '하나손해보험', ym: 202306, label: '하나손보 2023.06 개정' },
-      { co: '에이스손해보험', ym: 202309, label: '에이스손보 2023.09 개정' },
-      { co: '메리츠화재', ym: 202412, label: '메리츠화재 2024.12 개정' },
-      { co: '흥국화재', ym: 202509, label: '흥국화재 2025.09 개정' },
-      { co: 'KB손해보험', ym: 202601, label: 'KB손보 2026.01 개정(수술Ⅲ)' },
-      { co: '롯데손해보험', ym: 202601, label: '롯데손보 2026.01 개정' },
-      { co: '농협손해보험', ym: 202609, label: '농협손보 2026.09 개정' }
+      { co: '하나손해보험', ym: 202306, label: '하나손보 2023.06 개정', matchKeys: ['하나'] },
+      { co: '예별(구 MG)손해보험', ym: 202309, label: '예별(구 MG) 2023.09 개정', matchKeys: ['예별', '에이별', 'mg', '엠지'] },
+      { co: '메리츠화재', ym: 202412, label: '메리츠화재 2024.12 개정', matchKeys: ['메리츠', '멜츠'] },
+      { co: '흥국화재', ym: 202509, label: '흥국화재 2025.09 개정', matchKeys: ['흥국화', '흥화'] },
+      { co: 'KB손해보험', ym: 202601, label: 'KB손보 2026.01 개정(수술Ⅲ)', matchKeys: ['kb손', '케손'] },
+      { co: '롯데손해보험', ym: 202601, label: '롯데손보 2026.01 개정', matchKeys: ['롯데', '롯손'] },
+      { co: '농협손해보험', ym: 202609, label: '농협손보 2026.09 개정', matchKeys: ['농협손', '농손'] }
     ],
     evaluate: function(cosInput, year, month) {
       const cosList = parseCosList(cosInput);
@@ -918,7 +918,7 @@ const REVISION_RULES = [
               <div style="font-weight:850;color:#dc2626;margin-bottom:4px;">⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳</div>
               <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin-bottom:6px;">
                 <div>• 하나손보 : 2023.06~</div>
-                <div>• 에이스손보 : 2023.09~</div>
+                <div>• 예별(구 MG) : 2023.09~</div>
                 <div>• 메리츠화재 : 2024.12~</div>
                 <div>• 흥국화재 : 2025.09~</div>
                 <div>• KB손보 : 2026.01~(수술Ⅲ)</div>
@@ -933,7 +933,8 @@ const REVISION_RULES = [
       // B. 단일 회사 선택
       if (cosList.length === 1) {
         const coStr = cosList[0];
-        const revItem = this.revisions.find(r => coStr.includes(r.co.slice(0, 2)));
+        const normCo = coStr.toLowerCase();
+        const revItem = this.revisions.find(r => r.matchKeys ? r.matchKeys.some(k => normCo.includes(k)) : normCo.includes(r.co.slice(0, 2)));
 
         if (!revItem) {
           return {
@@ -989,7 +990,8 @@ const REVISION_RULES = [
 
       // C. 여러 회사 복수 선택 (전체 선택된 회사별 개별 대조!)
       const coResults = cosList.map(coName => {
-        const revItem = this.revisions.find(r => coName.includes(r.co.slice(0, 2)));
+        const normCo = coName.toLowerCase();
+        const revItem = this.revisions.find(r => r.matchKeys ? r.matchKeys.some(k => normCo.includes(k)) : normCo.includes(r.co.slice(0, 2)));
         if (!revItem) {
           return {
             co: coName,
