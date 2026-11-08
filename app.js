@@ -365,7 +365,12 @@ function bindResultEvents(box) {
 
 function openCard(card, gi) {
   card.classList.toggle('open');
-  if (card.classList.contains('open') && !card.dataset.filled) {
+  const t = card.querySelector('.card-toggle');
+  const open = card.classList.contains('open');
+  t.innerHTML = open
+    ? '접기 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+    : '상세 보기 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+  if (open && !card.dataset.filled) {
     card.querySelector('.cb-pad').innerHTML = detailHTML(gi);
     card.dataset.filled = '1';
     bindDetail(card, gi);
@@ -564,10 +569,15 @@ function mdBold(s) {
 function relatedEdi(g, limit) {
   const stop = new Set(['및', '의', '기타', '상세불명', '달리', '분류된', '질환', '장애', '신생물', '양성', '악성', '동반', '포함', '주', '급성', '만성', '기타의', '에서의', '관련', '경우', '상세', '불명', '특정']);
   const tokens = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 2 && !stop.has(t));
-  if (!tokens.length) return [];
+  const procs = curatedFor(g, window.CURATED?.procs);
+  const extra = procs
+    ? procs.val.flatMap(p => p.s.split(/[^가-힣A-Za-z0-9]+/)).filter(t => t.length >= 3 && !stop.has(t))
+    : [];
+  const all = [...new Set([...tokens, ...extra])];
+  if (!all.length) return [];
   const hits = [];
   for (const r of idx.ediSurg) {
-    for (const tk of tokens) {
+    for (const tk of all) {
       if (r.nn.includes(norm(tk))) { hits.push({ i: r.i, w: tk.length }); break; }
     }
   }
@@ -583,29 +593,29 @@ function relatedEdi(g, limit) {
 }
 
 function relatedExc(g, limit) {
-  const tokens = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 2);
-  if (!tokens.length) return [];
+  const names = new Set([norm(g.n), ...(g.vs || []).map(norm)]);
+  const tokens = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 3);
   const rows = state.X.rows;
   const out = [];
   const seen = new Set();
-  const normed = rows.map(r => norm(r[1]));
-  tokens.forEach(tk => {
-    const nq = norm(tk);
-    if (nq.length < 2) return;
-    for (let i = 0; i < rows.length && out.length < limit * 3; i++) {
-      if (!normed[i].includes(nq)) continue;
-      const row = rows[i];
-      const doc = state.X.docs[row[0]] || {};
-      const v = row[4] || row[5];
-      if (!v) continue;
-      const key = (doc.co || '') + v;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push({ co: doc.co || '—', title: (doc.title || '').slice(0, 12), v, cls: v.includes('불가') ? 'exc-no' : v.includes('부담보') ? 'exc-db' : 'exc-ok' });
-      if (out.length >= limit) break;
-    }
-  });
-  return out.slice(0, limit);
+  const OK = /인수|부담보|인수불가|거절|제한|할증|보류/;
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const nq = norm(row[1]);
+    const hit = names.has(nq) || tokens.some(t => nq.includes(norm(t)));
+    if (!hit) continue;
+    const v = (row[4] || row[5] || '').trim();
+    if (!v || !OK.test(v)) continue;
+    const doc = state.X.docs[row[0]] || {};
+    const val = v.split('/')[0].trim().slice(0, 14);
+    const key = (doc.co || '') + val;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ co: doc.co || '—', title: (doc.title || '').slice(0, 14), v: val,
+               cls: val.includes('불가') || val.includes('거절') ? 'exc-no' : val.includes('부담보') || val.includes('제한') ? 'exc-db' : 'exc-ok' });
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 function ediRowHTML(i) {
