@@ -2433,21 +2433,21 @@ function detailBodyHTML(gi) {
 
           <!-- C형 -->
           <div style="background:var(--surface-2);border-left:3.5px solid #ef4444;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#ef4444;font-size:12.5px;margin-bottom:3px;">🆎 C유형: [동일질병 1회 + 동일부위 동시수술 제한] (라이나생명 등)</div>
+            <div style="font-weight:900;color:#ef4444;font-size:12.5px;margin-bottom:3px;">🆎 C유형: [동일질병 1회 + 동일부위 동시수술 제한] (라이나생명, 흥국생명 등)</div>
             <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
               • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>1회만(제한)</b><br>
               • <b>다른질병/동일부위</b>: <b>1회만(동일 장기군 제한)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
-              <span style="font-size:11px;color:#ef4444;font-weight:700;">· 【실무 예시】 동시에 위용종절제술 + 대장용종절제술 시행 시, 동일 복부장기 수술로 보아 1회만 지급!</span>
+              <span style="font-size:11px;color:#ef4444;font-weight:700;">· 【실무 예시】 동시에 위용종절제술 + 대장용종절제술 시행 시, 동일 복부장기 수술로 보아 1회만 지급! (동일질병=KCD 3자리 기준)</span>
             </div>
           </div>
 
           <!-- D형 -->
           <div style="background:var(--surface-2);border-left:3.5px solid #8b5cf6;border-radius:8px;padding:9px 11px;">
-            <div style="font-weight:900;color:#8b5cf6;font-size:12.5px;margin-bottom:3px;">🆑 D유형: [수술 1회당 + 동일부위 동시수술 제한] (KB라이프 등)</div>
+            <div style="font-weight:900;color:#8b5cf6;font-size:12.5px;margin-bottom:3px;">🆑 D유형: [수술 1회당 + 동일부위 동시수술 제한] (KB라이프, 농협손보 등)</div>
             <div style="font-size:11.5px;color:var(--text);line-height:1.5;">
               • 동일질병/동일부위: 1회 | 동일질병/<b>다른부위</b>: <b>2회(좌·우 별도 인정)</b><br>
               • <b>다른질병/동일부위</b>: <b>1회만(높은 급여 1개만 지급)</b> | 다른질병/다른부위: <b>2회(각각 지급)</b><br>
-              <span style="font-size:11px;color:#8b5cf6;font-weight:700;">· 【주의】 특약명은 [수술 1회당]이나, 세부규정 제2조②항에 동일 복부장기(위+대장 등) 동시 수술 시 1회만 지급 명시!</span>
+              <span style="font-size:11px;color:#8b5cf6;font-weight:700;">· 【주의】 특약명은 [수술 1회당]이나, 세부규정에 동일 복부장기(위+대장 등) 동시 수술 시 1회만 지급 명시!</span>
             </div>
           </div>
         </div>
