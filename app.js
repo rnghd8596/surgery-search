@@ -230,7 +230,12 @@ function search(qraw) {
     else if (nn.includes(nq)) add(i, 5);
   });
 
-  // 별칭(실무 용어)은 이름 일치보다 뒤에 배치
+  // 별칭(실무 용어)의 핵심어가 질병명에 있으면 우선
+  if (syn) {
+    const terms = [...new Set([syn.k, ...syn.q])].map(norm).filter(t => t.length >= 2);
+    idx.name.forEach(({ i, nn }) => { if (terms.some(t => nn.includes(t))) add(i, 6); });
+  }
+  // 코드만 맞는 별칭 결과는 뒤로
   if (syn) {
     syn.codes.forEach(cp => {
       for (const code in state.D.codeIndex) {
