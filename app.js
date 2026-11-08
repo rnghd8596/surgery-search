@@ -1268,10 +1268,11 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
 }
 
 /* ───────────────────────── 2. 종수술비 정밀검색 (년·월 시기별 & 회사별) ───────────────────────── */
-const GEN_YEARS = {
-  recent: [2020, 2021, 2022, 2023, 2024, 2025, 2026, null],
-  old:    [2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, null]
-};
+const ALL_CONTRACT_YEARS = [
+  2026, 2025, 2024, 2023, 2022, 2021, 2020,
+  2019, 2018, 2017, 2016, 2015, 2014, 2013,
+  2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005
+];
 
 function updateTierBadges() {
   const dBadge = $('#tierDateBadge');
@@ -1279,15 +1280,11 @@ function updateTierBadges() {
 
   if (dBadge) {
     if (state.tDateTouched) {
-      let dtText = '2020년 이후';
+      let dtText = '전체';
       if (state.tYear && state.tMonth) {
         dtText = `${state.tYear}년 ${state.tMonth}월`;
       } else if (state.tYear) {
         dtText = `${state.tYear}년`;
-      } else if (state.tGen === 'recent') {
-        dtText = '2020년 이후';
-      } else if (state.tGen === 'old') {
-        dtText = '2020년 이전';
       }
       dBadge.textContent = `: ${dtText}`;
     } else {
@@ -1354,29 +1351,20 @@ function renderTierEmptyExample() {
   });
 }
 
-function renderYearGrid(gen) {
+function renderYearGrid() {
   const grid = $('#tierYearGrid');
   const monthSec = $('#tierMonthSection');
-  if (!GEN_YEARS[gen]) {
-    grid.style.display = 'none';
-    monthSec.style.display = 'none';
-    return;
-  }
+  if (!grid) return;
 
-  const years = GEN_YEARS[gen];
-  const allLabel = gen === 'recent' ? '2020년 이후 전체' : '2020년 이전 전체';
-
-  grid.innerHTML = years.map(y => {
-    if (y === null) {
-      const isSel = state.tYear === null;
-      return `<button class="f-chip y-chip ${isSel ? 'on' : ''}" data-y="" style="padding:5px 0;font-size:11px;font-weight:750;">${allLabel}</button>`;
-    }
-    const isSel = state.tYear === y;
-    return `<button class="f-chip y-chip ${isSel ? 'on' : ''}" data-y="${y}" style="padding:5px 0;font-size:11px;font-weight:750;">${y}년</button>`;
-  }).join('');
+  grid.innerHTML = `
+    <button class="f-chip y-chip ${state.tYear === null ? 'on' : ''}" data-y="" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">년도 전체</button>
+    ${ALL_CONTRACT_YEARS.map(y => `
+      <button class="f-chip y-chip ${state.tYear === y ? 'on' : ''}" data-y="${y}" style="padding:6px 0;font-size:11px;font-weight:750;">${y}년</button>
+    `).join('')}
+  `;
 
   grid.style.display = 'grid';
-  monthSec.style.display = 'block';
+  if (monthSec) monthSec.style.display = 'block';
 
   $$('#tierYearGrid .y-chip').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1554,7 +1542,7 @@ function bindTierTab() {
     renderTierEmptyExample(); qTierEl.focus();
   });
 
-  renderYearGrid('recent');
+  renderYearGrid();
   updateTierBadges();
   renderTierEmptyExample();
 }
@@ -1718,138 +1706,16 @@ function cardTierHTML(gi, q, matchedEdi) {
 }
 
 /* ───────────────────────── 3. N대질병수술비 정밀검색 (판정 & 약관 트리) ───────────────────────── */
-const NDAI_GEN_YEARS = {
-  recent: [2020, 2021, 2022, 2023, 2024, 2025, 2026, null],
-  old:    [2019, 2018, 2017, 2016, 2015, 2014, 2013, null]
-};
-
-function inferNtierForCompany(co, year) {
-  if (!co) return '';
-  if (co.includes('현대')) {
-    if (!year) return '123대';
-    return year >= 2021 ? '123대' : (year >= 2018 ? '120대' : '71대');
-  }
-  if (co.includes('KB') || co.includes('케이비')) {
-    if (!year) return '116대';
-    return year >= 2022 ? '116대' : (year >= 2019 ? '112대' : '101대');
-  }
-  if (co.includes('삼성화재')) {
-    if (!year) return '116대';
-    return year >= 2021 ? '116대' : (year >= 2019 ? '101대' : '77대');
-  }
-  if (co.includes('DB') || co.includes('동부')) {
-    if (!year) return '119대';
-    return year >= 2022 ? '119대' : (year >= 2019 ? '106대' : '85대');
-  }
-  if (co.includes('메리츠')) {
-    if (!year) return '112대';
-    return year >= 2021 ? '112대' : '71대';
-  }
-  if (co.includes('한화손')) {
-    if (!year) return '110대';
-    return year >= 2021 ? '110대' : '81대';
-  }
-  return '';
-}
-
-function updateNdaiBadges() {
-  const dBadge = $('#ndaiDateBadge');
-  const cBadge = $('#ndaiCoBadge');
-  const tBadge = $('#ndaiTierBadge');
-
-  if (dBadge) {
-    if (state.ndaiDateTouched) {
-      let dtText = '2020년 이후';
-      if (state.ndaiYear) {
-        dtText = `${state.ndaiYear}년`;
-      } else if (state.ndaiGen === 'recent') {
-        dtText = '2020년 이후';
-      } else if (state.ndaiGen === 'old') {
-        dtText = '2020년 이전';
-      }
-      dBadge.textContent = `: ${dtText}`;
-    } else {
-      dBadge.textContent = '';
-    }
-  }
-
-  if (cBadge) {
-    if (state.ndaiCoTouched) {
-      const coText = state.ndaiCos && state.ndaiCos.length > 0 ? state.ndaiCos.join(', ') : (state.ndaiCo || '전체');
-      cBadge.textContent = `: ${coText}`;
-    } else {
-      cBadge.textContent = '';
-    }
-  }
-
-  if (tBadge) tBadge.textContent = state.ndaiTier || '전체 N대';
-}
-
-function renderNdaiEmptyExample() {
-  const box = $('#results-ndai');
-  if (!box) return;
-  box.innerHTML = `
-    <div style="margin-top:6px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 14px;background:var(--surface);text-align:left;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <span style="font-size:12px;font-weight:900;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:4px 9px;border-radius:6px;">💡 검색 결과 예시 (미리보기)</span>
-        <span style="font-size:11px;color:var(--text-3);font-weight:700;">검색어를 입력하면 이렇게 나와요</span>
-      </div>
-
-      <div style="background:var(--surface-2);border-radius:14px;padding:13px;border:1px solid var(--border);margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <div style="font-size:15px;font-weight:900;color:var(--text);">현대해상 123대 맘모톰</div>
-          <div style="background:#7c3aed;color:#fff;padding:4px 10px;border-radius:8px;font-size:14.5px;font-weight:900;">59대 해당</div>
-        </div>
-        <div style="font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:8px;">
-          진단서 D24 (유방의 양성신생물) ➔ 현대해상 123대질병수술비 중 <b>59대 질병</b> 지급<br>
-          <span style="color:var(--text-3);">· 질병코드 N60(유방의 양성형성이상) 진단 시 10대 질병으로 판정</span>
-        </div>
-        <div style="display:inline-block;background:var(--surface);border:1px solid var(--line);padding:3px 8px;border-radius:6px;font-size:11px;color:var(--text-3);">
-          KB손보 112대: 49대 질병 해당 / DB손보 119대: 58대 질병 해당
-        </div>
-      </div>
-
-      <div style="font-size:11.5px;color:var(--text-3);font-weight:750;margin-bottom:6px;">
-        👇 <b>원터치 추천 검색어</b> (누르면 바로 검색):
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ndaiExampleChips">
-        <button type="button" class="f-chip ex-btn" data-q="현대 123대 맘모톰" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">현대 123대 맘모톰</button>
-        <button type="button" class="f-chip ex-btn" data-q="KB 112대 대장용종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">KB 112대 대장용종</button>
-        <button type="button" class="f-chip ex-btn" data-q="N23" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">요로결석 N23</button>
-        <button type="button" class="f-chip ex-btn" data-q="DB 119대 백내장" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">DB 119대 백내장</button>
-      </div>
-    </div>
-  `;
-
-  box.querySelectorAll('.ex-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const q = btn.dataset.q;
-      const qNdaiEl = $('#q-ndai');
-      if (qNdaiEl) qNdaiEl.value = q;
-      state.ndaiQ = q;
-      $('#clearBtn-ndai').hidden = false;
-      runNdaiSearch(q);
-    });
-  });
-}
-
-function renderNdaiYearGrid(gen) {
+function renderNdaiYearGrid() {
   const grid = $('#ndaiYearGrid');
-  if (!NDAI_GEN_YEARS[gen]) {
-    grid.style.display = 'none';
-    return;
-  }
-  const years = NDAI_GEN_YEARS[gen];
-  const allLabel = gen === 'recent' ? '2020년 이후 전체' : '2020년 이전 전체';
+  if (!grid) return;
 
-  grid.innerHTML = years.map(y => {
-    if (y === null) {
-      const isSel = state.ndaiYear === null;
-      return `<button class="f-chip ny-chip ${isSel ? 'on' : ''}" data-ny="" style="padding:5px 0;font-size:11px;font-weight:750;">${allLabel}</button>`;
-    }
-    const isSel = state.ndaiYear === y;
-    return `<button class="f-chip ny-chip ${isSel ? 'on' : ''}" data-ny="${y}" style="padding:5px 0;font-size:11px;font-weight:750;">${y}년</button>`;
-  }).join('');
+  grid.innerHTML = `
+    <button class="f-chip ny-chip ${state.ndaiYear === null ? 'on' : ''}" data-ny="" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">년도 전체</button>
+    ${ALL_CONTRACT_YEARS.map(y => `
+      <button class="f-chip ny-chip ${state.ndaiYear === y ? 'on' : ''}" data-ny="${y}" style="padding:6px 0;font-size:11px;font-weight:750;">${y}년</button>
+    `).join('')}
+  `;
 
   grid.style.display = 'grid';
 
@@ -2128,7 +1994,7 @@ function bindNdaiTab() {
     renderNdaiEmptyExample(); qNdaiEl.focus();
   });
 
-  renderNdaiYearGrid('recent');
+  renderNdaiYearGrid();
   renderDynamicNdaiTierChips();
   updateNdaiBadges();
   renderNdaiEmptyExample();
@@ -2304,15 +2170,34 @@ function cardNdaiHTML(gi, q) {
         <div style="font-size:11px;color:var(--text-3);margin-top:4px;">각 회사별 증권에 기재된 가입금액 한도로 각각 지급됩니다.</div>
       </div>`;
   } else {
-    contentHTML = `
-      <div class="ndai-res-box covered" style="background:var(--surface-2);border-color:var(--line);">
-        <div class="ndai-res-status" style="color:var(--text);font-size:13px;">
-          <span>🏢 N대 질병수술비: 주요 ${cos.size}개 보험사 특약 보장 해당</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--text-3);line-height:1.45;">
-          상단에서 보험회사를 선택하시면 해당 회사의 몇 대 질병인지 1초 만에 확인하실 수 있습니다.
-        </div>
-      </div>`;
+    const previewCos = Array.from(cos.keys()).slice(0, 6);
+    const previewLines = previewCos.map(c => {
+      const lines = formatNdaLinesForCo(g, c, nTier);
+      return lines.length > 0 ? `• <b>${esc(c)}</b>: ${lines[0]}` : null;
+    }).filter(Boolean);
+
+    if (previewLines.length > 0) {
+      contentHTML = `
+        <div class="ndai-res-box covered" style="border-left:4px solid #8b5cf6;margin-top:8px;background:var(--surface);">
+          <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;margin-bottom:6px;">
+            <span>✓ 주요 ${cos.size}개 보험사 N대 질병수술비 보장 해당</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--text);margin-bottom:6px;">
+            ${previewLines.map(l => `<div style="background:var(--surface-2);padding:6px 10px;border-radius:7px;border:1px solid var(--border);">${l}</div>`).join('')}
+          </div>
+          <div style="font-size:11px;color:var(--text-3);">상단에서 보험사를 선택하시면 해당 회사의 증권 특약별 상세 판정을 비교할 수 있습니다.</div>
+        </div>`;
+    } else {
+      contentHTML = `
+        <div class="ndai-res-box not-covered" style="border-left:4px solid var(--line);margin-top:8px;background:var(--surface-2);">
+          <div class="ndai-res-status" style="font-size:12.5px;font-weight:800;color:var(--text-3);">
+            <span>⚠️ N대 질병수술비 특약 미포함 (종수술비 청구)</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">
+            N대 질병수술비 분류표에는 제외된 질환이므로 1~5종 종수술비로 청구를 진행합니다.
+          </div>
+        </div>`;
+    }
   }
 
   return `
