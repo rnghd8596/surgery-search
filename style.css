@@ -180,14 +180,16 @@ html[data-theme="light"] .i-moon{display:none}
 html[data-theme="dark"] .i-sun{display:none}
 
 .tabs{
-  max-width:920px;margin:0 auto;padding:10px 20px 12px;
-  display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;
+  max-width:920px;margin:0 auto;padding:8px 12px 10px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;width:100%;box-sizing:border-box;
 }
 .tabs::-webkit-scrollbar{display:none}
 .tab{
-  flex:0 0 auto;border:0;background:transparent;color:var(--text-3);
-  font-size:14.5px;font-weight:700;letter-spacing:-.02em;
-  padding:9px 15px;border-radius:12px;cursor:pointer;transition:.22s var(--ease);white-space:nowrap;
+  border:0;background:transparent;color:var(--text-3);
+  font-size:13px;font-weight:800;letter-spacing:-.03em;
+  padding:9px 2px;border-radius:11px;cursor:pointer;transition:.2s var(--ease);
+  text-align:center;display:flex;align-items:center;justify-content:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .tab:hover{color:var(--text-2);background:var(--line-2)}
 .tab.on{color:var(--brand);background:var(--brand-3)}
@@ -244,6 +246,14 @@ html[data-theme="dark"] .tab.on{background:var(--brand-3);color:#8DBBFF}
   background:var(--line-2);color:var(--text-2);display:grid;place-items:center;transition:.18s;
 }
 .clear-btn:hover{background:var(--line);color:var(--text)}
+
+.voice-btn{
+  flex:0 0 auto;width:34px;height:34px;border:0;border-radius:10px;cursor:pointer;
+  background:transparent;color:var(--text-3);display:grid;place-items:center;transition:.18s;margin-right:2px;
+}
+.voice-btn:hover{color:var(--brand);background:var(--line-2)}
+.voice-btn.recording{color:#ef4444;background:rgba(239,68,68,0.12);animation:pulseMic 1s infinite}
+@keyframes pulseMic{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
 .chips{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .chips::-webkit-scrollbar{display:none}
@@ -562,7 +572,8 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 @media (max-width:640px){
   .main{padding:0 16px 32px}
   .topbar-inner{padding:12px 16px 0}
-  .tabs{padding:8px 16px 10px}
+  .tabs{padding:6px 10px 8px;gap:4px}
+  .tab{font-size:12px;padding:8px 1px;border-radius:10px}
   .hero{padding:18px 0 14px}
   .hero-sub{font-size:13px}
   .search-wrap{top:calc(var(--header-h, 96px) + 2px)}

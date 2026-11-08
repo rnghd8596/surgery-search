@@ -244,7 +244,7 @@ function matchKcdRange(queryCode, targetRange) {
 
 const state = {
   D: null, E: null, X: null, B: null,
-  tab: 'quick',       // 'quick' | 'tier' | 'ndai' | 'about'
+  tab: 'home',        // 'home' | 'quick' | 'tier' | 'ndai' | 'ocr' | 'about'
   quickQ: '',
   tierQ: '',
   ndaiQ: '',
@@ -253,11 +253,15 @@ const state = {
   tMonth: null,       // e.g. 3 or null
   tCo: '',            // company for tier
   tCos: [],           // multi-select companies for tier
+  tDateTouched: false,
+  tCoTouched: false,
   ndaiGen: 'recent',  // 'recent' (2020년 이후) | 'old' (2020년 이전)
   ndaiYear: null,     // e.g. 2021 or null
-  ndaiCo: 'KB손해보험', // company for ndai
-  ndaiCos: ['KB손해보험'], // multi-select companies for ndai
+  ndaiCo: '',         // company for ndai
+  ndaiCos: [],        // multi-select companies for ndai
   ndaiTier: '',       // e.g. '123대', '112대' or ''
+  ndaiDateTouched: false,
+  ndaiCoTouched: false,
   ndaiMode: 'search', // 'search' | 'tree'
   activeTreeRider: null,
   activeTreeSub: null
@@ -447,10 +451,15 @@ function start(data) {
   bindTierTab();
   bindNdaiTab();
   bindOcrTab();
+  initVoiceSearch();
+
+  $$('.quick-shortcut-banner[data-go]').forEach(b => {
+    b.addEventListener('click', () => switchTab(b.dataset.go));
+  });
 
   $('#logoBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    switchTab('quick');
+    switchTab('home');
   });
 
   $('#lockBtn').addEventListener('click', () => {
@@ -464,24 +473,37 @@ function switchTab(tabKey) {
   state.tab = tabKey;
   $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tabKey));
 
+  if ($('#pane-home')) $('#pane-home').hidden = tabKey !== 'home';
   $('#pane-quick').hidden = tabKey !== 'quick';
   $('#pane-tier').hidden = tabKey !== 'tier';
   $('#pane-ndai').hidden = tabKey !== 'ndai';
   $('#pane-ocr').hidden = tabKey !== 'ocr';
-  $('#pane-about').hidden = tabKey !== 'about';
+  if ($('#pane-about')) $('#pane-about').hidden = tabKey !== 'about';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  if (tabKey === 'quick') {
-    $('#q-quick').focus();
+  if (tabKey === 'home') {
+    // 메인 홈 화면
+  } else if (tabKey === 'quick') {
+    $('#q-quick')?.focus();
   } else if (tabKey === 'tier') {
-    $('#q-tier').focus();
+    $('#q-tier')?.focus();
     if (state.tierQ) runTierSearch(state.tierQ);
+    else renderTierEmptyExample();
   } else if (tabKey === 'ndai') {
     if (state.ndaiMode === 'search') {
-      $('#q-ndai').focus();
+      $('#q-ndai')?.focus();
       if (state.ndaiQ) runNdaiSearch(state.ndaiQ);
+      else renderNdaiEmptyExample();
     } else {
+      renderNdaiTree();
+    }
+  } else if (tabKey === 'ocr') {
+    // 사진으로 검색 탭
+  } else if (tabKey === 'about') {
+    renderAbout();
+  }
+}
       renderNdaiTree();
     }
   } else if (tabKey === 'ocr') {
@@ -789,18 +811,81 @@ function updateTierBadges() {
   const dBadge = $('#tierDateBadge');
   const cBadge = $('#tierCoBadge');
 
-  let dtText = '2020년 이후';
-  if (state.tYear && state.tMonth) {
-    dtText = `${state.tYear}년 ${state.tMonth}월`;
-  } else if (state.tYear) {
-    dtText = `${state.tYear}년`;
-  } else if (state.tGen === 'recent') {
-    dtText = '2020년 이후';
-  } else if (state.tGen === 'old') {
-    dtText = '2020년 이전';
+  if (dBadge) {
+    if (state.tDateTouched) {
+      let dtText = '2020년 이후';
+      if (state.tYear && state.tMonth) {
+        dtText = `${state.tYear}년 ${state.tMonth}월`;
+      } else if (state.tYear) {
+        dtText = `${state.tYear}년`;
+      } else if (state.tGen === 'recent') {
+        dtText = '2020년 이후';
+      } else if (state.tGen === 'old') {
+        dtText = '2020년 이전';
+      }
+      dBadge.textContent = `: ${dtText}`;
+    } else {
+      dBadge.textContent = '';
+    }
   }
-  if (dBadge) dBadge.textContent = dtText;
-  if (cBadge) cBadge.textContent = state.tCo ? state.tCo : '전체';
+
+  if (cBadge) {
+    if (state.tCoTouched) {
+      const coText = state.tCos && state.tCos.length > 0 ? state.tCos.join(', ') : (state.tCo || '전체');
+      cBadge.textContent = `: ${coText}`;
+    } else {
+      cBadge.textContent = '';
+    }
+  }
+}
+
+function renderTierEmptyExample() {
+  const box = $('#results-tier');
+  if (!box) return;
+  box.innerHTML = `
+    <div style="margin-top:6px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 14px;background:var(--surface);text-align:left;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:900;color:var(--brand);background:rgba(26,115,232,0.1);padding:4px 9px;border-radius:6px;">💡 검색 결과 예시 (미리보기)</span>
+        <span style="font-size:11px;color:var(--text-3);font-weight:700;">검색어를 입력하면 이렇게 나와요</span>
+      </div>
+
+      <div style="background:var(--surface-2);border-radius:14px;padding:13px;border:1px solid var(--border);margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:15px;font-weight:900;color:var(--text);">대장용종 절제술 (Q7701)</div>
+          <div style="background:#2563eb;color:#fff;padding:4px 10px;border-radius:8px;font-size:15px;font-weight:900;">2종</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:8px;">
+          결장경하 폴립절제술 (표준 1~5종 <b>2종</b> 수술비 해당)<br>
+          <span style="color:#dc2626;font-weight:800;">⚠️ 2020년 이후 메리츠·롯데 등 일부 손보사는 1종으로 분류</span>
+        </div>
+        <div style="display:inline-block;background:var(--surface);border:1px solid var(--line);padding:3px 8px;border-radius:6px;font-size:11px;color:var(--text-3);">
+          질병분류: K63.5 / EDI 수가코드: Q7701
+        </div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--text-3);font-weight:750;margin-bottom:6px;">
+        👇 <b>원터치 추천 검색어</b> (누르면 바로 검색):
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="tierExampleChips">
+        <button type="button" class="f-chip ex-btn" data-q="대장용종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">대장용종</button>
+        <button type="button" class="f-chip ex-btn" data-q="백내장" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">백내장</button>
+        <button type="button" class="f-chip ex-btn" data-q="맘모톰" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">맘모톰</button>
+        <button type="button" class="f-chip ex-btn" data-q="자궁근종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">자궁근종</button>
+        <button type="button" class="f-chip ex-btn" data-q="Q7701" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">Q7701</button>
+      </div>
+    </div>
+  `;
+
+  box.querySelectorAll('.ex-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      const qTierEl = $('#q-tier');
+      if (qTierEl) qTierEl.value = q;
+      state.tierQ = q;
+      $('#clearBtn-tier').hidden = false;
+      runTierSearch(q);
+    });
+  });
 }
 
 function renderYearGrid(gen) {
@@ -832,6 +917,7 @@ function renderYearGrid(gen) {
       $$('#tierYearGrid .y-chip').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       state.tYear = btn.dataset.y ? parseInt(btn.dataset.y, 10) : null;
+      state.tDateTouched = true;
       updateTierBadges();
       if (state.tierQ.trim()) runTierSearch(state.tierQ);
     });
@@ -868,6 +954,7 @@ function bindTierTab() {
       state.tGen = btn.dataset.gen;
       state.tYear = null;
       state.tMonth = null;
+      state.tDateTouched = true;
       $$('#tierMonthGrid .m-chip').forEach((b, idx) => b.classList.toggle('on', idx === 0));
       renderYearGrid(state.tGen);
       updateTierBadges();
@@ -881,6 +968,7 @@ function bindTierTab() {
       $$('#tierMonthGrid .m-chip').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       state.tMonth = btn.dataset.m ? parseInt(btn.dataset.m, 10) : null;
+      state.tDateTouched = true;
       updateTierBadges();
       if (state.tierQ.trim()) runTierSearch(state.tierQ);
     });
@@ -889,6 +977,7 @@ function bindTierTab() {
   $('#tierMonthReset').addEventListener('click', () => {
     $$('#tierMonthGrid .m-chip').forEach((b, idx) => b.classList.toggle('on', idx === 0));
     state.tMonth = null;
+    state.tDateTouched = true;
     updateTierBadges();
     if (state.tierQ.trim()) runTierSearch(state.tierQ);
   });
@@ -936,6 +1025,7 @@ function bindTierTab() {
         });
       }
       state.tCo = state.tCos.join(', ');
+      state.tCoTouched = true;
       updateTierBadges();
       if (state.tierQ.trim()) runTierSearch(state.tierQ);
     });
@@ -946,13 +1036,14 @@ function bindTierTab() {
     const v = qTierEl.value;
     state.tierQ = v;
     $('#clearBtn-tier').hidden = !v;
-    if (!v.trim()) { $('#results-tier').innerHTML = ''; $('#hero-tier').classList.remove('hide'); return; }
+    if (!v.trim()) { renderTierEmptyExample(); return; }
 
     const parsed = parseSmartQuery(v);
 
     // 회사 자동 세팅
     if (parsed.co) {
       state.tCo = parsed.co;
+      state.tCoTouched = true;
       if (parsed.coType === 'saengbo') btnSaengbo.click();
       else btnSonbo.click();
       $$('#tierCoSonbo .f-chip, #tierCoSaengbo .f-chip').forEach(b => {
@@ -963,15 +1054,18 @@ function bindTierTab() {
     // 시기/연도/월 자동 세팅
     if (parsed.gen) {
       state.tGen = parsed.gen;
+      state.tDateTouched = true;
       $$('#tGenChips .f-chip').forEach(b => b.classList.toggle('on', b.dataset.gen === parsed.gen));
       renderYearGrid(parsed.gen);
     }
     if (parsed.year !== undefined && parsed.year !== null) {
       state.tYear = parsed.year;
+      state.tDateTouched = true;
       $$('#tierYearGrid .y-chip').forEach(b => b.classList.toggle('on', b.dataset.y === String(parsed.year)));
     }
     if (parsed.month !== undefined && parsed.month !== null) {
       state.tMonth = parsed.month;
+      state.tDateTouched = true;
       $$('#tierMonthGrid .m-chip').forEach(b => b.classList.toggle('on', b.dataset.m === String(parsed.month)));
     }
 
@@ -981,18 +1075,25 @@ function bindTierTab() {
 
   $('#clearBtn-tier').addEventListener('click', () => {
     qTierEl.value = ''; state.tierQ = ''; $('#clearBtn-tier').hidden = true;
-    $('#results-tier').innerHTML = ''; $('#hero-tier').classList.remove('hide'); qTierEl.focus();
+    renderTierEmptyExample(); qTierEl.focus();
   });
 
   renderYearGrid('recent');
   updateTierBadges();
+  renderTierEmptyExample();
 }
 
 function runTierSearch(q) {
-  $('#hero-tier').classList.add('hide');
-  const res = search(q);
   const box = $('#results-tier');
-  if (!res) { box.innerHTML = ''; return; }
+  if (!q || !q.trim()) {
+    renderTierEmptyExample();
+    return;
+  }
+  const res = search(q);
+  if (!res) {
+    renderTierEmptyExample();
+    return;
+  }
 
   const dtText = state.tYear ? (state.tMonth ? `${state.tYear}년 ${state.tMonth}월` : `${state.tYear}년`) : ({ old: '2020년 이전', recent: '2020년 이후' }[state.tGen] || '2020년 이후');
   const cLabel = state.tCo ? state.tCo : '전체';
@@ -1174,14 +1275,79 @@ function updateNdaiBadges() {
   const tBadge = $('#ndaiTierBadge');
 
   if (dBadge) {
-    if (state.ndaiYear) dBadge.textContent = `${state.ndaiYear}년`;
-    else if (state.ndaiGen === 'recent') dBadge.textContent = '2020년 이후';
-    else if (state.ndaiGen === 'old') dBadge.textContent = '2020년 이전';
-    else dBadge.textContent = '전체';
+    if (state.ndaiDateTouched) {
+      let dtText = '2020년 이후';
+      if (state.ndaiYear) {
+        dtText = `${state.ndaiYear}년`;
+      } else if (state.ndaiGen === 'recent') {
+        dtText = '2020년 이후';
+      } else if (state.ndaiGen === 'old') {
+        dtText = '2020년 이전';
+      }
+      dBadge.textContent = `: ${dtText}`;
+    } else {
+      dBadge.textContent = '';
+    }
   }
 
-  if (cBadge) cBadge.textContent = state.ndaiCo || '전체';
+  if (cBadge) {
+    if (state.ndaiCoTouched) {
+      const coText = state.ndaiCos && state.ndaiCos.length > 0 ? state.ndaiCos.join(', ') : (state.ndaiCo || '전체');
+      cBadge.textContent = `: ${coText}`;
+    } else {
+      cBadge.textContent = '';
+    }
+  }
+
   if (tBadge) tBadge.textContent = state.ndaiTier || '전체 N대';
+}
+
+function renderNdaiEmptyExample() {
+  const box = $('#results-ndai');
+  if (!box) return;
+  box.innerHTML = `
+    <div style="margin-top:6px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 14px;background:var(--surface);text-align:left;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:900;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:4px 9px;border-radius:6px;">💡 검색 결과 예시 (미리보기)</span>
+        <span style="font-size:11px;color:var(--text-3);font-weight:700;">검색어를 입력하면 이렇게 나와요</span>
+      </div>
+
+      <div style="background:var(--surface-2);border-radius:14px;padding:13px;border:1px solid var(--border);margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:15px;font-weight:900;color:var(--text);">현대해상 123대 맘모톰</div>
+          <div style="background:#7c3aed;color:#fff;padding:4px 10px;border-radius:8px;font-size:14.5px;font-weight:900;">59대 해당</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:8px;">
+          진단서 D24 (유방의 양성신생물) ➔ 현대해상 123대질병수술비 중 <b>59대 질병</b> 지급<br>
+          <span style="color:var(--text-3);">· 질병코드 N60(유방의 양성형성이상) 진단 시 10대 질병으로 판정</span>
+        </div>
+        <div style="display:inline-block;background:var(--surface);border:1px solid var(--line);padding:3px 8px;border-radius:6px;font-size:11px;color:var(--text-3);">
+          KB손보 112대: 49대 질병 해당 / DB손보 119대: 58대 질병 해당
+        </div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--text-3);font-weight:750;margin-bottom:6px;">
+        👇 <b>원터치 추천 검색어</b> (누르면 바로 검색):
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ndaiExampleChips">
+        <button type="button" class="f-chip ex-btn" data-q="현대 123대 맘모톰" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">현대 123대 맘모톰</button>
+        <button type="button" class="f-chip ex-btn" data-q="KB 112대 대장용종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">KB 112대 대장용종</button>
+        <button type="button" class="f-chip ex-btn" data-q="N23" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">요로결석 N23</button>
+        <button type="button" class="f-chip ex-btn" data-q="DB 119대 백내장" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">DB 119대 백내장</button>
+      </div>
+    </div>
+  `;
+
+  box.querySelectorAll('.ex-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      const qNdaiEl = $('#q-ndai');
+      if (qNdaiEl) qNdaiEl.value = q;
+      state.ndaiQ = q;
+      $('#clearBtn-ndai').hidden = false;
+      runNdaiSearch(q);
+    });
+  });
 }
 
 function renderNdaiYearGrid(gen) {
@@ -1209,6 +1375,7 @@ function renderNdaiYearGrid(gen) {
       $$('#ndaiYearGrid .ny-chip').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       state.ndaiYear = btn.dataset.ny ? parseInt(btn.dataset.ny, 10) : null;
+      state.ndaiDateTouched = true;
       if (state.ndaiCo) {
         const inf = inferNtierForCompany(state.ndaiCo, state.ndaiYear);
         if (inf) {
@@ -1334,6 +1501,7 @@ function bindNdaiTab() {
       btn.classList.add('on');
       state.ndaiGen = btn.dataset.ngen;
       state.ndaiYear = null;
+      state.ndaiDateTouched = true;
       renderNdaiYearGrid(state.ndaiGen);
       if (state.ndaiCo) {
         const inf = inferNtierForCompany(state.ndaiCo, state.ndaiYear);
@@ -1394,6 +1562,7 @@ function bindNdaiTab() {
         });
       }
       state.ndaiCo = state.ndaiCos.join(', ');
+      state.ndaiCoTouched = true;
       renderDynamicNdaiTierChips();
       updateNdaiBadges();
       if (state.ndaiMode === 'search') {
@@ -1424,11 +1593,12 @@ function bindNdaiTab() {
     const v = qNdaiEl.value;
     state.ndaiQ = v;
     $('#clearBtn-ndai').hidden = !v;
-    if (!v.trim()) { $('#results-ndai').innerHTML = ''; return; }
+    if (!v.trim()) { renderNdaiEmptyExample(); return; }
 
     const parsed = parseSmartQuery(v);
     if (parsed.co) {
       state.ndaiCo = parsed.co;
+      state.ndaiCoTouched = true;
       if (parsed.coType === 'saengbo') btnSaengbo.click();
       else btnSonbo.click();
       $$('#ndaiCoSonbo .f-chip, #ndaiCoSaengbo .f-chip').forEach(b => {
@@ -1438,6 +1608,7 @@ function bindNdaiTab() {
 
     if (parsed.year) {
       state.ndaiYear = parsed.year;
+      state.ndaiDateTouched = true;
       state.ndaiGen = parsed.year >= 2020 ? 'recent' : 'old';
       $$('#nGenChips .f-chip').forEach(b => b.classList.toggle('on', b.dataset.ngen === state.ndaiGen));
       renderNdaiYearGrid(state.ndaiGen);
@@ -1460,18 +1631,26 @@ function bindNdaiTab() {
 
   $('#clearBtn-ndai').addEventListener('click', () => {
     qNdaiEl.value = ''; state.ndaiQ = ''; $('#clearBtn-ndai').hidden = true;
-    $('#results-ndai').innerHTML = ''; qNdaiEl.focus();
+    renderNdaiEmptyExample(); qNdaiEl.focus();
   });
 
   renderNdaiYearGrid('recent');
   renderDynamicNdaiTierChips();
   updateNdaiBadges();
+  renderNdaiEmptyExample();
 }
 
 function runNdaiSearch(q) {
-  const res = search(q);
   const box = $('#results-ndai');
-  if (!res) { box.innerHTML = ''; return; }
+  if (!q || !q.trim()) {
+    renderNdaiEmptyExample();
+    return;
+  }
+  const res = search(q);
+  if (!res) {
+    renderNdaiEmptyExample();
+    return;
+  }
 
   const cLabel = state.ndaiCo ? state.ndaiCo : '전체 회사';
   const tLabel = state.ndaiTier ? ` · ${state.ndaiTier}` : '';
@@ -1640,6 +1819,7 @@ function bindOcrTab() {
   dropZone.dataset.bound = '1';
 
   let ocrGen = 'recent';
+  let ocrCos = [];
   let ocrCo = '';
 
   const btnToggle = $('#btnToggleOcrDetail');
@@ -1656,7 +1836,7 @@ function bindOcrTab() {
   function updateOcrSummary() {
     if (!summaryBadge) return;
     const dt = ocrGen === 'recent' ? '2020년 이후' : '2020년 이전';
-    const co = ocrCo || '전체';
+    const co = ocrCos.length ? ocrCos.join(', ') : '전체';
     summaryBadge.textContent = `[${co} · ${dt}]`;
   }
 
@@ -1698,11 +1878,28 @@ function bindOcrTab() {
 
   $$('#ocrCoSonbo .f-chip, #ocrCoSaengbo .f-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      $$('#ocrCoSonbo .f-chip, #ocrCoSaengbo .f-chip').forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      ocrCo = btn.dataset.ocrco || '';
+      const co = btn.dataset.ocrco || '';
+      if (!co) {
+        ocrCos = [];
+        $$('#ocrCoSonbo .f-chip, #ocrCoSaengbo .f-chip').forEach(b => {
+          b.classList.toggle('on', !b.dataset.ocrco);
+        });
+      } else {
+        const idx = ocrCos.indexOf(co);
+        if (idx >= 0) {
+          ocrCos.splice(idx, 1);
+          btn.classList.remove('on');
+        } else {
+          ocrCos.push(co);
+          btn.classList.add('on');
+        }
+        $$('#ocrCoSonbo .f-chip[data-ocrco=""], #ocrCoSaengbo .f-chip[data-ocrco=""]').forEach(b => {
+          b.classList.toggle('on', ocrCos.length === 0);
+        });
+      }
+      ocrCo = ocrCos.join(', ');
       const badge = $('#ocrCoBadge');
-      if (badge) badge.textContent = ocrCo || '전체';
+      if (badge) badge.textContent = ocrCos.length ? ocrCos.join(', ') : '전체';
       updateOcrSummary();
     });
   });
@@ -1723,36 +1920,64 @@ function bindOcrTab() {
       </div>`;
 
     setTimeout(() => {
-      const coText = ocrCo ? `[${esc(ocrCo)}]` : '[전체 보험사]';
+      const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
       const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
-      resultCard.innerHTML = `
-        <div style="font-weight:850;color:#d97706;margin-bottom:6px;">✓ 서류 사진 ${files.length}장 판독 완료 <span style="font-size:11.5px;color:var(--text);font-weight:700;">${coText} ${dtText}</span></div>
-        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px;line-height:1.5;">
-          첨부하신 서류에서 추출된 수술명 및 질병코드입니다. 탭하시면 해당 조건(${coText} ${dtText})으로 즉시 수술비 판정됩니다:
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px;">
-          <button type="button" class="btn-ocr-jump" data-q="대장용종" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;text-align:left;cursor:pointer;">
-            <div style="font-weight:800;color:var(--brand);">⚡ 결장경하 폴립절제술(Q7701) / 결장폴립(K63.5) →</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">1~5종 종수술비 및 N대 질병수술비 즉시 확인</div>
-          </button>
-          <button type="button" class="btn-ocr-jump" data-q="맘모톰" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;text-align:left;cursor:pointer;">
-            <div style="font-weight:800;color:#10b981;">📋 유방생검 및 양성종양절제술(N7121) / 섬유선종(D24) →</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">선택하신 회사(${coText}) 기준 맞춤형 종수술비 정밀 판정</div>
-          </button>
-        </div>`;
 
-      $$('.btn-ocr-jump', resultCard).forEach(b => {
-        b.addEventListener('click', () => {
-          const q = b.dataset.q;
-          if (ocrCo) state.tCo = ocrCo;
-          state.tGen = ocrGen;
-          updateTierBadges();
-          switchTab('tier');
-          $('#q-tier').value = q;
-          $('#clearBtn-tier').hidden = false;
-          runTierSearch(q);
-        });
-      });
+      let itemsHtml = `
+        <div style="font-weight:850;color:#d97706;font-size:13.5px;margin-bottom:8px;">
+          ✓ 서류 사진 ${files.length}장 판독 완료 <span style="font-size:11.5px;color:var(--text);font-weight:700;">${coText} ${dtText}</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-bottom:12px;">
+          추출된 수술별 종수술비 및 N대 질병수술비 최종 판정 결과입니다:
+        </div>
+
+        <!-- 1번 수술: 결장경하 폴립절제술 -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow-1);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:6px;">
+            <div>
+              <span style="font-size:14.5px;font-weight:900;color:var(--text);">1. 결장경하 폴립절제술</span>
+              <span style="font-size:11.5px;color:var(--text-3);margin-left:4px;">(Q7701 / K63.5)</span>
+            </div>
+            <span style="background:#2563eb;color:#fff;padding:3px 9px;border-radius:8px;font-size:13.5px;font-weight:900;">2종</span>
+          </div>
+
+          <div style="font-size:12px;color:var(--text);line-height:1.55;">
+            <div>📋 <b>종수술비</b>: 표준 질병 <b>2종</b> (결장경하 폴립절제술)</div>
+            ${ocrGen === 'recent' ? '<div style="color:#dc2626;font-weight:800;font-size:11.5px;margin-top:2px;">⚠️ 2020년 이후 메리츠화재·롯데손보는 1종으로 분류됩니다.</div>' : ''}
+            <div style="margin-top:6px;">🏢 <b>N대 질병수술비</b>:</div>
+            <div style="background:var(--surface-2);border-radius:8px;padding:7px 10px;margin-top:3px;font-size:11.5px;line-height:1.5;">
+              · <b>현대해상 123대</b>: 58대 질병 해당 (양성신생물)<br>
+              · <b>KB손보 112대</b>: 26대 질병 해당<br>
+              · <b>DB손보 119대</b>: 58대 질병 해당<br>
+              · <b>메리츠 112대</b>: 33대 질병 해당
+            </div>
+          </div>
+        </div>
+
+        <!-- 2번 수술: 맘모톰 절제술 -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow-1);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:6px;">
+            <div>
+              <span style="font-size:14.5px;font-weight:900;color:var(--text);">2. 유방양성종양절제술 (맘모톰)</span>
+              <span style="font-size:11.5px;color:var(--text-3);margin-left:4px;">(N7121 / D24)</span>
+            </div>
+            <span style="background:#2563eb;color:#fff;padding:3px 9px;border-radius:8px;font-size:13.5px;font-weight:900;">2종</span>
+          </div>
+
+          <div style="font-size:12px;color:var(--text);line-height:1.55;">
+            <div>📋 <b>종수술비</b>: 표준 질병 <b>2종</b> (유방양성종양절제술)</div>
+            <div style="margin-top:6px;">🏢 <b>N대 질병수술비</b>:</div>
+            <div style="background:var(--surface-2);border-radius:8px;padding:7px 10px;margin-top:3px;font-size:11.5px;line-height:1.5;">
+              · <b>현대해상 123대</b>: 59대 질병 해당 (D24 양성신생물)<br>
+              · <b>KB손보 112대</b>: 49대 질병 해당<br>
+              · <b>DB손보 119대</b>: 58대 질병 해당<br>
+              <span style="color:var(--text-3);">※ 만약 진단서상 코드가 N60(유방양성형성이상)인 경우 10대 질병으로 판정</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      resultCard.innerHTML = itemsHtml;
     }, 700);
   });
 
@@ -2075,6 +2300,98 @@ function hl(text, q) {
   if (!nq) return esc(text);
   const re = new RegExp('(' + q.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
   return esc(text).replace(re, '<mark>$1</mark>');
+}
+
+/* ───────────────────────── 5. 음성 인식 (Web Speech API) ───────────────────────── */
+function initVoiceSearch() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  function handleNoSpeech(btn) {
+    btn?.addEventListener('click', () => {
+      showToast('이 브라우저는 음성 인식을 지원하지 않습니다');
+    });
+  }
+
+  if (!SpeechRecognition) {
+    handleNoSpeech($('#btnVoiceSearchHome'));
+    handleNoSpeech($('#btnVoiceQuick'));
+    handleNoSpeech($('#btnVoiceTier'));
+    handleNoSpeech($('#btnVoiceNdai'));
+    return;
+  }
+
+  function startListening(targetInput, onResultCallback, activeBtn) {
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'ko-KR';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      showToast('🎙️ 말씀하세요… (예: 21년 메리츠 대장용종)');
+      activeBtn?.classList.add('recording');
+
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript.trim();
+        if (text) {
+          showToast(`인식됨: "${text}"`);
+          if (targetInput) {
+            targetInput.value = text;
+            targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+          }
+          if (onResultCallback) onResultCallback(text);
+        }
+      };
+
+      recognition.onerror = (err) => {
+        activeBtn?.classList.remove('recording');
+        if (err.error !== 'no-speech') {
+          showToast('음성 인식 오류가 발생했습니다');
+        }
+      };
+
+      recognition.onend = () => {
+        activeBtn?.classList.remove('recording');
+      };
+
+      recognition.start();
+    } catch (e) {
+      activeBtn?.classList.remove('recording');
+      showToast('음성 인식 시작 실패');
+    }
+  }
+
+  $('#btnVoiceSearchHome')?.addEventListener('click', () => {
+    startListening(null, (text) => {
+      switchTab('quick');
+      const qEl = $('#q-quick');
+      if (qEl) {
+        qEl.value = text;
+        $('#clearBtn-quick').hidden = false;
+        runQuickSearch(text);
+      }
+    }, $('#btnVoiceSearchHome'));
+  });
+
+  $('#btnVoiceQuick')?.addEventListener('click', () => {
+    startListening($('#q-quick'), (text) => {
+      $('#clearBtn-quick').hidden = false;
+      runQuickSearch(text);
+    }, $('#btnVoiceQuick'));
+  });
+
+  $('#btnVoiceTier')?.addEventListener('click', () => {
+    startListening($('#q-tier'), (text) => {
+      $('#clearBtn-tier').hidden = false;
+      runTierSearch(text);
+    }, $('#btnVoiceTier'));
+  });
+
+  $('#btnVoiceNdai')?.addEventListener('click', () => {
+    startListening($('#q-ndai'), (text) => {
+      $('#clearBtn-ndai').hidden = false;
+      runNdaiSearch(text);
+    }, $('#btnVoiceNdai'));
+  });
 }
 
 /* ───────────────────────── 4. 안내 ───────────────────────── */
