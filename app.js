@@ -224,19 +224,20 @@ function search(qraw) {
   }
 
   const syn = idx.syn.find(s => s.keys.some(k => k.includes(nq)) || nq.includes(s.nq) || s.nq.includes(nq));
+  idx.name.forEach(({ i, nn }) => {
+    if (nn === nq) add(i, 3);
+    else if (nn.startsWith(nq)) add(i, 4);
+    else if (nn.includes(nq)) add(i, 5);
+  });
+
+  // 별칭(실무 용어)은 이름 일치보다 뒤에 배치
   if (syn) {
     syn.codes.forEach(cp => {
       for (const code in state.D.codeIndex) {
-        if (code.startsWith(cp)) state.D.codeIndex[code].forEach(i => add(i, 3));
+        if (code.startsWith(cp)) state.D.codeIndex[code].forEach(i => add(i, 8));
       }
     });
   }
-
-  idx.name.forEach(({ i, nn }) => {
-    if (nn === nq) add(i, 4);
-    else if (nn.startsWith(nq)) add(i, 5);
-    else if (nn.includes(nq)) add(i, 6);
-  });
 
   const gi = [...scores.entries()].sort((a, b) => a[1] - b[1] || (state.D.g[b[0]].m.length - state.D.g[a[0]].m.length)).slice(0, MAX_NAME);
 
@@ -245,6 +246,16 @@ function search(qraw) {
     if (r.nn.includes(nq)) {
       ediHits.push(r.i);
       if (ediHits.length >= MAX_EDI * 2) break;
+    }
+  }
+  // 별칭 검색어로 수가 보강 (예: 대장용종 → 용종절제술)
+  if (syn && ediHits.length < 5) {
+    const terms = [...new Set([...syn.q, syn.k])].map(norm).filter(t => t.length >= 2).sort((a, b) => b.length - a.length);
+    for (const t of terms) {
+      for (const r of idx.edi) {
+        if (r.nn.includes(t) && !ediHits.includes(r.i)) ediHits.push(r.i);
+      }
+      if (ediHits.length >= 20) break;
     }
   }
   ediHits.sort((a, b) => (state.E.rows[b][2] === 'S') - (state.E.rows[a][2] === 'S'));
