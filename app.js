@@ -837,36 +837,6 @@ function cardQuickHTML(gi, q, matchedEdi) {
   </article>`;
 }
 
-      ${ediBanner}
-
-      <div style="background:var(--surface-2);border-radius:14px;padding:12px 14px;margin-top:10px;border:1px solid var(--border);">
-        <div style="font-size:11px;font-weight:750;color:var(--text-3);letter-spacing:-.01em;margin-bottom:4px;">1~5종 수술비 표준 판정</div>
-        <div style="display:flex;align-items:center;gap:12px;margin:2px 0 4px;">
-          <span class="proc-tag ${'t' + (t.t || 2)}" style="font-size:16px;padding:5px 14px;border-radius:10px;min-width:54px;">${esc(tierLabel(t))}</span>
-          <div>
-            <div style="font-size:14px;font-weight:800;color:var(--text);">${esc(t.w || g.n + ' 수술')}</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;">생명보험 전사 · 2020년 이전 손해보험 표준약관 기준</div>
-          </div>
-        </div>
-        ${exHTML}
-        ${procsHTML}
-      </div>
-    </div>
-
-    <div class="card-actions">
-      <button class="card-toggle">
-        <span>세부 근거 ∨</span>
-      </button>
-      <button class="btn-copy">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-        고객 안내문 복사
-      </button>
-    </div>
-
-    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
-  </article>`;
-}
-
 /* ───────────────────────── 2. 종수술비 정밀검색 (년·월 시기별 & 회사별) ───────────────────────── */
 const GEN_YEARS = {
   recent: [2026, 2025, 2024, 2023, 2022, 2021, 2020, null],
