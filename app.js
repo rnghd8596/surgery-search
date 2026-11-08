@@ -1155,38 +1155,6 @@ function cardTierHTML(gi, q, matchedEdi) {
   </article>`;
 }
 
-      ${ediBanner}
-
-      <div style="background:var(--surface-2);border-radius:14px;padding:12px 14px;margin-top:10px;border:1px solid var(--border);">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:11px;font-weight:800;color:var(--brand);">1~5종 종수술비 맞춤 판정</span>
-          <span style="font-size:11px;font-weight:700;color:var(--text-3);">${esc(co ? co : '전사 기준')}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;margin:3px 0 6px;">
-          <span class="proc-tag ${'t' + (parseInt(finalTier) || 2)}" style="font-size:17px;padding:6px 16px;border-radius:10px;min-width:56px;">${esc(finalTier)}</span>
-          <div>
-            <div style="font-size:14.5px;font-weight:850;color:var(--text);">${esc(g.n)} 수술</div>
-            <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(finalNote)}</div>
-          </div>
-        </div>
-        ${procsHTML}
-      </div>
-    </div>
-
-    <div class="card-actions">
-      <button class="card-toggle">
-        <span>세부 근거 ∨</span>
-      </button>
-      <button class="btn-copy">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-        고객 안내문 복사
-      </button>
-    </div>
-
-    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
-  </article>`;
-}
-
 /* ───────────────────────── 3. N대질병수술비 정밀검색 (판정 & 약관 트리) ───────────────────────── */
 const NDAI_GEN_YEARS = {
   recent: [2026, 2025, 2024, 2023, 2022, 2021, null],
