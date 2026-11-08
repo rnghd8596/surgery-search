@@ -340,7 +340,7 @@ html[data-theme="dark"] .tab.on{background:var(--brand-3);color:#8DBBFF}
   height:44px;border:0;border-radius:14px;cursor:pointer;
   background:linear-gradient(180deg,#3E8BFF,#2A76EC);color:#fff;
   font-size:13.5px;font-weight:750;letter-spacing:-.01em;
-  box-shadow:0 6px 16px rgba(49,130,246,.26),inset 0 1px 0 rgba(255,255,255,.24);
+  box-shadow:0 4px 12px rgba(49,130,246,.18),inset 0 1px 0 rgba(255,255,255,.24);
   transition:.2s var(--ease);
 }
 .btn-copy:hover{filter:brightness(1.05);transform:translateY(-1px)}

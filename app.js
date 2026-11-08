@@ -312,6 +312,7 @@ document.addEventListener('keydown', (e) => {
 
 function runSearch(q) {
   $('#hero').classList.add('hide');
+  $$('#chips .chip').forEach(c => c.classList.toggle('on', c.dataset.q === q.trim()));
   const res = search(q);
   const box = $('#results');
   if (!res) { renderIdle(); return; }
