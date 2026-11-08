@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════
-   홍비서 PRO 수술비 사전 — app
+   보험비서 수술비 사전 — app
    데이터는 AES-256-GCM + PBKDF2 로 암호화되어 있으며,
    비밀번호 없이는 원본 JSON을 열 수 없습니다.
    ══════════════════════════════════════════════════════════ */
@@ -12,9 +12,69 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<'
 const norm = (s) => String(s || '').replace(/[\s·,.\-()\[\]{}'"`~!@#$%^&*_+=|\\/:;?<>]/g, '').toLowerCase();
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
+/* ───────────────────────── 수술코드(EDI 수가코드) ↔ 질병/종수 매핑 ───────────────────────── */
+const EDI_CODE_MAP = {
+  // 대장·직장
+  'Q7701': { codes: ['K63.5', 'D12'], name: '결장경하 폴립절제술', tier: '2종 (개정약관 1종)' },
+  'Q7702': { codes: ['K63.5', 'D12'], name: '결장경하 종양절제술', tier: '2~3종' },
+  'Q7703': { codes: ['K63.5', 'D12'], name: '내시경적 대장 점막절제술(EMR)', tier: '2~3종' },
+  'Q7704': { codes: ['K63.5', 'D12'], name: '내시경적 대장 점막하박리술(ESD)', tier: '2~3종' },
+  'Q7691': { codes: ['K62.1'], name: '에스결장경하 폴립절제술', tier: '2종' },
+  // 위·십이지장
+  'Q7651': { codes: ['K31.7', 'D13.1'], name: '위내시경하 폴립절제술', tier: '2종' },
+  'Q7652': { codes: ['K31.7', 'D13.1'], name: '위내시경하 종양절제술(EMR)', tier: '2~3종' },
+  'Q7653': { codes: ['K31.7', 'D13.1'], name: '위내시경하 점막하박리술(ESD)', tier: '2~3종' },
+  // 이비인후과
+  'O1421': { codes: ['J34.2', 'J34'], name: '비중격교정술(점막하절제술)', tier: '3종' },
+  'O1422': { codes: ['J34.2'], name: '비중격성형술', tier: '3종' },
+  'O1431': { codes: ['J34.3', 'J30'], name: '점막하하비갑개절제술', tier: '1~2종' },
+  'O1432': { codes: ['J34.3', 'J30'], name: '하비갑개소작술·절제술', tier: '1~2종' },
+  'O1411': { codes: ['J32', 'J33'], name: '내시경적 부비동수술(FESS-단측)', tier: '3종' },
+  'O1412': { codes: ['J32', 'J33'], name: '내시경적 부비동수술(FESS-양측)', tier: '3종' },
+  'O2111': { codes: ['J35.0', 'J35'], name: '편도적출술', tier: '3종' },
+  'O2112': { codes: ['J35.2'], name: '아데노이드절제술', tier: '2~3종' },
+  // 안과
+  'S5111': { codes: ['H25', 'H26'], name: '수정체유화술 및 인공수정체삽입술(단안)', tier: '2종' },
+  'S5112': { codes: ['H25', 'H26'], name: '수정체유화술 및 인공수정체삽입술(양안)', tier: '2종' },
+  'S5119': { codes: ['H25'], name: '낭외적출술 및 인공수정체삽입술', tier: '2~3종' },
+  // 항문외과
+  'Q2761': { codes: ['K64'], name: '치핵절제술(근본수술)', tier: '3종' },
+  'Q2762': { codes: ['K64'], name: '치핵결찰술', tier: '1~2종' },
+  'Q2781': { codes: ['K60'], name: '치루근본수술', tier: '3종' },
+  // 일반외과
+  'Q7211': { codes: ['K80', 'K81'], name: '복강경하 담낭절제술', tier: '3종' },
+  'Q7212': { codes: ['K80'], name: '개복 담낭절제술', tier: '3종' },
+  'Q2861': { codes: ['K35', 'K37'], name: '충수절제술(복강경)', tier: '3종' },
+  'Q2862': { codes: ['K35'], name: '충수절제술(개복)', tier: '3종' },
+  'Q2911': { codes: ['K40'], name: '서혜부탈장교정술(단측)', tier: '3종' },
+  'Q2912': { codes: ['K40'], name: '서혜부탈장교정술(양측)', tier: '3종' },
+  // 정형외과
+  'N0281': { codes: ['M17'], name: '인공관절 전치환술(슬관절-단측)', tier: '4종' },
+  'N0282': { codes: ['M17'], name: '인공관절 전치환술(슬관절-양측)', tier: '4종' },
+  'N0283': { codes: ['M16'], name: '인공관절 전치환술(고관절-단측)', tier: '4종' },
+  'N0936': { codes: ['M75.1'], name: '관절경하 회전근개봉합술', tier: '3종' },
+  'N0937': { codes: ['M75'], name: '관절경하 견봉성형술', tier: '3종' },
+  // 산부인과
+  'R4121': { codes: ['D25'], name: '자궁근종절제술(복강경)', tier: '3종' },
+  'R4122': { codes: ['D25'], name: '자궁근종절제술(개복)', tier: '3종' },
+  'R4331': { codes: ['O82'], name: '제왕절개만출술', tier: '3~4종' },
+  // 순환기내과
+  'M6551': { codes: ['I20', 'I21'], name: '경피적 관상동맥스텐트삽입술(1혈관)', tier: '3~4종' },
+  'M6552': { codes: ['I20', 'I21'], name: '경피적 관상동맥스텐트삽입술(2혈관이상)', tier: '3~4종' },
+  // 비뇨의학과
+  'R3421': { codes: ['N40'], name: '경요도 전립선절제술(TURP)', tier: '3종' },
+  'R3221': { codes: ['N20'], name: '체외충격파쇄석술(ESWL)', tier: '비해당(시술) 다수' }
+};
+
 const state = {
-  D: null, E: null, X: null, B: null, M: null,
-  tab: 'search', q: '', tier: 0, ndaOnly: false, expanded: new Set(), cache: new Map(),
+  D: null, E: null, X: null, B: null,
+  tab: 'quick',       // 'quick' | 'detailed' | 'riders' | 'about'
+  quickQ: '',
+  detailedQ: '',
+  dPeriod: 'all',     // 'all' | 'std' | 'recent' | 'old'
+  dCo: '',            // '' (all) or company name
+  dMode: 'all',       // 'all' | 'tier' | 'ndai'
+  ridersCo: '',
 };
 
 /* ───────────────────────── 테마 ───────────────────────── */
@@ -35,7 +95,12 @@ function applyTheme(t) {
 /* ───────────────────────── 토스트 ───────────────────────── */
 let toastTimer;
 function toast(msg, ok = true) {
-  const el = $('#toast');
+  let el = $('#toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'toast'; el.className = 'toast';
+    document.body.appendChild(el);
+  }
   el.innerHTML = (ok ? '<span class="tick"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#0B3D2E" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></svg></span>' : '') + '<span>' + esc(msg) + '</span>';
   el.classList.add('show');
   clearTimeout(toastTimer);
@@ -44,7 +109,6 @@ function toast(msg, ok = true) {
 
 /* ───────────────────────── 암호화 데이터 로드 ───────────────────────── */
 const b64ToBytes = (b64) => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-const bytesToB64 = (u8) => btoa(String.fromCharCode(...u8));
 
 async function deriveKey(pw, saltB64, iter) {
   const enc = new TextEncoder();
@@ -80,71 +144,57 @@ async function decryptFile(key, file) {
   if (String.fromCharCode(...buf.slice(0, 4)) !== 'HBS1') throw new Error('BAD_MAGIC');
   const iv = buf.slice(4, 16);
   const ct = buf.slice(16);
-  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct); // 비밀번호 오류 시 throw
-  const inflated = await gunzip(plain);
-  return JSON.parse(new TextDecoder().decode(inflated));
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+  const decomp = await gunzip(plain);
+  return JSON.parse(new TextDecoder().decode(decomp));
 }
 
-async function unlockWithKey(key) {
-  const m = state.M;
-  const [diseases, edi, exc, bunri] = await Promise.all(
-    m.files.map(f => decryptFile(key, f.f))
-  );
-  return { diseases, edi, exc, bunri };
+async function loadAll(pw) {
+  const metaRes = await fetch('assets/data/meta.json', { cache: 'no-store' });
+  if (!metaRes.ok) throw new Error('메타데이터 로드 실패');
+  const meta = await metaRes.json();
+  const key = await deriveKey(pw, meta.salt, meta.iter);
+
+  const [diseases, edi, exc, bunri] = await Promise.all([
+    decryptFile(key, meta.files.diseases),
+    decryptFile(key, meta.files.edi),
+    decryptFile(key, meta.files.exc),
+    decryptFile(key, meta.files.bunri),
+  ]);
+  return { diseases, edi, exc, bunri, meta };
 }
 
-/* ───────────────────────── 부트스트랩 ───────────────────────── */
-(async function boot() {
+/* ───────────────────────── 로그인/잠금 ───────────────────────── */
+const pwEl = $('#pw');
+const lockBtn = $('#unlockBtn');
+function setLockBusy(b) {
+  lockBtn.disabled = b;
+  lockBtn.querySelector('span').textContent = b ? '데이터 복호화 중…' : '잠금 해제';
+}
+
+(async function trySavedPw() {
+  let pw = null;
+  try { pw = sessionStorage.getItem('hb.k'); } catch (_) {}
+  if (!pw) return;
+  setLockBusy(true);
   try {
-    const r = await fetch('assets/data/manifest.json', { cache: 'no-store' });
-    state.M = await r.json();
-  } catch (e) {
-    $('#pwErr').textContent = '데이터 매니페스트를 불러오지 못했습니다. 웹서버 주소로 접속해 주세요.';
-    $('#pwErr').classList.add('show');
-    return;
-  }
-
-  const saved = (() => { try { return sessionStorage.getItem('hb.k'); } catch (_) { return null; } })();
-  if (saved) {
-    try {
-      setLockBusy(true, '세션 복원 중');
-      const raw = b64ToBytes(saved);
-      const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, true, ['decrypt']);
-      const data = await unlockWithKey(key);
-      start(data);
-      return;
-    } catch (_) {
-      try { sessionStorage.removeItem('hb.k'); } catch (_) {}
-      setLockBusy(false);
-    }
+    const data = await loadAll(pw);
+    start(data);
+  } catch (err) {
+    sessionStorage.removeItem('hb.k');
+    setLockBusy(false);
   }
 })();
 
-const LOCK_BTN_HTML = $('#unlockBtn').innerHTML;
-function setLockBusy(busy, label) {
-  const b = $('#unlockBtn');
-  b.disabled = busy;
-  b.innerHTML = busy
-    ? '<span class="spin"></span><span>' + esc(label || '잠금 해제 중') + '…</span>'
-    : LOCK_BTN_HTML;
-}
-
 $('#lockForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const pwEl = $('#pw');
-  const pw = pwEl.value;
+  const pw = pwEl.value.trim();
   if (!pw) { pwEl.focus(); return; }
+  setLockBusy(true);
   $('#pwErr').classList.remove('show');
-  setLockBusy(true, '잠금 해제 중');
-  await new Promise(r => setTimeout(r, 30));
   try {
-    const key = await deriveKey(pw, state.M.salt, state.M.iter);
-    const data = await unlockWithKey(key);
-    try {
-      const jwk = await crypto.subtle.exportKey('raw', key);
-      sessionStorage.setItem('hb.k', bytesToB64(new Uint8Array(jwk)));
-    } catch (_) {}
-    $('#lock').style.transition = 'opacity .45s ease, transform .45s ease';
+    const data = await loadAll(pw);
+    try { sessionStorage.setItem('hb.k', pw); } catch (_) {}
     start(data);
   } catch (err) {
     setLockBusy(false);
@@ -176,14 +226,13 @@ function start(data) {
   $('#lock').hidden = true;
   $('#app').hidden = false;
   document.body.style.overflow = '';
-  renderChips();
-  renderQuickStats();
-  renderBunri();
+  bindDetailedFilterChips();
   renderRiders();
   renderAbout();
-  renderIdle();
+  renderIdleQuick();
+  renderIdleDetailed();
   syncHeaderHeight();
-  $('#q').focus({ preventScroll: true });
+  $('#q-quick').focus({ preventScroll: true });
 }
 
 function syncHeaderHeight() {
@@ -203,7 +252,7 @@ function toCho(s) {
   return out;
 }
 
-const idx = { name: [], nameLoose: [], edi: [], ediSurg: [], syn: [] };
+const idx = { name: [], edi: [], ediSurg: [], syn: [] };
 function buildIndices() {
   const G = state.D.g;
   G.forEach((g, i) => {
@@ -212,36 +261,93 @@ function buildIndices() {
   });
   (state.E.rows || []).forEach((r, i) => {
     const nn = norm(r[1] + ' ' + (r[4] || ''));
-    const rec = { i, nn };
+    const rec = { i, c: (r[0] || '').toUpperCase(), nn, n: r[1] };
     idx.edi.push(rec);
     if (r[2] === 'S') idx.ediSurg.push(rec);
   });
   idx.syn = (window.CURATED?.synonyms || []).map(s => ({ ...s, nq: norm(s.k), keys: s.q.map(norm) }));
 }
 
-/* ───────────────────────── 검색 ───────────────────────── */
-const MAX_NAME = 60, MAX_EDI = 40;
+/* ───────────────────────── 정밀 진단용 필터 칩 바인딩 ───────────────────────── */
+function bindDetailedFilterChips() {
+  $$('#dPeriodChips .f-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('#dPeriodChips .f-chip').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      state.dPeriod = btn.dataset.period;
+      if (state.detailedQ.trim()) runDetailedSearch(state.detailedQ);
+    });
+  });
 
-function search(qraw) {
-  const q = qraw.trim();
+  $$('#dCompanyChips .f-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('#dCompanyChips .f-chip').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      state.dCo = btn.dataset.co;
+      if (state.detailedQ.trim()) runDetailedSearch(state.detailedQ);
+    });
+  });
+
+  $$('#dRiderModeChips .f-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $$('#dRiderModeChips .f-chip').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      state.dMode = btn.dataset.mode;
+      if (state.detailedQ.trim()) runDetailedSearch(state.detailedQ);
+    });
+  });
+}
+
+/* ───────────────────────── 검색 엔진 (공통) ───────────────────────── */
+const MAX_NAME = 12;
+const MAX_EDI  = 8;
+
+function search(rawQ) {
+  const q = rawQ.trim();
+  if (!q) return null;
   const nq = norm(q);
-  if (!nq) return null;
+  const up = q.replace(/\s+/g, '').toUpperCase();
   const scores = new Map();
   const add = (i, s) => { if (!scores.has(i) || scores.get(i) > s) scores.set(i, s); };
 
-  const up = q.replace(/\s+/g, '').toUpperCase();
-  const looksCode = /^[A-Z]/.test(up) && /\d/.test(up);
+  let matchedEdi = null;
 
-  if (looksCode) {
-    (state.D.codeIndex[up] || []).forEach(i => add(i, 0));
-    for (const code in state.D.codeIndex) {
-      if (code !== up && code.startsWith(up)) state.D.codeIndex[code].forEach(i => add(i, 1));
+  // 1. 수술코드(EDI 코드) 직접 매칭 (예: Q7701, O1421, S5111 등)
+  const looksEdi = /^[A-Z]\d{4}/.test(up);
+  if (looksEdi) {
+    if (EDI_CODE_MAP[up]) {
+      const em = EDI_CODE_MAP[up];
+      matchedEdi = { code: up, name: em.name, tier: em.tier };
+      em.codes.forEach(targetCode => {
+        for (const code in state.D.codeIndex) {
+          if (code === targetCode || code.startsWith(targetCode)) {
+            state.D.codeIndex[code].forEach(i => add(i, 0));
+          }
+        }
+      });
+    } else {
+      const foundEdi = idx.edi.find(r => r.c.startsWith(up));
+      if (foundEdi) {
+        matchedEdi = { code: foundEdi.c, name: foundEdi.n };
+        const ediNorm = norm(foundEdi.n);
+        idx.name.forEach(({ i, nn }) => {
+          if (ediNorm.includes(nn) || nn.includes(ediNorm.slice(0, 4))) add(i, 0.2);
+        });
+      }
     }
-    // 코드가 질병명 안에 포함된 경우(범위 표기)
-    state.D.g.forEach((g, i) => { if (g.c.some(c => c.replace(/\s/g, '').toUpperCase().includes(up))) add(i, 2); });
   }
 
-  // 1. 별칭(syn) 정밀 매칭 (완전일치 우선, 이후 부분일치)
+  // 2. KCD 질병코드 매칭
+  const looksKcd = /^[A-Z]\d/.test(up);
+  if (looksKcd) {
+    (state.D.codeIndex[up] || []).forEach(i => add(i, 0));
+    for (const code in state.D.codeIndex) {
+      if (code !== up && code.startsWith(up)) state.D.codeIndex[code].forEach(i => add(i, 0.8));
+    }
+    state.D.g.forEach((g, i) => { if (g.c.some(c => c.replace(/\s/g, '').toUpperCase().includes(up))) add(i, 1.5); });
+  }
+
+  // 3. 별칭(synonyms) 정밀 매칭
   const synExact = idx.syn.find(s => s.keys.some(k => k === nq) || nq === s.nq);
   const synFuzzy = synExact || idx.syn.find(s => s.keys.some(k => k.includes(nq) || nq.includes(k)) || nq.includes(s.nq) || s.nq.includes(nq));
   const syn = synExact || synFuzzy;
@@ -251,48 +357,30 @@ function search(qraw) {
     targets.forEach((cp, rank) => {
       for (const code in state.D.codeIndex) {
         if (code === cp || code.startsWith(cp)) {
-          state.D.codeIndex[code].forEach(i => add(i, 0.5 + rank * 0.05));
+          state.D.codeIndex[code].forEach(i => add(i, 0.4 + rank * 0.05));
         }
       }
     });
   }
 
+  // 4. 질병명 텍스트 매칭
   const isCho = /^[ㄱ-ㅎ]+$/.test(nq);
   idx.name.forEach(({ i, nn, ch }) => {
     if (isCho) {
       if (ch === nq) add(i, 4);
       else if (ch.startsWith(nq)) add(i, 5);
-      else if (ch.includes(nq)) add(i, 6);
       return;
     }
     if (nn === nq) add(i, 1);
-    else if (nn.startsWith(nq)) add(i, 3);
+    else if (nn.startsWith(nq)) add(i, 2.5);
     else if (nn.includes(nq)) add(i, 4);
   });
 
-  // 별칭(실무 용어)의 핵심어가 질병명에 있으면 우선
-  // 장기 불일치 배제 (예: 대장/결장 검색 시 위/십이지장/자궁 등 배제)
-  if (syn) {
-    const terms = [...new Set([syn.k, ...syn.q])].map(norm).filter(t => t.length >= 2);
-    const organMismatch = (name) => {
-      if ((nq.includes('대장') || nq.includes('결장') || nq.includes('직장')) &&
-          (name.includes('위') || name.includes('십이지장') || name.includes('담낭') || name.includes('자궁'))) return true;
-      if ((nq.includes('위') || nq.includes('십이지장')) &&
-          (name.includes('대장') || name.includes('결장') || name.includes('직장') || name.includes('자궁'))) return true;
-      return false;
-    };
-
-    idx.name.forEach(({ i, nn }) => {
-      if (organMismatch(nn)) return;
-      if (terms.some(t => nn.includes(t))) add(i, 6);
-    });
-  }
-
-  // 만약 고신뢰도 결과(score < 3)가 이미 있다면, 노이즈(score >= 3.5)는 제거하여 정확한 결과만 노출!
+  // 고신뢰도 결과(score < 2.5)가 있으면 노이즈 제거
   let giEntries = [...scores.entries()];
-  const hasHighConf = giEntries.some(([_, s]) => s < 3);
+  const hasHighConf = giEntries.some(([_, s]) => s < 2.5);
   if (hasHighConf) {
-    giEntries = giEntries.filter(([_, s]) => s < 3.5);
+    giEntries = giEntries.filter(([_, s]) => s < 3.2);
   }
 
   const mainPrefixes = syn ? (syn.main || syn.codes.slice(0, 4)) : [];
@@ -302,178 +390,182 @@ function search(qraw) {
     .slice(0, MAX_NAME);
 
   const ediHits = [];
+  if (matchedEdi) {
+    for (const r of idx.edi) {
+      if (r.c.startsWith(matchedEdi.code)) ediHits.push(r.i);
+    }
+  }
   for (const r of idx.edi) {
-    if (r.nn.includes(nq)) {
+    if (r.nn.includes(nq) && !ediHits.includes(r.i)) {
       ediHits.push(r.i);
       if (ediHits.length >= MAX_EDI * 2) break;
     }
   }
-  // 코드로만 검색된 경우, 해당 질환의 대표 수술로 수가 보강 (예: J34 → 비중격교정술)
-  if (!ediHits.length && gi.length) {
-    relatedEdi(state.D.g[gi[0][0]], 12).forEach(h => ediHits.push(h.i));
-  }
-  // 별칭 검색어로 수가 보강 (예: 대장용종 → 용종절제술)
-  if (syn && ediHits.length < 5) {
-    const terms = [...new Set([...syn.q, syn.k])].map(norm).filter(t => t.length >= 2).sort((a, b) => b.length - a.length);
-    for (const t of terms) {
-      for (const r of idx.edi) {
-        if (r.nn.includes(t) && !ediHits.includes(r.i)) ediHits.push(r.i);
-      }
-      if (ediHits.length >= 20) break;
-    }
-  }
-  ediHits.sort((a, b) => (state.E.rows[b][2] === 'S') - (state.E.rows[a][2] === 'S'));
 
-  return { groups: gi.map(([i]) => i), edi: ediHits.slice(0, MAX_EDI), syn, q };
+  return { groups: gi.map(([i]) => i), edi: ediHits.slice(0, MAX_EDI), syn, q, matchedEdi };
 }
 
-/* ───────────────────────── 칩 / 통계 ───────────────────────── */
-const CHIP_TERMS = ['대장용종', '백내장', '비중격', '협심증', '인공관절', '치핵', '담낭', '편도', '자궁근종', '회전근개'];
-function renderChips() {
-  $('#chips').innerHTML = CHIP_TERMS.map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('');
-  $$('#chips .chip').forEach(b => b.addEventListener('click', () => {
-    $('#q').value = b.dataset.q;
-    $('#q').dispatchEvent(new Event('input'));
-    $('#q').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  }));
-}
-
-function renderQuickStats() {
-  const el = $('#quickstats');
-  if (!el) return;
-  const s = state.D.g.length, r = state.D.riders.length, e = state.E.rows.length;
-  el.innerHTML = `
-    <span class="qstat"><b>${r}</b>개 약관</span>
-    <span class="qstat"><b>${s.toLocaleString()}</b>개 질병분류</span>
-    <span class="qstat"><b>${e.toLocaleString()}</b>개 수가코드</span>
-    <span class="qstat">기준 <b>${esc(state.D.asOf || '2026.11')}</b></span>`;
-}
-
-/* ───────────────────────── 검색 입력 ───────────────────────── */
-const qEl = $('#q');
-qEl.addEventListener('input', debounce(() => {
-  const v = qEl.value;
-  state.q = v;
-  $('#clearBtn').hidden = !v;
-  if (!v.trim()) { renderIdle(); return; }
-  runSearch(v);
+/* ───────────────────────── 1. 빠른 검색 핸들러 ───────────────────────── */
+const qQuickEl = $('#q-quick');
+qQuickEl.addEventListener('input', debounce(() => {
+  const v = qQuickEl.value;
+  state.quickQ = v;
+  $('#clearBtn-quick').hidden = !v;
+  if (!v.trim()) { renderIdleQuick(); return; }
+  runQuickSearch(v);
 }, 70));
-$('#clearBtn').addEventListener('click', () => {
-  qEl.value = ''; state.q = ''; $('#clearBtn').hidden = true; renderIdle(); qEl.focus();
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === '/' && document.activeElement !== qEl && !$('#app').hidden) { e.preventDefault(); qEl.focus(); qEl.select(); }
-  if (e.key === 'Escape' && document.activeElement === qEl) { qEl.value = ''; $('#clearBtn').hidden = true; renderIdle(); }
+
+$('#clearBtn-quick').addEventListener('click', () => {
+  qQuickEl.value = ''; state.quickQ = ''; $('#clearBtn-quick').hidden = true; renderIdleQuick(); qQuickEl.focus();
 });
 
-function runSearch(q) {
-  $('#hero').classList.add('hide');
-  $$('#chips .chip').forEach(c => c.classList.toggle('on', c.dataset.q === q.trim()));
+function runQuickSearch(q) {
+  $('#hero-quick').classList.add('hide');
   const res = search(q);
-  const box = $('#results');
-  if (!res) { renderIdle(); return; }
-
-  const tierCount = {};
-  const pool = res.groups;
-  const filtered = pool.filter(i => {
-    const g = state.D.g[i];
-    const t = g['5'] ? (g['5'].c === 'low' ? 0 : g['5'].t) : 0;
-    if (state.tier && t !== state.tier) return false;
-    if (state.ndaOnly && !g.m.length) return false;
-    return true;
-  });
-
-  const SEARCH_COS = ['현대해상', '삼성화재', 'DB손해보험', 'KB손해보험', '메리츠화재', '한화손해보험', '흥국화재', '롯데손해보험', 'NH농협손해보험', '삼성생명', '한화생명', '교보생명'];
-  const curSco = state.searchCo || '';
+  const box = $('#results-quick');
+  if (!res) { renderIdleQuick(); return; }
 
   const head = `
     <div class="res-head">
-      <div class="res-title"><em>${esc(q)}</em> 검색 결과</div>
-      <div class="res-count">분류 ${filtered.length}건 · 수가 ${res.edi.length}건</div>
-    </div>
-    <div class="filters">
-      <button class="f-chip ${state.tier === 0 ? 'on' : ''}" data-tier="0">전체 종수</button>
-      ${[1, 2, 3, 4, 5].map(n => `<button class="f-chip ${state.tier === n ? 'on' : ''}" data-tier="${n}">${n}종</button>`).join('')}
-      <button class="f-chip ${state.ndaOnly ? 'on' : ''}" data-nda="1">N대 해당</button>
-    </div>
-    <div class="co-filters" style="margin-top:7px;display:flex;align-items:center;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:3px;">
-      <span style="font-size:11.5px;font-weight:700;color:var(--text-3);white-space:nowrap;padding-right:2px;">🏢 가입회사:</span>
-      <button class="f-chip ${!curSco ? 'on' : ''}" data-sco="" style="font-size:11.5px;padding:4px 9px;">전체</button>
-      ${SEARCH_COS.map(co => `<button class="f-chip ${curSco === co ? 'on' : ''}" data-sco="${esc(co)}" style="font-size:11.5px;padding:4px 9px;">${esc(co.replace(/손해보험|화재|생명/, ''))}</button>`).join('')}
+      <div class="res-title"><em>${esc(q)}</em> 빠른 판정 결과</div>
+      <div class="res-count">분류 ${res.groups.length}건</div>
     </div>`;
 
-  if (!filtered.length && !res.edi.length) {
+  if (!res.groups.length && !res.edi.length) {
     box.innerHTML = head + `
       <div class="empty">
         <span class="empty-emoji">🔍</span>
         <h3>“${esc(q)}”에 대한 결과가 없습니다</h3>
-        <p>질병코드(J34, K63…) · 질병명(용종, 백내장…) ·<br>수술명(절제술, 성형술…)으로 다시 검색해 보세요.</p>
-        <div class="sugg">${CHIP_TERMS.slice(0, 6).map(t => `<button class="chip" data-q="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+        <p>질병코드(K63, J34) · 수술코드(Q7701, O1421) · 질병명(대장용종)으로 다시 검색해 보세요.</p>
       </div>`;
-    bindResultEvents(box);
     return;
   }
 
   let html = head;
-
-  if (res.syn && !filtered.length) {
-    html += `<div class="panel" style="margin:6px 0;padding:14px 16px"><p style="font-size:12.5px">‘${esc(res.syn.k)}’ 로 묶어서 찾은 결과입니다.</p></div>`;
-  }
-
-  html += filtered.slice(0, 20).map(i => cardHTML(i, q)).join('');
-
-  if (res.edi.length) {
-    html += `<div class="res-head" style="margin-top:10px"><div class="res-title">수가코드(EDI) <em>${res.edi.length}</em></div></div>`;
-    html += `<div class="card" style="padding:6px 4px"><div style="padding:0 16px">${res.edi.slice(0, 12).map(i => ediRowHTML(i)).join('')}</div></div>`;
-  }
+  html += res.groups.slice(0, 15).map(i => cardQuickHTML(i, q, res.matchedEdi)).join('');
 
   box.innerHTML = html;
-  bindResultEvents(box);
+  bindCardActions(box);
 }
 
-function bindResultEvents(box) {
-  $$('.chip[data-q]', box).forEach(b => b.addEventListener('click', () => {
-    qEl.value = b.dataset.q; $('#clearBtn').hidden = false;
-    state.q = b.dataset.q; runSearch(b.dataset.q);
+function renderIdleQuick() {
+  $('#hero-quick').classList.remove('hide');
+  const box = $('#results-quick');
+  box.innerHTML = `
+    <div class="res-head"><div class="res-title">자주 찾는 수술</div><div class="res-count">탭하면 1초 판정</div></div>
+    <div class="card" style="padding:14px 18px 4px">
+      ${(window.CURATED?.synonyms || []).slice(0, 8).map(s => `
+        <div class="rider-row" data-q="${esc(s.q[0])}" style="cursor:pointer">
+          <div class="rider-main"><div class="rider-name">${esc(s.k)}</div><div class="rider-meta">${esc(s.q.slice(0, 3).join(' · '))}</div></div>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--text-3)" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6 6-6"/></svg>
+        </div>`).join('')}
+    </div>
+    <p class="disclaim">질병코드(J34, K63) · 수술코드(Q7701, O1421) · 질병명(대장용종, 백내장) 무엇이든 입력하세요.</p>`;
+
+  $$('#results-quick .rider-row[data-q]').forEach(r => r.addEventListener('click', () => {
+    qQuickEl.value = r.dataset.q; $('#clearBtn-quick').hidden = false; state.quickQ = r.dataset.q;
+    runQuickSearch(r.dataset.q);
   }));
-  $$('.f-chip[data-sco]', box).forEach(b => b.addEventListener('click', () => {
-    state.searchCo = b.dataset.sco;
-    runSearch(state.q);
-  }));
-  $$('.f-chip', box).forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.sco !== undefined) return;
-    if (b.dataset.nda) { state.ndaOnly = !state.ndaOnly; }
-    else { state.tier = +b.dataset.tier; }
-    runSearch(state.q);
-  }));
-  $$('.card[data-gi]', box).forEach(card => {
-    const gi = +card.dataset.gi;
-    card.querySelector('.card-head').addEventListener('click', () => openCard(card, gi));
-    card.querySelector('.card-toggle').addEventListener('click', (e) => { e.stopPropagation(); openCard(card, gi); });
-    card.querySelector('.btn-copy').addEventListener('click', (e) => { e.stopPropagation(); copyCard(gi); });
+}
+
+/* ───────────────────────── 2. 정밀 증권 진단 핸들러 ───────────────────────── */
+const qDetailedEl = $('#q-detailed');
+qDetailedEl.addEventListener('input', debounce(() => {
+  const v = qDetailedEl.value;
+  state.detailedQ = v;
+  $('#clearBtn-detailed').hidden = !v;
+  if (!v.trim()) { renderIdleDetailed(); return; }
+  runDetailedSearch(v);
+}, 70));
+
+$('#clearBtn-detailed').addEventListener('click', () => {
+  qDetailedEl.value = ''; state.detailedQ = ''; $('#clearBtn-detailed').hidden = true; renderIdleDetailed(); qDetailedEl.focus();
+});
+
+function runDetailedSearch(q) {
+  $('#hero-detailed').classList.add('hide');
+  const res = search(q);
+  const box = $('#results-detailed');
+  if (!res) { renderIdleDetailed(); return; }
+
+  const head = `
+    <div class="res-head">
+      <div class="res-title"><em>${esc(q)}</em> 증권 정밀 진단 결과</div>
+      <div class="res-count">분류 ${res.groups.length}건</div>
+    </div>`;
+
+  if (!res.groups.length && !res.edi.length) {
+    box.innerHTML = head + `
+      <div class="empty">
+        <span class="empty-emoji">🔍</span>
+        <h3>“${esc(q)}”에 대한 결과가 없습니다</h3>
+        <p>질병코드 · 수술코드 · 질병명으로 다시 검색해 보세요.</p>
+      </div>`;
+    return;
+  }
+
+  let html = head;
+  html += res.groups.slice(0, 15).map(i => cardDetailedHTML(i, q, res.matchedEdi)).join('');
+
+  box.innerHTML = html;
+  bindCardActions(box);
+}
+
+function renderIdleDetailed() {
+  $('#hero-detailed').classList.remove('hide');
+  const box = $('#results-detailed');
+  box.innerHTML = `
+    <div class="panel" style="padding:16px 18px;margin-top:12px;">
+      <h3 style="font-size:14px;margin-bottom:6px;"><span class="sec-dot"></span>증권 맞춤 진단 방법</h3>
+      <p style="font-size:12.5px;color:var(--text-2);line-height:1.55;">
+        1. 상단에서 고객의 <b>가입시기(약관 세대)</b>와 <b>보험사</b>를 선택하세요.<br>
+        2. 수술명이나 질병코드(K63.5, Q7701)를 검색창에 입력하세요.<br>
+        3. 해당 증권 조건에 맞춰 <b>종수술비 몇 종</b>인지와 <b>N대 수술비 담보군</b>이 100% 확정 계산됩니다.
+      </p>
+    </div>`;
+}
+
+/* ───────────────────────── 카드 액션 공통 바인딩 ───────────────────────── */
+function bindCardActions(box) {
+  $$('.card-toggle', box).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card');
+      const gi = Number(card.dataset.gi);
+      const isOpen = card.classList.toggle('open');
+      btn.querySelector('span') && (btn.querySelector('span').textContent = isOpen ? '세부사항 접기' : '세부사항 펼치기 (근거 · 수가)');
+      if (isOpen && !card.dataset.rendered) {
+        card.querySelector('.cb-pad').innerHTML = detailHTML(gi);
+        card.dataset.rendered = '1';
+      }
+    });
+  });
+
+  $$('.btn-copy', box).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card');
+      copyCard(Number(card.dataset.gi));
+    });
+  });
+
+  $$('.btn-goto-detailed', box).forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetQ = btn.dataset.q;
+      switchTab('detailed');
+      qDetailedEl.value = targetQ;
+      $('#clearBtn-detailed').hidden = false;
+      state.detailedQ = targetQ;
+      runDetailedSearch(targetQ);
+    });
   });
 }
 
-function openCard(card, gi) {
-  card.classList.toggle('open');
-  const t = card.querySelector('.card-toggle');
-  const open = card.classList.contains('open');
-  t.innerHTML = open
-    ? '접기 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
-    : '상세 보기 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
-  if (open && !card.dataset.filled) {
-    card.querySelector('.cb-pad').innerHTML = detailHTML(gi);
-    card.dataset.filled = '1';
-    bindDetail(card, gi);
-  }
-}
-
-/* ───────────────────────── 카드 ───────────────────────── */
+/* ───────────────────────── 1. 빠른 검색용 카드 HTML ───────────────────────── */
 function tierOf(g) {
-  const t = g['5'] || { t: 2, t2: 3, w: '', c: 'low' };
-  return t;
+  return g['5'] || { t: 0, c: 'low', w: '약관 분류표 확인 필요' };
 }
-function tierLabel(t) { return t.t === t.t2 ? `${t.t}종` : `${t.t}~${t.t2}종`; }
+function tierLabel(t) {
+  return t.t ? `${t.t}종` : '확인 필요';
+}
 
 function matchInfo(g) {
   const riders = state.D.riders;
@@ -498,28 +590,220 @@ function shortRider(r) {
   return s.length > 34 ? s.slice(0, 34) + '…' : s;
 }
 
-function cardHTML(gi, q) {
+function curatedFor(g, table) {
+  if (!table) return null;
+  for (const code of g.c) {
+    const full = code.replace(/[†*+]/g, '').toUpperCase();
+    const bare = full.split('~')[0];
+    for (const c of [full, bare]) {
+      if (table[c]) return { key: c, val: table[c] };
+      for (const k in table) { if (c.startsWith(k)) return { key: k, val: table[k] }; }
+    }
+  }
+  return null;
+}
+
+function cardQuickHTML(gi, q, matchedEdi) {
+  const g = state.D.g[gi];
+  const t = tierOf(g);
+  const procs = curatedFor(g, window.CURATED?.procs);
+  const ex = curatedFor(g, window.CURATED?.exceptions);
+
+  let ediBanner = '';
+  if (matchedEdi) {
+    ediBanner = `
+      <div style="background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:10px;padding:8px 12px;margin:8px 0;font-size:12px;">
+        <span style="font-weight:800;color:var(--brand)">✓ 수술코드 [${esc(matchedEdi.code)}] ${esc(matchedEdi.name)} 매칭</span>
+      </div>`;
+  }
+
+  // 메인 표준 종수 답변 (크고 선명하게!)
+  let mainTierBadge = ex ? ex.val.stdTier : tierLabel(t);
+  let mainTierTitle = ex ? ex.val.stdTitle : (procs ? procs.val[0].s : g.n + ' 관련 수술');
+  let mainTierDesc  = ex ? ex.val.stdDesc : '생명보험 및 2020년 이전 손해보험 표준약관 기준';
+
+  let exceptionBlock = '';
+  if (ex) {
+    exceptionBlock = `
+      <div style="margin-top:10px;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.3);border-radius:11px;padding:10px 13px;">
+        <div style="font-size:12.5px;font-weight:850;color:#d97706;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+          <span class="proc-tag t1" style="font-size:11px;padding:2px 7px;border-radius:6px;">${esc(ex.val.exTier)}</span>
+          <span>${esc(ex.val.exTitle)}</span>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-2);line-height:1.45;">
+          ${esc(ex.val.exDesc)}
+        </div>
+      </div>`;
+  }
+
+  // 기타 수술 방식 (복강경, 개복, ESD 등)
+  let otherProcsHTML = '';
+  if (procs && procs.val.length > 1) {
+    const others = procs.val.slice(1);
+    otherProcsHTML = `
+      <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:6px;">
+        <div style="font-size:11px;font-weight:750;color:var(--text-3);margin-bottom:1px;">기타 수술 방식별 종수:</div>
+        ${others.map(p => {
+          const num = parseInt(p.t) || 3;
+          const tagClass = 't' + Math.min(5, Math.max(1, num));
+          return `
+            <div class="proc-row">
+              <span class="proc-tag ${tagClass}">${esc(p.t)}</span>
+              <span class="proc-text">${esc(p.s)}</span>
+              ${p.note ? `<span class="proc-note">${esc(p.note)}</span>` : ''}
+            </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  return `
+  <article class="card" data-gi="${gi}">
+    <div class="card-head">
+      <div class="card-top">
+        <div>
+          <h3 class="card-name">${hl(g.n, q)}</h3>
+          <div class="card-codes">${g.c.slice(0, 8).map(c => `<span class="code-pill">${esc(c)}</span>`).join('')}</div>
+        </div>
+      </div>
+
+      ${ediBanner}
+
+      <!-- 빠른 판정 메인 박스 (결과는 간결하게 크게!) -->
+      <div class="result-highlight-box">
+        <div class="res-box-header">
+          <span class="res-tag">1~5종 수술비 표준 판정</span>
+          <span class="res-period-badge">표준 약관 기준</span>
+        </div>
+        
+        <div style="display:flex;align-items:center;gap:12px;margin:4px 0 6px;">
+          <span class="proc-tag ${'t' + (parseInt(mainTierBadge) || 2)}" style="font-size:16px;padding:6px 14px;border-radius:10px;min-width:54px;">${esc(mainTierBadge)}</span>
+          <div>
+            <div style="font-size:14.5px;font-weight:800;color:var(--text);letter-spacing:-.02em;">${esc(mainTierTitle)}</div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">${esc(mainTierDesc)}</div>
+          </div>
+        </div>
+
+        ${exceptionBlock}
+        ${otherProcsHTML}
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <button class="card-toggle">
+        <span>세부사항 펼치기 (근거 · 수가)</span>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+      <button class="btn-copy">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
+        고객 안내문 복사
+      </button>
+      <button class="btn-goto-detailed" data-q="${esc(g.n)}" style="flex:0 0 auto;padding:0 12px;height:44px;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--brand);font-size:12.5px;font-weight:800;cursor:pointer;">
+        정밀 진단 →
+      </button>
+    </div>
+
+    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
+  </article>`;
+}
+
+/* ───────────────────────── 2. 정밀 증권 진단용 카드 HTML ───────────────────────── */
+function cardDetailedHTML(gi, q, matchedEdi) {
   const g = state.D.g[gi];
   const t = tierOf(g);
   const { cos, riderCount } = matchInfo(g);
-  const tclass = 't' + Math.min(5, Math.max(1, t.t));
-  const est = t.c === 'low' ? '<span class="badge est">추정</span>' : '';
+  const procs = curatedFor(g, window.CURATED?.procs);
+  const ex = curatedFor(g, window.CURATED?.exceptions);
 
-  let coBanner = '';
-  if (state.searchCo) {
-    if (cos.has(state.searchCo)) {
-      const arr = cos.get(state.searchCo);
-      coBanner = `
-        <div style="background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;">
-          <div style="font-weight:800;color:var(--brand);margin-bottom:3px;">✓ ${esc(state.searchCo)} 가입 기준: N대 질병수술비 보장 해당</div>
-          <div style="color:var(--text-2);font-size:11.5px;line-height:1.45;">${arr.map(x => esc(x.line)).join('<br>')}</div>
-        </div>`;
+  const period = state.dPeriod;
+  const co = state.dCo;
+  const mode = state.dMode;
+
+  let ediBanner = '';
+  if (matchedEdi) {
+    ediBanner = `
+      <div style="background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:10px;padding:8px 12px;margin:8px 0;font-size:12px;">
+        <span style="font-weight:800;color:var(--brand)">✓ 수술코드 [${esc(matchedEdi.code)}] ${esc(matchedEdi.name)} 매칭</span>
+      </div>`;
+  }
+
+  // 1. 종수술비 정밀 판정 블록
+  let tierBlockHTML = '';
+  if (mode === 'all' || mode === 'tier') {
+    let finalTier = tierLabel(t);
+    let finalNote = '표준 1~5종 기준';
+
+    if (ex && (period === 'recent' || co.includes('메리츠') || co.includes('롯데'))) {
+      finalTier = ex.val.exTier.split(' ')[0] || '1종';
+      finalNote = '2020년 이후 개정 약관 적용 (1종 하향 개정)';
+    } else if (period === 'old') {
+      finalTier = t.t <= 2 ? '1종' : t.t === 3 ? '2종' : '3종';
+      finalNote = '2006년 이전 구 1~3종 약관 적용';
+    } else if (period === 'std') {
+      finalTier = ex ? ex.val.stdTier : tierLabel(t);
+      finalNote = '2006~2019년 표준 1~5종 약관 적용';
+    }
+
+    tierBlockHTML = `
+      <div class="result-highlight-box">
+        <div class="res-box-header">
+          <span class="res-tag">1~5종 수술비 정밀 판정</span>
+          <span class="res-period-badge">${period === 'all' ? '가입시기 미선택' : period === 'std' ? '표준 1~5종' : period === 'recent' ? '최근 개정약관' : '구 1~3종'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin:3px 0 6px;">
+          <span class="proc-tag ${'t' + (parseInt(finalTier) || 2)}" style="font-size:16px;padding:5px 14px;border-radius:10px;min-width:54px;">${esc(finalTier)}</span>
+          <div>
+            <div style="font-size:14px;font-weight:800;color:var(--text);">${esc(g.n)} 수술</div>
+            <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(finalNote)}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // 2. N대 질병수술비 정밀 판정 블록
+  let ndaiBlockHTML = '';
+  if (mode === 'all' || mode === 'ndai') {
+    if (co) {
+      if (cos.has(co)) {
+        const arr = cos.get(co);
+        ndaiBlockHTML = `
+          <div class="ndai-res-box covered">
+            <div class="ndai-res-status">
+              <span style="font-size:16px;">✓</span>
+              <span>[${esc(co)}] N대 질병수술비 보장 해당</span>
+            </div>
+            <div class="ndai-res-group">해당 담보군: <b>${arr.map(x => esc(x.line)).join(' · ')}</b></div>
+            <div class="ndai-res-desc">선택하신 [${esc(co)}] 증권의 가입금액 한도로 전액 지급됩니다.</div>
+          </div>`;
+      } else {
+        ndaiBlockHTML = `
+          <div class="ndai-res-box not-covered">
+            <div class="ndai-res-status">
+              <span style="font-size:16px;">⚠️</span>
+              <span>[${esc(co)}] N대 질병수술비 특약 미해당</span>
+            </div>
+            <div class="ndai-res-desc">선택하신 [${esc(co)}]의 N대 특약 분류표에는 포함되지 않는 질환입니다.<br><b>종수술비</b>로만 청구를 진행하세요.</div>
+          </div>`;
+      }
     } else {
-      coBanner = `
-        <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;">
-          <div style="font-weight:800;color:#ef4444;margin-bottom:2px;">⚠️ ${esc(state.searchCo)}: N대 수술비 특약 미해당</div>
-          <div style="color:var(--text-3);font-size:11px;">해당 회사의 N대 질병수술비에는 포함되지 않습니다. 1~5종 수술비로 청구 검토하세요.</div>
-        </div>`;
+      if (riderCount > 0) {
+        ndaiBlockHTML = `
+          <div class="ndai-res-box covered" style="background:var(--surface-2);border-color:var(--line);">
+            <div class="ndai-res-status" style="color:var(--text);font-size:13px;">
+              <span>🏢 N대 질병수술비: 주요 ${cos.size}개 보험사 특약 보장 해당</span>
+            </div>
+            <div style="font-size:11.5px;color:var(--text-3);line-height:1.45;">
+              ⚠️ <b>회사 미선택</b>: 상단에서 회사를 지정하면 해당 회사의 N대 보장 여부가 1초 만에 확정됩니다.
+            </div>
+          </div>`;
+      } else {
+        ndaiBlockHTML = `
+          <div class="ndai-res-box not-covered">
+            <div class="ndai-res-status" style="font-size:13px;">
+              <span>⚠️ N대 질병수술비 미해당</span>
+            </div>
+            <div class="ndai-res-desc">주요 보험사 N대 특약에는 포함되지 않는 질환입니다. 종수술비로 청구하세요.</div>
+          </div>`;
+      }
     }
   }
 
@@ -527,27 +811,20 @@ function cardHTML(gi, q) {
   <article class="card" data-gi="${gi}">
     <div class="card-head">
       <div class="card-top">
-        <div style="min-width:0">
+        <div>
           <h3 class="card-name">${hl(g.n, q)}</h3>
           <div class="card-codes">${g.c.slice(0, 8).map(c => `<span class="code-pill">${esc(c)}</span>`).join('')}</div>
-          ${altNames(g)}
         </div>
       </div>
-      <div class="card-badges">
-        <span class="badge ${tclass}"><span class="b-dot"></span>${tierLabel(t)}</span>
-        ${est}
-        ${riderCount ? `<span class="badge nda">N대 ${cos.size}개사</span>` : ''}
-        ${g.ch ? `<span class="badge ghost">${esc(g.ch)}</span>` : ''}
-      </div>
-      ${coBanner}
-      <div class="card-facts">
-        <div class="fact"><dt>약관 분류</dt><dd>${riderCount}개</dd></div>
-        <div class="fact"><dt>KCD</dt><dd>${g.c.length}개 코드</dd></div>
-        <div class="fact"><dt>표준 종수</dt><dd>${tierLabel(t)}</dd></div>
-      </div>
+
+      ${ediBanner}
+      ${tierBlockHTML}
+      ${ndaiBlockHTML}
     </div>
+
     <div class="card-actions">
-      <button class="card-toggle">상세 보기
+      <button class="card-toggle">
+        <span>세부사항 펼치기 (근거 · 수가)</span>
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
       </button>
       <button class="btn-copy">
@@ -555,21 +832,14 @@ function cardHTML(gi, q) {
         고객 안내문 복사
       </button>
     </div>
+
     <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
-}
-
-function altNames(g) {
-  const base = norm(g.n);
-  const others = (g.vs || []).filter(n => n !== g.n && norm(n) !== base && n.length <= 26 && !n.includes('제외')).slice(0, 3);
-  if (!others.length) return '';
-  return `<p class="card-alt">같은 코드 다른 명칭 · ${others.map(esc).join(', ')}</p>`;
 }
 
 function hl(text, q) {
   const nq = norm(q);
   if (!nq) return esc(text);
-  // 원문에서 공백·기호를 제외한 문자열의 위치 → 원문 인덱스 매핑
   const map = [];
   let flat = '';
   for (let i = 0; i < text.length; i++) {
@@ -588,135 +858,94 @@ function hl(text, q) {
     esc(text.slice(end));
 }
 
-/* ───────────────────────── 카드 상세 ───────────────────────── */
-function curatedFor(g, table) {
-  if (!table) return null;
-  for (const code of g.c) {
-    const full = code.replace(/[†*+]/g, '').toUpperCase();
-    const bare = full.split('~')[0];
-    for (const c of [full, bare]) {
-      if (table[c]) return { key: c, val: table[c] };
-      for (const k in table) { if (c.startsWith(k)) return { key: k, val: table[k] }; }
-    }
-  }
-  return null;
-}
-
+/* ───────────────────────── 세부사항 (펼쳤을 때만 노출) ───────────────────────── */
 function detailHTML(gi) {
   const g = state.D.g[gi];
   const t = tierOf(g);
   const { cos, riderCount } = matchInfo(g);
-  const procs = curatedFor(g, window.CURATED?.procs);
   const tip = curatedFor(g, window.CURATED?.tips);
   let out = '';
 
-  /* 1. 종수 */
-  out += `<section class="sec">
-    <h4 class="sec-title">1~5종 수술비 <span class="cnt">표준 참고</span><span class="dotline"></span></h4>
-    <div class="tier-row">
-      <div class="tier-big" style="color:var(--${'t' + Math.min(5, Math.max(1, t.t))})">${tierLabel(t)}</div>
-      <div class="tier-why">${esc(t.w || '약관 분류표 기준 확인 필요')}</div>
-    </div>
-    <div style="background:var(--bg-2);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;">
-      <div style="font-weight:700;margin-bottom:3px;color:var(--text)">📅 가입 시기별 종수 가이드</div>
-      <div style="color:var(--text-2);font-size:11.5px;line-height:1.45;">
-        · <b>2006년 이전 (구 1~3종)</b>: ${t.t <= 2 ? '1종' : t.t === 3 ? '2종' : '3종'} 해당<br>
-        · <b>2006년 이후 (현행 1~5종)</b>: <b>${tierLabel(t)}</b> 해당 예상<br>
-        · <b>최근 1~8종 수술비</b>: 관혈/비관혈 시술법 및 약관 분류표 참조
+  /* 1. 실무 청구 꿀팁 */
+  if (tip) {
+    out += `<section class="sec">
+      <div class="tip-box">
+        <div class="tip-head">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <b>${esc(tip.val.title)}</b>
+        </div>
+        <ul class="tip-list">${tip.val.items.map(it => `<li>${esc(it)}</li>`).join('')}</ul>
       </div>
+    </section>`;
+  }
+
+  /* 2. 1~5종 약관 분류표 원문 근거 */
+  out += `<section class="sec">
+    <h4 class="sec-title">1~5종 수술비 약관 분류 근거<span class="dotline"></span></h4>
+    <div style="background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;">
+      · <b>표준 약관 종수</b>: <b>${tierLabel(t)}</b> (${esc(t.w || '약관 분류표 세부 조항')})<br>
+      · <b>구 1~3종 (2006년 이전)</b>: ${t.t <= 2 ? '1종' : t.t === 3 ? '2종' : '3종'} 해당<br>
+      · <b>관혈 vs 비관혈</b>: 내시경·카테터 등 비관혈 수술은 통상 1~2종, 개복·개흉 등 관혈 수술은 3~5종 적용
     </div>
-    ${procs ? `<table class="proc-table">${procs.val.map(p => `<tr><td>${esc(p.s)}</td><td><span class="tier-tag">${esc(p.t)}</span></td></tr>`).join('')}</table>` : ''}
   </section>`;
 
-  /* 2. N대 */
+  /* 3. N대 질병수술비 특별약관 원문 */
   if (riderCount) {
     const list = [...cos.entries()].sort((a, b) => b[1].length - a[1].length);
-    const show = list.slice(0, 6);
     out += `<section class="sec">
-      <h4 class="sec-title">N대 질병수술비 <span class="cnt">${cos.size}개사</span><span class="dotline"></span></h4>
+      <h4 class="sec-title">N대 질병수술비 약관 원문 매칭 (${cos.size}개사)<span class="dotline"></span></h4>
       <div class="nda-panel">
-        <div class="nda-list" id="ndaList-${gi}">
-          ${show.map(([co, arr]) => `
+        <div class="nda-list">
+          ${list.map(([co, arr]) => `
             <div class="nda-item">
               <span class="nda-flag"></span>
               <span class="nda-co">${esc(co)}</span>
-              <span class="nda-desc">${esc(arr[0].line)}${arr.length > 1 ? ` <b style="color:var(--brand)">외 ${arr.length - 1}</b>` : ''}</span>
+              <span class="nda-desc">${arr.map(x => esc(x.line)).join('<br>')}</span>
             </div>`).join('')}
         </div>
-        ${list.length > 6 ? `<button class="more-btn" data-more="nda" data-gi="${gi}">전체 ${list.length}개사 보기</button>` : ''}
       </div>
     </section>`;
   }
 
-  /* 3. EDI */
-  const edi = relatedEdi(g, 6);
-  if (edi.length) {
+  /* 4. 심평원 EDI 수술 수가코드 */
+  const ediList = relatedEdi(g, 6);
+  if (ediList.length) {
     out += `<section class="sec">
-      <h4 class="sec-title">관련 수가코드(EDI) <span class="cnt">${edi.length}</span><span class="dotline"></span></h4>
-      <div class="edi-list">${edi.map(r => ediRowHTML(r.i)).join('')}</div>
-      <button class="more-btn" data-more="edi" data-gi="${gi}">수가 검색에서 더 보기</button>
+      <h4 class="sec-title">심평원 EDI 수술 수가코드<span class="dotline"></span></h4>
+      <div class="edi-grid">${ediList.map(h => ediRowHTML(h.i)).join('')}</div>
     </section>`;
   }
 
-  /* 4. 팁 */
-  const items = tip ? tip.val.items : (window.CURATED?.genericTips || []).slice(0, 3);
-  const title = tip ? tip.val.title : '실무 청구 · 삭감 방어 체크';
+  /* 5. 청구 필요 서류 체크리스트 */
   out += `<section class="sec">
-    <h4 class="sec-title">보험비서 실무 청구 팁<span class="dotline"></span></h4>
-    <div class="tipbox">
-      <div class="tip-head">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .8 1.6V17h5.6v-1.6c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z"/></svg>
-        ${esc(title)}
-      </div>
-      <ul>${items.map(x => `<li>${mdBold(x)}</li>`).join('')}</ul>
+    <h4 class="sec-title">청구 필요 서류 체크리스트<span class="dotline"></span></h4>
+    <div style="background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text-2);line-height:1.55;">
+      ✓ <b>진단서</b> (질병분류코드 KCD, 확정진단명 명시)<br>
+      ✓ <b>수술기록지</b> (수술명, 관혈/비관혈 수술 방식, 수술 부위 명시)<br>
+      ✓ <b>진료비 세부산정내역서</b> (EDI 수가코드 기재된 영수증)<br>
+      ✓ <b>조직검사 결과지</b> (용종·종양의 경우 선종/악성 여부 입증용)
     </div>
   </section>`;
 
-  /* 5. 간편심사 */
-  const ex = relatedExc(g, 6);
-  if (ex.length) {
-    out += `<section class="sec">
-      <h4 class="sec-title">간편심사 예외질환 <span class="cnt">${ex.length}개사</span><span class="dotline"></span></h4>
-      <div class="exc-wrap">${ex.map(e => `
-        <div class="exc-row">
-          <span class="exc-co">${esc(e.co)} · ${esc(e.title)}</span>
-          <span class="exc-val ${e.cls}">${esc(e.v)}</span>
-        </div>`).join('')}</div>
-    </section>`;
-  }
-
-  out += `<p class="disclaim">· 종수·N대 매칭은 공개 약관 분류표를 정리한 <b>참고 자료</b>입니다. 실제 지급은 가입 약관(세대)·진단서·심사 결과로 확정됩니다.<br>· 같은 질병이라도 수술 방법(관혈/비관혈)에 따라 종수가 달라질 수 있습니다.</p>`;
   return out;
 }
 
-function mdBold(s) {
-  return esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
-}
-
 function relatedEdi(g, limit) {
-  const STOP = new Set(['및', '의', '기타', '상세불명', '달리', '분류된', '질환', '장애', '신생물', '양성', '악성', '동반', '포함', '주', '급성', '만성', '기타의', '에서의', '관련', '경우', '상세', '불명', '특정']);
-  const GENERIC = new Set(['절제', '수술', '적출', '봉합', '성형', '제거', '절개', '이물', '검사', '조영', '치료', '시술']);
-  const clean = (t) => t.replace(/(으로|에서|의|을|를|에|로|와|과)$/, '');
-  const pick = (arr, min) => arr.map(clean).filter(t => t.length >= min && !STOP.has(t) && !GENERIC.has(t));
+  const pool = [];
+  const seen = new Set();
+  const names = new Set([norm(g.n), ...(g.vs || []).map(norm)]);
+  const tokens = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 2);
 
-  const nameTokens = [...new Set(pick(g.n.split(/[^가-힣A-Za-z0-9]+/), 2))].sort((a, b) => b.length - a.length).slice(0, 6);
-  const procs = curatedFor(g, window.CURATED?.procs);
-  const procTokens = procs
-    ? [...new Set(pick(procs.val.flatMap(p => p.s.split(/[^가-힣A-Za-z0-9]+/)), 3))].sort((a, b) => b.length - a.length).slice(0, 4)
-    : [];
-  if (!nameTokens.length && !procTokens.length) return [];
-
-  const scored = [];
-  for (const r of idx.ediSurg) {
-    let nHit = 0, pHit = 0, len = 0;
-    for (const tk of nameTokens) if (r.nn.includes(norm(tk))) { nHit++; len += tk.length; }
-    for (const tk of procTokens) if (r.nn.includes(norm(tk))) { pHit++; len += tk.length; }
-    if (nHit || pHit) scored.push({ i: r.i, sc: nHit * 12 + pHit * 3 + len, nHit });
+  for (let i = 0; i < idx.edi.length; i++) {
+    const rec = idx.edi[i];
+    let score = 0;
+    if (names.has(rec.nn)) score = 10;
+    else if (tokens.some(t => rec.nn.includes(norm(t)))) score = 5;
+    if (score) pool.push({ i, score });
   }
-  scored.sort((a, b) => b.sc - a.sc);
-  const named = scored.filter(h => h.nHit > 0);
-  const pool = named.length >= 4 ? named : scored;
-  const seen = new Set(), out = [];
+  pool.sort((a, b) => b.score - a.score || (state.E.rows[b.i][2] === 'S') - (state.E.rows[a.i][2] === 'S'));
+
+  const out = [];
   for (const h of pool) {
     const code = state.E.rows[h.i][0];
     if (seen.has(code)) continue;
@@ -726,100 +955,50 @@ function relatedEdi(g, limit) {
   return out;
 }
 
-function relatedExc(g, limit) {
-  const names = new Set([norm(g.n), ...(g.vs || []).map(norm)]);
-  const tokens = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 3);
-  const rows = state.X.rows;
-  const out = [];
-  const seen = new Set();
-  const OK = /인수|부담보|인수불가|거절|제한|할증|보류/;
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const nq = norm(row[1]);
-    const hit = names.has(nq) || tokens.some(t => nq.includes(norm(t)));
-    if (!hit) continue;
-    const v = (row[4] || row[5] || '').trim();
-    if (!v || !OK.test(v)) continue;
-    const doc = state.X.docs[row[0]] || {};
-    const val = v.split('/')[0].trim().slice(0, 14);
-    const key = (doc.co || '') + val;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push({ co: doc.co || '—', title: (doc.title || '').slice(0, 14), v: val,
-               cls: val.includes('불가') || val.includes('거절') ? 'exc-no' : val.includes('부담보') || val.includes('제한') ? 'exc-db' : 'exc-ok' });
-    if (out.length >= limit) break;
-  }
-  return out;
-}
-
 function ediRowHTML(i) {
   const r = state.E.rows[i];
-  const kind = r[2] === 'S' ? '수술' : r[2] === 'T' ? '처치' : r[2] === 'U' ? '약국' : r[2] === 'D' ? '치과' : '';
+  const kind = r[2] === 'S' ? '수술' : r[2] === 'T' ? '처치' : '';
   return `<div class="edi-item">
     <span class="edi-code">${esc(r[0])}</span>
     <span class="edi-name">${esc(r[1])}${kind ? ` <b style="color:var(--text-3);font-size:11px">［${kind}］</b>` : ''}</span>
   </div>`;
 }
 
-function bindDetail(card, gi) {
-  $$('[data-more]', card).forEach(b => b.addEventListener('click', () => {
-    if (b.dataset.more === 'nda') {
-      const g = state.D.g[gi];
-      const { cos } = matchInfo(g);
-      const list = [...cos.entries()].sort((a, b) => b[1].length - a[1].length);
-      card.querySelector(`#ndaList-${gi}`).innerHTML = list.map(([co, arr]) => `
-        <div class="nda-item">
-          <span class="nda-flag"></span>
-          <span class="nda-co">${esc(co)}</span>
-          <span class="nda-desc">${arr.map(x => esc(x.line)).join('<br>')}</span>
-        </div>`).join('');
-      b.remove();
-    } else {
-      const g = state.D.g[gi];
-      const tk = g.n.split(/[^가-힣A-Za-z0-9]+/).filter(t => t.length >= 2)[0] || g.n;
-      switchTab('search');
-      qEl.value = tk; $('#clearBtn').hidden = false; state.q = tk;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      runSearch(tk);
-    }
-  }));
-}
-
 /* ───────────────────────── 복사 ───────────────────────── */
 function copyCard(gi) {
   const g = state.D.g[gi];
   const t = tierOf(g);
-  const { cos, riderCount } = matchInfo(g);
+  const { cos } = matchInfo(g);
   const procs = curatedFor(g, window.CURATED?.procs);
-  const top = procs ? procs.val.slice(0, 2).map(p => `${p.s} → ${p.t}`).join('\n   · ') : '';
-  const co = state.searchCo;
+  const top = procs ? procs.val.slice(0, 2).map(p => `${p.s} → ${p.t}`).join('\n  - ') : '';
+  const co = state.dCo;
   const hasCo = co && cos.has(co);
 
   let text = '';
   if (co) {
     text = `[보험비서] ${co} 가입 고객 수술비 보장 안내
 
-고객님, 가입하신 [${co}] 기준으로 문의하신 [${g.n}] 수술비 보장 내역을 안내해 드립니다.
+고객님, 가입하신 [${co}] 기준으로 [${g.n}] 수술비 보장 내역을 안내해 드립니다.
 
 · 질병코드 : ${g.c.slice(0, 3).join(', ')} (${g.n})
-· 종수술비 : 1~5종 중 ${tierLabel(t)} 해당 예상
-· ${co} N대 수술비 : ${hasCo ? '보장 해당\n  - ' + cos.get(co).map(x => x.line).join('\n  - ') : 'N대 수술비 특약 미해당 (종수술비만 청구 가능)'}${top ? '\n· 주요 수술 : ' + top : ''}
+· 1~5종 수술비 : ${tierLabel(t)} 해당 예상
+· ${co} N대 수술비 : ${hasCo ? '보장 해당\n  - ' + cos.get(co).map(x => x.line).join('\n  - ') : 'N대 수술비 특약 미해당 (종수술비 청구 대상)'}${top ? '\n· 주요 수술별 종수 : \n  - ' + top : ''}
 
 필요 서류 : 진단서(질병분류코드·수술명 명시), 수술기록지, 진료비 세부산정내역서
-※ 정확한 보상 여부와 지급액은 가입 약관 및 현장 심사 기준에 따라 달라질 수 있습니다.
+※ 정확한 지급액은 가입 약관 세대 및 현장 심사 기준에 따라 달라질 수 있습니다.
 
 - 보험비서 드림`;
   } else {
     text = `[보험비서] ${g.n}(${g.c.slice(0, 3).join(', ')}) 수술비 안내
 
-안녕하세요, 고객님. 문의하신 질병·수술 건을 정리해 드립니다.
+고객님, 문의하신 [${g.n}] 수술비 보장 요약 안내입니다.
 
 · 질병코드 : ${g.c.slice(0, 3).join(', ')} ${g.n}
-· 5종 수술비 : ${tierLabel(t)} 해당 예상${t.c === 'low' ? ' (수술 방법 확인 필요)' : ''}
-· N대 질병수술비 : ${cos.size}개 원수사 · ${riderCount}개 약관 분류 해당${top ? '\n· 주요 수술 : ' + top : ''}
+· 1~5종 수술비 : ${tierLabel(t)} 해당 예상 (가입 세대별 확인 요망)
+· N대 질병수술비 : 주요 보험사 N대 특약 보장 해당${top ? '\n· 주요 수술별 종수 :\n  - ' + top : ''}
 
-필요 서류 : 진단서(KCD 코드·수술명 기재), 수술기록지, 입퇴원확인서
-※ 정확한 지급 여부는 가입하신 약관과 진단서 내용에 따라 달라질 수 있습니다. 청구 전 서류를 함께 확인해 드리겠습니다.
+필요 서류 : 진단서(KCD 코드·수술명 기재), 수술기록지, 진료비 영수증
+※ 정확한 보상 여부는 가입하신 증권 약관에 따라 차이가 있을 수 있으니 청구 전 서류 확인을 도와드리겠습니다.
 
 - 보험비서 드림`;
   }
@@ -829,35 +1008,16 @@ function copyCard(gi) {
     navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
   } else fallbackCopy(text, done);
 }
+
 function fallbackCopy(text, done) {
   const ta = document.createElement('textarea');
   ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
   document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); done(); } catch (_) { toast('복사에 실패했습니다. 길게 눌러 복사해 주세요.', false); }
+  try { document.execCommand('copy'); done(); } catch (_) { toast('복사에 실패했습니다.', false); }
   document.body.removeChild(ta);
 }
 
-/* ───────────────────────── 초기 화면 ───────────────────────── */
-function renderIdle() {
-  $('#hero').classList.remove('hide');
-  const box = $('#results');
-  box.innerHTML = `
-    <div class="res-head"><div class="res-title">자주 찾는 수술</div><div class="res-count">탭하면 바로 검색</div></div>
-    <div class="card" style="padding:18px 18px 6px">
-      ${(window.CURATED?.synonyms || []).slice(0, 8).map(s => `
-        <div class="rider-row" data-q="${esc(s.q[0])}">
-          <div class="rider-main"><div class="rider-name">${esc(s.k)}</div><div class="rider-meta">${esc(s.q.slice(0, 3).join(' · '))}</div></div>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--text-3)" stroke-width="2.2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
-        </div>`).join('')}
-    </div>
-    <p class="disclaim">질병코드(J34) · 질병명(용종) · 수술명(절제술) 무엇이든 입력해 보세요. 초성·띄어쓰기 없이도 찾아집니다.</p>`;
-  $$('#results .rider-row[data-q]').forEach(r => r.addEventListener('click', () => {
-    qEl.value = r.dataset.q; $('#clearBtn').hidden = false; state.q = r.dataset.q;
-    runSearch(r.dataset.q);
-  }));
-}
-
-/* ───────────────────────── 탭 ───────────────────────── */
+/* ───────────────────────── 탭 전환 ───────────────────────── */
 function switchTab(tab) {
   state.tab = tab;
   $$('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
@@ -867,87 +1027,32 @@ function switchTab(tab) {
 $('#tabs').addEventListener('click', (e) => {
   const b = e.target.closest('.tab'); if (b) switchTab(b.dataset.tab);
 });
-$('#logoBtn').addEventListener('click', (e) => { e.preventDefault(); switchTab('search'); });
-$('#themeBtn').addEventListener('click', () => {
-  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-});
-addEventListener('scroll', () => {
-  $('.topbar').classList.toggle('scrolled', scrollY > 6);
-}, { passive: true });
-
-/* ───────────────────────── 분리심사 ───────────────────────── */
-function renderBunri() {
-  const B = state.B; if (!B) return;
-  let html = `<div class="page-head">
-    <h2>${esc(B.meta.title)}</h2>
-    <p>기준일 ${esc(B.meta.asOf)} · ${esc(B.meta.range)}</p>
-  </div>
-  <div class="panel">
-    <h3><span class="sec-dot"></span>분리심사란?</h3>
-    <p>${esc(B.meta.def)}</p>
-    <div class="warn">${esc(B.meta.warn)}</div>
-  </div>`;
-
-  B.groups.forEach(gp => {
-    html += `<div class="group-label">${esc(gp.title)}</div>`;
-    gp.items.forEach(it => {
-      html += `<div class="ins-card">
-        <div class="ins-top">
-          <span class="ins-name">${esc(it.co)}</span>
-          ${it.product ? `<span class="ins-prod">${esc(it.product)}</span>` : ''}
-        </div>
-        <ul>${(it.bullets || []).map(b => `<li>${esc(b)}</li>`).join('')}</ul>
-        ${it.confirm ? `<div class="ins-confirm">근거 · ${esc(it.confirm)}</div>` : ''}
-      </div>`;
-    });
-  });
-
-  if (B.tips?.length) {
-    html += `<div class="group-label">실무 체크</div><div class="tipbox"><div class="tip-head">
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v2M4.9 6.9l1.4 1.4M19.1 6.9l-1.4 1.4M3 14h2M19 14h2M12 21a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"/></svg>
-      분리심사 안내 시 꼭 말해야 할 것</div>
-      <ul>${B.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul></div>`;
-  }
-  html += `<p class="disclaim">출처 · ${esc(B.meta.sources)} · 본 내용은 영업 참고용 요약이며, 실제 인수는 전산 고지 입력 후 결정됩니다.</p>`;
-  $('#pane-bunri').innerHTML = html;
-}
 
 /* ───────────────────────── N대 질병수술비 약관 목록 ───────────────────────── */
 function renderRiders() {
   const R = state.D.riders;
-  const byCo = new Map();
-  R.forEach((r, i) => {
-    if (!byCo.has(r.co)) byCo.set(r.co, []);
-    byCo.get(r.co).push({ r, i });
-  });
+  const cos = [...new Set(R.map(r => r.co))];
+  const cur = state.ridersCo || cos[0];
 
-  const coList = [...byCo.entries()].sort((a, b) => b[1].length - a[1].length);
-  const curCo = state.ridersCo || '전체';
-
-  let html = `<div class="page-head">
-    <h2>N대 질병수술비 약관 <span style="color:var(--brand)">${R.length}</span></h2>
-    <p>원수사를 선택하면 해당 보험사의 N대 수술비 특약과 질병 분류표가 즉시 정렬됩니다.</p>
-  </div>
-  <div class="co-chips" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:14px;-webkit-overflow-scrolling:touch;">
-    <button class="chip ${curCo === '전체' ? 'on' : ''}" data-rco="전체">전체 (${R.length})</button>
-    ${coList.map(([co, arr]) => `<button class="chip ${curCo === co ? 'on' : ''}" data-rco="${esc(co)}">${esc(co.replace(/손해보험|화재|생명/, ''))} (${arr.length})</button>`).join('')}
-  </div>`;
-
-  const filteredCos = curCo === '전체' ? coList : coList.filter(([co]) => co === curCo);
-  filteredCos.forEach(([co, arr]) => {
-    html += `<div class="panel" style="padding:12px 18px 8px">
-      <h3 style="margin:8px 0 10px"><span class="sec-dot"></span>${esc(co)} <span style="color:var(--text-3);font-weight:700;font-size:12px">${arr.length}개 특약</span></h3>
-      ${arr.map(({ r }) => `
-        <div class="rider-row" data-rid="${esc(r.id)}">
-          <div class="rider-main">
-            <div class="rider-name">${esc(r.rider || r.product)}</div>
-            <div class="rider-meta">${esc(r.product || '')}</div>
-          </div>
-          <span class="rider-ver">${esc((r.ver || '').split('·')[0].trim().slice(0, 12))}</span>
-        </div>
-        <div class="rider-subs">${(r.subs || []).map(s => `<span class="sub-pill">${esc(s)}</span>`).join('')}</div>`).join('')}
+  let html = `
+    <div class="page-head"><h2>N대 질병수술비 특별약관</h2><p>원수사별 N대 수술비 특약 목록과 세부 담보 구성을 확인합니다.</p></div>
+    <div class="co-chips" style="display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:14px;">
+      ${cos.map(co => `<button class="chip ${co === cur ? 'on' : ''}" data-rco="${esc(co)}">${esc(co)}</button>`).join('')}
     </div>`;
+
+  const filtered = R.filter(r => r.co === cur);
+  html += `<div class="card" style="padding:14px 18px 4px">`;
+  filtered.forEach(r => {
+    html += `
+      <div style="padding:12px 0;border-bottom:1px solid var(--line);">
+        <div style="font-weight:800;font-size:14px;color:var(--text);margin-bottom:4px;">${esc(r.rider)}</div>
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:6px;">${esc(r.docTitle || '')} (${esc(r.co)})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;">
+          ${(r.subs || []).map(s => `<span class="sub-pill" style="font-size:11px;padding:2px 7px;background:var(--surface-2);border-radius:6px;color:var(--text-2);">${esc(s)}</span>`).join('')}
+        </div>
+      </div>`;
   });
+  html += `</div>`;
 
   const pane = $('#pane-riders');
   pane.innerHTML = html;
@@ -958,59 +1063,27 @@ function renderRiders() {
       renderRiders();
     });
   });
-
-  $$('.rider-row[data-rid]', pane).forEach(row => row.addEventListener('click', () => row.classList.toggle('open')));
 }
 
 /* ───────────────────────── 안내 ───────────────────────── */
 function renderAbout() {
   const s = state.D.g.length, e = state.E.rows.length, r = state.D.riders.length;
   $('#pane-about').innerHTML = `
-    <div class="page-head"><h2>서비스 안내</h2><p>수술비 판단에 쓰인 데이터와 한계를 정확히 밝힙니다.</p></div>
+    <div class="page-head"><h2>서비스 안내</h2><p>보험비서 수술비 판별기에 쓰인 데이터와 원칙을 안내합니다.</p></div>
 
     <div class="panel">
       <h3><span class="sec-dot"></span>탑재 데이터</h3>
       <p>· 질병·수술 분류 <b>${s.toLocaleString()}건</b> — ${r}개 원수사 N대 질병수술비 특별약관의 질병코드·담보 구성<br>
-         · EDI 수가코드 <b>${e.toLocaleString()}건</b> — 심평원 의·치과 수가파일(2026.11.1 시행)<br>
-         · 분리심사 지침 — GA소식지·월간프라임 2026.05~11 요약<br>
-         · 간편심사 예외질환 — 21개 원수사 인수기준표</p>
+         · 심평원 EDI 수술 수가코드 <b>${e.toLocaleString()}건</b> — 진료비 세부산정내역서 수술코드 완벽 매칭<br>
+         · 원수사 <b>${r}개 특별약관</b> 질병분류표 전수 분석</p>
     </div>
 
     <div class="panel">
-      <h3><span class="sec-dot"></span>종수 분류 기준</h3>
-      <p>1~5종 수술비는 표준 분류표를 기준으로 질병코드·수술명 키워드를 매칭한 <b>참고값</b>입니다. 같은 질병도 관혈/비관혈, 절제 범위, 가입 세대(구 3종·현행 5종·1~8종)에 따라 달라집니다. 카드의 “추정” 표시는 질환명만으로 확정이 어려운 건입니다.</p>
-    </div>
-
-    <div class="panel">
-      <h3><span class="sec-dot"></span>보안</h3>
-      <p>모든 데이터는 <b>AES-256-GCM</b>으로 암호화되어 저장되며, 비밀번호는 PBKDF2-SHA256(210,000회)로 키를 유도합니다. 비밀번호 없이는 데이터 파일을 열 수 없고, 검색엔진에는 노출되지 않습니다(noindex·robots).</p>
-    </div>
-
-    <div class="panel">
-      <h3><span class="sec-dot"></span>면책</h3>
-      <p>본 서비스는 보험 설계 실무를 돕는 참고 도구입니다. 지급 여부·금액은 가입 약관, 진단서, 손해사정 결과로 확정되며, 본 내용을 근거로 한 보상 판단의 최종 책임은 설계사·고객에게 있습니다.</p>
-    </div>
-
-    <p class="disclaim">데이터 기준 ${esc(state.D.asOf || '2026.11')} · © 보험비서</p>`;
+      <h3><span class="sec-dot"></span>판별 원칙</h3>
+      <p>· <b>1~5종 수술비</b>: 표준 1~5종 분류표 및 2020년 이후 개정 약관(대장용종 1종 하향 등)을 정확히 분리하여 판정합니다.<br>
+         · <b>수술코드 매칭</b>: Q7701, O1421 등 병원 영수증의 EDI 코드를 입력해도 해당 질환과 종수가 1초 만에 바로 도출됩니다.<br>
+         · <b>면책 유의사항</b>: 본 도구는 영업 및 보상 청구 참고용 요약본이며, 실제 보험금 지급 여부는 가입 당시 약관과 보상과 최종 심사로 확정됩니다.</p>
+    </div>`;
 }
-
-/* 스피너 스타일 주입 */
-const st = document.createElement('style');
-st.textContent = `.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;display:inline-block;animation:sp .7s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}`;
-document.head.appendChild(st);
-
-/* 오류 표시 (조용한 실패 방지) */
-function fatal(msg) {
-  let el = document.getElementById('errbox');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'errbox';
-    el.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:200;background:#3A1C21;color:#FF9AA4;border:1px solid #6B2A32;border-radius:14px;padding:12px 14px;font-size:12px;line-height:1.5;font-family:ui-monospace,monospace;white-space:pre-wrap;max-height:40vh;overflow:auto';
-    document.body.appendChild(el);
-  }
-  el.textContent = '오류: ' + msg;
-}
-addEventListener('error', (e) => fatal(e.message || 'script error'));
-addEventListener('unhandledrejection', (e) => fatal((e.reason && (e.reason.message || e.reason)) || 'promise rejection'));
 
 })();
