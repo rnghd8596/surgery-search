@@ -182,8 +182,16 @@ function start(data) {
   renderRiders();
   renderAbout();
   renderIdle();
+  syncHeaderHeight();
   $('#q').focus({ preventScroll: true });
 }
+
+function syncHeaderHeight() {
+  const h = document.querySelector('.topbar')?.offsetHeight || 100;
+  document.documentElement.style.setProperty('--header-h', h + 'px');
+}
+addEventListener('resize', syncHeaderHeight);
+addEventListener('orientationchange', syncHeaderHeight);
 
 const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
 function toCho(s) {

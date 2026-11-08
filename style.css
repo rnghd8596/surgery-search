@@ -216,7 +216,7 @@ html[data-theme="dark"] .tab.on{background:var(--brand-3);color:#8DBBFF}
 .hero-sub{margin:10px 0 0;font-size:14px;color:var(--text-3);font-weight:500}
 .hero.hide{display:none}
 
-.search-wrap{position:sticky;top:96px;z-index:30;padding:6px 0 10px;
+.search-wrap{position:sticky;top:calc(var(--header-h, 100px) + 4px);z-index:30;padding:6px 0 10px;
   background:linear-gradient(var(--bg) 62%,color-mix(in srgb,var(--bg) 0%,transparent));
 }
 .searchbox{
@@ -503,7 +503,7 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   .tabs{padding:8px 16px 10px}
   .hero{padding:18px 0 14px}
   .hero-sub{font-size:13px}
-  .search-wrap{top:88px}
+  .search-wrap{top:calc(var(--header-h, 96px) + 2px)}
   .searchbox{height:56px;border-radius:18px}
   .card-head{padding:17px 16px 0}
   .card-alt{margin:7px 0 0;font-size:11.5px;color:var(--text-3);font-weight:600;line-height:1.5}
