@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+<meta name="referrer" content="no-referrer">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="naver-site-verification" content="noindex">
+<meta name="theme-color" content="#F7F8FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0E14" media="(prefers-color-scheme: dark)">
+<meta name="description" content="대한민국 보험 수술비·종수술비 통합 솔루션">
+<title>홍비서 PRO 수술비 사전 | 대한민국 보험 수술비·종수술비 통합 솔루션</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233182F6'/%3E%3Ctext x='32' y='43' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3E%ED%99%8D%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- ══════════════════ LOCK ══════════════════ -->
+<div id="lock" class="lock">
+  <div class="lock-aurora" aria-hidden="true">
+    <span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span>
+    <span class="grid"></span>
+  </div>
+
+  <div class="lock-card" id="lockCard">
+    <div class="brand-mark">홍</div>
+    <h1 class="lock-title">홍비서 <span>PRO</span></h1>
+    <p class="lock-sub">수술비 사전 <i></i> 보험 수술비 통합 솔루션</p>
+
+    <form id="lockForm" autocomplete="on">
+      <div class="pw-field" id="pwField">
+        <input id="pw" type="password" inputmode="text" placeholder="비밀번호" autocomplete="current-password" aria-label="비밀번호" spellcheck="false">
+        <button type="button" id="pwEye" class="pw-eye" aria-label="비밀번호 표시">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z"/><circle cx="12" cy="12" r="2.8"/></svg>
+        </button>
+      </div>
+      <button type="submit" class="btn-primary" id="unlockBtn">
+        <span>잠금 해제</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+      </button>
+      <p class="pw-err" id="pwErr" role="alert">비밀번호가 올바르지 않습니다</p>
+    </form>
+
+    <div class="lock-meta">
+      <span class="dot"></span>
+      <span>AES-256 암호화 · 인가된 사용자 전용</span>
+    </div>
+  </div>
+
+  <p class="lock-foot">© 홍비서 PRO · 무단 공유 및 재배포 금지</p>
+</div>
+
+<!-- ══════════════════ APP ══════════════════ -->
+<div id="app" class="app" hidden>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="logo" href="#" id="logoBtn">
+        <span class="logo-mark">홍</span>
+        <span class="logo-text">홍비서 <b>PRO</b></span>
+      </a>
+      <div class="topbar-actions">
+        <button id="themeBtn" class="icon-btn" aria-label="다크 모드 전환">
+          <svg class="i-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
+          <svg class="i-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.4A8.4 8.4 0 0 1 9.6 4a8.4 8.4 0 1 0 10.4 10.4Z"/></svg>
+        </button>
+        <button id="lockBtn" class="icon-btn" aria-label="잠금">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <nav class="tabs" id="tabs" role="tablist">
+      <button class="tab on" data-tab="search" role="tab">수술비 검색</button>
+      <button class="tab" data-tab="bunri" role="tab">분리심사</button>
+      <button class="tab" data-tab="riders" role="tab">약관 130</button>
+      <button class="tab" data-tab="about" role="tab">안내</button>
+    </nav>
+  </header>
+
+  <main class="main">
+
+    <!-- ───────── 검색 ───────── -->
+    <section id="pane-search" class="pane">
+      <div class="hero" id="hero">
+        <p class="hero-eyebrow">수술비 통합 검색</p>
+        <h2 class="hero-title">수술비, <span class="grad">3초</span> 만에 확인</h2>
+        <p class="hero-sub">질병코드 · 질병명 · 수술명, 무엇으로 검색해도 바로 나옵니다</p>
+      </div>
+
+      <div class="search-wrap" id="searchWrap">
+        <div class="searchbox" id="searchbox">
+          <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
+          <input id="q" type="search" placeholder="질병코드 · 질병명 · 수술명" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="검색어">
+          <button id="clearBtn" class="clear-btn" hidden aria-label="지우기">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="quickstats" id="quickstats"></div>
+      <div id="results" class="results" aria-live="polite"></div>
+    </section>
+
+    <!-- ───────── 분리심사 ───────── -->
+    <section id="pane-bunri" class="pane" hidden></section>
+
+    <!-- ───────── 약관 목록 ───────── -->
+    <section id="pane-riders" class="pane" hidden></section>
+
+    <!-- ───────── 안내 ───────── -->
+    <section id="pane-about" class="pane" hidden></section>
+  </main>
+
+  <footer class="foot">
+    <p>본 서비스의 종수·N대 매칭은 <b>참고 자료</b>이며, 실제 지급 여부는 가입 약관과 심사 결과로 확정됩니다.</p>
+    <p class="foot-dim">© 홍비서 PRO · 데이터 기준 2026.11</p>
+  </footer>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="assets/curated.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
