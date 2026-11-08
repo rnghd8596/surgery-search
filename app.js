@@ -818,7 +818,7 @@ function renderRiders() {
             <div class="rider-name">${esc(r.rider || r.product)}</div>
             <div class="rider-meta">${esc(r.product || '')}</div>
           </div>
-          <span class="rider-ver">${esc(r.ver || '')}</span>
+          <span class="rider-ver">${esc((r.ver || '').split('·')[0].trim().slice(0, 12))}</span>
         </div>
         <div class="rider-subs">${(r.subs || []).map(s => `<span class="sub-pill">${esc(s)}</span>`).join('')}</div>`).join('')}
     </div>`;
