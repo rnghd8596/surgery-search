@@ -1683,23 +1683,30 @@ function bindOcrTab() {
 /* ───────────────────────── N대 약관 트리 드릴다운 ───────────────────────── */
 function renderNdaiTree() {
   const container = $('#riderTreeContainer');
-  const co = state.ndaiCo || '현대해상';
-  const R = state.D.riders;
-  const filtered = R.map((r, ri) => ({ ...r, ri })).filter(r => r.co === co);
+  const cos = state.ndaiCos && state.ndaiCos.length ? state.ndaiCos : (state.ndaiCo ? [state.ndaiCo] : []);
+  const R = state.D?.riders || [];
+
+  // 선택된 회사 기준 필터링
+  const filtered = R.map((r, ri) => ({ ...r, ri })).filter(r => {
+    if (!cos.length) return true;
+    return cos.some(c => r.co.includes(c) || c.includes(r.co));
+  });
+
+  const coTitle = cos.length ? cos.join(', ') : '전체 보험사';
 
   if (!filtered.length) {
     container.innerHTML = `
       <div class="empty" style="padding:28px 20px;">
         <span class="empty-emoji">🏢</span>
-        <h3>[${esc(co)}] 특약 데이터 준비 중</h3>
-        <p>선택하신 회사의 N대 특약 데이터를 불러오는 중입니다. 손보사(현대, 삼성, DB, KB, 메리츠 등)를 먼저 확인해 보세요.</p>
+        <h3>[${esc(coTitle)}] 특약 데이터 준비 중</h3>
+        <p>선택하신 회사의 N대 특약 데이터를 불러오는 중입니다. 손보사(현대, 삼성, DB, KB, 메리츠 등) 또는 생보사를 확인해 보세요.</p>
       </div>`;
     return;
   }
 
   let html = `
     <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-weight:850;font-size:14px;color:var(--text);">[${esc(co)}] N대 질병수술비 특약 목록</span>
+      <span style="font-weight:850;font-size:14px;color:var(--text);">[${esc(coTitle)}] N대 질병수술비 특약 목록 (${filtered.length}종)</span>
       <span style="font-size:11.5px;color:var(--brand);font-weight:700;">특약 터치 시 세부 담보 전개</span>
     </div>`;
 
@@ -1709,8 +1716,8 @@ function renderNdaiTree() {
       <div class="rider-tree-card" data-ri="${r.ri}">
         <div class="rider-tree-head">
           <div>
-            <div class="rider-tree-title">${esc(r.rider)}</div>
-            <div class="rider-tree-sub">${esc(r.product || r.docTitle || co)} · 담보군 ${subs.length}개</div>
+            <div class="rider-tree-title">[${esc(r.co)}] ${esc(r.rider)}</div>
+            <div class="rider-tree-sub">${esc(r.product || r.docTitle || r.co)} · 담보군 ${subs.length}개</div>
           </div>
           <svg class="tree-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" style="transition:transform .2s;"><path d="M6 9l6 6 6-6"/></svg>
         </div>
