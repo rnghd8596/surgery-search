@@ -72,7 +72,8 @@ const EDI_CODE_MAP = {
 /* ───────────────────────── 회사 약칭 & 자동 감지 매핑 (전사 31개사 및 패밀리) ───────────────────────── */
 const COMPANY_FAMILIES = [
   { key: 'db', name: 'DB', sonbo: 'DB손해보험', saengbo: 'DB생명' },
-  { key: '동부', name: '동부', sonbo: 'DB손해보험', saengbo: 'DB생명' },
+  { key: '디비', name: 'DB', sonbo: 'DB손해보험', saengbo: 'DB생명' },
+  { key: '동부', name: 'DB', sonbo: 'DB손해보험', saengbo: 'DB생명' },
   { key: '삼성', name: '삼성', sonbo: '삼성화재', saengbo: '삼성생명' },
   { key: '한화', name: '한화', sonbo: '한화손해보험', saengbo: '한화생명' },
   { key: 'kb', name: 'KB', sonbo: 'KB손해보험', saengbo: 'KB라이프생명' },
@@ -86,37 +87,37 @@ const COMPANY_FAMILIES = [
 
 const COMPANY_ALIASES = [
   // 손해보험 (13개사)
-  { name: '현대해상', type: 'sonbo', keys: ['현대해상', '현대', '현해'] },
-  { name: '삼성화재', type: 'sonbo', keys: ['삼성화재', '삼화'] },
-  { name: 'DB손해보험', type: 'sonbo', keys: ['db손해보험', 'db손보', '디손', '동부화재'] },
-  { name: 'KB손해보험', type: 'sonbo', keys: ['kb손해보험', 'kb손보', '케손', '크손', 'kb손'] },
-  { name: '메리츠화재', type: 'sonbo', keys: ['메리츠화재', '메리츠', '멜츠'] },
-  { name: '한화손해보험', type: 'sonbo', keys: ['한화손해보험', '한화손보', '한손'] },
-  { name: '흥국화재', type: 'sonbo', keys: ['흥국화재', '흥화'] },
-  { name: '롯데손해보험', type: 'sonbo', keys: ['롯데손해보험', '롯데손보', '롯손', '롯데'] },
-  { name: 'NH농협손해보험', type: 'sonbo', keys: ['농협손해보험', '농협손보', '농손', 'nh손보', 'nh농협손보'] },
+  { name: '현대해상', type: 'sonbo', keys: ['현대해상', '현대', '현해', '현손'] },
+  { name: '삼성화재', type: 'sonbo', keys: ['삼성화재', '삼화', '삼성화'] },
+  { name: 'DB손해보험', type: 'sonbo', keys: ['db손해보험', 'db손보', '디비손해보험', '디비손보', '디손', '디비손해', '동부화재', '동부손보'] },
+  { name: 'KB손해보험', type: 'sonbo', keys: ['kb손해보험', 'kb손보', '케이비손보', '케손', '크손', '케이손', 'kb손'] },
+  { name: '메리츠화재', type: 'sonbo', keys: ['메리츠화재', '메리츠', '멜츠', '메화'] },
+  { name: '한화손해보험', type: 'sonbo', keys: ['한화손해보험', '한화손보', '한손', '한화손'] },
+  { name: '흥국화재', type: 'sonbo', keys: ['흥국화재', '흥화', '흥국화'] },
+  { name: '롯데손해보험', type: 'sonbo', keys: ['롯데손해보험', '롯데손보', '롯손', '롯화', '롯데'] },
+  { name: 'NH농협손해보험', type: 'sonbo', keys: ['농협손해보험', '농협손보', '농손', 'nh손보', 'nh농협손보', '엔손'] },
   { name: '하나손해보험', type: 'sonbo', keys: ['하나손해보험', '하나손보', '하손'] },
-  { name: 'MG손해보험', type: 'sonbo', keys: ['mg손해보험', 'mg손보', '엠손'] },
-  { name: 'AIG손해보험', type: 'sonbo', keys: ['aig손해보험', 'aig손보', '에이아이지'] },
-  { name: '라이나손해보험', type: 'sonbo', keys: ['라이나손해보험', '라이나손보'] },
+  { name: 'MG손해보험', type: 'sonbo', keys: ['mg손해보험', 'mg손보', '엠손', '엠지손보', '엠지'] },
+  { name: 'AIG손해보험', type: 'sonbo', keys: ['aig손해보험', 'aig손보', '에이아이지', '아이지손보'] },
+  { name: '라이나손해보험', type: 'sonbo', keys: ['라이나손해보험', '라이나손보', '라손', '에이스손보', '처브'] },
 
   // 생명보험 (18개사)
   { name: '삼성생명', type: 'saengbo', keys: ['삼성생명', '삼생'] },
   { name: '한화생명', type: 'saengbo', keys: ['한화생명', '한생', '대한생명'] },
-  { name: '교보생명', type: 'saengbo', keys: ['교보생명', '교보'] },
-  { name: '신한라이프', type: 'saengbo', keys: ['신한라이프', '신라', '신한생명', '신생'] },
-  { name: 'KB라이프생명', type: 'saengbo', keys: ['kb라이프생명', 'kb라이프', '케생', '크생', '푸르덴셜'] },
+  { name: '교보생명', type: 'saengbo', keys: ['교보생명', '교보', '교생'] },
+  { name: '신한라이프', type: 'saengbo', keys: ['신한라이프', '신라', '신한생명', '신생', '오렌지라이프', '오렌지'] },
+  { name: 'KB라이프생명', type: 'saengbo', keys: ['kb라이프생명', 'kb라이프', '케이비라이프', '케라', '케생', '크생', '크라', '푸르덴셜', 'kb생명'] },
   { name: '동양생명', type: 'saengbo', keys: ['동양생명', '동양', '동생'] },
-  { name: '미래에셋생명', type: 'saengbo', keys: ['미래에셋생명', '미래에셋', '미생'] },
-  { name: 'DB생명', type: 'saengbo', keys: ['db생명', '디생', '동부생명'] },
+  { name: '미래에셋생명', type: 'saengbo', keys: ['미래에셋생명', '미래에셋', '미생', '미래생명', '미생명'] },
+  { name: 'DB생명', type: 'saengbo', keys: ['db생명', '디비생명', '디생', '동부생명'] },
   { name: '흥국생명', type: 'saengbo', keys: ['흥국생명', '흥생'] },
   { name: '라이나생명', type: 'saengbo', keys: ['라이나생명', '라이나', '라생'] },
   { name: '메트라이프생명', type: 'saengbo', keys: ['메트라이프생명', '메트라이프', '메라', '멧라', '메트'] },
   { name: 'AIA생명', type: 'saengbo', keys: ['aia생명', 'aia', '에이아이에이', '아아생'] },
   { name: '하나생명', type: 'saengbo', keys: ['하나생명', '하생'] },
   { name: 'ABL생명', type: 'saengbo', keys: ['abl생명', 'abl', '에이비엘', '아블', '알리안츠'] },
-  { name: 'NH농협생명', type: 'saengbo', keys: ['농협생명', '농생', 'nh생명', 'nh농협생명'] },
-  { name: 'iM라이프', type: 'saengbo', keys: ['im라이프', 'dgb생명', '아라', '아임', '디라'] },
+  { name: 'NH농협생명', type: 'saengbo', keys: ['농협생명', '농생', 'nh생명', 'nh농협생명', '엔생'] },
+  { name: 'iM라이프', type: 'saengbo', keys: ['im라이프', 'dgb생명', '아라', '아임', '디라', 'dgb'] },
   { name: 'KDB생명', type: 'saengbo', keys: ['kdb생명', 'kdb', '케디생', '금호생명'] },
   { name: 'IBK연금보험', type: 'saengbo', keys: ['ibk연금보험', 'ibk연금', '기업은행연금', '아백연금'] }
 ];
@@ -822,7 +823,54 @@ function getBeginnerTips(g) {
 
 function renderIdleQuick() {
   const box = $('#results-quick');
-  if (box) box.innerHTML = '';
+  if (!box) return;
+
+  const frequentItems = [
+    { title: '대장용종 절제술', sub: 'K63.5 · Q7701 (2종 / 개정 1종)', query: '대장용종', badge: '2종', badgeBg: '#2563eb' },
+    { title: '백내장 수정체수술', sub: 'H25/H26 · 초음파유화술 (1종)', query: '백내장', badge: '1종', badgeBg: '#059669' },
+    { title: '맘모톰 (유방절제)', sub: 'D24 · N60 (2종 / 단순생검 제외)', query: '맘모톰', badge: '2종', badgeBg: '#2563eb' },
+    { title: '자궁근종 절제술', sub: 'D25 · 복강경·개복·하이푸 (2~3종)', query: '자궁근종', badge: '2~3종', badgeBg: '#7c3aed' },
+    { title: '무릎 인공관절치환', sub: 'M17 · 전치환술 (4종 / 세척 3종)', query: '인공관절', badge: '4종', badgeBg: '#dc2626' },
+    { title: '치핵 · 치루 근치술', sub: 'K60~K64 · 외과적 치핵절제 (1종)', query: '치핵', badge: '1종', badgeBg: '#059669' },
+    { title: '요로결석 쇄석술', sub: 'N20~N23 · 체외충격파쇄석 (2종)', query: '요로결석', badge: '2종', badgeBg: '#2563eb' },
+    { title: '복강경 담낭절제술', sub: 'K80 · 담석증 담낭적출 (3종)', query: '담낭절제', badge: '3종', badgeBg: '#ea580c' },
+    { title: '척추 디스크 감압술', sub: 'M51 · 신경감압·수핵절제 (3종)', query: '추간판', badge: '3종', badgeBg: '#ea580c' },
+    { title: '하지정맥류 레이저', sub: 'I83 · 광범위정맥류발거 (2종)', query: '하지정맥류', badge: '2종', badgeBg: '#2563eb' }
+  ];
+
+  box.innerHTML = `
+    <div style="margin-top:14px;animation:fadeIn .25s ease;">
+      <!-- 다빈도 질병 바로검색 그리드 -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:12px;font-weight:900;color:var(--brand);background:rgba(26,115,232,0.1);padding:4px 10px;border-radius:6px;">🔥 다빈도 질병 · 수술 바로검색</span>
+        <span style="font-size:11px;color:var(--text-3);font-weight:700;">누르면 즉시 결과가 나와요</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:8px;" id="quickFrequentGrid">
+        ${frequentItems.map(item => `
+          <button type="button" class="quick-freq-btn" data-q="${item.query}" style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;cursor:pointer;transition:all .15s ease;-webkit-tap-highlight-color:transparent;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+              <span style="font-size:13px;font-weight:850;color:var(--text);letter-spacing:-.01em;">${item.title}</span>
+              <span style="background:${item.badgeBg};color:#fff;font-size:10.5px;font-weight:900;padding:2px 6px;border-radius:5px;flex-shrink:0;">${item.badge}</span>
+            </div>
+            <div style="font-size:11px;color:var(--text-3);letter-spacing:-.02em;line-height:1.3;">${item.sub}</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  box.querySelectorAll('.quick-freq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      const qQuickEl = $('#q-quick');
+      if (qQuickEl) qQuickEl.value = q;
+      state.quickQ = q;
+      $('#clearBtn-quick').hidden = false;
+      const parsed = parseSmartQuery(q);
+      runQuickSearch(parsed.cleanQ || q, parsed);
+    });
+  });
 }
 
 function cardQuickHTML(gi, q, matchedEdi) {
