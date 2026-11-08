@@ -426,7 +426,7 @@ function cardHTML(gi, q) {
         <span class="badge ${tclass}"><span class="b-dot"></span>${tierLabel(t)}</span>
         ${est}
         ${riderCount ? `<span class="badge nda">N대 ${cos.size}개사</span>` : ''}
-        ${g.g ? `<span class="badge ghost">${esc(g.g)}</span>` : ''}
+        ${g.ch ? `<span class="badge ghost">${esc(g.ch)}</span>` : ''}
       </div>
       <div class="card-facts">
         <div class="fact"><dt>약관 분류</dt><dd>${riderCount}개</dd></div>
@@ -623,7 +623,7 @@ function ediRowHTML(i) {
   const kind = r[2] === 'S' ? '수술' : r[2] === 'T' ? '처치' : r[2] === 'U' ? '약국' : r[2] === 'D' ? '치과' : '';
   return `<div class="edi-item">
     <span class="edi-code">${esc(r[0])}</span>
-    <span class="edi-name">${esc(r[1])}${r[4] && r[4] !== r[1] ? `<span style="color:var(--text-3)"> · ${esc(r[4]).slice(0, 60)}</span>` : ''}${kind ? ` <b style="color:var(--text-3);font-size:11px">［${kind}］</b>` : ''}</span>
+    <span class="edi-name">${esc(r[1])}${kind ? ` <b style="color:var(--text-3);font-size:11px">［${kind}］</b>` : ''}</span>
   </div>`;
 }
 
