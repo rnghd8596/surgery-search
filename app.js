@@ -185,12 +185,22 @@ function start(data) {
   $('#q').focus({ preventScroll: true });
 }
 
+const CHO = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ';
+function toCho(s) {
+  let out = '';
+  for (const ch of s) {
+    const c = ch.charCodeAt(0);
+    out += (c >= 0xAC00 && c <= 0xD7A3) ? CHO[Math.floor((c - 0xAC00) / 588)] : ch;
+  }
+  return out;
+}
+
 const idx = { name: [], nameLoose: [], edi: [], ediSurg: [], syn: [] };
 function buildIndices() {
   const G = state.D.g;
   G.forEach((g, i) => {
     const nn = norm(g.n);
-    idx.name.push({ i, nn, codes: g.c.map(c => c.toUpperCase()) });
+    idx.name.push({ i, nn, ch: toCho(nn), codes: g.c.map(c => c.toUpperCase()) });
   });
   (state.E.rows || []).forEach((r, i) => {
     const nn = norm(r[1] + ' ' + (r[4] || ''));
@@ -224,7 +234,14 @@ function search(qraw) {
   }
 
   const syn = idx.syn.find(s => s.keys.some(k => k.includes(nq)) || nq.includes(s.nq) || s.nq.includes(nq));
-  idx.name.forEach(({ i, nn }) => {
+  const isCho = /^[ㄱ-ㅎ]+$/.test(nq);
+  idx.name.forEach(({ i, nn, ch }) => {
+    if (isCho) {
+      if (ch === nq) add(i, 4);
+      else if (ch.startsWith(nq)) add(i, 5);
+      else if (ch.includes(nq)) add(i, 6);
+      return;
+    }
     if (nn === nq) add(i, 3);
     else if (nn.startsWith(nq)) add(i, 4);
     else if (nn.includes(nq)) add(i, 5);
