@@ -73,7 +73,7 @@ const EDI_CODE_MAP = {
   'R3431': { codes: ['N40'], name: '경요도 전립선결찰술(유로리프트)', tier: '1~2종 (비급여/분쟁)' },
   'R3441': { codes: ['N40'], name: '홀뮴레이저 전립선적출술(HoLEP)', tier: '3종' },
   'R3461': { codes: ['N40'], name: '전립선고수압분사절제술(워터젯/아쿠아블레이션)', tier: '3종' },
-  'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '비해당(시술) 다수' },
+  'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '생보 2종 (손보 면책 다수)' },
   // 척추 및 치과 신의료기술/다빈도
   'O1441': { codes: ['J34.8', 'J34.2'], name: '비밸브재건술', tier: '2~3종' },
   'O1451': { codes: ['J32'], name: '풍선카테터부비동확장술', tier: '2종' },
@@ -81,6 +81,357 @@ const EDI_CODE_MAP = {
   'N0331': { codes: ['M80', 'S22', 'S32'], name: '경피적 척추체성형술(골시멘트)', tier: '3종' },
   'U1010': { codes: ['K08.1', 'K08'], name: '치조골이식술(골이식술)', tier: '2종 (표준 1~5종 33항)' }
 };
+
+/* ───────────────────────── 유사 명칭 직관 비교 (체외충격파 vs 쇄석술 등) ───────────────────────── */
+const COMPARISON_PAIRS = [
+  {
+    id: 'eswt_vs_eswl',
+    keys: ['체외충격파', '충격파', '체외충격파치료', '체외충격파쇄석', '체외충격파쇄석술', '쇄석술', '쇄석', 'eswt', 'eswl'],
+    title: '⚡ 유사 명칭 직관 비교: 체외충격파 (ESWT) vs 체외충격파쇄석술 (ESWL)',
+    items: [
+      {
+        name: '체외충격파치료 (ESWT)',
+        badge: '❌ 수술비 전사 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '관절·근육·인대 통증 (족저근막염, 석회건염, 테니스엘보 등)',
+        nature: '외래 물리치료 / 통증 처치 (*약관 분류표 본문 제외 명시)',
+        payout: '수술비 전사 면책 (*약관상 ESWT 명시적 제외) · 실손만 청구 가능'
+      },
+      {
+        name: '체외충격파쇄석술 (ESWL)',
+        badge: '⭕ 생보 2종 / 손보 1·2종',
+        badgeColor: '#fff',
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '신장 및 요관 결석 파쇄 배출 (KCD: N20~N23)',
+        nature: '체외 충격파로 체내 결석 분쇄 (생보 37항 / 손보 85·87항)',
+        payout: '생보 2종 · 메리츠 87항 2종 (60일내 1회) · 현대해상 특약별 1종 또는 2종'
+      }
+    ]
+  },
+  {
+    id: 'spine_block_neuro_disc',
+    keys: ['신경차단술', '신경차단', '신경성형술', '신경성형', '유착박리', '신경유착박리술', '락츠', 'racz', '경막외차단술'],
+    title: '⚡ 척추 3대 시술·수술 직관 비교 (신경차단 vs 신경성형 vs 수핵절제)',
+    items: [
+      {
+        name: '신경차단술 (Block)',
+        badge: '❌ 수술비 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '디스크·협착증 신경 염증',
+        nature: '주사기 바늘 약물 주입 (천자·주사)',
+        payout: '약관상 명시적 제외 (실손의료비만 가능)'
+      },
+      {
+        name: '신경성형술 (RACZ)',
+        badge: '⚠️ 원칙적 비해당 (분쟁)',
+        badgeColor: '#fff',
+        badgeBg: '#ea580c',
+        borderColor: '#ea580c',
+        boxBg: 'rgba(234, 88, 12, 0.06)',
+        target: '척추관 신경 유착 및 부종',
+        nature: '특수 카테터 약물세척 및 유착 박리',
+        payout: '절제 조작 없어 수술비 부지급(실손 비급여 가능)'
+      },
+      {
+        name: '수핵절제술 / 감압술',
+        badge: '⭕ 3종 정식수술',
+        badgeColor: '#fff',
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '돌출 추간판(디스크) 파편',
+        nature: '내시경/관혈 병적 조직 절단·절제',
+        payout: '종수술비 [3종] + N대 질병수술비 지급'
+      }
+    ]
+  },
+  {
+    id: 'biopsy_vs_mammotome',
+    keys: ['생검', '침생검', '조직검사', '총생검'],
+    title: '⚡ 검사 vs 수술 직관 비교: 단순 침생검 vs 맘모톰 절제술',
+    items: [
+      {
+        name: '단순 침생검 (Needle Biopsy)',
+        badge: '❌ 수술비 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '유방·갑상선 혹 조직 채취',
+        nature: '진단 목적의 소량 채취 검사',
+        payout: '치료 목적 아니므로 수술비 부지급 (실손 검사비 청구)'
+      },
+      {
+        name: '맘모톰 절제술 (진공보조절제)',
+        badge: '⭕ 2종 지급',
+        badgeColor: '#fff',
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '유방 섬유선종·양성종양 (D24)',
+        nature: '치료 목적 병변 완전 절제',
+        payout: '종수술비 [2종] + N대 질병수술비 지급'
+      }
+    ]
+  },
+  {
+    id: 'suture_simple_vs_muscle',
+    keys: ['단순봉합', '창상봉합', '피부봉합', '봉합술', '꿰맴', '상처봉합'],
+    title: '⚡ 상처 봉합 직관 비교: 단순 피부봉합 vs 근봉합술 / 변연절제술',
+    items: [
+      {
+        name: '단순 피부봉합술',
+        badge: '❌ 수술비 비해당',
+        badgeColor: '#fff',
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '표피 및 진피 표층 열상',
+        nature: '단순 피부 꿰맴 (외래 처치)',
+        payout: '수술비 부지급 · 실손 및 응급실내원비 청구'
+      },
+      {
+        name: '근봉합술 / 변연절제술 동반',
+        badge: '⭕ 1종 지급 가능',
+        badgeColor: '#fff',
+        badgeBg: '#059669',
+        borderColor: '#059669',
+        boxBg: 'rgba(5, 150, 105, 0.06)',
+        target: '근육층 파열 또는 오염 괴사조직',
+        nature: '근육층 봉합 또는 괴사조직 절제술',
+        payout: '종수술비 [1종] 지급 (수술확인서 근봉합 명기 필수)'
+      }
+    ]
+  }
+];
+
+/* ───────────────────────── 수술비 비해당 / 시술 / 처치 / 면책 판정 DB ───────────────────────── */
+const EXCLUDED_PROCEDURES = [
+  {
+    keys: ['신경차단술', '신경차단', '블럭', 'block', 'nerveblock', '경막외차단술', '신경근차단술', '후관절차단술'],
+    name: '신경차단술 (Nerve Block)',
+    verdict: '수술비 비해당 (지급 불가)',
+    badge: '❌ 수술비 비해당 (약관상 명시적 제외)',
+    badgeBg: '#ef4444',
+    reason: '표준약관상 “신경차단(Nerve Block)”은 수술의 정의에서 명시적으로 제외',
+    detail: '표준 1~5종 및 질병수술비 약관은 “흡인, 천자 등의 조치 및 신경차단(Nerve Block)은 제외한다”고 규정하고 있습니다. C-arm 영상 유도하에 주사 바늘로 국소마취제와 소염제를 신경 부위에 투여하는 주사 처치이므로 수술비가 지급되지 않습니다.',
+    relatedDisease: '추간판장애(목·허리디스크 M50·M51) · 척추관협착증(M48)',
+    relatedCodes: ['M50', 'M51', 'M48'],
+    silson: '실손의료비(통원/입원)에서 질병 치료 목적의 급여/비급여 주사료로 정상 청구 가능',
+    altSurgery: '추간판절제술(3종) · 내시경하 수핵제거술(3종) · 척추유합술(4종)'
+  },
+  {
+    keys: ['이물주입술', '이물주입', '주입술', '필러주입', '보형물주입'],
+    name: '이물주입술 (보형물·필러·약물 주입)',
+    verdict: '수술비 비해당 (지급 불가)',
+    badge: '❌ 수술비 비해당 (수술 정의 미충족)',
+    badgeBg: '#ef4444',
+    reason: '약관상 수술 정의(생체 절단·절제) 미충족 및 단순 주입·천자 제외',
+    detail: '약관상 수술은 생체에 절단(특정 부위를 잘라 없앰), 절제(특정 부위를 잘라 냄) 등의 조작을 가하는 것을 의미합니다. 주사기나 카테터로 이물질, 약물, 필러 등을 주입하는 행위는 약관상 수술에 해당하지 않습니다.',
+    relatedDisease: '안면·피부 연조직 질환 또는 비뇨기계 기능성 주입',
+    relatedCodes: [],
+    silson: '치료 목적(미용 제외) 시 실손의료비 검토 가능하나, 단순 미용성형 주입은 전액 면책',
+    altSurgery: '외과적 절제술 또는 근치적 재건수술'
+  },
+  {
+    keys: ['신경성형술', '경막외신경성형술', '경막외유착박리술', '락츠', 'racz', '신경유착박리술', '감압신경성형술'],
+    name: '경막외 신경성형술 (신경유착박리술 / RACZ 카테터)',
+    verdict: '원칙적 비해당 (부지급 / 분쟁 다수)',
+    badge: '⚠️ 원칙적 비해당 (분쟁 항목)',
+    badgeBg: '#ea580c',
+    reason: '절개·절단 조작 없는 카테터 유착박리 및 약물주입 시술',
+    detail: '꼬리뼈를 통해 특수 카테터를 삽입하여 염증 물질을 세척하고 신경 유착을 박리하는 비관혈적 시술입니다. 보험사는 “절단·절제 조작이 없는 단순 천자/약물주입 시술”로 보아 종수술비 및 질병수술비를 부지급(면책) 처리합니다.',
+    relatedDisease: '추간판장애(목·허리디스크 M50·M51) · 척추관협착증(M48)',
+    relatedCodes: ['M50', 'M51', 'M48'],
+    silson: '입원/통원 실손의료비에서 비급여 치료비로 청구 가능',
+    altSurgery: '내시경적 수핵제거술(3종) · 경피적 디스크감압술(3종) · 척추고정술(4종)'
+  },
+  {
+    keys: ['도수치료', '체외충격파치료', '도수', '물리치료', '체외충격파'],
+    name: '도수치료 · 근골격계 체외충격파치료 (ESWT)',
+    verdict: '수술비 비해당 (물리치료·재활 처치)',
+    badge: '❌ 수술비 비해당',
+    badgeBg: '#ef4444',
+    reason: '약관상 수술 정의 미해당 (물리치료 및 보존적 재활 처치)',
+    detail: '손이나 기구를 이용하여 관절·근육을 교정하거나 충격파를 가하는 보존적 통증 완화 치료로, 수술비 담보의 지급 대상이 아닙니다. (요로결석 쇄석술인 ESWL과 구별 필수)',
+    relatedDisease: '근골격계 질환(족저근막염 M72, 회전근개 M75, 관절통 등)',
+    relatedCodes: ['M72', 'M75', 'M17'],
+    silson: '실손의료비에서 비급여 도수치료·체외충격파로 청구 가능 (가입 세대별 연간 횟수·한도 확인)',
+    altSurgery: '관혈적 관절수술(3~4종) · 관절경하 인대/건 수술(3종)'
+  },
+  {
+    keys: ['프롤로주사', '프롤로', '증식치료', 'dna주사', 'pdrn', '연골주사', '히알루론산주사', '뼈주사'],
+    name: '프롤로치료 (증식치료) · 관절강내 주사',
+    verdict: '수술비 비해당 (주사치료)',
+    badge: '❌ 수술비 비해당',
+    badgeBg: '#ef4444',
+    reason: '약관상 “주사·천자(바늘을 꽂아 약물을 주입하는 것)”는 수술에서 제외',
+    detail: '인대나 힘줄, 관절강 내에 고농도 포도당, PDRN, 콜라겐 등을 주사하여 재생을 유도하는 주사 처치로 수술비 지급 대상이 아닙니다.',
+    relatedDisease: '무릎관절증(M17) · 회전근개파열(M75) · 족저근막염(M72)',
+    relatedCodes: ['M17', 'M75'],
+    silson: '실손의료비에서 급여/비급여 주사료로 청구 가능 (치료 목적 소견서 필요)',
+    altSurgery: '관절경하 활액막절제술(3종) · 인공관절치환술(4종)'
+  },
+  {
+    keys: ['조직검사', '생검', '침생검', '단순생검', '바늘생검', '총생검'],
+    name: '단순 조직검사 (생검 / Needle Biopsy)',
+    verdict: '수술비 비해당 (진단 목적 검사)',
+    badge: '❌ 수술비 비해당',
+    badgeBg: '#ef4444',
+    reason: '치료 목적이 아닌 “진단 목적의 단순 검사(생검)”',
+    detail: '약관상 수술비는 “치료를 직접적인 목적으로 한 수술”에 한하여 지급됩니다. 진단을 위해 세포나 조직을 소량 떼어내는 단순 생검(침생검, 총생검)은 수술비가 지급되지 않습니다. (단, 맘모톰처럼 병변 완전절제를 동반한 경우 2종 인정)',
+    relatedDisease: '유방종양(D24, N60) · 갑상선결절(E04)',
+    relatedCodes: ['D24', 'E04'],
+    silson: '실손의료비에서 검사비로 정상 청구 가능',
+    altSurgery: '양성종양 절제술(2종) · 관혈적 종양적출술(3종)'
+  },
+  {
+    keys: ['단순봉합술', '피부봉합', '창상봉합', '단순봉합', '꿰맴', '봉합술', '상처봉합'],
+    name: '단순 피부 창상봉합술 (봉합치료)',
+    verdict: '원칙적 비해당 (단순 피부 꿰맴)',
+    badge: '⚠️ 단순봉합 비해당',
+    badgeBg: '#ea580c',
+    reason: '약관상 단순 창상봉합술(피부 표층 봉합)은 수술비 제외',
+    detail: '단순히 찢어진 피부 표층만 꿰매는 봉합술은 수술비가 지급되지 않습니다. 다만, 근포/근육층까지 깊게 찢어져 “근봉합술(근육봉합)”을 시행하거나 오염된 괴사조직을 잘라내는 “변연절제술”이 동반 기재된 경우 1종 수술비 청구가 가능합니다.',
+    relatedDisease: '열상 · 외상성 창상 (S코드)',
+    relatedCodes: ['S01', 'S61', 'S81'],
+    silson: '실손의료비 및 응급실내원비, 상해통원일당 청구 가능',
+    altSurgery: '근봉합술(1종) · 변연절제술 동반 봉합(1종) · 건봉합술(3종)'
+  },
+  {
+    keys: ['위내시경검사', '대장내시경검사', '단순내시경', '내시경검사'],
+    name: '단순 소화기 내시경 검사',
+    verdict: '수술비 비해당 (검사 목적)',
+    badge: '❌ 수술비 비해당',
+    badgeBg: '#ef4444',
+    reason: '치료 목적이 아닌 육안 관찰 검사 행위',
+    detail: '단순히 위나 대장 내부를 관찰하는 검사는 수술비가 지급되지 않습니다. 검사 도중 용종(폴립)을 발견하여 내시경으로 절제한 경우에만 “내시경적 폴립절제술”로 1~2종 수술비가 지급됩니다.',
+    relatedDisease: '위염(K29) · 대장질환(K63)',
+    relatedCodes: ['K29', 'K63'],
+    silson: '증상(속쓰림, 복통 등) 치료 목적의 검사비는 실손 청구 가능 (단순 정기검진은 면책)',
+    altSurgery: '내시경하 용종절제술(폴립절제 1~2종, EMR 2~3종)'
+  },
+  {
+    keys: ['보톡스', '필러', '지방흡입', '쌍꺼풀', '코성형'],
+    name: '미용·성형 시술 (보톡스 / 필러 / 지방흡입 등)',
+    verdict: '수술비 및 실손 전액 면책 (부지급)',
+    badge: '❌ 수술비·실손 전액 면책',
+    badgeBg: '#ef4444',
+    reason: '약관상 “미용성형 목적의 수술”은 절대적 면책 사유',
+    detail: '질병이나 상해의 직접적인 치료 목적이 아닌 외모 개선, 미용, 체형 교정 목적의 시술은 수술비 및 실손의료비에서 전액 면책(지급 제외)됩니다.',
+    relatedDisease: '미용 성형',
+    relatedCodes: [],
+    silson: '면책 (지급 불가)',
+    altSurgery: '치료 목적 기능개선 수술인 경우에 한해 예외적 검토'
+  },
+  {
+    keys: ['혈액투석', '복막투석', '투석'],
+    name: '혈액투석 · 복막투석',
+    verdict: '수술비 비해당 (보존적 여과 치료)',
+    badge: '❌ 수술비 비해당',
+    badgeBg: '#ef4444',
+    reason: '지속적인 체외 순환 여과 치료로 수술 정의 미해당',
+    detail: '만성 신부전 환자의 투석 행위 자체는 수술비 지급 대상이 아닙니다. (단, 투석을 위해 혈관을 연결하는 “동정맥루 조성술(혈관수술)”은 2~3종 수술비 지급 대상이며, 인공신장투석치료비 전용 특약으로 청구합니다.)',
+    relatedDisease: '만성 신부전 (N18)',
+    relatedCodes: ['N18'],
+    silson: '입원/통원 실손의료비에서 정상 보상',
+    altSurgery: '동정맥루 설치술/성형술(2~3종) · 신장이식술(5종)'
+  }
+];
+
+function findComparisonPair(normQ) {
+  if (!normQ) return null;
+  return COMPARISON_PAIRS.find(p => p.keys.some(k => {
+    const nk = norm(k);
+    return normQ === nk || (nk.length >= 3 && (normQ.includes(nk) || nk.includes(normQ)));
+  }));
+}
+
+function findExcludedProcedure(normQ) {
+  if (!normQ) return null;
+  if (normQ.includes('쇄석')) return null; // 쇄석술은 생보 2종 대상이므로 비해당 단독 매칭 제외
+  return EXCLUDED_PROCEDURES.find(p => p.keys.some(k => {
+    const nk = norm(k);
+    return normQ === nk || (nk.length >= 3 && (normQ.includes(nk) || nk.includes(normQ)));
+  }));
+}
+
+function renderComparisonPairHTML(pair) {
+  const is3Cols = pair.items.length === 3;
+  return `
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:12px;margin-bottom:12px;box-shadow:var(--shadow-1);animation:fadeIn .2s ease;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:900;color:var(--brand);">${esc(pair.title)}</span>
+        <span style="font-size:11px;color:var(--text-3);font-weight:700;">비슷한 시술 직관 비교</span>
+      </div>
+      <div style="display:grid;grid-template-columns:${is3Cols ? 'repeat(auto-fit, minmax(105px, 1fr))' : '1fr 1fr'};gap:8px;">
+        ${pair.items.map(it => `
+          <div style="background:${it.boxBg};border:1.5px solid ${it.borderColor};border-radius:12px;padding:10px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;margin-bottom:4px;flex-wrap:wrap;">
+                <span style="font-size:12.5px;font-weight:900;color:var(--text);">${esc(it.name)}</span>
+                <span style="background:${it.badgeBg};color:${it.badgeColor};font-size:10px;font-weight:900;padding:2px 5px;border-radius:6px;white-space:nowrap;">${esc(it.badge)}</span>
+              </div>
+              <div style="font-size:11px;color:var(--text-2);line-height:1.45;margin-top:4px;">
+                • <b>대상</b>: ${esc(it.target)}<br>
+                • <b>성격</b>: ${esc(it.nature)}
+              </div>
+            </div>
+            <div style="font-size:11.5px;color:var(--text);font-weight:850;border-top:1px dashed ${it.borderColor};padding-top:6px;margin-top:2px;">
+              👉 ${esc(it.payout)}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderExcludedProcedureHTML(proc) {
+  const copyText = `[${proc.name} 수술비 보상 안내]
+
+고객님, 문의하신 ${proc.name}은(는) 보험 약관상 수술비 지급 대상이 아닙니다.
+
+📌 판정: ${proc.verdict}
+• 제외 사유: ${proc.reason}
+• 상세 내용: ${proc.detail}
+• 실손의료비: ${proc.silson}
+• 참고: ${proc.altSurgery}`;
+
+  return `
+    <div style="background:var(--surface);border:1.5px solid ${proc.badgeBg};border-radius:14px;padding:13px;margin-bottom:12px;box-shadow:var(--shadow-1);animation:fadeIn .2s ease;text-align:left;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+        <span style="background:${proc.badgeBg};color:#fff;font-size:11.5px;font-weight:900;padding:3px 8px;border-radius:8px;">${esc(proc.badge)}</span>
+        <span style="font-size:11.5px;color:var(--text-3);font-weight:750;">약관 수술의 정의 판정</span>
+      </div>
+      <div style="font-size:15.5px;font-weight:900;color:var(--text);margin-bottom:8px;">
+        ${esc(proc.name)}
+      </div>
+
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:12px;line-height:1.5;margin-bottom:10px;">
+        <div style="margin-bottom:4px;"><b style="color:var(--text);">📌 판정 결과:</b> <span style="font-weight:850;color:${proc.badgeBg};">${esc(proc.verdict)}</span></div>
+        <div style="margin-bottom:4px;"><b style="color:var(--text);">📜 약관 제외 사유:</b> <span style="color:var(--text-2);">${esc(proc.reason)}</span></div>
+        <div style="margin-bottom:4px;"><b style="color:var(--text);">💡 상세 설명:</b> <span style="color:var(--text-2);">${esc(proc.detail)}</span></div>
+        <div style="margin-bottom:4px;"><b style="color:var(--text);">🩺 실손의료비:</b> <span style="color:var(--text-2);">${esc(proc.silson)}</span></div>
+        ${proc.relatedDisease ? `<div style="margin-bottom:4px;"><b style="color:var(--text);">🔍 연관 질환:</b> <span style="color:var(--brand);font-weight:800;">${esc(proc.relatedDisease)}</span></div>` : ''}
+        <div><b style="color:var(--text);">🛡️ 수술비 인정 대안:</b> <span style="color:var(--text);font-weight:800;">${esc(proc.altSurgery)}</span></div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;">
+        <button type="button" class="f-btn btn-copy-proc" data-copy="${esc(copyText)}" style="background:var(--brand);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:850;cursor:pointer;">📋 고객 안내문 복사</button>
+      </div>
+    </div>
+  `;
+}
+
 
 /* ───────────────────────── 회사 약칭 & 자동 감지 매핑 (전사 31개사 및 패밀리) ───────────────────────── */
 const COMPANY_FAMILIES = [
@@ -857,9 +1208,20 @@ function bindQuickTab() {
 }
 
 function runQuickSearch(q, parsed) {
-  const res = search(q);
+  const normQ = norm(q);
+  const compPair = findComparisonPair(normQ);
+  const exclProc = findExcludedProcedure(normQ);
+
+  const res = search(q) || { groups: [], edi: [] };
   const box = $('#results-quick');
-  if (!res) { renderIdleQuick(); return; }
+
+  if (exclProc && exclProc.relatedCodes && (!res.groups || res.groups.length === 0)) {
+    exclProc.relatedCodes.forEach(code => {
+      (state.D.codeIndex[code] || []).forEach(gi => {
+        if (!res.groups.includes(gi)) res.groups.push(gi);
+      });
+    });
+  }
 
   let subInfo = '';
   if (parsed && (parsed.co || parsed.year || parsed.ntier)) {
@@ -870,6 +1232,9 @@ function runQuickSearch(q, parsed) {
     subInfo = `<div style="font-size:12px;font-weight:750;color:var(--brand);margin-top:3px;">[${parts.join(' · ')} 인식]</div>`;
   }
 
+  const compHTML = compPair ? renderComparisonPairHTML(compPair) : '';
+  const exclHTML = exclProc ? renderExcludedProcedureHTML(exclProc) : '';
+
   const head = `
     <div class="res-head">
       <div>
@@ -879,7 +1244,7 @@ function runQuickSearch(q, parsed) {
       <div class="res-count">분류 ${res.groups.length}건</div>
     </div>`;
 
-  if (!res.groups.length && !res.edi.length) {
+  if (!res.groups.length && !res.edi.length && !compPair && !exclProc) {
     box.innerHTML = head + `
       <div class="empty">
         <span class="empty-emoji">🔍</span>
@@ -889,8 +1254,13 @@ function runQuickSearch(q, parsed) {
     return;
   }
 
-  let html = head;
-  html += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi, parsed)).join('');
+  let html = head + compHTML + exclHTML;
+  if (res.groups.length > 0) {
+    if (exclProc && exclProc.relatedCodes && exclProc.relatedCodes.length > 0) {
+      html += `<div style="font-size:12.5px;font-weight:900;color:var(--text);margin:14px 0 8px 4px;">💡 연관 질환 정식 수술비 보장 내역 (${esc(exclProc.relatedDisease)})</div>`;
+    }
+    html += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi, parsed)).join('');
+  }
   box.innerHTML = html;
   bindCardActions(box);
 }
@@ -1054,6 +1424,72 @@ function parseCosList(coInput) {
 }
 
 const REVISION_RULES = [
+  {
+    id: 'eswl_hyundai_tier',
+    name: '체외충격파쇄석술(ESWL) 보험사·특약별 종수',
+    match: (g) => {
+      const codes = g.c || [];
+      const hasNCode = codes.some(c => ['N20', 'N21', 'N22', 'N23'].some(t => c.startsWith(t)));
+      const hasName = (g.n || '').includes('결석') || (g.g || '').includes('결석');
+      const hasVs = (g.vs || []).some(v => v.includes('쇄석') || v.includes('ESWL'));
+      return hasNCode || hasName || hasVs;
+    },
+    standardTier: '2종',
+    revisions: [
+      { co: '현대해상', ym: 202208, label: '현대해상 일반형(1종) vs 질병수술Ⅱ(2종)', matchKeys: ['현대', '현해'] }
+    ],
+    evaluate: function(cosInput, year, month) {
+      const cosList = parseCosList(cosInput);
+      const isHyundai = cosList.some(co => ['현대', '현해'].some(k => co.toLowerCase().includes(k)));
+      const isMeritz = cosList.some(co => ['메리츠', '멜츠'].some(k => co.toLowerCase().includes(k)));
+
+      if (cosList.length === 1 && !isHyundai) {
+        return {
+          tier: '2종',
+          hasDiff: false,
+          note: `${cosList[0]} 체외충격파쇄석술 2종 지급 (60일 이내 1회 한)`,
+          boxHTML: `
+            <div class="rev-alert-box blue">
+              <div class="rab-title">✓ ${cosList[0]} 체외충격파쇄석술 [2종 지급]</div>
+              <div class="rab-desc" style="color:var(--text-2);margin-top:2px;">
+                1~5종 수술분류표에 따라 <b>2종</b>으로 지급됩니다. (수술개시일부터 60일 이내 2회 이상 수술은 1회로 간주)<br>
+                ※ 물리치료인 <b>체외충격파치료술(ESWT)은 전사 제외</b>입니다.
+              </div>
+            </div>`
+        };
+      }
+
+      return {
+        tier: isHyundai ? '1·2종' : '2종',
+        hasDiff: true,
+        diffBadge: '[특약별 상이]',
+        note: '생보 2종 / 메리츠 87항 2종 / 현대해상 일반형 85항 1종 vs 질병Ⅱ 85항 2종 (정액수술비는 부지급)',
+        boxHTML: `
+          <div class="rev-alert-box">
+            <div class="rab-title">⚠️ 체외충격파쇄석술(ESWL) 보험사·특약별 종수 확인 (필수)</div>
+            <div class="rab-card">
+              <div class="rab-row">
+                <span class="rab-label">생명보험 전사 & 메리츠화재 (제87항)</span>
+                <span class="rab-val blue">2종 지급 (60일 내 1회)</span>
+              </div>
+              <div class="rab-row">
+                <span class="rab-label">현대해상 질병수술Ⅱ / 회당지급형</span>
+                <span class="rab-val blue">제85항 2종 지급</span>
+              </div>
+              <div class="rab-row">
+                <span class="rab-label">현대해상 일반형 1~5종 (과거 약관)</span>
+                <span class="rab-val orange">제85항 1종 지급</span>
+              </div>
+              <div class="rab-row">
+                <span class="rab-label">기본 정액 질병수술비 (손보 공통)</span>
+                <span class="rab-val red">부지급 (수술정의 제외)</span>
+              </div>
+            </div>
+            <div class="rab-desc">※ 약관 분류표 본문상 <b>체외충격파치료술(ESWT)은 전사 제외</b>이나, <b>체외충격파쇄석술(ESWL)</b>은 종수술비에서 1종 또는 2종으로 지급됩니다.</div>
+          </div>`
+      };
+    }
+  },
   {
     id: 'hyundai_cancer_4tier',
     name: '현대해상 6대암 관혈근치수술 4종 하향 개정',
@@ -1921,10 +2357,18 @@ function runTierSearch(q, family) {
     renderTierEmptyExample();
     return;
   }
-  const res = search(q);
-  if (!res) {
-    renderTierEmptyExample();
-    return;
+  const normQ = norm(q);
+  const compPair = findComparisonPair(normQ);
+  const exclProc = findExcludedProcedure(normQ);
+
+  const res = search(q) || { groups: [], edi: [] };
+
+  if (exclProc && exclProc.relatedCodes && (!res.groups || res.groups.length === 0)) {
+    exclProc.relatedCodes.forEach(code => {
+      (state.D.codeIndex[code] || []).forEach(gi => {
+        if (!res.groups.includes(gi)) res.groups.push(gi);
+      });
+    });
   }
 
   const dtText = state.tYear ? (state.tMonth ? `${state.tYear}년 ${state.tMonth}월` : `${state.tYear}년`) : ({ old: '2020년 이전', recent: '2020년 이후' }[state.tGen] || '2020년 이후');
@@ -1946,6 +2390,9 @@ function runTierSearch(q, family) {
       </div>`;
   }
 
+  const compHTML = compPair ? renderComparisonPairHTML(compPair) : '';
+  const exclHTML = exclProc ? renderExcludedProcedureHTML(exclProc) : '';
+
   const head = `
     <div class="res-head">
       <div class="res-title"><em>${esc(q)}</em> 종수술비 정밀 결과 <span style="font-size:11.5px;color:var(--brand);font-weight:700;">[${esc(cLabel)} · ${esc(dtText)}]</span></div>
@@ -1953,7 +2400,7 @@ function runTierSearch(q, family) {
     </div>
     ${familyBarHTML}`;
 
-  if (!res.groups.length && !res.edi.length) {
+  if (!res.groups.length && !res.edi.length && !compPair && !exclProc) {
     box.innerHTML = head + `
       <div class="empty">
         <span class="empty-emoji">🔍</span>
@@ -1963,8 +2410,13 @@ function runTierSearch(q, family) {
     return;
   }
 
-  let html = head;
-  html += res.groups.slice(0, 15).map(i => cardTierHTML(i, q, res.matchedEdi)).join('');
+  let html = head + compHTML + exclHTML;
+  if (res.groups.length > 0) {
+    if (exclProc && exclProc.relatedCodes && exclProc.relatedCodes.length > 0) {
+      html += `<div style="font-size:12.5px;font-weight:900;color:var(--text);margin:14px 0 8px 4px;">💡 연관 질환 정식 종수술비 보장 내역 (${esc(exclProc.relatedDisease)})</div>`;
+    }
+    html += res.groups.slice(0, 15).map(i => cardTierHTML(i, q, res.matchedEdi)).join('');
+  }
   box.innerHTML = html;
   bindCardActions(box);
 
@@ -2492,10 +2944,18 @@ function runNdaiSearch(q, family) {
     renderNdaiEmptyExample();
     return;
   }
-  const res = search(q);
-  if (!res) {
-    renderNdaiEmptyExample();
-    return;
+  const normQ = norm(q);
+  const compPair = findComparisonPair(normQ);
+  const exclProc = findExcludedProcedure(normQ);
+
+  const res = search(q) || { groups: [], edi: [] };
+
+  if (exclProc && exclProc.relatedCodes && (!res.groups || res.groups.length === 0)) {
+    exclProc.relatedCodes.forEach(code => {
+      (state.D.codeIndex[code] || []).forEach(gi => {
+        if (!res.groups.includes(gi)) res.groups.push(gi);
+      });
+    });
   }
 
   const cLabel = state.ndaiCos && state.ndaiCos.length ? state.ndaiCos.join(', ') : (state.ndaiCo ? state.ndaiCo : '전체 회사');
@@ -2517,6 +2977,9 @@ function runNdaiSearch(q, family) {
       </div>`;
   }
 
+  const compHTML = compPair ? renderComparisonPairHTML(compPair) : '';
+  const exclHTML = exclProc ? renderExcludedProcedureHTML(exclProc) : '';
+
   const head = `
     <div class="res-head">
       <div class="res-title"><em>${esc(q)}</em> N대 수술비 판정 <span style="font-size:11.5px;color:#8b5cf6;font-weight:800;">[${esc(cLabel)}${esc(tLabel)}]</span></div>
@@ -2524,7 +2987,7 @@ function runNdaiSearch(q, family) {
     </div>
     ${familyBarHTML}`;
 
-  if (!res.groups.length) {
+  if (!res.groups.length && !compPair && !exclProc) {
     box.innerHTML = head + `
       <div class="empty">
         <span class="empty-emoji">🔍</span>
@@ -2533,8 +2996,13 @@ function runNdaiSearch(q, family) {
     return;
   }
 
-  let html = head;
-  html += res.groups.slice(0, 15).map(i => cardNdaiHTML(i, q)).join('');
+  let html = head + compHTML + exclHTML;
+  if (res.groups.length > 0) {
+    if (exclProc && exclProc.relatedCodes && exclProc.relatedCodes.length > 0) {
+      html += `<div style="font-size:12.5px;font-weight:900;color:var(--text);margin:14px 0 8px 4px;">💡 연관 질환 정식 N대 질병수술비 보장 내역 (${esc(exclProc.relatedDisease)})</div>`;
+    }
+    html += res.groups.slice(0, 15).map(i => cardNdaiHTML(i, q)).join('');
+  }
   box.innerHTML = html;
   bindCardActions(box);
   bindNdaiCodeExpand(box);
@@ -3073,6 +3541,22 @@ function bindCardActions(box) {
           pad.innerHTML = detailBodyHTML(gi);
           pad.dataset.loaded = '1';
         }
+      }
+    });
+  });
+
+  // 비해당 판정 고객 안내문 복사
+  $$('.btn-copy-proc', box).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const text = btn.dataset.copy;
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.textContent;
+          btn.textContent = '복사 완료! ✓';
+          btn.style.background = '#059669';
+          setTimeout(() => { btn.textContent = orig; btn.style.background = 'var(--brand)'; }, 1500);
+        });
       }
     });
   });
