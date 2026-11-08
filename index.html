@@ -137,10 +137,15 @@ window.onerror = function(msg, url, line, col, err) {
 
     <!-- ───────── 2. 종수술비 정밀검색 (가입시기 년·월 & 회사별 맞춤 1~5종) ───────── -->
     <section id="pane-tier" class="pane" hidden>
-      <div class="hero" id="hero-tier">
-        <p class="hero-eyebrow">1~5종 종수술비 정밀검색</p>
-        <h2 class="hero-title">가입시기(년·월) · 회사별 <span class="grad">맞춤 종수 확인</span></h2>
-        <p class="hero-sub">화면 칩으로 원터치 체크하거나, 검색창에 '2103 메리츠 용종' 직접 입력하세요</p>
+      <!-- 최상단 검색창 -->
+      <div class="search-wrap" style="margin-bottom:12px;">
+        <div class="searchbox">
+          <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
+          <input id="q-tier" type="search" placeholder="수술명 · 질병명 (예: 21년3월 메리츠 대장용종, 2103 KB 맘모톰, Q7701)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="종수술비 검색어">
+          <button id="clearBtn-tier" class="clear-btn" hidden aria-label="지우기">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
       </div>
 
       <!-- 종수술비 필터 바 -->
@@ -239,25 +244,20 @@ window.onerror = function(msg, url, line, col, err) {
 
       </div>
 
-      <div class="search-wrap">
-        <div class="searchbox">
-          <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-tier" type="search" placeholder="수술명 · 질병명 (예: 21년3월 메리츠 대장용종, 2103 KB 맘모톰, Q7701)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="종수술비 검색어">
-          <button id="clearBtn-tier" class="clear-btn" hidden aria-label="지우기">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
-        </div>
-      </div>
-
       <div id="results-tier" class="results" aria-live="polite"></div>
     </section>
 
     <!-- ───────── 3. N대질병수술비 정밀검색 (손해 13 · 생명 18 전사 & 계층 트리) ───────── -->
     <section id="pane-ndai" class="pane" hidden>
-      <div class="hero" id="hero-ndai">
-        <p class="hero-eyebrow">N대 질병수술비 정밀검색</p>
-        <h2 class="hero-title">123대 중 몇 대 질병인지 <span class="grad">1초 만에 확정</span></h2>
-        <p class="hero-sub">회사를 선택하고 몇 대 질병인지 확인하거나 약관 트리를 탐색하세요</p>
+      <!-- 최상단 N대 검색창 -->
+      <div class="search-wrap" style="margin-bottom:12px;" id="ndaiSearchWrap">
+        <div class="searchbox">
+          <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
+          <input id="q-ndai" type="search" placeholder="질병명 · 수술명 · N대숫자 (예: 21년 현대 123대 맘모톰, 112대 KB 맘모톰, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="N대 검색어">
+          <button id="clearBtn-ndai" class="clear-btn" hidden aria-label="지우기">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
       </div>
 
       <!-- 상단 서브 모드 전환 -->
@@ -353,17 +353,8 @@ window.onerror = function(msg, url, line, col, err) {
 
       </div>
 
-      <!-- 서브뷰 1: N대 판정 검색 -->
+      <!-- 서브뷰 1: N대 판정 검색 결과 -->
       <div id="ndaiSearchSubView">
-        <div class="search-wrap">
-          <div class="searchbox">
-            <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-            <input id="q-ndai" type="search" placeholder="질병명 · 수술명 · N대숫자 (예: 21년 현대 123대 맘모톰, 112대 KB 맘모톰, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="N대 검색어">
-            <button id="clearBtn-ndai" class="clear-btn" hidden aria-label="지우기">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-            </button>
-          </div>
-        </div>
         <div id="results-ndai" class="results" aria-live="polite"></div>
       </div>
 
@@ -412,7 +403,13 @@ window.onerror = function(msg, url, line, col, err) {
             <span>🏢 가입 보험사:</span>
             <span id="ocrCoBadge" style="font-size:11px;color:#d97706;font-weight:800;">전체</span>
           </div>
-          <div class="co-grid" id="ocrCoGrid" style="grid-template-columns:repeat(3,1fr);">
+
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
+            <button class="f-chip on" id="btnOcrSonbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;">손해보험 (13개사)</button>
+            <button class="f-chip" id="btnOcrSaengbo" type="button" style="padding:8px 0;font-weight:800;border-radius:10px;background:var(--surface-2);color:var(--text-3);">생명보험 (18개사)</button>
+          </div>
+
+          <div class="co-grid" id="ocrCoSonbo" style="grid-template-columns:repeat(3,1fr);">
             <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
             <button class="f-chip" data-ocrco="현대해상">현대해상</button>
             <button class="f-chip" data-ocrco="삼성화재">삼성화재</button>
@@ -422,9 +419,32 @@ window.onerror = function(msg, url, line, col, err) {
             <button class="f-chip" data-ocrco="한화손해보험">한화손보</button>
             <button class="f-chip" data-ocrco="흥국화재">흥국화재</button>
             <button class="f-chip" data-ocrco="롯데손해보험">롯데손보</button>
+            <button class="f-chip" data-ocrco="NH농협손해보험">농협손보</button>
+            <button class="f-chip" data-ocrco="하나손해보험">하나손보</button>
+            <button class="f-chip" data-ocrco="MG손해보험">MG손보</button>
+            <button class="f-chip" data-ocrco="AIG손해보험">AIG손보</button>
+          </div>
+
+          <div class="co-grid" id="ocrCoSaengbo" style="display:none;grid-template-columns:repeat(3,1fr);">
+            <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
             <button class="f-chip" data-ocrco="삼성생명">삼성생명</button>
             <button class="f-chip" data-ocrco="한화생명">한화생명</button>
             <button class="f-chip" data-ocrco="교보생명">교보생명</button>
+            <button class="f-chip" data-ocrco="신한라이프">신한라이프</button>
+            <button class="f-chip" data-ocrco="KB라이프생명">KB라이프</button>
+            <button class="f-chip" data-ocrco="동양생명">동양생명</button>
+            <button class="f-chip" data-ocrco="미래에셋생명">미래에셋</button>
+            <button class="f-chip" data-ocrco="DB생명">DB생명</button>
+            <button class="f-chip" data-ocrco="흥국생명">흥국생명</button>
+            <button class="f-chip" data-ocrco="라이나생명">라이나</button>
+            <button class="f-chip" data-ocrco="메트라이프생명">메트라이프</button>
+            <button class="f-chip" data-ocrco="AIA생명">AIA생명</button>
+            <button class="f-chip" data-ocrco="하나생명">하나생명</button>
+            <button class="f-chip" data-ocrco="ABL생명">ABL생명</button>
+            <button class="f-chip" data-ocrco="NH농협생명">농협생명</button>
+            <button class="f-chip" data-ocrco="iM라이프">iM라이프</button>
+            <button class="f-chip" data-ocrco="KDB생명">KDB생명</button>
+            <button class="f-chip" data-ocrco="IBK연금보험">IBK연금</button>
           </div>
         </div>
 
@@ -457,7 +477,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261108w"></script>
-<script src="app.js?v=20261108w"></script>
+<script src="assets/curated.js?v=20261108y"></script>
+<script src="app.js?v=20261108y"></script>
 </body>
 </html>

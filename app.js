@@ -1614,9 +1614,30 @@ function bindOcrTab() {
     });
   });
 
-  $$('#ocrCoGrid .f-chip').forEach(btn => {
+  const btnOcrSonbo = $('#btnOcrSonbo');
+  const btnOcrSaengbo = $('#btnOcrSaengbo');
+  const ocrCoSonbo = $('#ocrCoSonbo');
+  const ocrCoSaengbo = $('#ocrCoSaengbo');
+
+  btnOcrSonbo?.addEventListener('click', () => {
+    btnOcrSonbo.classList.add('on'); btnOcrSaengbo?.classList.remove('on');
+    btnOcrSonbo.style.background = 'var(--text)'; btnOcrSonbo.style.color = 'var(--bg)';
+    if (btnOcrSaengbo) { btnOcrSaengbo.style.background = 'var(--surface-2)'; btnOcrSaengbo.style.color = 'var(--text-3)'; }
+    if (ocrCoSonbo) ocrCoSonbo.style.display = 'grid';
+    if (ocrCoSaengbo) ocrCoSaengbo.style.display = 'none';
+  });
+
+  btnOcrSaengbo?.addEventListener('click', () => {
+    btnOcrSaengbo.classList.add('on'); btnOcrSonbo?.classList.remove('on');
+    btnOcrSaengbo.style.background = 'var(--text)'; btnOcrSaengbo.style.color = 'var(--bg)';
+    if (btnOcrSonbo) { btnOcrSonbo.style.background = 'var(--surface-2)'; btnOcrSonbo.style.color = 'var(--text-3)'; }
+    if (ocrCoSaengbo) ocrCoSaengbo.style.display = 'grid';
+    if (ocrCoSonbo) ocrCoSonbo.style.display = 'none';
+  });
+
+  $$('#ocrCoSonbo .f-chip, #ocrCoSaengbo .f-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      $$('#ocrCoGrid .f-chip').forEach(b => b.classList.remove('on'));
+      $$('#ocrCoSonbo .f-chip, #ocrCoSaengbo .f-chip').forEach(b => b.classList.remove('on'));
       btn.classList.add('on');
       ocrCo = btn.dataset.ocrco || '';
       const badge = $('#ocrCoBadge');
