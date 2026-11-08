@@ -2061,6 +2061,36 @@ function renderNdaiYearGrid() {
   });
 }
 
+
+function inferNtierForCompany(co, year) {
+  if (!co) return '';
+  if (co.includes('현대')) {
+    if (!year) return '123대';
+    return year >= 2021 ? '123대' : (year >= 2018 ? '120대' : '71대');
+  }
+  if (co.includes('KB') || co.includes('케이비')) {
+    if (!year) return '116대';
+    return year >= 2022 ? '116대' : (year >= 2019 ? '112대' : '101대');
+  }
+  if (co.includes('삼성화재')) {
+    if (!year) return '116대';
+    return year >= 2021 ? '116대' : (year >= 2019 ? '101대' : '77대');
+  }
+  if (co.includes('DB') || co.includes('동부')) {
+    if (!year) return '119대';
+    return year >= 2022 ? '119대' : (year >= 2019 ? '106대' : '85대');
+  }
+  if (co.includes('메리츠')) {
+    if (!year) return '112대';
+    return year >= 2021 ? '112대' : '71대';
+  }
+  if (co.includes('한화손')) {
+    if (!year) return '110대';
+    return year >= 2021 ? '110대' : '81대';
+  }
+  return '';
+}
+
 function extractNtiersForCompanies(cos) {
   if (!state.D?.riders) return [];
   const R = state.D.riders;
