@@ -2390,12 +2390,9 @@ function bindNdaiTab() {
     if (parsed.ntier) {
       state.ndaiTier = parsed.ntier;
       $$('#ndaiTierChips .f-chip').forEach(b => b.classList.toggle('on', b.dataset.ntier === parsed.ntier));
-    } else if (state.ndaiCo) {
-      const inf = inferNtierForCompany(state.ndaiCo, state.ndaiYear || 2022);
-      if (inf) {
-        state.ndaiTier = inf;
-        $$('#ndaiTierChips .f-chip').forEach(b => b.classList.toggle('on', b.dataset.ntier === inf));
-      }
+    } else {
+      state.ndaiTier = '';
+      $$('#ndaiTierChips .f-chip').forEach(b => b.classList.toggle('on', !b.dataset.ntier));
     }
 
     updateNdaiBadges();
