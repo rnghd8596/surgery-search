@@ -299,8 +299,9 @@ async function deriveKey(pw, saltB64, iter) {
 }
 async function decryptBlob(buf, key) {
   const u8 = new Uint8Array(buf);
-  const iv = u8.slice(0, 12);
-  const ct = u8.slice(12);
+  const offset = (u8[0] === 0x48 && u8[1] === 0x42 && u8[2] === 0x53 && u8[3] === 0x31) ? 4 : 0;
+  const iv = u8.slice(offset, offset + 12);
+  const ct = u8.slice(offset + 12);
   const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
   const ds = new DecompressionStream('gzip');
   const writer = ds.writable.getWriter();
