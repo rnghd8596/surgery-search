@@ -890,12 +890,15 @@ function cardQuickHTML(gi, q, matchedEdi) {
   let exHTML = '';
   if (ex) {
     exHTML = `
-      <div style="background:rgba(245,158,11,0.09);border:1.5px solid rgba(245,158,11,0.3);border-radius:12px;padding:10px 14px;margin:10px 0 6px;">
+      <div style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.3);border-radius:12px;padding:10px 14px;margin:10px 0 6px;">
         <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:850;color:#d97706;">
-          <span style="background:#f59e0b;color:#fff;border-radius:6px;padding:2px 6px;font-size:11px;font-weight:900;">${esc(ex.val.exTier)}</span>
+          <span style="background:#f59e0b;color:#fff;border-radius:6px;padding:2px 7px;font-size:11px;font-weight:900;">${esc(ex.val.exTier)}</span>
           <span>${esc(ex.val.exLabel)}</span>
         </div>
-        <div style="font-size:11.5px;color:var(--text-2);margin-top:4px;line-height:1.45;">${esc(ex.val.note)}</div>
+        <div style="font-size:12px;color:var(--text);margin-top:6px;line-height:1.5;">
+          • <b>2020년 이전 가입 (표준 1~5종)</b> ➔ <b style="color:#2563eb;">2종 지급</b><br>
+          • <b>2020년 이후 메리츠 · 롯데 등</b> ➔ <b style="color:#dc2626;">1종 하향 개정</b> (가입시기 확인 필수)
+        </div>
       </div>`;
   }
 
@@ -1405,6 +1408,34 @@ function cardTierHTML(gi, q, matchedEdi) {
       </div>`;
   }
 
+  let exCompareHTML = '';
+  if (ex) {
+    if (finalTier.includes('1')) {
+      exCompareHTML = `
+        <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.28);border-radius:11px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
+          <div style="font-weight:900;color:#dc2626;display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:12.5px;">
+            <span>⚠️ 가입시기 확인 필수: 2종 지급 가능</span>
+          </div>
+          <div style="color:var(--text);">
+            현재 선택 조건은 <b>2020년 이후 개정 약관(1종)</b> 기준입니다.<br>
+            • 고객의 가입시기가 <b>2020년 이전 계약</b>인 경우 ➔ <b style="color:#2563eb;font-size:13px;">[2종]</b>으로 지급됩니다!<br>
+            • 생명보험사 전사 및 2020년 이전 손보사는 <b>2종 유지</b> (가입시기 증권 대조 필수)
+          </div>
+        </div>`;
+    } else {
+      exCompareHTML = `
+        <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.28);border-radius:11px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
+          <div style="font-weight:900;color:#2563eb;display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:12.5px;">
+            <span>💡 가입시기별 종수 차이 안내</span>
+          </div>
+          <div style="color:var(--text);">
+            • <b>2020년 이전 가입 (표준 1~5종)</b> ➔ <b style="color:#2563eb;font-size:12.5px;">[2종] 지급</b><br>
+            • <b>2020년 이후 메리츠 · 롯데 등</b> ➔ <b style="color:#dc2626;font-size:12.5px;">[1종] 하향 개정</b> (2020년 이후 가입건은 1종 주의)
+          </div>
+        </div>`;
+    }
+  }
+
   return `
   <article class="card" data-gi="${gi}">
     <div class="card-head">
@@ -1427,6 +1458,7 @@ function cardTierHTML(gi, q, matchedEdi) {
             <div style="font-size:11.5px;color:var(--brand);font-weight:700;margin-top:2px;">${esc(finalNote)}</div>
           </div>
         </div>
+        ${exCompareHTML}
         ${procsHTML}
       </div>
     </div>
