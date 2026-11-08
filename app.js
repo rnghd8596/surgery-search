@@ -889,6 +889,145 @@ function parseCosList(coInput) {
 
 const REVISION_RULES = [
   {
+    id: 'hyundai_cancer_4tier',
+    name: '현대해상 6대암 관혈근치수술 4종 하향 개정',
+    match: (g) => (g.c || []).some(c => ['C73', 'C50', 'C53', 'C54', 'C61', 'C67'].some(target => c.startsWith(target))),
+    standardTier: '5종',
+    revisions: [
+      {
+        co: '현대해상',
+        ym: 202604,
+        label: '현대해상 2026.04 개정(질병수술Ⅳ)',
+        matchKeys: ['현대', '현해']
+      }
+    ],
+    evaluate: function(cosInput, year, month) {
+      const cosList = parseCosList(cosInput);
+
+      if (cosList.length === 0) {
+        return {
+          tier: '5종',
+          hasDiff: true,
+          diffBadge: '[현대해상 4종 주의]',
+          note: '악성신생물 치료 목적의 관혈적 근치수술 5종 (단, 현대해상 2026년 개정약관은 4종 하향)',
+          boxHTML: `
+            <div style="background:var(--surface);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+              <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">🚨 현대해상 약관 개정 주의 (2026년 질병수술Ⅳ)</div>
+              <div style="color:var(--text);font-size:11.5px;">
+                • <b>현대해상 2026년 이전 계약 및 타사 전사</b> : 관혈적 근치수술 시 <b style="color:#2563eb;">5종 지급</b><br>
+                • <b>현대해상 2026년 개정약관(질병수술Ⅳ)</b> : 6대 암(갑상선·유방·자궁·전립선·방광) 관혈수술 제1-2항 신설로 <b style="color:#dc2626;">4종으로 하향 지급</b>
+              </div>
+            </div>`
+        };
+      }
+
+      if (cosList.length === 1) {
+        const coStr = cosList[0];
+        const normCo = coStr.toLowerCase();
+        const isHyundai = ['현대', '현해'].some(k => normCo.includes(k));
+
+        if (!isHyundai) {
+          return {
+            tier: '5종',
+            hasDiff: false,
+            note: `${coStr}는 관혈적 악성신생물 근치수술 5종 지급 (표준약관)`,
+            boxHTML: ''
+          };
+        }
+
+        const ymText = '2026년 4월';
+        if (!year) {
+          return {
+            tier: '4·5종',
+            hasDiff: true,
+            diffBadge: '[가입시기별 상이]',
+            note: '현대해상은 2026년 4월 개정(질병수술Ⅳ) 기점으로 5종 ➔ 4종 하향',
+            boxHTML: `
+              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">🚨 현대해상 가입시기별 종수 기준 (6대 암)</div>
+                <div>• <b>2026년 이전 계약</b> ➔ <b style="color:#2563eb;">5종 지급</b> (관혈 근치수술)<br>• <b>2026년 개정약관(질병수술Ⅳ)</b> ➔ <b style="color:#dc2626;">4종 적용</b> (하향 개정)</div>
+              </div>`
+          };
+        }
+
+        const targetYm = year * 100 + (month || 12);
+        if (targetYm >= 202604) {
+          return {
+            tier: '4종',
+            hasDiff: true,
+            diffBadge: '[개정약관 4종]',
+            note: '현대해상 2026.04 개정약관(질병수술Ⅳ) 적용 (4종)',
+            boxHTML: `
+              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">✓ 현대해상 2026년 이후 개정약관 (4종 확정)</div>
+                <div style="color:var(--text-2);">고객 가입 시점이 2026년 개정(질병수술Ⅳ) 이후이므로 4종에 해당합니다. (2026년 이전 계약은 5종)</div>
+              </div>`
+          };
+        } else {
+          return {
+            tier: '5종',
+            hasDiff: true,
+            diffBadge: '[개정 이전 5종]',
+            note: '현대해상 2026년 이전 계약으로 5종 지급',
+            boxHTML: `
+              <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+                <div style="font-weight:850;color:#2563eb;margin-bottom:3px;">✓ 현대해상 2026년 이전 계약 (5종 확정)</div>
+                <div style="color:var(--text-2);">개정 전 가입 계약이므로 정상적으로 악성신생물 5종 수술비가 지급됩니다.</div>
+              </div>`
+          };
+        }
+      }
+
+      const coResults = cosList.map(coName => {
+        const normCo = coName.toLowerCase();
+        const isHyundai = ['현대', '현해'].some(k => normCo.includes(k));
+        if (!isHyundai) {
+          return {
+            co: coName,
+            tier: '5종',
+            note: '표준 1~5종 5종 유지'
+          };
+        }
+        if (!year) {
+          return {
+            co: coName,
+            tier: '4·5종',
+            note: '2026년 이전 5종 / 2026년 이후 4종'
+          };
+        }
+        const targetYm = year * 100 + (month || 12);
+        return {
+          co: coName,
+          tier: targetYm >= 202604 ? '4종' : '5종',
+          note: targetYm >= 202604 ? '2026.04 개정약관(질병수술Ⅳ) 4종' : '2026년 이전 계약 5종'
+        };
+      });
+
+      const hasDiff = coResults.some(r => r.tier.includes('4종'));
+      return {
+        tier: hasDiff ? '4·5종' : '5종',
+        hasDiff,
+        diffBadge: hasDiff ? '[현대해상 4종 주의]' : '',
+        note: `선택하신 ${cosList.length}개 보험사별 약관 비교`,
+        boxHTML: `
+          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;">
+            <div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:6px;">🏢 선택하신 ${cosList.length}개사 판정 비교:</div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              ${coResults.map(cr => `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:var(--surface-2);border-radius:7px;font-size:12px;border:1px solid var(--border);">
+                  <span style="font-weight:800;color:var(--text);">${esc(cr.co)}</span>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:11px;color:var(--text-3);">${esc(cr.note)}</span>
+                    <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:${cr.tier === '4종' ? '#dc2626' : '#2563eb'};color:#fff;">${esc(cr.tier)}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>`
+      };
+    }
+  },
+  {
     id: 'colon_polyp',
     name: '대장용종 절제술 (내시경 폴립절제)',
     match: (g) => (g.c || []).some(c => c.startsWith('K63') || c.startsWith('D12') || c.startsWith('K62')),
@@ -1801,6 +1940,56 @@ function renderDynamicNdaiTierChips() {
   });
 }
 
+
+function renderNdaiEmptyExample() {
+  const box = $('#results-ndai');
+  if (!box) return;
+  box.innerHTML = `
+    <div style="margin-top:6px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 14px;background:var(--surface);text-align:left;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <span style="font-size:12px;font-weight:900;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:4px 9px;border-radius:6px;">💡 N대 질병수술비 검색 예시</span>
+        <span style="font-size:11px;color:var(--text-3);font-weight:700;">검색어를 입력하면 N대 특약이 나와요</span>
+      </div>
+
+      <div style="background:var(--surface-2);border-radius:14px;padding:13px;border:1px solid var(--border);margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <div style="font-size:15px;font-weight:900;color:var(--text);">맘모톰 절제술 (D24)</div>
+          <div style="background:#8b5cf6;color:#fff;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:900;">N대 해당</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:6px;">
+          • <b>KB손해보험</b>: 116대 질병 중 [49대 질병] 해당<br>
+          • <b>메리츠화재</b>: 131대 질병 중 [특정다빈도29대] 해당<br>
+          • <b>현대해상</b>: 120대 질병 중 [다발성10대 질병수술] 해당
+        </div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--text-3);font-weight:750;margin-bottom:6px;">
+        👇 <b>원터치 추천 검색어</b> (누르면 바로 검색):
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ndaiExampleChips">
+        <button type="button" class="f-chip ndai-ex-btn" data-q="맘모톰" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">맘모톰</button>
+        <button type="button" class="f-chip ndai-ex-btn" data-q="대장용종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">대장용종</button>
+        <button type="button" class="f-chip ndai-ex-btn" data-q="백내장" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">백내장</button>
+        <button type="button" class="f-chip ndai-ex-btn" data-q="자궁근종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">자궁근종</button>
+        <button type="button" class="f-chip ndai-ex-btn" data-q="갑상선암" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">갑상선암</button>
+      </div>
+    </div>
+  `;
+
+  box.querySelectorAll('.ndai-ex-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q;
+      const qNdaiEl = $('#q-ndai');
+      if (qNdaiEl) qNdaiEl.value = q;
+      state.ndaiQ = q;
+      const clearBtn = $('#clearBtn-ndai');
+      if (clearBtn) clearBtn.hidden = false;
+      const parsed = parseSmartQuery(q);
+      runNdaiSearch(parsed.cleanQ || q, parsed.family);
+    });
+  });
+}
+
 function bindNdaiTab() {
   const qNdaiEl = $('#q-ndai');
   const btnSearchTab = $('#btnNdaiSearchTab');
@@ -2172,11 +2361,15 @@ function cardNdaiHTML(gi, q) {
         <div style="font-size:11px;color:var(--text-3);margin-top:4px;">각 회사별 증권에 기재된 가입금액 한도로 각각 지급됩니다.</div>
       </div>`;
   } else {
-    const previewCos = Array.from(cos.keys()).slice(0, 6);
-    const previewLines = previewCos.map(c => {
+    const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험'];
+    const otherCos = Array.from(cos.keys()).filter(c => !majorCos.some(m => c.includes(m.slice(0, 2))));
+    const previewCos = [...majorCos, ...otherCos];
+    const previewLines = [];
+    previewCos.forEach(c => {
+      if (previewLines.length >= 6) return;
       const lines = formatNdaLinesForCo(g, c, nTier);
-      return lines.length > 0 ? `• <b>${esc(c)}</b>: ${lines[0]}` : null;
-    }).filter(Boolean);
+      if (lines.length > 0) previewLines.push(`• <b>${esc(c)}</b>: ${lines[0]}`);
+    });
 
     if (previewLines.length > 0) {
       contentHTML = `
@@ -2635,25 +2828,102 @@ function detailBodyHTML(gi) {
       </div>` : ''}`;
 }
 
-/* ───────────────────────── 복사 ───────────────────────── */
+/* ───────────────────────── 수술명 정돈 헬퍼 ───────────────────────── */
+function getCleanProcName(g, q) {
+  const normQ = (q || '').trim();
+  if (normQ.includes('맘모톰')) return '맘모톰 절제술 (진공보조절제)';
+  if (normQ.includes('인공관절')) return '인공관절 치환술';
+  if (normQ.includes('대장용종') || normQ.includes('용종')) return '내시경적 폴립(용종) 절제술';
+  if (normQ.includes('백내장')) return '수정체 유화술 및 인공수정체 삽입술';
+  if (normQ.includes('자궁근종')) return '자궁근종 절제술 (복강경/하이푸)';
+  if (normQ.includes('비염') || normQ.includes('비중격')) return '비중격교정술 및 하비갑개 절제술';
+  if (normQ.includes('갑상선암') || normQ.includes('갑상선')) return '갑상선 근치절제술 / 엽절제술';
+  if (normQ.includes('유방암')) return '근치적 유방전절제술 / 유방보존술';
+  if (normQ.includes('제왕절개')) return '제왕절개 분만술';
+  if (normQ.includes('치핵')) return '치핵 근본절제술';
+  if (normQ.includes('담낭') || normQ.includes('담석')) return '복강경 담낭절제술';
+  if (normQ.includes('충수') || normQ.includes('맹장')) return '충수절제술 (맹장수술)';
+  if (normQ.includes('탈장')) return '서혜부 탈장교정술';
+  if (normQ.includes('편도')) return '편도 및 아데노이드 절제술';
+
+  const procs = curatedFor(g, window.CURATED?.procs);
+  if (procs && procs.val && procs.val.length > 0) {
+    const first = procs.val[0].s;
+    if (first && !first.includes('확인') && !first.includes('범위') && !first.includes('분류상')) {
+      return first;
+    }
+  }
+
+  const w = g['5']?.w || '';
+  if (w && !w.includes('질환 분류상') && !w.includes('확인 필요') && !w.includes('범위')) {
+    return w;
+  }
+
+  return `${g.n} 절제·치료 수술`;
+}
+
+/* ───────────────────────── 복사 (체크한 회사 기준 / 종수술 + N대 동시 출력) ───────────────────────── */
 function copyCard(gi) {
   const g = state.D.g[gi];
-  const t = tierOf(g);
-  const procs = curatedFor(g, window.CURATED?.procs);
-  const topProc = procs && procs.val && procs.val.length > 0 ? procs.val[0] : null;
+  const tab = state.tab;
 
-  const co = state.tCo || state.ndaiCo || '';
-  const cosList = (state.tCos && state.tCos.length > 0) ? state.tCos : (co ? [co] : []);
+  let cosList = [];
+  let year = null;
+  let month = null;
 
-  const procName = topProc ? topProc.s : (t.w || `${g.n} 수술`);
-  const kcdCode = g.c.slice(0, 3).join(', ');
-  const mainTier = tierLabel(t);
-
-  let companyLines = '';
-  if (cosList.length > 0) {
-    companyLines = cosList.map(c => `✔️${c} ${mainTier} 수술비`).join('\n\n');
+  if (tab === 'ndai') {
+    cosList = (state.ndaiCos && state.ndaiCos.length > 0) ? state.ndaiCos : (state.ndaiCo ? [state.ndaiCo] : []);
+    year = state.ndaiYear;
+    month = state.ndaiMonth;
+  } else if (tab === 'tier') {
+    cosList = (state.tCos && state.tCos.length > 0) ? state.tCos : (state.tCo ? [state.tCo] : []);
+    year = state.tYear;
+    month = state.tMonth;
   } else {
-    companyLines = `✔️가입 보험사 ${mainTier} 수술비`;
+    // 빠른검색 탭: 검색어 파싱 결과 반영
+    const parsed = parseSmartQuery($('#q-quick')?.value || '');
+    cosList = (parsed?.cos && parsed.cos.length > 0) ? parsed.cos : (parsed?.co ? [parsed.co] : []);
+    year = parsed?.year || null;
+    month = parsed?.month || null;
+  }
+
+  const activeQ = tab === 'ndai' ? ($('#q-ndai')?.value || '') : (tab === 'tier' ? ($('#q-tier')?.value || '') : ($('#q-quick')?.value || ''));
+  const procName = getCleanProcName(g, activeQ);
+  const kcdCode = g.c.slice(0, 3).join(', ');
+
+  let companyLines = [];
+
+  if (cosList.length > 0) {
+    companyLines = cosList.map(coName => {
+      const coBlocks = [];
+
+      // 1. 1~5종 종수술비 판정 (개정 이력 반영)
+      const evalRes = evaluateSurgery(g, [coName], year, month);
+      const tierText = evalRes.tier || '2종';
+      coBlocks.push(`✔️${coName} ${tierText} 수술비`);
+
+      // 2. N대 질병수술비 판정 (해당 시 동시 출력!)
+      const ndaLines = formatNdaLinesForCo(g, coName, state.ndaiTier);
+      if (ndaLines && ndaLines.length > 0) {
+        const cleanNda = ndaLines[0].replace(/<[^>]+>/g, '').trim();
+        coBlocks.push(`✔️${coName} N대 질병수술비 (${cleanNda})`);
+      }
+
+      return coBlocks.join('
+');
+    });
+  } else {
+    // 회사를 선택하지 않은 일반 조회 시
+    const evalRes = evaluateSurgery(g, [], year, month);
+    const coBlocks = [`✔️1~5종 종수술비: ${evalRes.tier || '2종'} 수술비`];
+
+    // N대 주요사 해당 여부
+    const ndaCheck = formatNdaLinesForCo(g, 'KB손해보험', null);
+    if (ndaCheck && ndaCheck.length > 0) {
+      coBlocks.push(`✔️N대 질병수술비: 주요 손해보험사 N대 질병수술비 해당`);
+    }
+    companyLines = [coBlocks.join('
+')];
   }
 
   const text = `OOO 고객님께서 가입하신
@@ -2661,7 +2931,9 @@ function copyCard(gi) {
 
 [${g.n}(${kcdCode}) • ${procName}]
 
-${companyLines}
+${companyLines.join('
+
+')}
 
 🚨필요서류
 - 진료비영수증
