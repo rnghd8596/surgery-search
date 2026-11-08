@@ -99,55 +99,37 @@ window.onerror = function(msg, url, line, col, err) {
 
     <!-- ───────── 1. 빠른 검색 (필터 없이 1초 단답) ───────── -->
     <section id="pane-quick" class="pane">
-      <div class="hero" id="hero-quick">
-        <p class="hero-eyebrow">빠른 수술비 검색</p>
-        <h2 class="hero-title">수술명만 치면 <span class="grad">1초 만에 종수 판정</span></h2>
-        <p class="hero-sub">목적에 맞는 메뉴를 터치하거나 바로 검색창에 입력하세요</p>
+      <div class="hero" id="hero-quick" style="text-align:center;padding:20px 0 16px;">
+        <h1 class="hero-title" style="font-size:26px;font-weight:850;letter-spacing:-.035em;margin:0 0 6px;color:var(--text);">무엇을 도와드릴까요?</h1>
+        <p class="hero-sub" style="font-size:13px;color:var(--text-3);margin:0;">질병명·수술명을 검색하거나, 아래 메뉴를 선택하세요</p>
       </div>
 
-      <!-- 4대 모드 바로가기 2x2 컬러 카드 (첫 화면에서 원터치 전환) -->
-      <div class="mode-select-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">
-        <button type="button" class="mode-card on" data-go="quick" style="background:rgba(49,130,246,0.08);border:2px solid #3182f6;border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
-          <div style="font-size:24px;">⚡</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:#3182f6;">빠른검색</div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">1초 단답 판정</div>
-          </div>
-        </button>
-
-        <button type="button" class="mode-card" data-go="tier" style="background:rgba(16,185,129,0.08);border:1.5px solid rgba(16,185,129,0.35);border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
-          <div style="font-size:24px;">📋</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:#10b981;">종수술비 정밀</div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">년·월/회사 판정</div>
-          </div>
-        </button>
-
-        <button type="button" class="mode-card" data-go="ndai" style="background:rgba(139,92,246,0.08);border:1.5px solid rgba(139,92,246,0.35);border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
-          <div style="font-size:24px;">🏢</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:#8b5cf6;">N대질병 정밀</div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">몇대질병 단답</div>
-          </div>
-        </button>
-
-        <button type="button" class="mode-card" data-go="ocr" style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:14px;padding:12px 10px;text-align:left;cursor:pointer;box-shadow:var(--shadow-1);display:flex;align-items:center;gap:10px;">
-          <div style="font-size:24px;">📸</div>
-          <div>
-            <div style="font-size:12.5px;font-weight:900;color:#d97706;">사진으로 검색</div>
-            <div style="font-size:10px;color:var(--text-3);margin-top:2px;">서류·증권 사진 1초 분석</div>
-          </div>
-        </button>
-      </div>
-
-      <div class="search-wrap">
+      <div class="search-wrap" style="margin-bottom:12px;">
         <div class="searchbox">
           <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input id="q-quick" type="search" placeholder="질병명 · 수술명 · 질병코드 · 수술코드 (예: 대장용종, Q7701, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="빠른 검색어">
+          <input id="q-quick" type="search" placeholder="질병명 · 수술명 · 질병코드 입력 (예: 대장용종, 맘모톰, N23)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="빠른 검색어">
           <button id="clearBtn-quick" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
+      </div>
+
+      <!-- 검색창 바로 아래: 종수술 / N대 / 사진 바로가기 버튼 3종 -->
+      <div class="quick-nav-trio" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+        <button type="button" class="quick-shortcut-banner" data-go="tier" style="background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.3);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <span style="font-size:22px;">📋</span>
+          <span style="font-size:12.5px;font-weight:850;color:#10b981;">종수술비 정밀</span>
+        </button>
+
+        <button type="button" class="quick-shortcut-banner" data-go="ndai" style="background:rgba(139,92,246,0.06);border:1.5px solid rgba(139,92,246,0.3);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <span style="font-size:22px;">🏢</span>
+          <span style="font-size:12.5px;font-weight:850;color:#8b5cf6;">N대질병 정밀</span>
+        </button>
+
+        <button type="button" class="quick-shortcut-banner" data-go="ocr" style="background:rgba(245,158,11,0.06);border:1.5px solid rgba(245,158,11,0.3);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;">
+          <span style="font-size:22px;">📸</span>
+          <span style="font-size:12.5px;font-weight:850;color:#d97706;">사진으로 검색</span>
+        </button>
       </div>
 
       <div id="results-quick" class="results" aria-live="polite"></div>
@@ -168,15 +150,13 @@ window.onerror = function(msg, url, line, col, err) {
         <div style="margin-bottom:14px;">
           <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
             <span>📅 가입시기 (년·월):</span>
-            <span id="tierDateBadge" style="font-size:11px;color:var(--brand);font-weight:800;">전체 / 미선택</span>
+            <span id="tierDateBadge" style="font-size:11px;color:var(--brand);font-weight:800;">2020년 이후</span>
           </div>
 
-          <!-- 1단계: 시기 구분 버튼 (스크롤 없이 4열 그리드) -->
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;" id="tGenChips">
-            <button class="f-chip on" data-gen="all" type="button" style="padding:6px 0;font-size:11px;">전체</button>
-            <button class="f-chip" data-gen="recent" type="button" style="padding:6px 0;font-size:11px;">2020년~</button>
-            <button class="f-chip" data-gen="std" type="button" style="padding:6px 0;font-size:11px;">06~19년</button>
-            <button class="f-chip" data-gen="old" type="button" style="padding:6px 0;font-size:11px;">06년이전</button>
+          <!-- 1단계: 시기 구분 버튼 (2020년 이전 / 2020년 이후 2분할) -->
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px;" id="tGenChips">
+            <button class="f-chip" data-gen="old" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이전</button>
+            <button class="f-chip on" data-gen="recent" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이후</button>
           </div>
 
           <!-- 2단계: 연도 칩 그리드 (아래로 한눈에 펼쳐짐) -->
@@ -189,7 +169,7 @@ window.onerror = function(msg, url, line, col, err) {
               <span id="tierMonthReset" style="font-size:10.5px;color:var(--brand);font-weight:750;cursor:pointer;">[월 전체]</span>
             </div>
             <div id="tierMonthGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);">
-              <button class="f-chip m-chip on" data-m="" style="padding:4px 0;font-size:10.5px;grid-column:span 6;">월 전체 / 모름</button>
+              <button class="f-chip m-chip on" data-m="" style="padding:4px 0;font-size:10.5px;grid-column:span 6;">월 전체</button>
               <button class="f-chip m-chip" data-m="1" style="padding:4px 0;font-size:10.5px;">1월</button>
               <button class="f-chip m-chip" data-m="2" style="padding:4px 0;font-size:10.5px;">2월</button>
               <button class="f-chip m-chip" data-m="3" style="padding:4px 0;font-size:10.5px;">3월</button>
@@ -210,7 +190,7 @@ window.onerror = function(msg, url, line, col, err) {
         <div>
           <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
             <span>🏢 가입 보험사:</span>
-            <span id="tierCoBadge" style="font-size:11px;color:var(--brand);font-weight:800;">전체 / 미선택</span>
+            <span id="tierCoBadge" style="font-size:11px;color:var(--brand);font-weight:800;">전체</span>
           </div>
 
           <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
@@ -219,7 +199,7 @@ window.onerror = function(msg, url, line, col, err) {
           </div>
 
           <div class="co-grid" id="tierCoSonbo">
-            <button class="f-chip on" data-co="" style="grid-column:span 3;">전체 / 모름</button>
+            <button class="f-chip on" data-co="" style="grid-column:span 3;">전체</button>
             <button class="f-chip" data-co="현대해상">현대해상</button>
             <button class="f-chip" data-co="삼성화재">삼성화재</button>
             <button class="f-chip" data-co="DB손해보험">DB손보</button>
@@ -235,7 +215,7 @@ window.onerror = function(msg, url, line, col, err) {
           </div>
 
           <div class="co-grid" id="tierCoSaengbo" style="display:none;">
-            <button class="f-chip on" data-co="" style="grid-column:span 3;">전체 / 모름</button>
+            <button class="f-chip on" data-co="" style="grid-column:span 3;">전체</button>
             <button class="f-chip" data-co="삼성생명">삼성생명</button>
             <button class="f-chip" data-co="한화생명">한화생명</button>
             <button class="f-chip" data-co="교보생명">교보생명</button>
@@ -292,14 +272,12 @@ window.onerror = function(msg, url, line, col, err) {
         <!-- 1. 판매시기 (연도별 N대 자동 결정) -->
         <div style="margin-bottom:12px;">
           <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
-            <span>📅 판매·가입시기 (년도별 N대 자동 매칭):</span>
-            <span id="ndaiDateBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">전체 시기</span>
+            <span>📅 판매·가입시기:</span>
+            <span id="ndaiDateBadge" style="font-size:11px;color:#8b5cf6;font-weight:800;">2020년 이후</span>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:6px;" id="nGenChips">
-            <button class="f-chip on" data-ngen="all" type="button" style="padding:6px 0;font-size:11px;">전체</button>
-            <button class="f-chip" data-ngen="recent" type="button" style="padding:6px 0;font-size:11px;">2021년~</button>
-            <button class="f-chip" data-ngen="mid" type="button" style="padding:6px 0;font-size:11px;">18~20년</button>
-            <button class="f-chip" data-ngen="old" type="button" style="padding:6px 0;font-size:11px;">18년이전</button>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:6px;" id="nGenChips">
+            <button class="f-chip" data-ngen="old" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이전</button>
+            <button class="f-chip on" data-ngen="recent" type="button" style="padding:9px 0;font-size:12.5px;font-weight:850;border-radius:12px;">2020년 이후</button>
           </div>
           <div id="ndaiYearGrid" style="display:none;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface-2);padding:6px;border-radius:10px;border:1px solid var(--border);margin-bottom:6px;"></div>
         </div>
@@ -317,28 +295,41 @@ window.onerror = function(msg, url, line, col, err) {
           </div>
 
           <div class="co-grid" id="ndaiCoSonbo">
-            <button class="f-chip on" data-nco="KB손해보험">KB손보</button>
+            <button class="f-chip" data-nco="" style="grid-column:span 3;">전체</button>
             <button class="f-chip" data-nco="현대해상">현대해상</button>
             <button class="f-chip" data-nco="삼성화재">삼성화재</button>
             <button class="f-chip" data-nco="DB손해보험">DB손보</button>
+            <button class="f-chip on" data-nco="KB손해보험">KB손보</button>
             <button class="f-chip" data-nco="메리츠화재">메리츠</button>
             <button class="f-chip" data-nco="한화손해보험">한화손보</button>
             <button class="f-chip" data-nco="흥국화재">흥국화재</button>
             <button class="f-chip" data-nco="롯데손해보험">롯데손보</button>
             <button class="f-chip" data-nco="NH농협손해보험">농협손보</button>
             <button class="f-chip" data-nco="하나손해보험">하나손보</button>
-            <button class="f-chip" data-nco="" style="grid-column:span 2;">전체 / 미선택</button>
+            <button class="f-chip" data-nco="MG손해보험">MG손보</button>
+            <button class="f-chip" data-nco="AIG손해보험">AIG손보</button>
           </div>
 
           <div class="co-grid" id="ndaiCoSaengbo" style="display:none;">
-            <button class="f-chip on" data-nco="삼성생명">삼성생명</button>
+            <button class="f-chip on" data-nco="" style="grid-column:span 3;">전체</button>
+            <button class="f-chip" data-nco="삼성생명">삼성생명</button>
             <button class="f-chip" data-nco="한화생명">한화생명</button>
             <button class="f-chip" data-nco="교보생명">교보생명</button>
+            <button class="f-chip" data-nco="신한라이프">신한라이프</button>
+            <button class="f-chip" data-nco="KB라이프생명">KB라이프</button>
             <button class="f-chip" data-nco="동양생명">동양생명</button>
+            <button class="f-chip" data-nco="미래에셋생명">미래에셋</button>
             <button class="f-chip" data-nco="DB생명">DB생명</button>
             <button class="f-chip" data-nco="흥국생명">흥국생명</button>
+            <button class="f-chip" data-nco="라이나생명">라이나</button>
             <button class="f-chip" data-nco="메트라이프생명">메트라이프</button>
-            <button class="f-chip" data-nco="" style="grid-column:span 2;">전체 / 미선택</button>
+            <button class="f-chip" data-nco="AIA생명">AIA생명</button>
+            <button class="f-chip" data-nco="하나생명">하나생명</button>
+            <button class="f-chip" data-nco="ABL생명">ABL생명</button>
+            <button class="f-chip" data-nco="NH농협생명">농협생명</button>
+            <button class="f-chip" data-nco="iM라이프">iM라이프</button>
+            <button class="f-chip" data-nco="KDB생명">KDB생명</button>
+            <button class="f-chip" data-nco="IBK연금보험">IBK연금</button>
           </div>
         </div>
 
@@ -402,8 +393,39 @@ window.onerror = function(msg, url, line, col, err) {
           <div style="font-size:38px;margin-bottom:8px;">📷</div>
           <div style="font-size:14.5px;font-weight:850;color:var(--text);margin-bottom:4px;">병원 서류 또는 보험 증권 사진 첨부</div>
           <div style="font-size:11.5px;color:var(--text-3);margin-bottom:14px;">진단서 · 수술확인서 · 세부산정내역서 · 증권 특약표</div>
-          <input type="file" id="ocrFileInput" accept="image/*,application/pdf" style="display:none;">
-          <button type="button" class="f-chip" id="btnSelectOcrFile" style="background:#d97706;color:#fff;font-weight:850;padding:9px 20px;border-radius:10px;border:0;font-size:12.5px;box-shadow:var(--shadow-1);">사진 촬영 / 앨범에서 선택</button>
+          <input type="file" id="ocrFileInput" accept="image/*,application/pdf" multiple style="display:none;">
+          <button type="button" class="f-chip" id="btnSelectOcrFile" style="background:#d97706;color:#fff;font-weight:850;padding:9px 20px;border-radius:10px;border:0;font-size:12.5px;box-shadow:var(--shadow-1);">사진 촬영 / 앨범에서 선택 (여러 장 가능)</button>
+        </div>
+
+        <!-- 병원 서류 전용: 가입시기 & 보험회사 선택 (증권이 없는 경우) -->
+        <div style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);text-align:left;">
+          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>📅 가입시기 (병원서류만 올리는 경우):</span>
+            <span id="ocrDateBadge" style="font-size:11px;color:#d97706;font-weight:800;">2020년 이후</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px;" id="ocrGenChips">
+            <button class="f-chip" data-ocrgen="old" type="button" style="padding:8px 0;font-size:12px;font-weight:800;border-radius:10px;">2020년 이전</button>
+            <button class="f-chip on" data-ocrgen="recent" type="button" style="padding:8px 0;font-size:12px;font-weight:800;border-radius:10px;">2020년 이후</button>
+          </div>
+
+          <div style="font-size:11.5px;font-weight:750;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🏢 가입 보험사:</span>
+            <span id="ocrCoBadge" style="font-size:11px;color:#d97706;font-weight:800;">전체</span>
+          </div>
+          <div class="co-grid" id="ocrCoGrid" style="grid-template-columns:repeat(3,1fr);">
+            <button class="f-chip on" data-ocrco="" style="grid-column:span 3;">전체</button>
+            <button class="f-chip" data-ocrco="현대해상">현대해상</button>
+            <button class="f-chip" data-ocrco="삼성화재">삼성화재</button>
+            <button class="f-chip" data-ocrco="DB손해보험">DB손보</button>
+            <button class="f-chip" data-ocrco="KB손해보험">KB손보</button>
+            <button class="f-chip" data-ocrco="메리츠화재">메리츠</button>
+            <button class="f-chip" data-ocrco="한화손해보험">한화손보</button>
+            <button class="f-chip" data-ocrco="흥국화재">흥국화재</button>
+            <button class="f-chip" data-ocrco="롯데손해보험">롯데손보</button>
+            <button class="f-chip" data-ocrco="삼성생명">삼성생명</button>
+            <button class="f-chip" data-ocrco="한화생명">한화생명</button>
+            <button class="f-chip" data-ocrco="교보생명">교보생명</button>
+          </div>
         </div>
 
         <div id="ocrPreviewBox" style="display:none;margin-top:14px;text-align:left;">
@@ -435,7 +457,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261108p"></script>
-<script src="app.js?v=20261108p"></script>
+<script src="assets/curated.js?v=20261108t"></script>
+<script src="app.js?v=20261108t"></script>
 </body>
 </html>
