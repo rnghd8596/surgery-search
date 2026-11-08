@@ -61,12 +61,25 @@ const EDI_CODE_MAP = {
   'R4121': { codes: ['D25'], name: '자궁근종절제술(복강경)', tier: '3종' },
   'R4122': { codes: ['D25'], name: '자궁근종절제술(개복)', tier: '3종' },
   'R4331': { codes: ['O82'], name: '제왕절개만출술', tier: '3~4종' },
-  // 순환기내과
+  // 순환기내과 및 혈관외과 (하지정맥류 등)
   'M6551': { codes: ['I20', 'I21'], name: '경피적 관상동맥스텐트삽입술(1혈관)', tier: '3~4종' },
   'M6552': { codes: ['I20', 'I21'], name: '경피적 관상동맥스텐트삽입술(2혈관이상)', tier: '3~4종' },
+  'O1241': { codes: ['I83'], name: '광범위정맥류발거술(단측)', tier: '2~3종' },
+  'O1242': { codes: ['I83'], name: '광범위정맥류발거술(양측)', tier: '2~3종' },
+  'O1251': { codes: ['I83'], name: '정맥류국소제거술(단측)', tier: '1~2종' },
+  'O1261': { codes: ['I83'], name: '복재정맥결찰술', tier: '1~2종' },
   // 비뇨의학과
   'R3421': { codes: ['N40'], name: '경요도 전립선절제술(TURP)', tier: '3종' },
-  'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '비해당(시술) 다수' }
+  'R3431': { codes: ['N40'], name: '경요도 전립선결찰술(유로리프트)', tier: '1~2종 (비급여/분쟁)' },
+  'R3441': { codes: ['N40'], name: '홀뮴레이저 전립선적출술(HoLEP)', tier: '3종' },
+  'R3461': { codes: ['N40'], name: '전립선고수압분사절제술(워터젯/아쿠아블레이션)', tier: '3종' },
+  'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '비해당(시술) 다수' },
+  // 척추 및 치과 신의료기술/다빈도
+  'O1441': { codes: ['J34.8', 'J34.2'], name: '비밸브재건술', tier: '2~3종' },
+  'O1451': { codes: ['J32'], name: '풍선카테터부비동확장술', tier: '2종' },
+  'N0321': { codes: ['M51', 'M50'], name: '경피적 척추디스크감압술(고주파/레이저)', tier: '3종' },
+  'N0331': { codes: ['M80', 'S22', 'S32'], name: '경피적 척추체성형술(골시멘트)', tier: '3종' },
+  'U1010': { codes: ['K08.1', 'K08'], name: '치조골이식술(골이식술)', tier: '2종 (표준 1~5종 33항)' }
 };
 
 /* ───────────────────────── 회사 약칭 & 자동 감지 매핑 (전사 31개사 및 패밀리) ───────────────────────── */
@@ -931,6 +944,50 @@ function getBeginnerTips(g) {
     });
   }
 
+  if (codes.some(c => c.startsWith('I83'))) {
+    tips.push({
+      badge: '⚠️ 신의료기술 주의',
+      color: '#d97706',
+      bg: 'rgba(245,158,11,0.09)',
+      border: 'rgba(245,158,11,0.3)',
+      title: '비관혈 시술(베나실·클라리베인·고주파) 수술 인정 여부 확인',
+      text: '광범위 발거술(스트리핑)은 1~3종(2종 다수) 지급되나, 비관혈적 시술(베나실 생체접착제, 클라리베인, 고주파, 레이저)은 약관상 "절제·절단" 수술 정의 해당 여부로 분쟁이 잦습니다. 가입 약관의 비관혈 수술 인정 조항을 꼭 확인하세요.'
+    });
+  }
+
+  if (codes.some(c => c.startsWith('D25') || c.startsWith('N80'))) {
+    tips.push({
+      badge: '⚠️ 신의료기술 주의',
+      color: '#7c3aed',
+      bg: 'rgba(124,58,237,0.08)',
+      border: 'rgba(124,58,237,0.25)',
+      title: '하이푸(HIFU)·색전술 종수술비 인정 확인',
+      text: '복강경/개복 근종절제술(3종)이나 자궁적출(4종)과 달리, 하이푸(고강도초음파)는 절개 없는 신의료기술로 종수술비에서 2종 또는 분쟁이 발생합니다. 가입 약관의 신의료기술 인정 여부와 N대 질병수술비 보장 여부를 함께 확인하세요.'
+    });
+  }
+
+  if (codes.some(c => c.startsWith('N40'))) {
+    tips.push({
+      badge: '⚠️ 신의료기술 주의',
+      color: '#2563eb',
+      bg: 'rgba(37,99,235,0.08)',
+      border: 'rgba(37,99,235,0.25)',
+      title: '유로리프트(결찰술) vs 절제술(TURP/홀렙) 종수 구분',
+      text: '경요도절제(TURP)나 홀렙(HoLEP)은 3종이나, 유로리프트(경요도결찰술)는 결찰술 특약 또는 1~2종/비급여 분쟁이 있습니다. N대 질병수술비 지급 여부도 함께 대조하세요.'
+    });
+  }
+
+  if (codes.some(c => c.startsWith('N20') || c.startsWith('N21') || c.startsWith('N22') || c.startsWith('N23'))) {
+    tips.push({
+      badge: '⚠️ 초보 필수 주의',
+      color: '#059669',
+      bg: 'rgba(16,185,129,0.08)',
+      border: 'rgba(16,185,129,0.25)',
+      title: '체외충격파쇄석술(ESWL) 생·손보 약관 차이',
+      text: '체외충격파쇄석술은 생명보험 1~5종(2종)에서는 인정되는 경우가 많으나, 손해보험에서는 관혈적 수술이 아닌 시술로 보아 부지급되는 약관이 다수입니다. 요관경하 결석제거(2~3종)와 구분하세요.'
+    });
+  }
+
   return tips;
 }
 
@@ -940,15 +997,15 @@ function renderIdleQuick() {
 
   const frequentItems = [
     { title: '대장용종 절제술', sub: 'K63.5 · Q7701 (2종 / 개정 1종)', query: '대장용종', badge: '2종', badgeBg: '#2563eb' },
-    { title: '백내장 수정체수술', sub: 'H25/H26 · 초음파유화술 (1종)', query: '백내장', badge: '1종', badgeBg: '#059669' },
+    { title: '베나실 · 하지정맥류', sub: 'I83 · 시아노아크릴레이트 폐색술', query: '베나실', badge: '1~2종', badgeBg: '#d97706' },
+    { title: '하이푸 (자궁근종)', sub: 'D25 · 고강도초음파집속술 (2~3종)', query: '하이푸', badge: '2~3종', badgeBg: '#7c3aed' },
     { title: '맘모톰 (유방절제)', sub: 'D24 · N60 (2종 / 단순생검 제외)', query: '맘모톰', badge: '2종', badgeBg: '#2563eb' },
-    { title: '자궁근종 절제술', sub: 'D25 · 복강경·개복·하이푸 (2~3종)', query: '자궁근종', badge: '2~3종', badgeBg: '#7c3aed' },
+    { title: '유로리프트 (전립선)', sub: 'N40 · 경요도전립선결찰술', query: '유로리프트', badge: '1~2종', badgeBg: '#059669' },
+    { title: '백내장 수정체수술', sub: 'H25/H26 · 초음파유화술 (1종)', query: '백내장', badge: '1종', badgeBg: '#059669' },
     { title: '무릎 인공관절치환', sub: 'M17 · 전치환술 (4종 / 세척 3종)', query: '인공관절', badge: '4종', badgeBg: '#dc2626' },
     { title: '치핵 · 치루 근치술', sub: 'K60~K64 · 외과적 치핵절제 (1종)', query: '치핵', badge: '1종', badgeBg: '#059669' },
     { title: '요로결석 쇄석술', sub: 'N20~N23 · 체외충격파쇄석 (2종)', query: '요로결석', badge: '2종', badgeBg: '#2563eb' },
-    { title: '복강경 담낭절제술', sub: 'K80 · 담석증 담낭적출 (3종)', query: '담낭절제', badge: '3종', badgeBg: '#ea580c' },
-    { title: '척추 디스크 감압술', sub: 'M51 · 신경감압·수핵절제 (3종)', query: '추간판', badge: '3종', badgeBg: '#ea580c' },
-    { title: '하지정맥류 레이저', sub: 'I83 · 광범위정맥류발거 (2종)', query: '하지정맥류', badge: '2종', badgeBg: '#2563eb' }
+    { title: '척추 디스크 감압술', sub: 'M51 · 신경감압·수핵절제 (3종)', query: '추간판', badge: '3종', badgeBg: '#ea580c' }
   ];
 
   box.innerHTML = `
@@ -1614,9 +1671,10 @@ function renderTierEmptyExample() {
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;" id="tierExampleChips">
         <button type="button" class="f-chip ex-btn" data-q="대장용종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">대장용종</button>
-        <button type="button" class="f-chip ex-btn" data-q="백내장" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">백내장</button>
+        <button type="button" class="f-chip ex-btn" data-q="베나실" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">베나실</button>
+        <button type="button" class="f-chip ex-btn" data-q="하이푸" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">하이푸</button>
+        <button type="button" class="f-chip ex-btn" data-q="유로리프트" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">유로리프트</button>
         <button type="button" class="f-chip ex-btn" data-q="맘모톰" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">맘모톰</button>
-        <button type="button" class="f-chip ex-btn" data-q="자궁근종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">자궁근종</button>
         <button type="button" class="f-chip ex-btn" data-q="Q7701" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">Q7701</button>
       </div>
     </div>
@@ -2201,10 +2259,11 @@ function renderNdaiEmptyExample() {
         👇 <b>원터치 추천 검색어</b> (누르면 바로 검색):
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;" id="ndaiExampleChips">
+        <button type="button" class="f-chip ndai-ex-btn" data-q="베나실" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">베나실</button>
+        <button type="button" class="f-chip ndai-ex-btn" data-q="하이푸" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">하이푸</button>
+        <button type="button" class="f-chip ndai-ex-btn" data-q="유로리프트" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">유로리프트</button>
         <button type="button" class="f-chip ndai-ex-btn" data-q="맘모톰" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">맘모톰</button>
         <button type="button" class="f-chip ndai-ex-btn" data-q="대장용종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">대장용종</button>
-        <button type="button" class="f-chip ndai-ex-btn" data-q="백내장" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">백내장</button>
-        <button type="button" class="f-chip ndai-ex-btn" data-q="자궁근종" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">자궁근종</button>
         <button type="button" class="f-chip ndai-ex-btn" data-q="갑상선암" style="padding:6px 11px;font-size:12px;font-weight:850;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--text);">갑상선암</button>
       </div>
     </div>
@@ -3103,6 +3162,15 @@ function detailBodyHTML(gi) {
 /* ───────────────────────── 수술명 정돈 헬퍼 ───────────────────────── */
 function getCleanProcName(g, q) {
   const normQ = (q || '').trim();
+  if (normQ.includes('베나실')) return '하지정맥류 베나실 시술 (복재정맥폐색술)';
+  if (normQ.includes('클라리베인')) return '하지정맥류 클라리베인 시술 (기계화학정맥폐색술)';
+  if (normQ.includes('하지정맥') || normQ.includes('정맥류')) return '광범위 정맥류 발거술 / 레이저·고주파 폐쇄술';
+  if (normQ.includes('하이푸')) return '자궁근종·선근증 하이푸 시술 (고강도초음파집속술)';
+  if (normQ.includes('유로리프트')) return '전립선결찰술 (유로리프트 UroLift)';
+  if (normQ.includes('비밸브')) return '비밸브재건술 (비중격교정술 동시시행)';
+  if (normQ.includes('신경성형술') || normQ.includes('풍선확장')) return '경막외 신경성형술 / 풍선확장술';
+  if (normQ.includes('체외충격파') || normQ.includes('쇄석')) return '체외충격파 쇄석술 (ESWL)';
+  if (normQ.includes('치조골') || normQ.includes('뼈이식')) return '치조골이식술 (임플란트 골이식술)';
   if (normQ.includes('맘모톰')) return '맘모톰 절제술 (진공보조절제)';
   if (normQ.includes('인공관절')) return '인공관절 치환술';
   if (normQ.includes('대장용종') || normQ.includes('용종')) return '내시경적 폴립(용종) 절제술';
