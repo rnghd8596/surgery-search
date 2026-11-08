@@ -235,6 +235,14 @@ function search(qraw) {
     const terms = [...new Set([syn.k, ...syn.q])].map(norm).filter(t => t.length >= 2);
     idx.name.forEach(({ i, nn }) => { if (terms.some(t => nn.includes(t))) add(i, 6); });
   }
+  // 별칭의 대표 코드(앞쪽 4개)는 최우선
+  if (syn) {
+    (syn.main || syn.codes.slice(0, 4)).forEach(cp => {
+      for (const code in state.D.codeIndex) {
+        if (code.startsWith(cp)) state.D.codeIndex[code].forEach(i => add(i, 5));
+      }
+    });
+  }
   // 코드만 맞는 별칭 결과는 뒤로
   if (syn) {
     syn.codes.forEach(cp => {
