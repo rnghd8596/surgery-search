@@ -67,6 +67,7 @@ input{font-family:inherit}
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   padding:24px; background:var(--bg); overflow:hidden;
 }
+.lock.hide{display:none !important}
 .lock-aurora{position:absolute;inset:0;overflow:hidden;pointer-events:none}
 .orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;animation:float 16s var(--ease) infinite alternate}
 .o1{width:52vw;height:52vw;max-width:520px;max-height:520px;background:#9CC6FF;top:-12%;left:-10%}

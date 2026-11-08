@@ -437,6 +437,7 @@ function start(data) {
   buildIndex();
 
   $('#lock').classList.add('hide');
+  $('#lock').hidden = true;
   $('#app').hidden = false;
 
   bindNavTabs();
