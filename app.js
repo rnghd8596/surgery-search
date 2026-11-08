@@ -688,7 +688,6 @@ function renderIdleQuick() {
   const box = $('#results-quick');
   if (box) box.innerHTML = '';
 }
-}
 
 function cardQuickHTML(gi, q, matchedEdi) {
   const g = state.D.g[gi];
@@ -1243,7 +1242,7 @@ function renderDynamicNdaiTierChips() {
           <div style="font-size:11px;font-weight:850;color:#8b5cf6;margin-bottom:4px;">🏢 [${esc(c)}] 증권 특약:</div>
           <div style="display:flex;flex-wrap:wrap;gap:5px;">
             <button class="f-chip ${!state.ndaiTier ? 'on' : ''}" data-ntier="" style="padding:5px 10px;font-size:11px;font-weight:800;">전체 N대</button>
-            ${tiers.map(t => `<button class="f-chip ${state.ndaiTier === t ? 'on' : ''}" data-ntier="${esc(t)}" style="padding:5px 10px;font-size:11px;font-weight:800;">${esc(t)}</button>`).join('')}
+            ${tiers.length ? tiers.map(t => `<button class="f-chip ${state.ndaiTier === t ? 'on' : ''}" data-ntier="${esc(t)}" style="padding:5px 10px;font-size:11px;font-weight:800;">${esc(t)}</button>`).join('') : '<span style="font-size:11px;color:var(--text-3);padding:4px 6px;">N대 특약 미판매 / 준비 중</span>'}
           </div>
         </div>`;
     });
@@ -1698,8 +1697,8 @@ function renderNdaiTree() {
     container.innerHTML = `
       <div class="empty" style="padding:28px 20px;">
         <span class="empty-emoji">🏢</span>
-        <h3>[${esc(coTitle)}] 특약 데이터 준비 중</h3>
-        <p>선택하신 회사의 N대 특약 데이터를 불러오는 중입니다. 손보사(현대, 삼성, DB, KB, 메리츠 등) 또는 생보사를 확인해 보세요.</p>
+        <h3>[${esc(coTitle)}] N대 특약 미판매 / 준비 중</h3>
+        <p>선택하신 회사는 N대 질병수술비를 판매하지 않거나 약관 데이터 준비 중입니다. 상단 <strong>[📋 종수술비]</strong> 탭을 확인해 보세요.</p>
       </div>`;
     return;
   }
