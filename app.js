@@ -97,7 +97,7 @@ const COMPANY_ALIASES = [
   { name: '롯데손해보험', type: 'sonbo', keys: ['롯데손해보험', '롯데손보', '롯손', '롯화', '롯데'] },
   { name: 'NH농협손해보험', type: 'sonbo', keys: ['농협손해보험', '농협손보', '농손', 'nh손보', 'nh농협손보', '엔손'] },
   { name: '하나손해보험', type: 'sonbo', keys: ['하나손해보험', '하나손보', '하손'] },
-  { name: 'MG손해보험', type: 'sonbo', keys: ['mg손해보험', 'mg손보', '엠손', '엠지손보', '엠지'] },
+  { name: '예별(구 MG)손해보험', type: 'sonbo', keys: ['예별손해보험', '예별손보', '예별', '에이별', 'mg손해보험', 'mg손보', '엠손', '엠지손보', '엠지'] },
   { name: 'AIG손해보험', type: 'sonbo', keys: ['aig손해보험', 'aig손보', '에이아이지', '아이지손보'] },
   { name: '라이나손해보험', type: 'sonbo', keys: ['라이나손해보험', '라이나손보', '라손', '에이스손보', '처브'] },
 
@@ -220,31 +220,78 @@ function parseSmartQuery(raw) {
     }
   }
 
-  // 3. 보험사 검출 (구체적 단일 회사 우선 매칭 -> 없으면 생·손보 패밀리 매칭)
+  // 3. 보험사 검출 (복수 회사 동시 추출 지원: 예 '멜츠현대유방', '삼성현대대장용종')
+  const companyMatches = [];
   const lowerText = text.toLowerCase();
+
   for (const item of ALL_SPECIFIC_COMPANY_KEYS) {
-    const idxMatch = lowerText.indexOf(item.key.toLowerCase());
-    if (idxMatch >= 0) {
-      foundCo = item.ca.name;
-      foundCos = [item.ca.name];
-      foundCoType = item.ca.type;
-      text = text.slice(0, idxMatch) + ' ' + text.slice(idxMatch + item.key.length);
-      break;
+    const kLow = item.key.toLowerCase();
+    let pos = 0;
+    while (pos < lowerText.length) {
+      const idxMatch = lowerText.indexOf(kLow, pos);
+      if (idxMatch === -1) break;
+      companyMatches.push({
+        start: idxMatch,
+        end: idxMatch + kLow.length,
+        len: kLow.length,
+        name: item.ca.name,
+        type: item.ca.type,
+        family: null
+      });
+      pos = idxMatch + kLow.length;
     }
   }
 
-  if (!foundCo) {
-    for (const fam of ALL_FAMILY_KEYS) {
-      const idxMatch = lowerText.indexOf(fam.key.toLowerCase());
-      if (idxMatch >= 0) {
-        foundFamily = fam;
-        foundCo = fam.sonbo;
-        foundCos = [fam.sonbo, fam.saengbo];
-        foundCoType = 'family';
-        text = text.slice(0, idxMatch) + ' ' + text.slice(idxMatch + fam.key.length);
-        break;
+  for (const fam of ALL_FAMILY_KEYS) {
+    const kLow = fam.key.toLowerCase();
+    let pos = 0;
+    while (pos < lowerText.length) {
+      const idxMatch = lowerText.indexOf(kLow, pos);
+      if (idxMatch === -1) break;
+      const famNames = fam.sonbo && fam.saengbo ? [fam.sonbo, fam.saengbo] : (fam.sonbo ? [fam.sonbo] : [fam.saengbo]);
+      companyMatches.push({
+        start: idxMatch,
+        end: idxMatch + kLow.length,
+        len: kLow.length,
+        name: fam.sonbo || fam.saengbo,
+        names: famNames,
+        type: 'family',
+        family: fam
+      });
+      pos = idxMatch + kLow.length;
+    }
+  }
+
+  companyMatches.sort((a, b) => a.start - b.start || b.len - a.len);
+
+  const chosenMatches = [];
+  let lastEnd = 0;
+  for (const m of companyMatches) {
+    if (m.start >= lastEnd) {
+      chosenMatches.push(m);
+      lastEnd = m.end;
+    }
+  }
+
+  if (chosenMatches.length > 0) {
+    for (const m of chosenMatches) {
+      if (m.names) {
+        m.names.forEach(n => {
+          if (!foundCos.includes(n)) foundCos.push(n);
+        });
+      } else if (m.name && !foundCos.includes(m.name)) {
+        foundCos.push(m.name);
+      }
+      if (!foundCo) {
+        foundCo = m.name;
+        foundCoType = m.type;
+        foundFamily = m.family;
       }
     }
+
+    chosenMatches.sort((a, b) => b.start - a.start).forEach(m => {
+      text = text.slice(0, m.start) + ' ' + text.slice(m.end);
+    });
   }
 
   // 불필요한 조사나 군더더기 단어 제거 (이후, 이전, 수술비, 보험, 특약, 청구)
@@ -540,13 +587,9 @@ function switchTab(tabKey) {
     if (state.tierQ) runTierSearch(state.tierQ);
     else renderTierEmptyExample();
   } else if (tabKey === 'ndai') {
-    if (state.ndaiMode === 'search') {
-      $('#q-ndai')?.focus();
-      if (state.ndaiQ) runNdaiSearch(state.ndaiQ);
-      else renderNdaiEmptyExample();
-    } else {
-      renderNdaiTree();
-    }
+    $('#q-ndai')?.focus();
+    if (state.ndaiQ) runNdaiSearch(state.ndaiQ);
+    else renderNdaiEmptyExample();
   } else if (tabKey === 'ocr') {
     // 사진으로 검색 탭
   } else if (tabKey === 'about') {
@@ -574,6 +617,10 @@ function search(rawQ) {
   const add = (i, s) => { if (!scores.has(i) || scores.get(i) > s) scores.set(i, s); };
 
   let matchedEdi = null;
+
+  // 암/악성 vs 양성 질환 의도 구분 (자궁암 검색 시 평활근종 배제 등)
+  const isCancerQuery = /(암|악성|신생물|카르시노마|육종|림프종|백혈병)/.test(nq) || /^C\d/.test(up);
+  const isBenignQuery = /(근종|양성|폴립|용종|결절|비대|낭종)/.test(nq);
 
   // 1. 수술코드(EDI 코드) 직접 매칭 (예: Q7701, O1421, S5111 등)
   const looksEdi = /^[A-Z]\d{4}/.test(up);
@@ -637,14 +684,48 @@ function search(rawQ) {
     });
   }
 
-  // 4. 별칭(synonyms) 광범위 정밀 매칭 (맘모톰, 인공관절, 유방, 대장용종 등)
-  const matchingSyns = idx.syn.filter(s => s.keys.some(k => k === nq || nq.includes(k) || k.includes(nq)));
-  matchingSyns.forEach(syn => {
+  // 4. 별칭(synonyms) 광범위 정밀 매칭 (맘모톰, 인공관절, 자궁암, 대장용종 등)
+  const matchingSyns = [];
+  idx.syn.forEach(syn => {
+    let matchType = null; // 'exact' | 'prefix' | 'sub'
+
+    for (const k of syn.keys) {
+      if (k === nq) {
+        matchType = 'exact';
+        break;
+      }
+      if ((k.startsWith(nq) || nq.startsWith(k)) && Math.abs(k.length - nq.length) <= 2) {
+        if (!matchType || matchType === 'sub') matchType = 'prefix';
+      } else if (nq.includes(k) || k.includes(nq)) {
+        if (isCancerQuery && !syn.keys.some(sk => /(암|악성|신생물|c\d)/i.test(sk))) {
+          continue; // 암 검색 시 양성 질환 별칭 매칭 차단!
+        }
+        if (isBenignQuery && syn.keys.some(sk => /(암|악성)/.test(sk))) {
+          continue; // 양성 검색 시 암 별칭 차단!
+        }
+        if (!matchType) matchType = 'sub';
+      }
+    }
+
+    if (!matchType) return;
+    matchingSyns.push(syn);
+
+    const baseScore = matchType === 'exact' ? 0.01 : (matchType === 'prefix' ? 0.08 : 0.6);
     const targets = syn.main || syn.codes || [];
     targets.forEach((cp, rank) => {
       for (const code in state.D.codeIndex) {
         if (code === cp || code.startsWith(cp)) {
-          state.D.codeIndex[code].forEach(i => add(i, 0.4 + rank * 0.05));
+          state.D.codeIndex[code].forEach(i => {
+            const g = state.D.g[i];
+            const isCancerCode = g.c.some(c => c.startsWith('C') || c.startsWith('D0'));
+            if (isCancerQuery && !isCancerCode && !norm(g.n).includes('악성') && !norm(g.n).includes('암')) {
+              return; // 암 검색 시 평활근종 등 양성 질환 철저 배제!
+            }
+            if (isBenignQuery && isCancerCode) {
+              return;
+            }
+            add(i, baseScore + rank * 0.01);
+          });
         }
       }
     });
@@ -655,18 +736,27 @@ function search(rawQ) {
   const terms = q.split(/\s+/).map(norm).filter(t => t.length > 0);
 
   idx.name.forEach(({ i, nn, ch }) => {
+    const g = state.D.g[i];
+    const isCancerCode = g.c.some(c => c.startsWith('C') || c.startsWith('D0'));
+    if (isCancerQuery && !isCancerCode && !nn.includes('악성') && !nn.includes('암')) {
+      return;
+    }
+    if (isBenignQuery && isCancerCode) {
+      return;
+    }
+
     if (isCho) {
       if (ch === nq) add(i, 2);
       else if (ch.startsWith(nq)) add(i, 3);
       return;
     }
-    if (nn === nq) add(i, 0.2);
-    else if (nn.startsWith(nq)) add(i, 1.0);
-    else if (nn.includes(nq)) add(i, 1.5);
+    if (nn === nq) add(i, 0.005);
+    else if (nn.startsWith(nq)) add(i, 0.04);
+    else if (nn.includes(nq)) add(i, 0.2);
     else if (terms.length > 1) {
       const matchCount = terms.filter(t => nn.includes(t)).length;
-      if (matchCount === terms.length) add(i, 1.2);
-      else if (matchCount > 0) add(i, 2.5 + (terms.length - matchCount));
+      if (matchCount === terms.length) add(i, 0.3);
+      else if (matchCount > 0 && matchCount >= terms.length - 1) add(i, 1.5);
     }
   });
 
@@ -686,8 +776,27 @@ function search(rawQ) {
   });
 
   let giEntries = [...scores.entries()];
+  if (isCancerQuery) {
+    giEntries = giEntries.filter(([i]) => {
+      const g = state.D.g[i];
+      const isCancerCode = g.c.some(c => c.startsWith('C') || c.startsWith('D0'));
+      return isCancerCode || norm(g.n).includes('악성') || norm(g.n).includes('암');
+    });
+  }
+
   const gi = giEntries
-    .sort((a, b) => a[1] - b[1] || (state.D.g[b[0]].m.length - state.D.g[a[0]].m.length))
+    .sort((a, b) => {
+      if (Math.abs(a[1] - b[1]) > 0.001) return a[1] - b[1];
+      const gA = state.D.g[a[0]];
+      const gB = state.D.g[b[0]];
+      const exactA = (gA.n === q || (gA.vs || []).includes(q) || norm(gA.n) === nq) ? 1 : 0;
+      const exactB = (gB.n === q || (gB.vs || []).includes(q) || norm(gB.n) === nq) ? 1 : 0;
+      if (exactA !== exactB) return exactB - exactA;
+      const preA = norm(gA.n).startsWith(nq) ? 1 : 0;
+      const preB = norm(gB.n).startsWith(nq) ? 1 : 0;
+      if (preA !== preB) return preB - preA;
+      return Math.abs(norm(gA.n).length - nq.length) - Math.abs(norm(gB.n).length - nq.length);
+    })
     .slice(0, MAX_NAME);
 
   const ediHits = [];
@@ -908,14 +1017,15 @@ const REVISION_RULES = [
         return {
           tier: '5종',
           hasDiff: true,
-          diffBadge: '[현대해상 4종 주의]',
-          note: '악성신생물 치료 목적의 관혈적 근치수술 5종 (단, 현대해상 2026년 개정약관은 4종 하향)',
+          diffBadge: '[2026 현대해상 담보별 상이]',
+          note: '악성신생물 관혈 근치수술 5종 (2026년 이후 현대해상은 가입 담보에 따라 4종 또는 5종)',
           boxHTML: `
-            <div style="background:var(--surface);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-              <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">🚨 현대해상 약관 개정 주의 (2026년 질병수술Ⅳ)</div>
-              <div style="color:var(--text);font-size:11.5px;">
-                • <b>현대해상 2026년 이전 계약 및 타사 전사</b> : 관혈적 근치수술 시 <b style="color:#2563eb;">5종 지급</b><br>
-                • <b>현대해상 2026년 개정약관(질병수술Ⅳ)</b> : 6대 암(갑상선·유방·자궁·전립선·방광) 관혈수술 제1-2항 신설로 <b style="color:#dc2626;">4종으로 하향 지급</b>
+            <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.35);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
+              <div style="font-weight:850;color:#dc2626;margin-bottom:5px;">⚠️ 2026년 현대해상 가입자부터는 담보별 상이하니 필수확인</div>
+              <div style="color:var(--text);font-size:11.5px;display:flex;flex-direction:column;gap:3px;">
+                <div>• <b>현대해상 2026년 이전 계약 및 타사 전사</b> : 관혈적 근치수술 시 <b style="color:#2563eb;">5종 지급</b></div>
+                <div>• <b>현대해상 2026년 이후 가입자</b> : 가입 담보에 따라 <b style="color:#dc2626;">4종 또는 5종 상이</b></div>
+                <div style="color:var(--text-3);font-size:11px;margin-top:2px;">(※ 무조건 하향이 아니며, 담보 가입에 따라 다름 — 질병수술Ⅳ 특약은 4종 / 기존 질병수술 특약은 5종)</div>
               </div>
             </div>`
         };
@@ -935,17 +1045,20 @@ const REVISION_RULES = [
           };
         }
 
-        const ymText = '2026년 4월';
         if (!year) {
           return {
             tier: '4·5종',
             hasDiff: true,
-            diffBadge: '[가입시기별 상이]',
-            note: '현대해상은 2026년 4월 개정(질병수술Ⅳ) 기점으로 5종 ➔ 4종 하향',
+            diffBadge: '[담보별 상이]',
+            note: '2026년 이전 5종 / 2026년 이후 가입자는 담보에 따라 4종 또는 5종 상이',
             boxHTML: `
-              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">🚨 현대해상 가입시기별 종수 기준 (6대 암)</div>
-                <div>• <b>2026년 이전 계약</b> ➔ <b style="color:#2563eb;">5종 지급</b> (관혈 근치수술)<br>• <b>2026년 개정약관(질병수술Ⅳ)</b> ➔ <b style="color:#dc2626;">4종 적용</b> (하향 개정)</div>
+              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.35);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
+                <div style="font-weight:850;color:#dc2626;margin-bottom:5px;">⚠️ 2026년 현대해상 가입자부터는 담보별 상이하니 필수확인</div>
+                <div style="color:var(--text);font-size:11.5px;display:flex;flex-direction:column;gap:3px;">
+                  <div>• <b>2026년 이전 계약</b> ➔ <b style="color:#2563eb;">5종 지급</b> (관혈 근치수술)</div>
+                  <div>• <b>2026년 이후 가입자</b> ➔ 담보에 따라 <b style="color:#dc2626;">4종 또는 5종 상이</b></div>
+                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">(※ 질병수술Ⅳ 특약 가입 시 4종 하향 / 기존 1~5종 특약 가입 시 5종)</div>
+                </div>
               </div>`
           };
         }
@@ -953,14 +1066,18 @@ const REVISION_RULES = [
         const targetYm = year * 100 + (month || 12);
         if (targetYm >= 202604) {
           return {
-            tier: '4종',
+            tier: '4·5종',
             hasDiff: true,
-            diffBadge: '[개정약관 4종]',
-            note: '현대해상 2026.04 개정약관(질병수술Ⅳ) 적용 (4종)',
+            diffBadge: '[담보별 상이]',
+            note: '2026년 가입자: 담보에 따라 4종 또는 5종 상이',
             boxHTML: `
-              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
-                <div style="font-weight:850;color:#dc2626;margin-bottom:3px;">✓ 현대해상 2026년 이후 개정약관 (4종 확정)</div>
-                <div style="color:var(--text-2);">고객 가입 시점이 2026년 개정(질병수술Ⅳ) 이후이므로 4종에 해당합니다. (2026년 이전 계약은 5종)</div>
+              <div style="background:rgba(239,68,68,0.06);border:1.5px solid rgba(239,68,68,0.35);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
+                <div style="font-weight:850;color:#dc2626;margin-bottom:5px;">⚠️ 2026년 현대해상 가입자부터는 담보별 상이하니 필수확인</div>
+                <div style="color:var(--text);font-size:11.5px;display:flex;flex-direction:column;gap:3px;">
+                  <div>• <b>질병수술Ⅳ 특약 가입 시</b> ➔ <b style="color:#dc2626;">4종 적용</b> (하향 개정)</div>
+                  <div>• <b>기존 1~5종 질병수술 특약 가입 시</b> ➔ <b style="color:#2563eb;">5종 적용</b></div>
+                  <div style="color:var(--text-3);font-size:11px;margin-top:2px;">(고객 증권에 적힌 세부 특약명이 '질병수술Ⅳ'인지 필수 확인 필요)</div>
+                </div>
               </div>`
           };
         } else {
@@ -968,11 +1085,11 @@ const REVISION_RULES = [
             tier: '5종',
             hasDiff: true,
             diffBadge: '[개정 이전 5종]',
-            note: '현대해상 2026년 이전 계약으로 5종 지급',
+            note: '현대해상 2026년 이전 계약으로 5종 정상 지급',
             boxHTML: `
-              <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;padding:9px 12px;margin:8px 0;font-size:12px;line-height:1.5;">
+              <div style="background:rgba(37,99,235,0.06);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.55;">
                 <div style="font-weight:850;color:#2563eb;margin-bottom:3px;">✓ 현대해상 2026년 이전 계약 (5종 확정)</div>
-                <div style="color:var(--text-2);">개정 전 가입 계약이므로 정상적으로 악성신생물 5종 수술비가 지급됩니다.</div>
+                <div style="color:var(--text-2);font-size:11.5px;">2026년 개정 전 가입 계약이므로 정상적으로 악성신생물 5종 수술비가 지급됩니다.</div>
               </div>`
           };
         }
@@ -1626,12 +1743,38 @@ function bindTierTab() {
     });
   });
 
+  function resetTierFilters() {
+    state.tCos = [];
+    state.tCo = '';
+    state.tYear = null;
+    state.tMonth = null;
+    state.tGen = 'recent';
+    state.tCoTouched = false;
+    state.tDateTouched = false;
+    $$('#tierCoSonbo .f-chip, #tierCoSaengbo .f-chip').forEach(b => {
+      b.classList.toggle('on', !b.dataset.co);
+    });
+    $$('#tierYearGrid .y-chip').forEach(b => b.classList.remove('on'));
+    $$('#tierMonthGrid .m-chip').forEach(b => b.classList.remove('on'));
+    const tierDateBody = $('#tierDateBody');
+    const tierCoBody = $('#tierCoBody');
+    if (tierDateBody) tierDateBody.style.display = 'none';
+    if ($('#tierDateToggleIcon')) $('#tierDateToggleIcon').textContent = '펼치기 ∨';
+    if (tierCoBody) tierCoBody.style.display = 'none';
+    if ($('#tierCoToggleIcon')) $('#tierCoToggleIcon').textContent = '펼치기 ∨';
+    updateTierBadges();
+  }
+
   // 하이브리드 스마트 검색창 입력 (21년3월, 2103, 202103, 메리츠 등 완벽 감지)
   qTierEl.addEventListener('input', debounce(() => {
     const v = qTierEl.value;
     state.tierQ = v;
     $('#clearBtn-tier').hidden = !v;
-    if (!v.trim()) { renderTierEmptyExample(); return; }
+    if (!v.trim()) {
+      resetTierFilters();
+      renderTierEmptyExample();
+      return;
+    }
 
     const parsed = parseSmartQuery(v);
 
@@ -1680,6 +1823,7 @@ function bindTierTab() {
 
   $('#clearBtn-tier').addEventListener('click', () => {
     qTierEl.value = ''; state.tierQ = ''; $('#clearBtn-tier').hidden = true;
+    resetTierFilters();
     renderTierEmptyExample(); qTierEl.focus();
   });
 
@@ -1847,6 +1991,40 @@ function cardTierHTML(gi, q, matchedEdi) {
 }
 
 /* ───────────────────────── 3. N대질병수술비 정밀검색 (판정 & 약관 트리) ───────────────────────── */
+function updateNdaiBadges() {
+  const dBadge = $('#ndaiDateBadge');
+  const cBadge = $('#ndaiCoBadge');
+  const tBadge = $('#ndaiTierBadge');
+  const treeBadge = $('#ndaiTreeBadge');
+
+  if (dBadge) {
+    if (state.ndaiYear) {
+      dBadge.textContent = `: ${state.ndaiYear}년`;
+    } else {
+      dBadge.textContent = ': 전체';
+    }
+  }
+
+  if (cBadge) {
+    if (state.ndaiCos && state.ndaiCos.length > 0) {
+      cBadge.textContent = `: ${state.ndaiCos.join(' · ')}`;
+    } else if (state.ndaiCo) {
+      cBadge.textContent = `: ${state.ndaiCo}`;
+    } else {
+      cBadge.textContent = ': 전체';
+    }
+  }
+
+  if (tBadge) {
+    tBadge.textContent = state.ndaiTier ? state.ndaiTier : '전체 N대';
+  }
+
+  if (treeBadge) {
+    const cos = state.ndaiCos && state.ndaiCos.length ? state.ndaiCos : (state.ndaiCo ? [state.ndaiCo] : []);
+    treeBadge.textContent = cos.length ? `[${cos.join(', ')}]` : '[전체 보험사]';
+  }
+}
+
 function renderNdaiYearGrid() {
   const grid = $('#ndaiYearGrid');
   if (!grid) return;
@@ -1992,12 +2170,8 @@ function renderNdaiEmptyExample() {
 
 function bindNdaiTab() {
   const qNdaiEl = $('#q-ndai');
-  const btnSearchTab = $('#btnNdaiSearchTab');
-  const btnTreeTab = $('#btnNdaiTreeTab');
-  const searchView = $('#ndaiSearchSubView');
-  const treeView = $('#ndaiTreeSubView');
 
-  // 접이식 아코디언 바 토글 (판매시기 & 가입회사)
+  // 접이식 아코디언 바 토글 (판매시기 & 가입회사 & 직접찾기 트리)
   const btnToggleNdaiDate = $('#btnToggleNdaiDate');
   const ndaiDateBody = $('#ndaiDateBody');
   const ndaiDateToggleIcon = $('#ndaiDateToggleIcon');
@@ -2016,23 +2190,37 @@ function bindNdaiTab() {
     if (ndaiCoToggleIcon) ndaiCoToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
   });
 
-  btnSearchTab.addEventListener('click', () => {
-    state.ndaiMode = 'search';
-    btnSearchTab.classList.add('on'); btnTreeTab.classList.remove('on');
-    btnSearchTab.style.background = 'var(--text)'; btnSearchTab.style.color = 'var(--bg)';
-    btnTreeTab.style.background = 'var(--surface-2)'; btnTreeTab.style.color = 'var(--text-3)';
-    searchView.style.display = 'block'; treeView.style.display = 'none';
-    if (state.ndaiQ) runNdaiSearch(state.ndaiQ);
+  const btnToggleNdaiTree = $('#btnToggleNdaiTree');
+  const ndaiTreeBody = $('#ndaiTreeBody');
+  const ndaiTreeToggleIcon = $('#ndaiTreeToggleIcon');
+  btnToggleNdaiTree?.addEventListener('click', () => {
+    const isHidden = ndaiTreeBody.style.display === 'none';
+    ndaiTreeBody.style.display = isHidden ? 'block' : 'none';
+    if (ndaiTreeToggleIcon) ndaiTreeToggleIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+    if (isHidden) renderNdaiTree();
   });
 
-  btnTreeTab.addEventListener('click', () => {
-    state.ndaiMode = 'tree';
-    btnTreeTab.classList.add('on'); btnSearchTab.classList.remove('on');
-    btnTreeTab.style.background = 'var(--text)'; btnTreeTab.style.color = 'var(--bg)';
-    btnSearchTab.style.background = 'var(--surface-2)'; btnSearchTab.style.color = 'var(--text-3)';
-    searchView.style.display = 'none'; treeView.style.display = 'block';
-    renderNdaiTree();
-  });
+  function resetNdaiFilters() {
+    state.ndaiCos = [];
+    state.ndaiCo = '';
+    state.ndaiYear = null;
+    state.ndaiGen = 'recent';
+    state.ndaiTier = '';
+    state.ndaiCoTouched = false;
+    state.ndaiDateTouched = false;
+    $$('#ndaiCoSonbo .f-chip, #ndaiCoSaengbo .f-chip').forEach(b => {
+      b.classList.toggle('on', !b.dataset.nco);
+    });
+    $$('#ndaiYearGrid .ny-chip').forEach(b => b.classList.toggle('on', !b.dataset.ny));
+    $$('#ndaiTierChips .f-chip').forEach(b => b.classList.toggle('on', !b.dataset.ntier));
+    if (ndaiDateBody) ndaiDateBody.style.display = 'none';
+    if (ndaiDateToggleIcon) ndaiDateToggleIcon.textContent = '펼치기 ∨';
+    if (ndaiCoBody) ndaiCoBody.style.display = 'none';
+    if (ndaiCoToggleIcon) ndaiCoToggleIcon.textContent = '펼치기 ∨';
+    updateNdaiBadges();
+    renderDynamicNdaiTierChips();
+    if (ndaiTreeBody && ndaiTreeBody.style.display !== 'none') renderNdaiTree();
+  }
 
   // 1. 판매시기 칩 클릭
   $$('#nGenChips .f-chip').forEach(btn => {
@@ -2133,7 +2321,11 @@ function bindNdaiTab() {
     const v = qNdaiEl.value;
     state.ndaiQ = v;
     $('#clearBtn-ndai').hidden = !v;
-    if (!v.trim()) { renderNdaiEmptyExample(); return; }
+    if (!v.trim()) {
+      resetNdaiFilters();
+      renderNdaiEmptyExample();
+      return;
+    }
 
     const parsed = parseSmartQuery(v);
     if (parsed.co) {
@@ -2182,6 +2374,7 @@ function bindNdaiTab() {
 
   $('#clearBtn-ndai').addEventListener('click', () => {
     qNdaiEl.value = ''; state.ndaiQ = ''; $('#clearBtn-ndai').hidden = true;
+    resetNdaiFilters();
     renderNdaiEmptyExample(); qNdaiEl.focus();
   });
 
@@ -2710,9 +2903,9 @@ function renderNdaiTree() {
           jBtn.addEventListener('click', (ev) => {
             ev.stopPropagation();
             const jq = jBtn.dataset.q;
-            $('#btnNdaiSearchTab').click();
             $('#q-ndai').value = jq;
             $('#clearBtn-ndai').hidden = false;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             runNdaiSearch(jq);
           });
         });
