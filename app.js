@@ -441,6 +441,7 @@ function cardHTML(gi, q) {
         <div style="min-width:0">
           <h3 class="card-name">${hl(g.n, q)}</h3>
           <div class="card-codes">${g.c.slice(0, 8).map(c => `<span class="code-pill">${esc(c)}</span>`).join('')}</div>
+          ${altNames(g)}
         </div>
       </div>
       <div class="card-badges">
@@ -466,6 +467,12 @@ function cardHTML(gi, q) {
     </div>
     <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
+}
+
+function altNames(g) {
+  const others = (g.vs || []).filter(n => n !== g.n).slice(0, 3);
+  if (!others.length) return '';
+  return `<p class="card-alt">같은 코드 다른 명칭 · ${others.map(esc).join(', ')}</p>`;
 }
 
 function hl(text, q) {
