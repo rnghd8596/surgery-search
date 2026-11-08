@@ -508,7 +508,7 @@ function runDetailedSearch(q) {
 
   const head = `
     <div class="res-head">
-      <div class="res-title"><em>${esc(q)}</em> 증권 정밀 진단 결과</div>
+      <div class="res-title"><em>${esc(q)}</em> 정밀 검색 결과</div>
       <div class="res-count">분류 ${res.groups.length}건</div>
     </div>`;
 
@@ -783,13 +783,27 @@ function cardDetailedHTML(gi, q, matchedEdi) {
     if (co) {
       if (cos.has(co)) {
         const arr = cos.get(co);
+        // 담보군 중복 제거 및 깔끔한 라인 정리
+        const seenLines = new Set();
+        const uniqueLines = [];
+        for (const x of arr) {
+          const l = (x.line || '').replace(/\s+/g, ' ').trim();
+          if (l && !seenLines.has(l)) {
+            seenLines.add(l);
+            uniqueLines.push(l);
+          }
+        }
+        const displayLines = uniqueLines.slice(0, 5);
+        const moreCount = uniqueLines.length - displayLines.length;
+        const lineText = displayLines.map(x => esc(x)).join(' · ') + (moreCount > 0 ? ` 외 ${moreCount}개` : '');
+
         ndaiBlockHTML = `
           <div class="ndai-res-box covered">
             <div class="ndai-res-status">
               <span style="font-size:16px;">✓</span>
               <span>[${esc(co)}] N대 질병수술비 보장 해당</span>
             </div>
-            <div class="ndai-res-group">해당 담보군: <b>${arr.map(x => esc(x.line)).join(' · ')}</b></div>
+            <div class="ndai-res-group">해당 담보군: <b>${lineText}</b></div>
             <div class="ndai-res-desc">선택하신 [${esc(co)}] 증권의 가입금액 한도로 전액 지급됩니다.</div>
           </div>`;
       } else {
