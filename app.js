@@ -1075,12 +1075,14 @@ function switchTab(tabKey, targetQ = '') {
     if ($('#q-tier')) $('#q-tier').value = '';
     state.tierQ = '';
     if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = true;
+    if (typeof window.renderTierEmptyExample === 'function') window.renderTierEmptyExample();
   }
   if (tabKey !== 'ndai' && typeof window.resetNdaiFilters === 'function') {
     window.resetNdaiFilters();
     if ($('#q-ndai')) $('#q-ndai').value = '';
     state.ndaiQ = '';
     if ($('#clearBtn-ndai')) $('#clearBtn-ndai').hidden = true;
+    if (typeof window.renderNdaiEmptyExample === 'function') window.renderNdaiEmptyExample();
   }
 
   if (tabKey === 'home') {
@@ -1110,7 +1112,8 @@ function switchTab(tabKey, targetQ = '') {
       state.tierQ = '';
       if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = true;
       if (typeof window.resetTierFilters === 'function') window.resetTierFilters();
-      renderTierEmptyExample();
+      if (typeof window.renderTierEmptyExample === 'function') window.renderTierEmptyExample();
+      else renderTierEmptyExample();
     }
     $('#q-tier')?.focus();
   } else if (tabKey === 'tier78') {
@@ -1138,7 +1141,8 @@ function switchTab(tabKey, targetQ = '') {
       state.ndaiQ = '';
       if ($('#clearBtn-ndai')) $('#clearBtn-ndai').hidden = true;
       if (typeof window.resetNdaiFilters === 'function') window.resetNdaiFilters();
-      renderNdaiEmptyExample();
+      if (typeof window.renderNdaiEmptyExample === 'function') window.renderNdaiEmptyExample();
+      else renderNdaiEmptyExample();
     }
     $('#q-ndai')?.focus();
   } else if (tabKey === 'ocr') {
@@ -2679,6 +2683,7 @@ function renderTierEmptyExample() {
     });
   });
 }
+window.renderTierEmptyExample = renderTierEmptyExample;
 
 function renderYearGrid() {
   const grid = $('#tierYearGrid');
@@ -3807,6 +3812,7 @@ function renderNdaiEmptyExample() {
     });
   });
 }
+window.renderNdaiEmptyExample = renderNdaiEmptyExample;
 
 function bindNdaiTab() {
   const qNdaiEl = $('#q-ndai');
