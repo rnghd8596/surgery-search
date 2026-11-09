@@ -1220,3 +1220,7 @@ html[data-theme="dark"] .btn-toggle-basic-surg {
 @media (min-width:900px){
   .hero{padding:38px 0 22px}
 }
+
+/* 3종·5종 수술코드 분류표 카드 */
+.tier-code-card .tier-2col{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:480px){.tier-code-card .tier-2col{grid-template-columns:1fr}}

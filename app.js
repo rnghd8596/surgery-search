@@ -1372,7 +1372,7 @@ function tierPillHTML(x, raw, jun, accent) {
   const junTxt = jun ? ' <span style="font-size:10.5px;font-weight:800;color:' + accent + ';">준용</span>' : '';
   return `<div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
       <span class="proc-tag ${cls}" style="font-size:15px;font-weight:900;padding:4px 10px;border-radius:7px;letter-spacing:-.3px;">${label}</span>${junTxt}
-      ${raw ? `<span style="font-size:11px;font-weight:750;color:var(--text-3);">${esc(raw)}</span>` : ''}
+      ${raw && raw !== label ? `<span style="font-size:11px;font-weight:750;color:var(--text-3);">${esc(raw)}</span>` : ''}
     </div>`;
 }
 
@@ -1404,7 +1404,7 @@ function renderTierMatchCards(ids, q) {
         </div>
         <div style="font-size:11.5px;font-weight:800;color:var(--text-2);margin:1px 0 9px 1px;">🏷️ 부위: ${esc(t.g)}${t.a && t.a !== t.g ? ' · ' + esc(t.a) : ''}</div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div class="tier-2col">
           <div style="border:1.5px solid rgba(49,130,246,0.3);background:rgba(49,130,246,0.05);border-radius:10px;padding:9px 11px;">
             <div style="font-size:11px;font-weight:900;color:#2563eb;margin-bottom:5px;">📋 3종 수술특약</div>
             ${tierPillHTML(t.x3, t.t3, t.j3, '#2563eb')}
