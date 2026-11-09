@@ -3103,6 +3103,176 @@ function cardTierHTML(gi, q, matchedEdi) {
 }
 
 /* ───────────────────────── 2-2. 7·8종 급여 수술비 정밀검색 (KDRG ADRG 분류) ───────────────────────── */
+const KDRG_DISEASE_MAP = [
+  // 1. 대장/직장 - 용종, 폴립, 선종
+  {
+    keys: ['대장용종', '결장용종', '직장용종', '대장폴립', '결장폴립', '직장폴립', '대장선종', '용종', '폴립', 'k63', 'd12', 'k62.1'],
+    disease: '대장용종 (결장·직장 폴립/선종)',
+    codes: ['G525', 'G524', 'G523', 'G532', 'G151', 'G152', 'G141', 'G142', 'G131', 'G121'],
+    desc: '내시경 용종절제(결장경 시술)는 1종, 복강경/개복 대장 수술은 4~6종으로 판정됩니다.'
+  },
+  // 2. 위 - 용종, 궤양, 위암
+  {
+    keys: ['위용종', '위폴립', '위선종', '위궤양', '위염', '위암', 'k29', 'k31', 'd13.1', 'c16'],
+    disease: '위용종 · 소화성궤양 · 위암',
+    codes: ['G441', 'G442', 'G443', 'G081', 'G082', 'G091', 'G092'],
+    desc: '위내시경 절제/지혈 시술은 1종, 위절제술은 6~7종으로 판정됩니다.'
+  },
+  // 3. 안과 - 백내장, 수정체
+  {
+    keys: ['백내장', '수정체', '다초점', '단초점', '인공수정체', 'h25', 'h26'],
+    disease: '백내장 (수정체 수술)',
+    codes: ['C062', 'C061', 'C063', 'C080'],
+    desc: '수정체 소절개(초음파 유화술) 및 후발성 백내장 야그레이저 모두 1종입니다. (※ 비급여 다초점렌즈 비용 자체는 실손/수술비 부지급 유의)'
+  },
+  // 4. 안과 - 녹내장
+  {
+    keys: ['녹내장', 'h40'],
+    disease: '녹내장',
+    codes: ['C093', 'C094', 'C091', 'C092'],
+    desc: '단순 및 복잡 녹내장 수술 모두 2종입니다.'
+  },
+  // 5. 항문 - 치핵, 치루, 치열, 농양
+  {
+    keys: ['치핵', '치질', '치루', '치열', '항문농양', '항문', 'k60', 'k61', 'k62', 'k64'],
+    disease: '치핵 · 치루 · 치열 · 항문질환',
+    codes: ['G260', 'G281', 'G282', 'G300', 'G311', 'G312'],
+    desc: '치핵 근치수술, 치루 수술, 치열 수술 모두 1종입니다.'
+  },
+  // 6. 충수 - 맹장염
+  {
+    keys: ['충수염', '맹장', '맹장염', '충수', 'k35', 'k36', 'k37'],
+    disease: '충수염 (맹장염)',
+    codes: ['G241', 'G242'],
+    desc: '복강경 및 개복 충수절제술 모두 3종입니다.'
+  },
+  // 7. 담낭 - 담석증, 담낭염
+  {
+    keys: ['담석', '담낭염', '담낭', '쓸개', 'k80', 'k81', 'k82'],
+    disease: '담석증 · 담낭염 (담낭절제술)',
+    codes: ['H101', 'H102', 'H103', 'H104'],
+    desc: '복강경 및 개복 담낭절제술은 4종입니다.'
+  },
+  // 8. 탈장 - 서혜부, 대퇴
+  {
+    keys: ['탈장', '서혜부탈장', '대퇴탈장', 'k40', 'k41'],
+    disease: '서혜 및 대퇴 탈장',
+    codes: ['G221', 'G222', 'G223', 'G224', 'G231', 'G232'],
+    desc: '복강경 및 개복 탈장교정술은 2종입니다.'
+  },
+  // 9. 척추 - 목·허리 디스크, 협착증
+  {
+    keys: ['디스크', '추간판', '척추', '목디스크', '허리디스크', '척추관협착', '수핵', 'm50', 'm51', 'm48'],
+    disease: '추간판탈출증 (목·허리 디스크) · 척추질환',
+    codes: ['B173', 'B174', 'B171', 'B172', 'B181', 'B161', 'B021', 'B022', 'B023'],
+    desc: '추간판제거술은 2종, 척추유합술/고정술은 5~6종, 척추 중재시술은 1종입니다.'
+  },
+  // 10. 관절 - 인공관절, 퇴행성 관절염
+  {
+    keys: ['인공관절', '퇴행성관절염', '무릎관절', '고관절', '무릎', '슬관절', 'm16', 'm17'],
+    disease: '퇴행성 관절염 · 인공관절 치환술',
+    codes: ['I041', 'I042', 'I043', 'I044', 'I031', 'I032', 'I033'],
+    desc: '슬관절(무릎) 치환술은 4~5종, 고관절 치환술은 5~6종입니다.'
+  },
+  // 11. 부인과 - 자궁근종, 자궁선근증
+  {
+    keys: ['자궁근종', '자궁선근증', '자궁혹', '자궁폴립', '자궁', '하이푸', 'd25', 'n80', 'n85'],
+    disease: '자궁근종 · 자궁선근증 · 자궁질환',
+    codes: ['N070', 'N080', 'N021', 'N022', 'N011', 'N012'],
+    desc: '자궁경 시술 2종, 단순 자궁수술(근종절제) 2종, 자궁절제술 2종, 악성종양 수술 6~7종입니다. (※ 비급여 하이푸 시술은 급여 수술 7·8종 부지급)'
+  },
+  // 12. 부인과 - 난소낭종
+  {
+    keys: ['난소낭종', '난소혹', '난소종양', '난소', 'd27', 'n83'],
+    disease: '난소낭종 (난소 양성종양)',
+    codes: ['N061', 'N062'],
+    desc: '복강경 및 개복 난소 수술은 4종입니다.'
+  },
+  // 13. 유방 - 맘모톰, 양성종양, 유방암
+  {
+    keys: ['유방', '맘모톰', '섬유선종', '유방결절', '유방암', 'd24', 'n60', 'n63', 'c50'],
+    disease: '유방 양성종양 (맘모톰) · 유방암',
+    codes: ['J071', 'J072', 'J061', 'J062', 'J063', 'J064'],
+    desc: '단순 유방수술(양성종양 절제)은 2종, 부분절제 3종, 전절제 4종, 근치적 절제 5종입니다. (※ 비급여 단순 흡인생검은 부지급 유의)'
+  },
+  // 14. 비뇨기 - 전립선비대증
+  {
+    keys: ['전립선', '전립선비대증', '유로리프트', 'n40'],
+    disease: '전립선비대증',
+    codes: ['M041', 'M042', 'M043', 'M021', 'M022'],
+    desc: '경요도 전립선절제술(TURP)은 2종, 개복 수술은 4~5종입니다.'
+  },
+  // 15. 비뇨기 - 요로결석
+  {
+    keys: ['요로결석', '신장결석', '쇄석술', 'eswl', '결석', 'n20', 'n21', 'n22', 'n23'],
+    disease: '요로결석 (신장·요관 결석)',
+    codes: ['L081', 'L082', 'L051', 'L052'],
+    desc: '체외충격파쇄석술(ESWL)은 1종, 요관경하 결석제거는 2종입니다.'
+  },
+  // 16. 혈관 - 하지정맥류
+  {
+    keys: ['하지정맥류', '정맥류', '베나실', '클라리베인', '고주파', '스트리핑', 'i83'],
+    disease: '하지정맥류',
+    codes: ['F252', 'F253', 'F254'],
+    desc: '정맥류 국소 절제 및 결찰·스트리핑 수술은 1종입니다. (※ 비급여 베나실·클라리베인 시술은 급여 수술 7·8종 부지급)'
+  },
+  // 17. 이비인후과 - 편도
+  {
+    keys: ['편도', '편도염', '아데노이드', 'j35'],
+    disease: '편도 및 아데노이드 비대·염증',
+    codes: ['D111', 'D112'],
+    desc: '편도 및 아데노이드 수술은 1종입니다.'
+  },
+  // 18. 이비인후과 - 축농증, 비염
+  {
+    keys: ['축농증', '부비동염', '비염', '비중격', 'j32', 'j34'],
+    disease: '만성 부비동염 (축농증) · 비염',
+    codes: ['D101', 'D102', 'D081', 'D082'],
+    desc: '내시경 부비동 수술 및 비염 수술은 1종입니다.'
+  },
+  // 19. 출산 - 제왕절개
+  {
+    keys: ['제왕절개', '출산', '분만', 'o82', 'o80'],
+    disease: '제왕절개 분만',
+    codes: ['O011', 'O012'],
+    desc: '제왕절개분만은 단태아·다태아 모두 2종입니다.'
+  },
+  // 20. 내분비 - 갑상선
+  {
+    keys: ['갑상선', '갑상선암', '갑상선결절', 'c73', 'e04'],
+    disease: '갑상선 결절 · 갑상선암',
+    codes: ['K064', 'K063', 'K051', 'K052'],
+    desc: '주요 갑상선 악성종양 수술은 4종, 내시경 부갑상선 수술은 2종입니다.'
+  },
+  // 21. 외상 - 골절, 핀제거
+  {
+    keys: ['골절', '핀제거', '금속핀', '체내고정', 's02', 's42', 's52', 's62', 's72', 's82', 's92'],
+    disease: '골절 · 금속고정물 제거술',
+    codes: ['I270', 'I131', 'I132', 'I141', 'I142'],
+    desc: '체내고정장치 제거술(핀제거)은 1종, 골절 관혈정복술은 3종입니다.'
+  },
+  // 22. 심혈관 - 협심증, 심근경색, 스텐트
+  {
+    keys: ['협심증', '심근경색', '스텐트', '관상동맥', 'i20', 'i21', 'i25'],
+    disease: '협심증 · 급성 심근경색증 (스텐트 시술)',
+    codes: ['F131', 'F111', 'F112', 'F121'],
+    desc: '일반 경피적 관상동맥 스텐트 시술은 3~4종, 급성 심근경색증 스텐트 시술은 4~5종입니다.'
+  },
+  // 23. 뇌혈관 - 뇌동맥류, 뇌출혈
+  {
+    keys: ['뇌동맥류', '뇌출혈', '코일색전', '클립결찰', 'i60', 'i61', 'i67'],
+    disease: '뇌동맥류 · 뇌혈관질환',
+    codes: ['B023', 'B024', 'B031', 'B032'],
+    desc: '뇌혈관 기형/동정맥루 색전술 및 뇌동맥류 결찰술은 5~6종입니다.'
+  },
+  // 24. 장기이식 - 간이식, 신장이식
+  {
+    keys: ['간이식', '신장이식', '장기이식', '이식'],
+    disease: '장기 이식 (간·신장 이식)',
+    codes: ['A010', 'L010'],
+    desc: '간 이식은 7종/8종(최고 등급), 신장 이식은 6종/7종입니다.'
+  }
+];
 function bindTier78Tab() {
   const qEl = $('#q-tier78');
   const clearBtn = $('#clearBtn-tier78');
@@ -3139,30 +3309,83 @@ function runTier78Search(rawQ) {
   const rows = idx.kdrg78 || [];
   const qNorm = norm(q);
   const qUpper = q.toUpperCase();
+  const qLower = q.toLowerCase();
 
-  const matches = rows.filter(r => {
-    return (r.c && r.c.toUpperCase().includes(qUpper)) ||
-           (r.n && (r.n.includes(q) || norm(r.n).includes(qNorm))) ||
-           (r.g && (r.g.includes(q) || norm(r.g).includes(qNorm)));
+  // 1. 질병명 / KCD 코드 매핑 검사
+  const matchedEntries = KDRG_DISEASE_MAP.filter(entry => {
+    return entry.keys.some(k => qLower.includes(k) || qNorm.includes(norm(k)));
   });
 
-  if (matches.length === 0) {
+  const rowMap = new Map();
+  rows.forEach(r => { if (r && r.c) rowMap.set(r.c, r); });
+
+  let matchedRows = [];
+  const addedCodes = new Set();
+
+  // 질병 매핑된 수술코드 우선 추가
+  matchedEntries.forEach(entry => {
+    entry.codes.forEach(code => {
+      const r = rowMap.get(code);
+      if (r && !addedCodes.has(r.c)) {
+        matchedRows.push({ ...r, _mappedDisease: entry.disease });
+        addedCodes.add(r.c);
+      }
+    });
+  });
+
+  // 2. 직접 텍스트 / 코드 매칭 추가
+  rows.forEach(r => {
+    if (addedCodes.has(r.c)) return;
+    const isCodeMatch = r.c && r.c.toUpperCase().includes(qUpper);
+    const isNameMatch = r.n && (r.n.includes(q) || norm(r.n).includes(qNorm));
+    const isGroupMatch = r.g && (r.g.includes(q) || norm(r.g).includes(qNorm));
+    if (isCodeMatch || isNameMatch || isGroupMatch) {
+      matchedRows.push(r);
+      addedCodes.add(r.c);
+    }
+  });
+
+  if (matchedRows.length === 0) {
     resEl.innerHTML = `
       <div class="empty-box" style="text-align:center;padding:32px 16px;">
         <span style="font-size:32px;display:block;margin-bottom:8px;">🔍</span>
         <h3 style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:4px;">“${esc(q)}”에 대한 7·8종 검색 결과가 없습니다</h3>
-        <p style="font-size:12.5px;color:var(--text-3);margin:0;">KDRG 수술코드(예: A010, B173) 또는 한글 수술명(간이식, 추간판, 충수)으로 검색해 보세요.</p>
+        <p style="font-size:12.5px;color:var(--text-3);margin:0;">질병명(대장용종, 백내장, 디스크), 질병코드(K63.5, H25, M51) 또는 KDRG 코드(A010, B173)로 검색해 보세요.</p>
       </div>`;
     return;
   }
 
+  let guideBannerHTML = '';
+  if (matchedEntries.length > 0) {
+    const mainEntry = matchedEntries[0];
+    guideBannerHTML = `
+      <div style="background:rgba(234,88,12,0.06);border:1.5px solid rgba(234,88,12,0.3);border-radius:12px;padding:12px 15px;margin-bottom:12px;text-align:left;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+          <span style="font-size:13px;font-weight:900;color:#ea580c;">💡 “${esc(mainEntry.disease)}” 수술방식별 7·8종 판정</span>
+          <span style="font-size:11px;font-weight:850;color:#e11d48;background:rgba(225,29,72,0.08);border:1px solid rgba(225,29,72,0.25);padding:2px 7px;border-radius:5px;">⚠️ 급여 전용 (비급여 제외)</span>
+        </div>
+        <div style="font-size:12px;color:var(--text);font-weight:750;line-height:1.45;">
+          ${esc(mainEntry.desc)}
+        </div>
+        <div style="font-size:11px;color:var(--text-2);margin-top:6px;padding-top:6px;border-top:1px dashed rgba(234,88,12,0.2);line-height:1.4;">
+          🔒 <strong>7·8종 필수 유의사항:</strong> 국민건강보험 <strong>[급여]</strong> 적용 수술만 보장되며, <strong>전액 비급여 시술은 약관상 보상 제외(부지급)</strong>됩니다.
+        </div>
+      </div>`;
+  } else {
+    guideBannerHTML = `
+      <div style="font-size:11.5px;color:#e11d48;background:rgba(225,29,72,0.06);border:1px solid rgba(225,29,72,0.2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-weight:750;text-align:left;">
+        🔒 <strong>7·8종(KDRG) 급여 수술 안내:</strong> 건강보험 [급여] 적용 수술만 보장 대상이며, 100% 비급여 시술은 전액 보상 제외됩니다.
+      </div>`;
+  }
+
   resEl.innerHTML = `
+    ${guideBannerHTML}
     <div style="font-size:12px;font-weight:800;color:#ea580c;margin:8px 0 12px;display:flex;align-items:center;justify-content:space-between;">
-      <span>“${esc(q)}” 7·8종 검색 결과</span>
-      <span style="background:rgba(234,88,12,0.12);color:#ea580c;padding:2px 8px;border-radius:6px;font-size:11px;">분류 ${matches.length}건</span>
+      <span>“${esc(q)}” 7·8종 수술 분류</span>
+      <span style="background:rgba(234,88,12,0.12);color:#ea580c;padding:2px 8px;border-radius:6px;font-size:11px;">수술 ${matchedRows.length}건</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px;">
-      ${matches.map(item => cardTier78HTML(item, q)).join('')}
+      ${matchedRows.map(item => cardTier78HTML(item, q)).join('')}
     </div>`;
 }
 
@@ -3217,6 +3440,9 @@ function cardTier78HTML(item, q) {
             <div style="font-size:12px;color:var(--text-2);line-height:1.4;">
               건강보험심사평가원 KDRG 버전 4.4 / ADRG 코드: <strong style="color:var(--text);">${esc(item.c)}</strong> ${item.g ? ' · 대분류: ' + esc(item.g) : ''}
             </div>
+            <div style="font-size:11px;color:#e11d48;margin-top:4px;font-weight:750;">
+              ※ 건강보험 [급여] 적용 수술 시에만 보장되며, 전액 비급여 수술은 지급되지 않습니다.
+            </div>
           </div>
         </div>
       </div>
@@ -3235,11 +3461,13 @@ function renderTier78EmptyExample() {
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
         <span style="font-size:11px;font-weight:800;color:var(--text-3);line-height:24px;">추천 검색:</span>
+        <button type="button" class="f-chip" data-q78="대장용종" style="font-size:11.5px;padding:3px 9px;">대장용종 (K63.5)</button>
+        <button type="button" class="f-chip" data-q78="백내장" style="font-size:11.5px;padding:3px 9px;">백내장 (H25)</button>
+        <button type="button" class="f-chip" data-q78="디스크" style="font-size:11.5px;padding:3px 9px;">디스크 (M51)</button>
+        <button type="button" class="f-chip" data-q78="치핵" style="font-size:11.5px;padding:3px 9px;">치핵 (K64)</button>
+        <button type="button" class="f-chip" data-q78="자궁근종" style="font-size:11.5px;padding:3px 9px;">자궁근종 (D25)</button>
+        <button type="button" class="f-chip" data-q78="B173" style="font-size:11.5px;padding:3px 9px;">B173 (추간판제거)</button>
         <button type="button" class="f-chip" data-q78="A010" style="font-size:11.5px;padding:3px 9px;">A010 (간이식)</button>
-        <button type="button" class="f-chip" data-q78="B173" style="font-size:11.5px;padding:3px 9px;">B173 (추간판)</button>
-        <button type="button" class="f-chip" data-q78="C061" style="font-size:11.5px;padding:3px 9px;">C061 (백내장)</button>
-        <button type="button" class="f-chip" data-q78="G241" style="font-size:11.5px;padding:3px 9px;">G241 (충수절제)</button>
-        <button type="button" class="f-chip" data-q78="J061" style="font-size:11.5px;padding:3px 9px;">J061 (유방절제)</button>
       </div>
     </div>`;
 
