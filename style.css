@@ -988,9 +988,11 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   background: rgba(139, 92, 246, 0.06);
 }
 .ncd-item.is-match {
+  grid-column: 1 / -1;
   background: rgba(245, 158, 11, 0.16) !important;
   border: 2px solid #ea580c !important;
   box-shadow: 0 2px 12px rgba(234, 88, 12, 0.28) !important;
+  padding: 8px 12px !important;
 }
 .ncd-item.is-match .kcd-badge-sm {
   background: #ea580c !important;
