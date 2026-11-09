@@ -2298,10 +2298,10 @@ function getBasicSurgerySummary(g) {
     return {
       status: 'no',
       badge: '❌ 원칙 부지급 (약관별 상이)',
-      badgeColor: '#d97706',
-      badgeBg: 'rgba(217, 119, 6, 0.1)',
-      border: 'rgba(217, 119, 6, 0.25)',
-      bg: 'rgba(217, 119, 6, 0.05)',
+      badgeColor: '#db2777',
+      badgeBg: 'rgba(219, 39, 119, 0.1)',
+      border: 'rgba(219, 39, 119, 0.25)',
+      bg: 'rgba(219, 39, 119, 0.05)',
       title: '기본 질병수술비 (정액)',
       summary: '절단·절제 미충족: 삼성·KB·현대 등 제외 (DB 등 일부 증권 확인)',
       tierSummary: '1~5종: ⭕ 생보/메리츠/삼성/KB 제87항 2종 (현대 일반형 1종, 질병수술Ⅱ 2종)',
@@ -2314,10 +2314,10 @@ function getBasicSurgerySummary(g) {
     return {
       status: 'warning',
       badge: '⚠️ 가입 특약명 확인 필수',
-      badgeColor: '#d97706',
-      badgeBg: 'rgba(217, 119, 6, 0.1)',
-      border: 'rgba(217, 119, 6, 0.25)',
-      bg: 'rgba(217, 119, 6, 0.05)',
+      badgeColor: '#db2777',
+      badgeBg: 'rgba(219, 39, 119, 0.1)',
+      border: 'rgba(219, 39, 119, 0.25)',
+      bg: 'rgba(219, 39, 119, 0.05)',
       title: '기본 질병수술비 (정액)',
       summary: '삼성 질수Ⅳ 및 KB 질수(백내장제외) 등 제외형 특약 주의',
       tierSummary: '1~5종: ⭕ 제71항 백내장·수정체 관혈수술 1종 (다초점·단초점 무관)',
@@ -2329,10 +2329,10 @@ function getBasicSurgerySummary(g) {
   return {
     status: 'yes',
     badge: '⭕ 정상 보장 가능',
-    badgeColor: '#d97706',
-    badgeBg: 'rgba(217, 119, 6, 0.1)',
-    border: 'rgba(217, 119, 6, 0.3)',
-    bg: 'rgba(217, 119, 6, 0.05)',
+    badgeColor: '#db2777',
+    badgeBg: 'rgba(219, 39, 119, 0.1)',
+    border: 'rgba(219, 39, 119, 0.3)',
+    bg: 'rgba(219, 39, 119, 0.05)',
     title: '기본 질병수술비 (정액)',
     summary: '표준약관상 기구를 사용한 생체 절단·절제 충족 시 정상 지급',
     tierSummary: '1~5종: ⭕ 수술분류표 기준 해당 종수 지급',
@@ -2371,14 +2371,14 @@ function getNdaiVerdictSummary(g) {
 function renderBasicSurgeryBox(info) {
   if (!info) return '';
   return `
-    <div class="basic-surg-summary-card" style="background:${info.bg};border:1px solid ${info.border};border-radius:10px;padding:9px 12px;margin:8px 0 4px 0;">
+    <div class="basic-surg-summary-card" style="background:rgba(219,39,119,0.05);border:1px solid rgba(219,39,119,0.25);border-radius:10px;padding:9px 12px;margin:8px 0 4px 0;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:4px;">
-        <span style="font-size:12px;font-weight:900;color:var(--text);">💡 기본 질병수술비(정액) 판정</span>
+        <span style="font-size:12px;font-weight:900;color:#db2777;">💡 기본 질병수술비(정액) 판정</span>
         <span style="font-size:11px;font-weight:850;color:${info.badgeColor};background:var(--surface);padding:2px 7px;border-radius:5px;border:1px solid ${info.border};">${esc(info.badge)}</span>
       </div>
       <div style="font-size:11.5px;color:var(--text);font-weight:750;line-height:1.45;">${esc(info.summary)}</div>
       <div style="font-size:11px;color:var(--text-2);margin-top:3px;line-height:1.4;">${esc(info.tierSummary)}</div>
-      ${info.hasDetail ? `<div style="font-size:10.5px;color:var(--brand);margin-top:4px;font-weight:750;">↳ 회사별 상세 약관 원문은 아래 [지급기준근거 ∨]에서 확인 가능</div>` : ''}
+      ${info.hasDetail ? `<div style="font-size:10.5px;color:#db2777;margin-top:4px;font-weight:750;">↳ 회사별 상세 약관 원문은 아래 [지급기준근거 ∨]에서 확인 가능</div>` : ''}
     </div>`;
 }
 
@@ -2519,9 +2519,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
       <!-- 빠른검색 3대 핵심 담보 판정 (질수 · 종수 · N대) -->
       <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px 0;">
         <!-- 1. 질수 (기본 질병수술비/정액) -->
-        <div class="qvb-row" style="background:rgba(245,158,11,0.06);border:1.5px solid rgba(245,158,11,0.3);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div class="qvb-row" style="background:rgba(219,39,119,0.06);border:1.5px solid rgba(219,39,119,0.3);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#d97706;white-space:nowrap;">💡 질수 (기본질병수술)</span>
+            <span style="font-size:12.5px;font-weight:900;color:#db2777;white-space:nowrap;">💡 질수 (기본질병수술)</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(basicSurg.summary)}</span>
           </div>
           <span style="font-size:11px;font-weight:850;color:${basicSurg.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${basicSurg.border};white-space:nowrap;flex-shrink:0;">${esc(basicSurg.badge)}</span>
@@ -3157,9 +3157,9 @@ function runTier78Search(rawQ) {
   }
 
   resEl.innerHTML = `
-    <div style="font-size:12px;font-weight:800;color:#0d9488;margin:8px 0 12px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:12px;font-weight:800;color:#ea580c;margin:8px 0 12px;display:flex;align-items:center;justify-content:space-between;">
       <span>“${esc(q)}” 7·8종 검색 결과</span>
-      <span style="background:rgba(13,148,136,0.12);color:#0d9488;padding:2px 8px;border-radius:6px;font-size:11px;">분류 ${matches.length}건</span>
+      <span style="background:rgba(234,88,12,0.12);color:#ea580c;padding:2px 8px;border-radius:6px;font-size:11px;">분류 ${matches.length}건</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px;">
       ${matches.map(item => cardTier78HTML(item, q)).join('')}
@@ -3171,25 +3171,25 @@ function cardTier78HTML(item, q) {
   const t8Badge = item.t8 ? `<span class="proc-tag t${item.t8}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;margin-top:1px;">${item.t8}종</span>` : `<span class="proc-tag t-none" style="font-size:12px;font-weight:800;padding:2px 6px;border-radius:5px;flex-shrink:0;">비해당</span>`;
 
   return `
-  <article class="card" style="border:1.5px solid rgba(13,148,136,0.22);border-radius:14px;padding:14px 16px;background:var(--surface);">
+  <article class="card" style="border:1.5px solid rgba(234,88,12,0.22);border-radius:14px;padding:14px 16px;background:var(--surface);">
     <div class="card-head">
       <div class="card-top" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <span class="kcd-badge-big" style="background:rgba(13,148,136,0.12);color:#0d9488;border:1.5px solid rgba(13,148,136,0.3);font-size:13px;font-weight:900;padding:2px 8px;border-radius:6px;">${esc(item.c)}</span>
+        <span class="kcd-badge-big" style="background:rgba(234,88,12,0.12);color:#ea580c;border:1.5px solid rgba(234,88,12,0.3);font-size:13px;font-weight:900;padding:2px 8px;border-radius:6px;">${esc(item.c)}</span>
         <h3 class="card-name" style="font-size:16px;font-weight:900;color:var(--text);margin:0;flex:1;">${hl(item.n, q)}</h3>
         ${item.g ? `<span style="font-size:11.5px;color:var(--text-3);font-weight:800;background:var(--surface-2);padding:2px 8px;border-radius:5px;border:1px solid var(--border);white-space:nowrap;">${esc(item.g)}</span>` : ''}
       </div>
 
-      <div class="judge-box" style="background:var(--surface-2);border:1.5px solid rgba(13,148,136,0.25);border-radius:10px;padding:10px 12px;">
+      <div class="judge-box" style="background:var(--surface-2);border:1.5px solid rgba(234,88,12,0.25);border-radius:10px;padding:10px 12px;">
         <div class="judge-head-meta" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <span class="meta-type" style="font-size:11.5px;font-weight:850;color:#0d9488;">종수술비 정밀 판정 (7종 · 8종 대조)</span>
+          <span class="meta-type" style="font-size:11.5px;font-weight:850;color:#ea580c;">종수술비 정밀 판정 (7종 · 8종 대조)</span>
           <span class="meta-co" style="font-size:10.5px;color:var(--text-3);font-weight:700;">KDRG ADRG 분류</span>
         </div>
 
         <!-- 1~7종 vs 1~8종 2분할 대조 박스 (좌우 5:5 동일 크기 고정) -->
         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 10px 0;">
           <!-- 1~7종 특약 -->
-          <div style="background:var(--surface);border:1.5px solid rgba(13,148,136,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
-            <div style="font-size:11px;font-weight:850;color:#0d9488;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="background:var(--surface);border:1.5px solid rgba(234,88,12,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:11px;font-weight:850;color:#ea580c;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
               <span>1~7종 급여수술특약</span>
               <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">현대·메리츠</span>
             </div>
@@ -3200,8 +3200,8 @@ function cardTier78HTML(item, q) {
           </div>
 
           <!-- 1~8종 특약 -->
-          <div style="background:var(--surface);border:1.5px solid rgba(13,148,136,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
-            <div style="font-size:11px;font-weight:850;color:#0f766e;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="background:var(--surface);border:1.5px solid rgba(234,88,12,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:11px;font-weight:850;color:#c2410c;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
               <span>1~8종 질병·상해특약</span>
               <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">삼성화재</span>
             </div>
@@ -3228,8 +3228,8 @@ function renderTier78EmptyExample() {
   const resEl = $('#results-tier78');
   if (!resEl) return;
   resEl.innerHTML = `
-    <div class="empty-example-card" style="background:rgba(13,148,136,0.05);border:1.5px solid rgba(13,148,136,0.25);border-radius:14px;padding:16px 18px;margin-top:8px;">
-      <div style="font-size:12.5px;font-weight:850;color:#0d9488;margin-bottom:4px;">💡 7·8종 수술비 검색 예시</div>
+    <div class="empty-example-card" style="background:rgba(234,88,12,0.05);border:1.5px solid rgba(234,88,12,0.25);border-radius:14px;padding:16px 18px;margin-top:8px;">
+      <div style="font-size:12.5px;font-weight:850;color:#ea580c;margin-bottom:4px;">💡 7·8종 수술비 검색 예시</div>
       <div style="font-size:12px;color:var(--text-2);line-height:1.45;">
         KDRG 수술코드(A010, B173 등)나 수술명(추간판, 간이식, 충수, 백내장)을 입력하면 <strong>현대·메리츠 1~7종</strong>과 <strong>삼성화재 1~8종</strong>의 종수를 한눈에 대조합니다.
       </div>
