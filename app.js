@@ -5033,30 +5033,6 @@ function bindOcrTab() {
 
     const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
     const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
-
-    const sourceLabel = fileCount > 0 ? `서류 및 사진 ${fileCount}건 AI 통합 판독 완료` : `진단서 텍스트 분석 완료`;
-
-    let html = `
-      <div style="font-weight:850;color:#8b5cf6;font-size:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
-        <span>✓ ${sourceLabel}</span>
-        <span style="font-size:11.5px;color:var(--text-2);font-weight:700;">${coText} ${dtText}</span>
-      </div>`;
-
-  function renderOcrAnalysisResult(rawText, fileCount) {
-    const parsed = parseDiagnosisAndSurgeries(rawText);
-
-    // 증권/제안서에서 회사가 인식된 경우 회사 필터 자동 동기화
-    if (parsed.policyInfo && parsed.policyInfo.hasPolicy && parsed.policyInfo.company) {
-      ocrCos = [parsed.policyInfo.company];
-      ocrCo = parsed.policyInfo.company;
-      const b = $('#ocrCoBadge');
-      if (b) b.textContent = ocrCo;
-      const sb = $('#ocrSummaryBadge');
-      if (sb) sb.textContent = `(${ocrCo})`;
-    }
-
-    const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
-    const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
     const sourceLabel = fileCount > 0 ? `서류 및 사진 ${fileCount}건 AI 통합 판독 완료` : `진단서 텍스트 분석 완료`;
 
     const hasPolicy = parsed.policyInfo && parsed.policyInfo.hasPolicy;
@@ -5228,10 +5204,6 @@ function bindOcrTab() {
         if (label) label.textContent = willOpen ? '📋 세부 지급 근거 및 산출 내역 접기' : '📋 세부 지급 근거 및 산출 내역 펼쳐보기';
       });
     }
-  }
-
-    resultCard.innerHTML = html;
-    bindCardActions(resultCard);
   }
 }
 
