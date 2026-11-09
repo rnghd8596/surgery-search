@@ -180,14 +180,14 @@ html[data-theme="light"] .i-moon{display:none}
 html[data-theme="dark"] .i-sun{display:none}
 
 .tabs{
-  max-width:920px;margin:0 auto;padding:8px 12px 10px;
+  max-width:920px;margin:0 auto;padding:8px 10px 10px;
   display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:100%;box-sizing:border-box;
 }
 .tabs::-webkit-scrollbar{display:none}
 .tab{
   border:0;background:transparent;color:var(--text-3);
-  font-size:13px;font-weight:800;letter-spacing:-.03em;
-  padding:9px 2px;border-radius:11px;cursor:pointer;transition:.2s var(--ease);
+  font-size:15px;font-weight:900;letter-spacing:-.03em;
+  padding:10px 2px;border-radius:12px;cursor:pointer;transition:.2s var(--ease);
   text-align:center;display:flex;align-items:center;justify-content:center;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
@@ -570,8 +570,8 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 @media (max-width:640px){
   .main{padding:0 16px 32px}
   .topbar-inner{padding:12px 16px 0}
-  .tabs{padding:6px 8px 8px;gap:3px;grid-template-columns:repeat(5,1fr)}
-  .tab{font-size:11.5px;padding:7px 1px;border-radius:9px;letter-spacing:-.04em}
+  .tabs{padding:6px 6px 8px;gap:3px;grid-template-columns:repeat(5,1fr)}
+  .tab{font-size:13.5px;padding:9px 1px;border-radius:10px;letter-spacing:-.035em}
   .hero{padding:18px 0 14px}
   .hero-sub{font-size:13px}
   .search-wrap{top:calc(var(--header-h, 96px) + 2px)}
@@ -986,6 +986,110 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 .ncd-item:hover {
   border-color: #8b5cf6;
   background: rgba(139, 92, 246, 0.06);
+}
+.ncd-item.is-match {
+  background: rgba(245, 158, 11, 0.16) !important;
+  border: 2px solid #ea580c !important;
+  box-shadow: 0 2px 12px rgba(234, 88, 12, 0.28) !important;
+}
+.ncd-item.is-match .kcd-badge-sm {
+  background: #ea580c !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+}
+.ncd-item.is-match .ncd-name {
+  color: #c2410c !important;
+  font-weight: 900 !important;
+}
+html[data-theme="dark"] .ncd-item.is-match {
+  background: rgba(245, 158, 11, 0.24) !important;
+  border-color: #f97316 !important;
+}
+html[data-theme="dark"] .ncd-item.is-match .ncd-name {
+  color: #fdba74 !important;
+}
+.ncd-match-tag {
+  font-size: 10px;
+  font-weight: 900;
+  color: #fff;
+  background: #ea580c;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+/* 정밀 진단 & 질수 바로가기 버튼 공통 */
+.btn-jump-action {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all .15s var(--ease);
+}
+.btn-jump-action:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+.btn-jump-action:active {
+  transform: scale(.98);
+}
+.btn-jump-tier {
+  background: rgba(49, 130, 246, 0.08);
+  border: 1.5px solid rgba(49, 130, 246, 0.35);
+  color: #2563eb;
+}
+html[data-theme="dark"] .btn-jump-tier {
+  background: rgba(49, 130, 246, 0.16);
+  border-color: rgba(49, 130, 246, 0.45);
+  color: #60a5fa;
+}
+.btn-jump-ndai {
+  background: rgba(139, 92, 246, 0.08);
+  border: 1.5px solid rgba(139, 92, 246, 0.35);
+  color: #8b5cf6;
+}
+html[data-theme="dark"] .btn-jump-ndai {
+  background: rgba(139, 92, 246, 0.16);
+  border-color: rgba(139, 92, 246, 0.45);
+  color: #a78bfa;
+}
+.btn-toggle-basic-surg {
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1.5px solid rgba(245, 158, 11, 0.35);
+  color: #d97706;
+  transition: all .15s var(--ease);
+}
+html[data-theme="dark"] .btn-toggle-basic-surg {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #f59e0b;
+}
+.btn-toggle-basic-surg:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+.btn-toggle-basic-surg:active {
+  transform: scale(.98);
 }
 .kcd-badge-sm {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
