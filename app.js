@@ -2518,19 +2518,19 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
 
       <!-- 빠른검색 3대 핵심 담보 판정 (질수 · 종수 · N대) -->
       <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px 0;">
-        <!-- 1. 질수 (기본 질병수술비/정액) -->
+        <!-- 1. 질병수술 (기본 질병수술비/정액) -->
         <div class="qvb-row" style="background:rgba(219,39,119,0.06);border:1.5px solid rgba(219,39,119,0.3);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#db2777;white-space:nowrap;">💡 질수 (기본질병수술)</span>
+            <span style="font-size:12.5px;font-weight:900;color:#db2777;white-space:nowrap;">💡 질병수술</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(basicSurg.summary)}</span>
           </div>
           <span style="font-size:11px;font-weight:850;color:${basicSurg.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${basicSurg.border};white-space:nowrap;flex-shrink:0;">${esc(basicSurg.badge)}</span>
         </div>
 
-        <!-- 2. 종수 (1~3종 · 1~5종 종수술) -->
+        <!-- 2. 종수술비 (3종·5종) -->
         <div class="qvb-row" style="background:rgba(49,130,246,0.05);border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#2563eb;white-space:nowrap;">📋 종수 (3종 · 5종)</span>
+            <span style="font-size:12.5px;font-weight:900;color:#2563eb;white-space:nowrap;">📋 종수술비 (3종·5종)</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(t.w || g.n + ' 수술')} <span style="color:var(--text-3);font-size:10.5px;">(${esc(evalRes.note)})</span></span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
@@ -2544,10 +2544,10 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
           </div>
         </div>
 
-        <!-- 3. N대 (N대 질병수술비) -->
+        <!-- 3. N대질병 -->
         <div class="qvb-row" style="background:rgba(16,185,129,0.05);border:1.5px solid rgba(16,185,129,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#059669;white-space:nowrap;">🏢 N대 (N대 질병수술)</span>
+            <span style="font-size:12.5px;font-weight:900;color:#059669;white-space:nowrap;">🏢 N대질병</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(ndaiVerdict.summary)}</span>
           </div>
           <span style="font-size:11px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
@@ -2564,11 +2564,14 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
       <!-- 정밀 진단 바로가기 버튼 2종 -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-jump-action btn-jump-tier" data-q="${esc(g.n)}">
-          <span>📋 종수술비 바로가기 →</span>
+          <span>📋 종수술비 (3종·5종) 바로가기 →</span>
         </button>
         <button type="button" class="btn-jump-action btn-jump-ndai" data-q="${esc(g.n)}">
           <span>🏢 N대질병 바로가기 →</span>
         </button>
+      </div>
+      <div style="font-size:11px;color:var(--text-3);text-align:center;margin-top:6px;line-height:1.4;">
+        ※ 7·8종(급여 수술)은 상단 <strong>[7·8종수술]</strong> 메뉴에서 별도로 검색하실 수 있습니다.
       </div>
     </div>
 
