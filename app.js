@@ -1016,7 +1016,7 @@ function start(data) {
 }
 
 /* ───────────────────────── 상단 탭 전환 ───────────────────────── */
-function switchTab(tabKey) {
+function switchTab(tabKey, targetQ = '') {
   state.tab = tabKey;
   $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tabKey));
 
@@ -1032,17 +1032,52 @@ function switchTab(tabKey) {
   if (tabKey === 'home') {
     // 메인 홈 화면
   } else if (tabKey === 'quick') {
+    if (targetQ) {
+      if ($('#q-quick')) $('#q-quick').value = targetQ;
+      state.quickQ = targetQ;
+      if ($('#clearBtn-quick')) $('#clearBtn-quick').hidden = false;
+      runQuickSearch(targetQ);
+    } else {
+      // 다른 메뉴 갔다 오면 검색창 및 결과 리셋
+      if ($('#q-quick')) $('#q-quick').value = '';
+      state.quickQ = '';
+      if ($('#clearBtn-quick')) $('#clearBtn-quick').hidden = true;
+      renderIdleQuick();
+    }
     $('#q-quick')?.focus();
   } else if (tabKey === 'tier') {
+    if (targetQ) {
+      if ($('#q-tier')) $('#q-tier').value = targetQ;
+      state.tierQ = targetQ;
+      if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = false;
+      runTierSearch(targetQ);
+    } else {
+      // 다른 메뉴 갔다 오면 검색창 및 결과 리셋
+      if ($('#q-tier')) $('#q-tier').value = '';
+      state.tierQ = '';
+      if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = true;
+      renderTierEmptyExample();
+    }
     $('#q-tier')?.focus();
-    if (state.tierQ) runTierSearch(state.tierQ);
-    else renderTierEmptyExample();
   } else if (tabKey === 'ndai') {
+    if (targetQ) {
+      if ($('#q-ndai')) $('#q-ndai').value = targetQ;
+      state.ndaiQ = targetQ;
+      if ($('#clearBtn-ndai')) $('#clearBtn-ndai').hidden = false;
+      runNdaiSearch(targetQ);
+    } else {
+      // 다른 메뉴 갔다 오면 검색창 및 결과 리셋
+      if ($('#q-ndai')) $('#q-ndai').value = '';
+      state.ndaiQ = '';
+      if ($('#clearBtn-ndai')) $('#clearBtn-ndai').hidden = true;
+      renderNdaiEmptyExample();
+    }
     $('#q-ndai')?.focus();
-    if (state.ndaiQ) runNdaiSearch(state.ndaiQ);
-    else renderNdaiEmptyExample();
   } else if (tabKey === 'ocr') {
-    // 사진으로 검색 탭
+    // 사진으로 검색 탭 리셋
+    if ($('#ocrInput')) $('#ocrInput').value = '';
+    if ($('#ocrPreviewBox')) $('#ocrPreviewBox').hidden = true;
+    if ($('#ocrResults')) $('#ocrResults').innerHTML = '';
   } else if (tabKey === 'about') {
     renderAbout();
   }
@@ -3878,10 +3913,7 @@ function bindCardActions(box) {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const q = btn.dataset.q;
-      switchTab('tier');
-      $('#q-tier').value = q;
-      $('#clearBtn-tier').hidden = false;
-      runTierSearch(q);
+      switchTab('tier', q);
     });
   });
 
@@ -3889,10 +3921,7 @@ function bindCardActions(box) {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const q = btn.dataset.q;
-      switchTab('ndai');
-      $('#q-ndai').value = q;
-      $('#clearBtn-ndai').hidden = false;
-      runNdaiSearch(q);
+      switchTab('ndai', q);
     });
   });
 }
