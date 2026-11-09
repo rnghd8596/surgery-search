@@ -2530,7 +2530,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
         <!-- 2. 종수 (1~3종 · 1~5종 종수술) -->
         <div class="qvb-row" style="background:rgba(49,130,246,0.05);border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#2563eb;white-space:nowrap;">📋 종수 (1~3종 · 1~5종)</span>
+            <span style="font-size:12.5px;font-weight:900;color:#2563eb;white-space:nowrap;">📋 종수 (3종 · 5종)</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(t.w || g.n + ' 수술')} <span style="color:var(--text-3);font-size:10.5px;">(${esc(evalRes.note)})</span></span>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
@@ -3033,7 +3033,7 @@ function cardTierHTML(gi, q, matchedEdi) {
 
       <div class="judge-box">
         <div class="judge-head-meta">
-          <span class="meta-type">종수술비 정밀 판정 (1~3종 · 1~5종 대조)</span>
+          <span class="meta-type">종수술비 정밀 판정 (3종 · 5종 대조)</span>
           <span class="meta-co">${esc(co ? co : '전사 기준')}</span>
         </div>
 
