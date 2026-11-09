@@ -218,30 +218,30 @@ html[data-theme="dark"] .tab[data-tab="home"].on {
   border-color: rgba(148, 163, 184, 0.35);
 }
 
-.tab[data-tab="quick"]:hover { color: #3182f6; background: rgba(49, 130, 246, 0.08); }
+.tab[data-tab="quick"]:hover { color: #db2777; background: rgba(236, 72, 153, 0.08); }
 .tab[data-tab="quick"].on {
+  color: #be185d;
+  background: rgba(236, 72, 153, 0.12);
+  border-color: rgba(236, 72, 153, 0.32);
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.14);
+}
+html[data-theme="dark"] .tab[data-tab="quick"].on {
+  color: #f472b6;
+  background: rgba(236, 72, 153, 0.2);
+  border-color: rgba(236, 72, 153, 0.4);
+}
+
+.tab[data-tab="tier"]:hover { color: #3182f6; background: rgba(49, 130, 246, 0.08); }
+.tab[data-tab="tier"].on {
   color: #1d4ed8;
   background: rgba(49, 130, 246, 0.12);
   border-color: rgba(49, 130, 246, 0.32);
   box-shadow: 0 2px 8px rgba(49, 130, 246, 0.14);
 }
-html[data-theme="dark"] .tab[data-tab="quick"].on {
+html[data-theme="dark"] .tab[data-tab="tier"].on {
   color: #93c5fd;
   background: rgba(49, 130, 246, 0.2);
   border-color: rgba(49, 130, 246, 0.4);
-}
-
-.tab[data-tab="tier"]:hover { color: #2563eb; background: rgba(37, 99, 235, 0.08); }
-.tab[data-tab="tier"].on {
-  color: #1e40af;
-  background: rgba(37, 99, 235, 0.12);
-  border-color: rgba(37, 99, 235, 0.32);
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.14);
-}
-html[data-theme="dark"] .tab[data-tab="tier"].on {
-  color: #60a5fa;
-  background: rgba(37, 99, 235, 0.2);
-  border-color: rgba(37, 99, 235, 0.4);
 }
 
 .tab[data-tab="ndai"]:hover { color: #059669; background: rgba(16, 185, 129, 0.08); }

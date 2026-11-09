@@ -2282,7 +2282,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
       ${evalRes.boxHTML}
       ${procsHTML}
 
-      <div style="font-size:11.5px;color:var(--brand);font-weight:800;text-align:center;margin:8px 0;background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.2);border-radius:9px;padding:7px 10px;">
+      <div style="font-size:11.5px;color:#db2777;font-weight:800;text-align:center;margin:8px 0;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.22);border-radius:9px;padding:7px 10px;">
         🔍 상세 내용은 지급기준근거 및 바로가기 확인
       </div>
 
