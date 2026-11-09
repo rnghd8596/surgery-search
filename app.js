@@ -3378,10 +3378,10 @@ function cardNdaiHTML(gi, q) {
         }
 
         return `
-          <div class="ndai-res-box covered" style="border-left:4px solid #8b5cf6;margin-bottom:8px;background:var(--surface);">
-            <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="ndai-res-box covered" style="border-left:4px solid #059669;margin-bottom:8px;background:var(--surface);">
+            <div class="ndai-res-status" style="color:#059669;font-size:13px;font-weight:850;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <span>✓ [${esc(c)}${esc(tierBadge)}] N대 질병수술비</span>
-              <span style="font-size:11px;background:rgba(139,92,246,0.12);color:#8b5cf6;padding:2px 7px;border-radius:6px;font-weight:800;">보장 해당</span>
+              <span style="font-size:11px;background:rgba(16,185,129,0.12);color:#059669;padding:2px 7px;border-radius:6px;font-weight:800;">보장 해당</span>
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
               ${items.map(it => `
@@ -3432,8 +3432,8 @@ function cardNdaiHTML(gi, q) {
 
     if (previewItems.length > 0) {
       contentHTML = `
-        <div class="ndai-res-box covered" style="border-left:4px solid #8b5cf6;margin-top:8px;background:var(--surface);">
-          <div class="ndai-res-status" style="color:#8b5cf6;font-size:13px;font-weight:850;margin-bottom:8px;">
+        <div class="ndai-res-box covered" style="border-left:4px solid #059669;margin-top:8px;background:var(--surface);">
+          <div class="ndai-res-status" style="color:#059669;font-size:13px;font-weight:850;margin-bottom:8px;">
             <span>✓ 주요 ${cos.size}개 보험사 N대 질병수술비 보장 해당</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px;">
