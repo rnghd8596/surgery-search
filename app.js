@@ -2964,14 +2964,14 @@ function renderNdaiEmptyExample() {
   box.innerHTML = `
     <div style="margin-top:6px;border:1.5px dashed var(--line);border-radius:16px;padding:16px 14px;background:var(--surface);text-align:left;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <span style="font-size:12px;font-weight:900;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:4px 9px;border-radius:6px;">💡 N대 질병수술비 검색 예시</span>
+        <span style="font-size:12px;font-weight:900;color:#059669;background:rgba(16,185,129,0.1);padding:4px 9px;border-radius:6px;">💡 N대 질병수술비 검색 예시</span>
         <span style="font-size:11px;color:var(--text-3);font-weight:700;">검색어를 입력하면 N대 특약이 나와요</span>
       </div>
 
       <div style="background:var(--surface-2);border-radius:14px;padding:13px;border:1px solid var(--border);margin-bottom:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
           <div style="font-size:15px;font-weight:900;color:var(--text);">맘모톰 절제술 (D24)</div>
-          <div style="background:#8b5cf6;color:#fff;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:900;">N대 해당</div>
+          <div style="background:#059669;color:#fff;padding:4px 10px;border-radius:8px;font-size:13px;font-weight:900;">N대 해당</div>
         </div>
         <div style="font-size:12px;color:var(--text-2);line-height:1.5;margin-bottom:6px;">
           • <b>KB손해보험</b>: 116대 질병 중 [49대 질병] 해당<br>
@@ -3622,7 +3622,7 @@ function bindOcrTab() {
       const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
 
       let itemsHtml = `
-        <div style="font-weight:850;color:#d97706;font-size:13.5px;margin-bottom:8px;">
+        <div style="font-weight:850;color:#8b5cf6;font-size:13.5px;margin-bottom:8px;">
           ✓ 서류 사진 ${files.length}장 판독 완료 <span style="font-size:11.5px;color:var(--text);font-weight:700;">${coText} ${dtText}</span>
         </div>
         <div style="font-size:11.5px;color:var(--text-3);margin-bottom:12px;">

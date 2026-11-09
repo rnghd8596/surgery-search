@@ -308,6 +308,21 @@ html[data-theme="dark"] .tab[data-tab="ocr"].on {
   box-shadow:0 0 0 4px color-mix(in srgb,var(--brand) 13%,transparent),var(--shadow-2);
   transform:translateY(-1px);
 }
+#pane-quick .searchbox:focus-within{
+  border-color:#db2777;
+  box-shadow:0 0 0 4px rgba(236,72,153,0.18),var(--shadow-2);
+}
+#pane-quick .searchbox:focus-within .s-ico{color:#db2777}
+#pane-tier .searchbox:focus-within{
+  border-color:#1d4ed8;
+  box-shadow:0 0 0 4px rgba(29,78,216,0.18),var(--shadow-2);
+}
+#pane-tier .searchbox:focus-within .s-ico{color:#1d4ed8}
+#pane-ndai .searchbox:focus-within{
+  border-color:#059669;
+  box-shadow:0 0 0 4px rgba(16,185,129,0.18),var(--shadow-2);
+}
+#pane-ndai .searchbox:focus-within .s-ico{color:#059669}
 .s-ico{color:var(--text-3);flex:0 0 auto;transition:color .2s}
 .searchbox:focus-within .s-ico{color:var(--brand)}
 .searchbox input{
