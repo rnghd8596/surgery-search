@@ -2160,9 +2160,9 @@ function getNdaiVerdictSummary(g) {
     return {
       covered: true,
       badge: `⭕ ${count}개사 N대 해당`,
-      badgeColor: '#8b5cf6',
-      bg: 'rgba(139, 92, 246, 0.05)',
-      border: 'rgba(139, 92, 246, 0.25)',
+      badgeColor: '#059669',
+      bg: 'rgba(16, 185, 129, 0.05)',
+      border: 'rgba(16, 185, 129, 0.25)',
       summary: majorText
     };
   } else {
@@ -2270,9 +2270,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
         </div>
 
         <!-- 3. N대 (N대 질병수술비) -->
-        <div class="qvb-row" style="background:rgba(139,92,246,0.05);border:1.5px solid rgba(139,92,246,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div class="qvb-row" style="background:rgba(16,185,129,0.05);border:1.5px solid rgba(16,185,129,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#8b5cf6;white-space:nowrap;">🏢 N대 (N대 질병수술)</span>
+            <span style="font-size:12.5px;font-weight:900;color:#059669;white-space:nowrap;">🏢 N대 (N대 질병수술)</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(ndaiVerdict.summary)}</span>
           </div>
           <span style="font-size:11px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
