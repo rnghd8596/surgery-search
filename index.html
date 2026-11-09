@@ -502,6 +502,22 @@ window.onerror = function(msg, url, line, col, err) {
           <div style="font-size:11.5px;color:var(--text-3);margin-bottom:14px;">진단서 · 수술확인서 · 세부산정내역서 · 증권 특약표</div>
           <input type="file" id="ocrFileInput" accept="image/*,application/pdf" multiple style="display:none;">
           <button type="button" class="f-chip" id="btnSelectOcrFile" style="background:linear-gradient(180deg,#8b5cf6,#7c3aed);color:#fff;font-weight:850;padding:9px 20px;border-radius:10px;border:0;font-size:12.5px;box-shadow:0 3px 10px rgba(139,92,246,0.3);">사진 촬영 / 앨범에서 선택 (여러 장 가능)</button>
+          <div style="margin-top:11px;font-size:11.5px;color:#8b5cf6;font-weight:800;display:flex;align-items:center;justify-content:center;gap:4px;">
+            <span>🖱️ PC는 이미지 드래그 또는 아무 곳이나 Ctrl+V 붙여넣기 지원</span>
+          </div>
+        </div>
+
+        <!-- 텍스트 직접 입력/붙여넣기 접이식 서랍 -->
+        <div style="margin-top:10px;text-align:left;">
+          <button type="button" id="btnToggleOcrPaste" style="background:none;border:0;color:#7c3aed;font-size:12px;font-weight:800;cursor:pointer;padding:4px 2px;display:flex;align-items:center;gap:4px;">
+            <span>✍️ 진단서 텍스트 직접 입력 / 카톡 복사 붙여넣기</span>
+            <span id="ocrPasteToggleIcon" style="font-size:11px;">펼치기 ∨</span>
+          </button>
+          <div id="ocrPasteDrawer" style="display:none;margin-top:8px;">
+            <textarea id="ocrTextInput" placeholder="진단서 텍스트를 그대로 붙여넣으세요.
+(예: J34.2 편위된 코사이막, J32.0 만성 사골동염, 비중격교정술, 하비갑개점막하 절제술 등)" style="width:100%;height:85px;border:1.5px solid rgba(139,92,246,0.35);border-radius:10px;padding:10px;font-size:12px;font-family:inherit;background:var(--surface-2);color:var(--text);resize:vertical;line-height:1.45;"></textarea>
+            <button type="button" id="btnAnalyzeOcrText" class="f-chip" style="margin-top:6px;width:100%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);color:#fff;font-weight:850;padding:9px 0;border-radius:9px;border:0;font-size:12.5px;box-shadow:0 2px 8px rgba(139,92,246,0.25);">텍스트 즉시 판정 분석하기</button>
+          </div>
         </div>
 
         <!-- 병원 서류 전용 접이식 토글 헤더 (기본 접힘) -->
@@ -614,8 +630,7 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 2 · 2 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span class="type-co-tag">미래에셋생명</span>
-              <span class="type-co-tag">NH농협손해</span>
+              <span style="font-size:11.5px;color:#059669;font-weight:800;">신체부위 분리 인정형</span>
             </div>
           </div>
           <div class="type-desc-banner">
@@ -674,7 +689,7 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 1 · 2 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span class="type-co-tag">현대해상</span>
+              <span style="font-size:11.5px;color:#dc2626;font-weight:800;">동일질병 1회 제한형</span>
             </div>
           </div>
           <div class="type-desc-banner">
@@ -714,6 +729,9 @@ window.onerror = function(msg, url, line, col, err) {
               <div style="color:#059669;font-weight:800;">✅ 3번(다른/동일) 2회 지급</div>
               <div style="color:var(--text-2);font-size:11.5px;">질병코드 상이 & 약관상 복부 동일부위 배제 예시 없음</div>
             </div>
+            <div class="co-sub-tab-bar" data-group="B">
+              <button type="button" class="co-sub-btn on" data-target-img="img-clause-B" data-target-cap="caption-clause-B" data-img-src="assets/clause_imgs/hyundai_p464_crop.png" data-full-src="assets/clause_imgs/hyundai_p464.png" data-caption="현대해상 P.464: 제3조 수술비 지급 세부규정">현대해상 (대표)</button>
+            </div>
             <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/hyundai_p464.png">
               <img id="img-clause-B" src="assets/clause_imgs/hyundai_p464_crop.png" alt="현대해상 약관" loading="lazy">
             </div>
@@ -729,7 +747,7 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 2 · 1 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span class="type-co-tag">KB라이프</span>
+              <span style="font-size:11.5px;color:#2563eb;font-weight:800;">복부 동일장기 제한형</span>
             </div>
           </div>
           <div class="type-desc-banner">
@@ -769,6 +787,9 @@ window.onerror = function(msg, url, line, col, err) {
               <div style="color:#dc2626;font-weight:800;">🚫 3번(다른/동일) 1회 제한</div>
               <div style="color:var(--text-2);font-size:11.5px;"><strong>약관 제5조 예시 명시</strong>: 위+대장 동시 절제는 복부장기 동일부위로 1회 제한</div>
             </div>
+            <div class="co-sub-tab-bar" data-group="C">
+              <button type="button" class="co-sub-btn on" data-target-img="img-clause-C" data-target-cap="caption-clause-C" data-img-src="assets/clause_imgs/kb_p503_crop.png" data-full-src="assets/clause_imgs/kb_p503.png" data-caption="KB라이프 P.503: 신체부위 정의 및 위+대장 동일부위 1회 예시">KB라이프 (대표)</button>
+            </div>
             <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/kb_p503.png">
               <img id="img-clause-C" src="assets/clause_imgs/kb_p503_crop.png" alt="KB라이프 약관" loading="lazy">
             </div>
@@ -784,8 +805,7 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 1 · 1 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span class="type-co-tag">라이나생명</span>
-              <span class="type-co-tag">흥국생명</span>
+              <span style="font-size:11.5px;color:#d97706;font-weight:800;">동시수술 1회 제한형</span>
             </div>
           </div>
           <div class="type-desc-banner">
@@ -825,6 +845,10 @@ window.onerror = function(msg, url, line, col, err) {
               <div style="color:#059669;font-weight:800;">✅ 4번(다른/다른)만 2회 지급</div>
               <div style="color:var(--text-2);font-size:11.5px;">질병과 부위가 둘 다 완전히 독립적이어야만 인정</div>
             </div>
+            <div class="co-sub-tab-bar" data-group="D">
+              <button type="button" class="co-sub-btn on" data-target-img="img-clause-D" data-target-cap="caption-clause-D" data-img-src="assets/clause_imgs/heungkuk_p1081_crop.png" data-full-src="assets/clause_imgs/heungkuk_p1081.png" data-caption="흥국생명 P.1081: 제3조 수술비 지급 세부규정">흥국생명 (대표)</button>
+              <button type="button" class="co-sub-btn" data-target-img="img-clause-D" data-target-cap="caption-clause-D" data-img-src="assets/clause_imgs/heungkuk_p1081_crop.png" data-full-src="assets/clause_imgs/heungkuk_p1081.png" data-caption="라이나생명: 제3조 수술비 지급 세부규정 (동시수술 1개 제한)">라이나생명</button>
+            </div>
             <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/heungkuk_p1081.png">
               <img id="img-clause-D" src="assets/clause_imgs/heungkuk_p1081_crop.png" alt="흥국생명 약관" loading="lazy">
             </div>
@@ -862,6 +886,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="assets/curated.js?v=20261109type4"></script>
 <script src="app.js?v=20261109type4"></script>
 </body>

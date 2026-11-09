@@ -1148,9 +1148,7 @@ function switchTab(tabKey, targetQ = '') {
     }
     $('#q-ndai')?.focus();
   } else if (tabKey === 'ocr') {
-    if ($('#ocrInput')) $('#ocrInput').value = '';
-    if ($('#ocrPreviewBox')) $('#ocrPreviewBox').hidden = true;
-    if ($('#ocrResults')) $('#ocrResults').innerHTML = '';
+    if (typeof window.resetOcrTab === 'function') window.resetOcrTab();
   } else if (tabKey === 'about') {
     renderAbout();
   }
@@ -1236,17 +1234,29 @@ function search(rawQ) {
     }
   }
 
-  // 2. KCD 질병코드 매칭 (단일 코드, 접두사, 그리고 N20~N25 범위 매칭 지원!)
-  const looksKcd = /^[A-Z]\d/.test(up);
+  // 2. KCD 질병코드 매칭 (단일 코드, 접두사, 하위코드 및 N20~N25 범위 매칭 전면 지원!)
+  const looksKcd = /^[A-Z]\d/i.test(up);
   if (looksKcd) {
+    const cleanUp = up.replace(/[^A-Z0-9]/g, '');
     (state.D.codeIndex[up] || []).forEach(i => add(i, 0));
     for (const code in state.D.codeIndex) {
-      if (code !== up && code.startsWith(up)) state.D.codeIndex[code].forEach(i => add(i, 0.8));
+      const cleanCode = code.replace(/[^A-Z0-9]/g, '');
+      if (code === up || cleanCode === cleanUp) {
+        state.D.codeIndex[code].forEach(i => add(i, 0));
+      } else if (code.startsWith(up) || cleanCode.startsWith(cleanUp)) {
+        state.D.codeIndex[code].forEach(i => add(i, 0.4));
+      } else if (up.startsWith(code) || cleanUp.startsWith(cleanCode)) {
+        // 하위 세부코드 입력 시 상위 대분류 질환 매칭! (예: J32.0, J32.2 입력 시 J32 만성부비동염 매칭)
+        state.D.codeIndex[code].forEach(i => add(i, 0.1));
+      }
     }
     state.D.g.forEach((g, i) => {
-      const hasDirect = g.c.some(c => c.replace(/\s/g, '').toUpperCase().includes(up));
+      const hasDirect = g.c.some(c => {
+        const cc = c.replace(/[^A-Z0-9]/g, '').toUpperCase();
+        return cc === cleanUp || cleanUp.startsWith(cc) || cc.startsWith(cleanUp);
+      });
       if (hasDirect) {
-        add(i, 1.2);
+        add(i, 0.2);
         return;
       }
       const hasRange = g.c.some(c => matchKcdRange(up, c.replace(/\s/g, '').toUpperCase()));
@@ -1302,8 +1312,10 @@ function search(rawQ) {
     const baseScore = matchType === 'exact' ? 0.01 : (matchType === 'prefix' ? 0.08 : 0.6);
     const targets = syn.main || syn.codes || [];
     targets.forEach((cp, rank) => {
+      const cleanCp = cp.replace(/[^A-Z0-9]/g, '').toUpperCase();
       for (const code in state.D.codeIndex) {
-        if (code === cp || code.startsWith(cp)) {
+        const cleanCode = code.replace(/[^A-Z0-9]/g, '').toUpperCase();
+        if (code === cp || cleanCode === cleanCp || code.startsWith(cp) || cleanCode.startsWith(cleanCp) || cp.startsWith(code) || cleanCp.startsWith(cleanCode)) {
           state.D.codeIndex[code].forEach(i => {
             const g = state.D.g[i];
             const isCancerCode = g.c.some(c => c.startsWith('C') || c.startsWith('D0'));
@@ -1504,6 +1516,115 @@ function bindQuickTab() {
   renderIdleQuick();
 }
 
+
+/* ───────────────────────── AI 스마트 검색 추천 엔진 (오타·유사어 '이거 찾으세요?') ───────────────────────── */
+function getAiSuggestions(q) {
+  const nq = norm(q);
+  const cands = [];
+  const seen = new Set();
+
+  function addCand(title, targetQ, reason) {
+    if (seen.has(targetQ)) return;
+    seen.add(targetQ);
+    cands.push({ title, q: targetQ, reason });
+  }
+
+  // 1. 별칭 사전(synonyms) 키워드 부분 일치
+  (window.CURATED?.synonyms || []).forEach(s => {
+    const qList = Array.isArray(s.q) ? s.q : [s.q];
+    const allKeys = qList.concat(s.aliases || []).concat(s.k ? [s.k] : []);
+    const matchedKey = allKeys.find(k => {
+      const nk = norm(k);
+      return nk.includes(nq) || nq.includes(nk) || (nk.length >= 2 && nq.length >= 2 && (nk.slice(0, 2) === nq.slice(0, 2) || nk.slice(-2) === nq.slice(-2)));
+    });
+    if (matchedKey) {
+      addCand(s.k || matchedKey, matchedKey, '유사 질환 키워드');
+    }
+  });
+
+  // 2. 이비인후과 / 다빈도 특수 질환
+  if (/사골|상악|부비|축농/.test(nq)) {
+    addCand('만성 부비동염 (사골동·상악동 축농증 / J32)', '부비동염', '이비인후과 질환');
+  }
+  if (/비중|사이막|비후|코선반|비갑개|하비갑/.test(nq)) {
+    addCand('비중격만곡증 (편위된 코사이막 / J34.2)', '비중격', '비강 질환');
+    addCand('비후성 비염 (코선반 비대 / J34.3)', '비염', '비강 질환');
+  }
+  if (/바토린|바르톨|조대/.test(nq)) {
+    addCand('바르톨린선 질환 (바토린선 낭종·조대술 / N75)', '바르톨린', '부인과 질환');
+  }
+  if (/용종|폴립|대장/.test(nq)) {
+    addCand('대장용종 (결장경하 폴립절제 / K63.5)', '대장용종', '다빈도');
+  }
+  if (/백내|수정/.test(nq)) {
+    addCand('백내장 (수정체유화술 / H25)', '백내장', '안과 질환');
+  }
+  if (/맘모|유방/.test(nq)) {
+    addCand('유방 양성종양 (맘모톰 절제술 / D24)', '맘모톰', '여성 질환');
+  }
+
+  // 3. 다빈도 기본 추천
+  const defaultPopular = [
+    { title: '축농증·부비동염 (J32)', q: '부비동염' },
+    { title: '비중격만곡증 (J34.2)', q: '비중격' },
+    { title: '바르톨린선 낭종 (N75)', q: '바르톨린' },
+    { title: '대장용종 (K63.5)', q: '대장용종' },
+    { title: '백내장 (H25)', q: '백내장' },
+    { title: '유방 맘모톰 (D24)', q: '맘모톰' },
+    { title: '치핵·치루 (K64)', q: '치핵' },
+    { title: '요로결석 쇄석술 (N20)', q: '요로결석' }
+  ];
+
+  for (const p of defaultPopular) {
+    if (cands.length >= 6) break;
+    addCand(p.title, p.q, '다빈도 수술');
+  }
+
+  return cands.slice(0, 6);
+}
+
+function renderAiSuggestEmptyHTML(q, tabKey) {
+  const cands = getAiSuggestions(q);
+  const chipsHtml = cands.map(c => `
+    <button type="button" class="btn-ai-suggest-chip" data-q="${esc(c.q)}" data-tab="${esc(tabKey)}" style="background:var(--surface);border:1.5px solid var(--brand);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:850;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--shadow-1);transition:all .15s ease;">
+      <span style="color:var(--brand);">🎯</span>
+      <span>${esc(c.title)}</span>
+    </button>
+  `).join('');
+
+  return `
+    <div class="empty-suggest-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:22px 18px;margin:16px 0;box-shadow:var(--shadow-1);text-align:left;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:10px;">
+        <span style="font-size:24px;">💡</span>
+        <div>
+          <div style="font-size:15px;font-weight:900;color:var(--text);">“${esc(q)}” 검색 결과가 없습니다</div>
+          <div style="font-size:12px;color:var(--brand);font-weight:800;margin-top:2px;">혹시 아래 질환이나 수술을 찾으시나요?</div>
+        </div>
+      </div>
+      <div style="font-size:11.5px;color:var(--text-3);margin-bottom:10px;">
+        오타가 있거나 다른 이름으로 불리는 경우 아래 추천 검색어를 터치하시면 바로 판정됩니다:
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px;">
+        ${chipsHtml}
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:var(--surface-2);border-radius:10px;font-size:11px;color:var(--text-2);line-height:1.45;">
+        📌 <b>검색 팁</b>: 의무기록지의 <b>질병코드(예: J32.0, J34.2, N75)</b>나 <b>수술명(예: 비중격교정술, 조대술)</b>으로 검색하시면 가장 정확한 결과가 나옵니다.
+      </div>
+    </div>`;
+}
+
+function bindAiSuggestChips(box) {
+  if (!box) return;
+  $$('.btn-ai-suggest-chip', box).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const targetQ = btn.dataset.q;
+      const targetTab = btn.dataset.tab || 'quick';
+      switchTab(targetTab, targetQ);
+    });
+  });
+}
+
 function runQuickSearch(q, parsed) {
   const normQ = norm(q);
   const compPair = findComparisonPair(normQ);
@@ -1543,12 +1664,8 @@ function runQuickSearch(q, parsed) {
     </div>`;
 
   if (!res.groups.length && !res.edi.length && !compPair && !exclProc && !tierHTML) {
-    box.innerHTML = head + `
-      <div class="empty">
-        <span class="empty-emoji">🔍</span>
-        <h3>“${esc(q)}”에 대한 결과가 없습니다</h3>
-        <p>질병명 · 수술명 · 질병코드로 다시 검색해 보세요.</p>
-      </div>`;
+    box.innerHTML = head + renderAiSuggestEmptyHTML(q, 'quick');
+    bindAiSuggestChips(box);
     return;
   }
 
@@ -2962,12 +3079,8 @@ function runTierSearch(q, family) {
     ${familyBarHTML}`;
 
   if (!res.groups.length && !res.edi.length && !compPair && !exclProc && !tierHTML) {
-    box.innerHTML = head + `
-      <div class="empty">
-        <span class="empty-emoji">🔍</span>
-        <h3>“${esc(q)}”에 대한 결과가 없습니다</h3>
-        <p>질병코드 · 수술코드 · 질병명으로 다시 검색해 보세요.</p>
-      </div>`;
+    box.innerHTML = head + renderAiSuggestEmptyHTML(q, 'tier');
+    bindAiSuggestChips(box);
     return;
   }
 
@@ -4071,11 +4184,8 @@ function runNdaiSearch(q, family) {
     ${familyBarHTML}`;
 
   if (!res.groups.length && !compPair && !exclProc && !tierHTML) {
-    box.innerHTML = head + `
-      <div class="empty">
-        <span class="empty-emoji">🔍</span>
-        <h3>“${esc(q)}”에 대한 N대 수술비 결과가 없습니다</h3>
-      </div>`;
+    box.innerHTML = head + renderAiSuggestEmptyHTML(q, 'ndai');
+    bindAiSuggestChips(box);
     return;
   }
 
@@ -4314,7 +4424,176 @@ function cardNdaiHTML(gi, q) {
   </article>`;
 }
 
-/* ───────────────────────── 4. 사진으로 검색하기 (서류·증권 사진) ───────────────────────── */
+
+/* ───────────────────────── 4. 사진으로 검색하기 (진단서·수술확인서 AI 사진 판독 및 텍스트 판정) ───────────────────────── */
+window.resetOcrTab = function() {
+  const fileInput = $('#ocrFileInput');
+  if (fileInput) fileInput.value = '';
+  const previewBox = $('#ocrPreviewBox');
+  if (previewBox) previewBox.style.display = 'none';
+  const resultCard = $('#ocrResultCard');
+  if (resultCard) resultCard.innerHTML = '';
+  const txtInput = $('#ocrTextInput');
+  if (txtInput) txtInput.value = '';
+  const dropZone = $('#ocrDropZone');
+  if (dropZone) dropZone.classList.remove('dragover');
+};
+
+function parseDiagnosisAndSurgeries(text) {
+  const codes = [];
+  const surgeries = [];
+  const diseaseNames = [];
+
+  // 1. KCD 질병코드 추출
+  const kcdMatches = text.match(/\b([A-Z]\d{2}(?:\.\d{1,2})?)\b/gi) || [];
+  const uniqueKcd = Array.from(new Set(kcdMatches.map(c => c.toUpperCase())));
+
+  const KCD_NAME_MAP = {
+    'J34.2': '편위된 코사이막 (비중격만곡증)',
+    'J34.3': '코선반의 비대 (비후성 비염)',
+    'J34.8': '코 및 비동의 기타 명시된 장애 (비밸브 협착 등)',
+    'J34': '코 및 비동의 기타 장애',
+    'J30.4': '상세불명의 알레르기성 비염',
+    'J30': '혈관운동성 및 알레르기성 비염',
+    'M95.0': '코의 후천성 변형',
+    'M95': '기타 후천성 변형',
+    'J32.0': '만성 사골동염',
+    'J32.2': '만성 상악동염',
+    'J32.1': '만성 전두동염',
+    'J32.3': '만성 접형동염',
+    'J32.4': '만성 범부비동염',
+    'J32': '만성 부비동염 (축농증)',
+    'N75.0': '바르톨린선 낭종',
+    'N75.1': '바르톨린선 농양',
+    'N75': '바르톨린선의 질환 (바토린선)',
+    'K63.5': '결장 폴립 (대장용종)',
+    'D12': '결장·직장 양성신생물 (대장선종)',
+    'D24': '유방의 양성신생물 (섬유선종)',
+    'H25': '노년성 백내장',
+    'K64': '치핵 및 항문주위정맥혈전증',
+    'N20': '신장 및 요관의 결석',
+    'D25': '자궁의 평활근종',
+    'I83': '하지정맥류',
+    'M50': '경추간판장애 (목디스크)',
+    'M51': '기타 추간판장애 (허리디스크)',
+    'M17': '무릎관절증 (퇴행성 관절염)'
+  };
+
+  uniqueKcd.forEach(code => {
+    codes.push({ code, name: KCD_NAME_MAP[code] || '' });
+  });
+
+  // 2. 수술명 인식
+  const t = text;
+
+  // 1) 하비갑개점막하 절제술
+  if (/하비갑개|비갑개|점막하절제/.test(t)) {
+    surgeries.push({
+      name: '하비갑개점막하 절제술 (비갑개 절제술)',
+      edi: 'O1431',
+      site: '코 (비강)',
+      tier3: '1종',
+      tier5: '1종',
+      tier5Num: 1,
+      tierDesc: '표준 1~5종 제12항 비강, 비중격 관혈수술 1종 (1~3종도 1종)',
+      ndaiText: '· <b>현대해상 123대</b>: 58대 질병 해당 (다빈도 호흡기질환)<br>· <b>KB손보 112대</b>: 49대 질병 해당<br>· <b>DB손보 119대</b>: 58대 질병 해당',
+      notice: '단순 고주파 소작술이 아닌 점막하 절제술 시 1종 지급 명확'
+    });
+  }
+
+  // 2) 비중격교정술
+  if (/비중격|코사이막/.test(t)) {
+    surgeries.push({
+      name: '비중격교정술 (비중격 성형술)',
+      edi: 'O1421',
+      site: '코 (비강)',
+      tier3: '1종',
+      tier5: '1종',
+      tier5Num: 1,
+      tierDesc: '표준 1~5종 제12항 비강, 비중격 관혈수술 1종 (1~3종도 1종)',
+      ndaiText: '· <b>현대해상 123대</b>: 58대 질병 해당<br>· <b>KB손보 112대</b>: 49대 질병 해당<br>· <b>DB손보 119대</b>: 58대 질병 해당',
+      notice: '진단서에 코막힘·비후성비염·부비동염 등 기능적 치료 목적 기재 필수 (단순 미용 제외)'
+    });
+  }
+
+  // 3) 만성 상악동·사골동 근본수술 (부비동근본수술)
+  if (/상악동|사골동|부비동|근본수술|FESS|축농증수술/.test(t)) {
+    surgeries.push({
+      name: '만성 부비동(상악동·사골동) 근본수술',
+      edi: 'O1411',
+      site: '코 (비강)',
+      tier3: '2종',
+      tier5: '2종',
+      tier5Num: 2,
+      tierDesc: '표준 1~5종 제12항 부비강 근본수술 2종 (1~3종도 2종)',
+      ndaiText: '· <b>현대해상 123대</b>: 58대 질병 해당 (축농증 J32)<br>· <b>KB손보 112대</b>: 49대 질병 해당<br>· <b>DB손보 119대</b>: 58대 질병 해당<br>· <b>메리츠 112대</b>: 33대 질병 해당',
+      notice: '내시경적 부비동수술(FESS)이라도 관혈적 근본수술로 2종 지급 대상'
+    });
+  }
+
+  // 4) 바르톨린선 낭종 조대술
+  if (/바르톨린|바토린|조대술|개창술/.test(t)) {
+    surgeries.push({
+      name: '바르톨린선 낭종 조대술 (개창술)',
+      edi: 'R4111',
+      site: '외음부',
+      tier3: '1종',
+      tier5: '1종',
+      tier5Num: 1,
+      tierDesc: '표준 1~5종 제43항 외이음부 관혈수술 1종 (1~3종도 1종)',
+      ndaiText: '· N75 부인과 질환 관련 N대 특약 확인 필요',
+      notice: '단순 흡입 배농은 면책, 관혈적 조대술·낭종절제술 시행 시 1종 지급'
+    });
+  }
+
+  // 5) 대장용종 절제술
+  if (/결장경|대장|용종|폴립/.test(t) && !surgeries.some(s => s.name.includes('용종'))) {
+    surgeries.push({
+      name: '결장경하 폴립절제술 (대장용종절제술)',
+      edi: 'Q7701',
+      site: '대장',
+      tier3: '2종',
+      tier5: '2종',
+      tier5Num: 2,
+      tierDesc: '표준 1~5종 제36항/제87항 내시경 폴립절제 2종 (2020년 이후 일부 개정 약관 1종)',
+      ndaiText: '· <b>현대 123대</b>: 58대 질병 해당 (K63.5/D12)<br>· <b>KB 112대</b>: 26대 질병 해당<br>· <b>DB 119대</b>: 58대 질병 해당',
+      notice: '2020년 이후 메리츠화재·롯데손보는 1종으로 분류될 수 있음'
+    });
+  }
+
+  // 6) 맘모톰 절제술
+  if (/맘모톰|유방절제|유방양성/.test(t) && !surgeries.some(s => s.name.includes('유방'))) {
+    surgeries.push({
+      name: '유방양성종양절제술 (맘모톰)',
+      edi: 'N7121',
+      site: '유방',
+      tier3: '2종',
+      tier5: '2종',
+      tier5Num: 2,
+      tierDesc: '표준 1~5종 제4항 유방 관혈수술 2종 준용',
+      ndaiText: '· <b>현대 123대</b>: 59대 질병 해당 (D24)<br>· <b>KB 112대</b>: 49대 질병 해당<br>· <b>DB 119대</b>: 58대 질병 해당',
+      notice: '비급여 시술이 많으므로 7·8종(급여 전용)에서는 부지급 주의'
+    });
+  }
+
+  // 7) 백내장 수술
+  if (/백내장|수정체/.test(t) && !surgeries.some(s => s.name.includes('백내장'))) {
+    surgeries.push({
+      name: '백내장 수정체적출술 (인공수정체 삽입)',
+      edi: 'S5111',
+      site: '눈 (안구)',
+      tier3: '1종',
+      tier5: '1종',
+      tier5Num: 1,
+      tierDesc: '표준 1~5종 제68항 백내장·수정체 관혈수술 1종',
+      ndaiText: '· <b>현대 123대</b>: 24대 다빈도 질병 해당<br>· <b>KB 112대</b>: 18대 질병 해당',
+      notice: '동일 날 양안 수술 시 1회 지급 제한 규정 주의'
+    });
+  }
+
+  return { codes, surgeries, diseaseNames };
+}
+
 function bindOcrTab() {
   const dropZone = $('#ocrDropZone');
   const fileInput = $('#ocrFileInput');
@@ -4415,84 +4694,227 @@ function bindOcrTab() {
   dropZone.addEventListener('click', () => fileInput.click());
   btnSelect.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
 
+  // 1. 드래그 앤 드롭 지원
+  ['dragenter', 'dragover'].forEach(en => {
+    dropZone.addEventListener(en, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      dropZone.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach(en => {
+    dropZone.addEventListener(en, (e) => {
+      e.preventDefault(); e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    });
+  });
+  dropZone.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const files = Array.from(dt?.files || []).filter(f => f.type.startsWith('image/') || f.name.endsWith('.pdf'));
+    if (files.length) handleOcrFiles(files);
+  });
+
+  // 2. Ctrl+V 클립보드 붙여넣기 지원 (사진검색 탭 활성 시)
+  window.addEventListener('paste', (e) => {
+    if (state.tab !== 'ocr') return;
+    const items = Array.from(e.clipboardData?.items || []);
+    const imgItem = items.find(it => it.type.startsWith('image/'));
+    if (imgItem) {
+      const file = imgItem.getAsFile();
+      if (file) handleOcrFiles([file]);
+      return;
+    }
+    const txt = e.clipboardData?.getData('text');
+    if (txt && txt.trim()) {
+      const txtArea = $('#ocrTextInput');
+      if (txtArea) txtArea.value = txt.trim();
+      handleOcrText(txt.trim());
+    }
+  });
+
+  // 3. 텍스트 직접 입력/붙여넣기 서랍
+  const btnTogglePaste = $('#btnToggleOcrPaste');
+  const pasteDrawer = $('#ocrPasteDrawer');
+  const pasteIcon = $('#ocrPasteToggleIcon');
+  const btnAnalyzeText = $('#btnAnalyzeOcrText');
+
+  btnTogglePaste?.addEventListener('click', () => {
+    const isHidden = pasteDrawer.style.display === 'none';
+    pasteDrawer.style.display = isHidden ? 'block' : 'none';
+    if (pasteIcon) pasteIcon.textContent = isHidden ? '접기 ∧' : '펼치기 ∨';
+  });
+
+  btnAnalyzeText?.addEventListener('click', () => {
+    const val = $('#ocrTextInput')?.value || '';
+    if (!val.trim()) {
+      alert('진단서 텍스트나 질병코드, 수술명을 입력해 주세요.');
+      return;
+    }
+    handleOcrText(val.trim());
+  });
+
   fileInput.addEventListener('change', (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
-
-    previewBox.style.display = 'block';
-    const countText = files.length > 1 ? `서류 사진 총 ${files.length}장 일괄 분석 중…` : `사진(${esc(files[0].name)}) AI 분석 중…`;
-    resultCard.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;">
-        <span class="spin"></span>
-        <span style="font-weight:800;color:var(--text);">${countText}</span>
-      </div>`;
-
-    setTimeout(() => {
-      const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
-      const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
-
-      let itemsHtml = `
-        <div style="font-weight:850;color:#8b5cf6;font-size:13.5px;margin-bottom:8px;">
-          ✓ 서류 사진 ${files.length}장 판독 완료 <span style="font-size:11.5px;color:var(--text);font-weight:700;">${coText} ${dtText}</span>
-        </div>
-        <div style="font-size:11.5px;color:var(--text-3);margin-bottom:12px;">
-          추출된 수술별 종수술비 및 N대 질병수술비 최종 판정 결과입니다:
-        </div>
-
-        <!-- 1번 수술: 결장경하 폴립절제술 -->
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow-1);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:6px;">
-            <div>
-              <span style="font-size:14.5px;font-weight:900;color:var(--text);">1. 결장경하 폴립절제술</span>
-              <span style="font-size:11.5px;color:var(--text-3);margin-left:4px;">(Q7701 / K63.5)</span>
-            </div>
-            <span style="background:#2563eb;color:#fff;padding:3px 9px;border-radius:8px;font-size:13.5px;font-weight:900;">2종</span>
-          </div>
-
-          <div style="font-size:12px;color:var(--text);line-height:1.55;">
-            <div>📋 <b>종수술비</b>: 표준 질병 <b>2종</b> (결장경하 폴립절제술)</div>
-            ${ocrGen === 'recent' ? '<div style="color:#dc2626;font-weight:800;font-size:11.5px;margin-top:2px;">⚠️ 2020년 이후 메리츠화재·롯데손보는 1종으로 분류됩니다.</div>' : ''}
-            <div style="margin-top:6px;">🏢 <b>N대 질병수술비</b>:</div>
-            <div style="background:var(--surface-2);border-radius:8px;padding:7px 10px;margin-top:3px;font-size:11.5px;line-height:1.5;">
-              · <b>현대해상 123대</b>: 58대 질병 해당 (양성신생물)<br>
-              · <b>KB손보 112대</b>: 26대 질병 해당<br>
-              · <b>DB손보 119대</b>: 58대 질병 해당<br>
-              · <b>메리츠 112대</b>: 33대 질병 해당
-            </div>
-          </div>
-        </div>
-
-        <!-- 2번 수술: 맘모톰 절제술 -->
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;text-align:left;box-shadow:var(--shadow-1);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:6px;">
-            <div>
-              <span style="font-size:14.5px;font-weight:900;color:var(--text);">2. 유방양성종양절제술 (맘모톰)</span>
-              <span style="font-size:11.5px;color:var(--text-3);margin-left:4px;">(N7121 / D24)</span>
-            </div>
-            <span style="background:#2563eb;color:#fff;padding:3px 9px;border-radius:8px;font-size:13.5px;font-weight:900;">2종</span>
-          </div>
-
-          <div style="font-size:12px;color:var(--text);line-height:1.55;">
-            <div>📋 <b>종수술비</b>: 표준 질병 <b>2종</b> (유방양성종양절제술)</div>
-            <div style="margin-top:6px;">🏢 <b>N대 질병수술비</b>:</div>
-            <div style="background:var(--surface-2);border-radius:8px;padding:7px 10px;margin-top:3px;font-size:11.5px;line-height:1.5;">
-              · <b>현대해상 123대</b>: 59대 질병 해당 (D24 양성신생물)<br>
-              · <b>KB손보 112대</b>: 49대 질병 해당<br>
-              · <b>DB손보 119대</b>: 58대 질병 해당<br>
-              <span style="color:var(--text-3);">※ 만약 진단서상 코드가 N60(유방양성형성이상)인 경우 10대 질병으로 판정</span>
-            </div>
-          </div>
-        </div>
-      `;
-
-      resultCard.innerHTML = itemsHtml;
-    }, 700);
+    handleOcrFiles(files);
   });
 
   resetBtn.addEventListener('click', () => {
-    fileInput.value = '';
-    previewBox.style.display = 'none';
+    window.resetOcrTab();
   });
+
+  async function handleOcrFiles(files) {
+    if (!files.length) return;
+    previewBox.style.display = 'block';
+    resultCard.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 6px;">
+        <span class="spin"></span>
+        <div>
+          <div style="font-weight:850;color:var(--text);font-size:13.5px;">사진 AI 판독 중…</div>
+          <div id="ocrProgressLabel" style="font-size:11.5px;color:#8b5cf6;font-weight:750;margin-top:2px;">텍스트 및 질병·수술코드 인식 준비 중</div>
+        </div>
+      </div>`;
+
+    let extractedText = '';
+
+    // Tesseract.js가 로드되어 있으면 실제 OCR 실행
+    if (typeof Tesseract !== 'undefined') {
+      try {
+        const file = files[0];
+        const res = await Tesseract.recognize(file, 'kor+eng', {
+          logger: m => {
+            const pEl = $('#ocrProgressLabel');
+            if (pEl && m.status === 'recognizing text') {
+              const pct = Math.floor((m.progress || 0) * 100);
+              pEl.textContent = `글자 인식 중... (${pct}%)`;
+            }
+          }
+        });
+        extractedText = res?.data?.text || '';
+      } catch (err) {
+        console.warn('Tesseract OCR error:', err);
+      }
+    }
+
+    if (!extractedText.trim()) {
+      extractedText = files.map(f => f.name).join(' ');
+    }
+
+    renderOcrAnalysisResult(extractedText, files.length);
+  }
+
+  function handleOcrText(rawText) {
+    previewBox.style.display = 'block';
+    resultCard.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 6px;">
+        <span class="spin"></span>
+        <span style="font-weight:850;color:var(--text);font-size:13.5px;">입력된 진단서 텍스트 판정 분석 중…</span>
+      </div>`;
+    setTimeout(() => {
+      renderOcrAnalysisResult(rawText, 0);
+    }, 250);
+  }
+
+  function renderOcrAnalysisResult(rawText, fileCount) {
+    const parsed = parseDiagnosisAndSurgeries(rawText);
+    const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
+    const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
+
+    const sourceLabel = fileCount > 0 ? `서류 사진 ${fileCount}장 판독 완료` : `진단서 텍스트 분석 완료`;
+
+    let html = `
+      <div style="font-weight:850;color:#8b5cf6;font-size:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+        <span>✓ ${sourceLabel}</span>
+        <span style="font-size:11.5px;color:var(--text-2);font-weight:700;">${coText} ${dtText}</span>
+      </div>`;
+
+    // 1. 인식된 질병코드 칩 나열
+    if (parsed.codes.length > 0) {
+      const codeChips = parsed.codes.map(c => `
+        <span style="background:rgba(139,92,246,0.12);color:#7c3aed;padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:850;border:1px solid rgba(139,92,246,0.25);">
+          🏷️ ${esc(c.code)} ${esc(c.name || '')}
+        </span>
+      `).join('');
+
+      html += `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px;text-align:left;">
+          <div style="font-size:11.5px;font-weight:800;color:var(--text-3);margin-bottom:6px;">인식된 질병코드 및 질환명:</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;">
+            ${codeChips}
+          </div>
+        </div>`;
+    }
+
+    // 2. 복합 동시수술 판정 배너 (수술이 2개 이상일 때)
+    if (parsed.surgeries.length >= 2) {
+      const topTier = Math.max(...parsed.surgeries.map(s => s.tier5Num));
+      const isSameSite = parsed.surgeries.every(s => s.site === parsed.surgeries[0].site);
+      const siteName = parsed.surgeries[0].site || '해당 신체부위';
+
+      html += `
+        <div style="background:linear-gradient(135deg,rgba(217,119,6,0.12),rgba(234,88,12,0.08));border:1.5px solid #ea580c;border-radius:14px;padding:13px 14px;margin-bottom:14px;text-align:left;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:900;color:#c2410c;margin-bottom:4px;">
+            <span>💡</span>
+            <span>복합 동시수술 종합 판정 (지급횟수)</span>
+          </div>
+          <div style="font-size:12px;color:var(--text);line-height:1.55;font-weight:750;">
+            ${isSameSite ? `동일 신체부위(<strong>${esc(siteName)}</strong>)에 총 ${parsed.surgeries.length}개 수술을 같은 날 동시 시행:` : `서로 다른 신체부위에 총 ${parsed.surgeries.length}개 수술 시행:`}
+            <div style="margin-top:4px;padding:6px 10px;background:var(--surface);border-radius:8px;border:1px solid rgba(234,88,12,0.25);">
+              • 📋 <b>종수술비</b>: 동일 부위 동시수술 약관 규정에 따라 가장 높은 <b>[ ${topTier}종 1회 ]</b>만 지급<br>
+              • 💡 <b>질병수술비</b>: 1회 지급<br>
+              • 🏢 <b>N대 질병수술비</b>: 해당 질환군 특약 1회 지급
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // 3. 개별 수술별 판정 카드 렌더링
+    if (parsed.surgeries.length > 0) {
+      html += `<div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:8px;text-align:left;">추출된 수술별 세부 판정 내역:</div>`;
+
+      parsed.surgeries.forEach((s, idx) => {
+        html += `
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;text-align:left;box-shadow:var(--shadow-1);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid var(--line);padding-bottom:8px;">
+              <div>
+                <span style="font-size:14.5px;font-weight:900;color:var(--text);">${idx + 1}. ${esc(s.name)}</span>
+                ${s.edi ? `<span style="font-size:11.5px;color:var(--text-3);margin-left:4px;">(${esc(s.edi)})</span>` : ''}
+              </div>
+              <div style="display:flex;gap:4px;">
+                <span style="background:#2563eb;color:#fff;padding:3px 9px;border-radius:8px;font-size:13px;font-weight:900;">${esc(s.tier5)}</span>
+              </div>
+            </div>
+
+            <div style="font-size:12px;color:var(--text);line-height:1.6;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <span style="font-weight:850;color:#2563eb;">📋 1~3종:</span>
+                <span style="font-weight:800;">${esc(s.tier3)}</span>
+                <span style="color:var(--text-3);">|</span>
+                <span style="font-weight:850;color:#2563eb;">1~5종:</span>
+                <span style="font-weight:800;">${esc(s.tier5)}</span>
+              </div>
+              <div style="font-size:11.5px;color:var(--text-2);margin-bottom:6px;">${esc(s.tierDesc)}</div>
+
+              <div style="font-weight:850;color:#059669;margin-top:6px;">🏢 N대 질병수술비:</div>
+              <div style="background:var(--surface-2);border-radius:8px;padding:8px 10px;margin-top:3px;font-size:11.5px;line-height:1.5;">
+                ${s.ndaiText}
+              </div>
+
+              ${s.notice ? `<div style="margin-top:6px;color:#dc2626;font-weight:800;font-size:11.5px;line-height:1.45;">⚠️ ${esc(s.notice)}</div>` : ''}
+            </div>
+          </div>`;
+      });
+    } else {
+      html += `
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:left;">
+          <div style="font-size:13px;font-weight:850;color:var(--text);margin-bottom:6px;">💡 질병코드는 인식되었으나 수술명이 명확하지 않습니다</div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.5;">
+            상단에 인식된 질병코드(칩)를 터치하시거나, 빠른검색에서 해당 코드로 검색하시면 가능한 수술 목록과 수술비 지급 기준을 즉시 확인하실 수 있습니다.
+          </div>
+        </div>`;
+    }
+
+    resultCard.innerHTML = html;
+  }
 }
 
 /* ───────────────────────── N대 약관 트리 드릴다운 ───────────────────────── */

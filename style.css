@@ -2175,3 +2175,11 @@ html[data-theme="dark"] .rules-modal-body {
   box-shadow: 0 4px 14px rgba(0,0,0,0.12);
 }
 
+
+#ocrDropZone.dragover {
+  border-color: #8b5cf6 !important;
+  background: rgba(139, 92, 246, 0.12) !important;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.35) !important;
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
