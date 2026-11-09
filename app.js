@@ -1039,6 +1039,7 @@ function start(data) {
   bindNdaiTab();
   bindOcrTab();
   bindRulesTab();
+  bindDisputesTab();
 
   $$('.quick-shortcut-banner[data-go]').forEach(b => {
     b.addEventListener('click', () => switchTab(b.dataset.go));
@@ -1067,11 +1068,18 @@ function switchTab(tabKey, targetQ = '') {
   $('#pane-ndai').hidden = tabKey !== 'ndai';
   $('#pane-ocr').hidden = tabKey !== 'ocr';
   if ($('#pane-rules')) $('#pane-rules').hidden = tabKey !== 'rules';
+  if ($('#pane-disputes')) $('#pane-disputes').hidden = tabKey !== 'disputes';
   if ($('#pane-about')) $('#pane-about').hidden = tabKey !== 'about';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // 다른 메뉴로 이동 시 이전 탭들의 필터 상태 깨끗이 초기화
+  // 다른 메뉴로 이동 시 이전 탭들의 검색창/필터 상태 깨끗이 초기화
+  if (tabKey !== 'quick') {
+    if ($('#q-quick')) $('#q-quick').value = '';
+    state.quickQ = '';
+    if ($('#clearBtn-quick')) $('#clearBtn-quick').hidden = true;
+    if (typeof renderIdleQuick === 'function') renderIdleQuick();
+  }
   if (tabKey !== 'tier' && typeof window.resetTierFilters === 'function') {
     window.resetTierFilters();
     if ($('#q-tier')) $('#q-tier').value = '';
@@ -1079,12 +1087,21 @@ function switchTab(tabKey, targetQ = '') {
     if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = true;
     if (typeof window.renderTierEmptyExample === 'function') window.renderTierEmptyExample();
   }
+  if (tabKey !== 'tier78') {
+    if ($('#q-tier78')) $('#q-tier78').value = '';
+    state.tier78Q = '';
+    if ($('#clearBtn-tier78')) $('#clearBtn-tier78').hidden = true;
+    if (typeof renderTier78EmptyExample === 'function') renderTier78EmptyExample();
+  }
   if (tabKey !== 'ndai' && typeof window.resetNdaiFilters === 'function') {
     window.resetNdaiFilters();
     if ($('#q-ndai')) $('#q-ndai').value = '';
     state.ndaiQ = '';
     if ($('#clearBtn-ndai')) $('#clearBtn-ndai').hidden = true;
     if (typeof window.renderNdaiEmptyExample === 'function') window.renderNdaiEmptyExample();
+  }
+  if (tabKey !== 'ocr' && typeof window.resetOcrTab === 'function') {
+    window.resetOcrTab();
   }
 
   if (tabKey === 'home') {
@@ -1094,7 +1111,8 @@ function switchTab(tabKey, targetQ = '') {
       if ($('#q-quick')) $('#q-quick').value = targetQ;
       state.quickQ = targetQ;
       if ($('#clearBtn-quick')) $('#clearBtn-quick').hidden = false;
-      runQuickSearch(targetQ);
+      const parsed = parseSmartQuery(targetQ);
+      runQuickSearch(parsed.cleanQ || targetQ, parsed);
     } else {
       if ($('#q-quick')) $('#q-quick').value = '';
       state.quickQ = '';
@@ -1102,6 +1120,8 @@ function switchTab(tabKey, targetQ = '') {
       renderIdleQuick();
     }
     $('#q-quick')?.focus();
+  } else if (tabKey === 'disputes') {
+    renderDisputesList('all');
   } else if (tabKey === 'tier') {
     if (targetQ) {
       if ($('#q-tier')) $('#q-tier').value = targetQ;
@@ -1483,9 +1503,9 @@ function renderTierMatchCards(ids, q) {
   }).join('');
 
   return `
-    <div style="display:flex;align-items:center;gap:8px;margin:16px 3px 8px;">
-      <span style="font-size:13px;font-weight:900;color:var(--text);">🔖 수술코드 분류표 판정</span>
-      <span style="font-size:11px;font-weight:750;color:var(--text-3);">수술코드·수술명 직접 매칭</span>
+    <div style="display:flex;align-items:center;gap:8px;margin:22px 3px 10px;padding-top:16px;border-top:1.5px dashed var(--border);">
+      <span style="font-size:13px;font-weight:900;color:var(--text);">🔖 세부 수술코드(EDI) 분류표 대조 (3종 · 5종)</span>
+      <span style="font-size:11px;font-weight:750;color:var(--text-3);">수술확인서 기재 코드 일치 여부 확인</span>
     </div>` + cards;
 }
 
@@ -1669,12 +1689,22 @@ function runQuickSearch(q, parsed) {
     return;
   }
 
-  let html = head + tierHTML + compHTML + exclHTML;
+  let groupsHTML = '';
   if (res.groups.length > 0) {
     if (exclProc && exclProc.relatedCodes && exclProc.relatedCodes.length > 0) {
-      html += `<div style="font-size:12.5px;font-weight:900;color:var(--text);margin:14px 0 8px 4px;">💡 연관 질환 정식 수술비 보장 내역 (${esc(exclProc.relatedDisease)})</div>`;
+      groupsHTML += `<div style="font-size:12.5px;font-weight:900;color:var(--text);margin:14px 0 8px 4px;">💡 연관 질환 정식 수술비 보장 내역 (${esc(exclProc.relatedDisease)})</div>`;
     }
-    html += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi, parsed)).join('');
+    groupsHTML += res.groups.slice(0, 12).map(i => cardQuickHTML(i, q, res.matchedEdi, parsed)).join('');
+  }
+
+  // 검색어가 EDI 수술코드(예: Q7701, N07151 등)로 직접 검색된 경우에만 수술코드 카드를 맨 위에,
+  // 일반 질병명/수술명(인공관절, 치핵, 추간판, 백내장 등) 검색 시에는 질병수술·종수술비·N대질병 3대 담보 카드를 무조건 최상단 1순위로 노출!
+  const looksEdi = /^[A-Z]\d{4}/i.test(q.replace(/\s+/g, ''));
+  let html = head;
+  if (looksEdi) {
+    html += tierHTML + compHTML + exclHTML + groupsHTML;
+  } else {
+    html += compHTML + exclHTML + groupsHTML + tierHTML;
   }
   box.innerHTML = html;
   bindCardActions(box);
@@ -6002,6 +6032,139 @@ function bindRulesTab() {
       if (e.target === modal) closeModal();
     });
   }
+}
+
+/* ───────────────────────── 8. 수술비 청구 분쟁사례 ───────────────────────── */
+function bindDisputesTab() {
+  const chips = $$('#disputesFilterChips .f-chip');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('on'));
+      chip.classList.add('on');
+      const f = chip.dataset.dfilter;
+      renderDisputesList(f);
+    });
+  });
+}
+
+function renderDisputesList(filterKey = 'all') {
+  const box = $('#disputesList');
+  if (!box) return;
+
+  const allCases = window.DISPUTE_CASES || [];
+  let filtered = allCases;
+  if (filterKey === 'new_tech') {
+    filtered = allCases.filter(c => c.category === 'new_tech');
+  } else if (filterKey !== 'all') {
+    filtered = allCases.filter(c => c.diseaseGroup === filterKey);
+  }
+
+  if (!filtered.length) {
+    box.innerHTML = `<div style="text-align:center;padding:30px 20px;color:var(--text-3);font-size:13px;font-weight:700;">해당 질병의 분쟁 사례가 없습니다.</div>`;
+    return;
+  }
+
+  box.innerHTML = filtered.map(c => `
+    <article class="card dispute-card" id="${c.id}" style="border:1.5px solid var(--border);border-radius:16px;background:var(--surface);overflow:hidden;box-shadow:var(--shadow-1);transition:all .2s ease;">
+      <!-- 카드 헤더 (항상 보이는 요약 영역) -->
+      <div style="padding:16px 18px 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <span style="font-size:11.5px;font-weight:900;color:#be123c;background:rgba(225,29,72,0.1);padding:3px 9px;border-radius:6px;">${esc(c.diseaseGroup)} · ${esc(c.tag)}</span>
+          <span style="font-size:11px;font-weight:850;color:${c.badgeColor};background:${c.badgeBg};padding:3px 8px;border-radius:6px;">${esc(c.badge)}</span>
+        </div>
+
+        <h3 style="font-size:17px;font-weight:900;color:var(--text);letter-spacing:-.02em;margin:0 0 4px;line-height:1.35;">
+          ${esc(c.surgeryName)}
+        </h3>
+        <div style="font-size:12.5px;color:var(--text-2);font-weight:750;margin-bottom:10px;">
+          ${esc(c.diseaseName)}
+        </div>
+
+        <!-- 1줄 핵심 쟁점 및 반박 요약 (첫 화면에서 군더더기 없이 딱 보임) -->
+        <div style="background:var(--surface-2);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.5;display:flex;flex-direction:column;gap:5px;">
+          <div style="color:#ef4444;font-weight:800;">
+            ${esc(c.summaryClaim)}
+          </div>
+          <div style="color:#059669;font-weight:850;">
+            ${esc(c.summaryCounter)}
+          </div>
+        </div>
+
+        <!-- 펼치기 토글 버튼 -->
+        <div style="margin-top:12px;">
+          <button type="button" class="btn-toggle-dispute" data-id="${c.id}" style="width:100%;height:42px;border:1px solid rgba(225,29,72,0.25);background:rgba(225,29,72,0.04);color:#be123c;font-size:12.5px;font-weight:850;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s ease;">
+            <span>📖 상세 분쟁 쟁점 및 보상과 반박 논리 펼치기</span>
+            <span class="disp-arrow">∨</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 펼쳐지는 서랍 (보상과 주장, 판례/조정례, 설계사 실무팁, 카톡 복사) -->
+      <div class="dispute-drawer" id="drawer-${c.id}" hidden style="border-top:1px dashed var(--border);background:var(--surface);padding:16px 18px 18px;animation:fadeIn .2s ease;">
+        <!-- 1. 보상과 주요 삭감·면책 논리 -->
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12.5px;font-weight:900;color:#dc2626;display:flex;align-items:center;gap:5px;margin-bottom:6px;">
+            <span>🏢 보험사 보상과 주요 주장 (삭감·부지급 논리)</span>
+          </div>
+          <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--text-2);line-height:1.6;">
+            ${c.insurerLogic.map(txt => `<li>${esc(txt)}</li>`).join('')}
+          </ul>
+        </div>
+
+        <!-- 2. 금감원 조정례 및 법원 판례 -->
+        <div style="margin-bottom:14px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:12.5px;font-weight:900;color:#059669;display:flex;align-items:center;gap:5px;margin-bottom:6px;">
+            <span>⚖️ 금융감독원 분쟁조정사례 및 법원 판례 근거</span>
+          </div>
+          <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--text);line-height:1.6;font-weight:600;">
+            ${c.courtLogic.map(txt => `<li>${esc(txt)}</li>`).join('')}
+          </ul>
+        </div>
+
+        <!-- 3. 설계사 실무 대응 가이드 & 서류 발급 팁 -->
+        <div style="margin-bottom:14px;background:rgba(49,130,246,0.05);border:1px solid rgba(49,130,246,0.2);border-radius:10px;padding:12px 14px;">
+          <div style="font-size:12.5px;font-weight:900;color:#1d4ed8;display:flex;align-items:center;gap:5px;margin-bottom:6px;">
+            <span>🛡️ 현장 설계사 필수 대응 요령 & 서류 발급 팁</span>
+          </div>
+          <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--text);line-height:1.6;font-weight:600;">
+            ${c.fieldTips.map(txt => `<li>${esc(txt)}</li>`).join('')}
+          </ul>
+        </div>
+
+        <!-- 4. 카톡 고객 전송용 요약문 복사 버튼 -->
+        <button type="button" class="btn-copy-dispute" data-id="${c.id}" style="width:100%;height:44px;border:none;background:linear-gradient(135deg,#e11d48,#be123c);color:#fff;font-size:13px;font-weight:900;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 6px rgba(225,29,72,0.25);">
+          <span>📋 카톡 전송용 고객 안내문 복사</span>
+        </button>
+      </div>
+    </article>
+  `).join('');
+
+  // 서랍 토글 바인딩
+  $$('.btn-toggle-dispute', box).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const drawer = $(`#drawer-${id}`);
+      const arrow = btn.querySelector('.disp-arrow');
+      if (!drawer) return;
+      const willOpen = drawer.hidden;
+      drawer.hidden = !willOpen;
+      if (arrow) arrow.textContent = willOpen ? '∧' : '∨';
+      const label = btn.querySelector('span:first-child');
+      if (label) label.textContent = willOpen ? '📕 상세 분쟁 내용 및 반박 근거 접기' : '📖 상세 분쟁 쟁점 및 보상과 반박 논리 펼치기';
+    });
+  });
+
+  // 카톡 안내문 복사 바인딩
+  $$('.btn-copy-dispute', box).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      const item = allCases.find(x => x.id === id);
+      if (!item) return;
+      copyToClipboard(item.customerMsg, btn, '✓ 고객 안내문 복사완료!');
+    });
+  });
 }
 
 })();

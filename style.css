@@ -203,12 +203,17 @@ html[data-theme="dark"] .i-sun{display:none}
   overflow: hidden;
   text-overflow: ellipsis;
   box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-}
-.tab:nth-child(1), .tab:nth-child(2), .tab:nth-child(3) {
-  grid-column: span 4;
-}
-.tab:nth-child(4), .tab:nth-child(5), .tab:nth-child(6), .tab:nth-child(7) {
   grid-column: span 3;
+}
+
+.quick-shortcut-banner {
+  min-height: 72px;
+  box-sizing: border-box;
+}
+.quick-shortcut-banner .banner-sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 상단 메뉴바 탭 고유 테마 및 고급 글래스 스타일 */
@@ -288,6 +293,19 @@ html[data-theme="dark"] .tab[data-tab="ocr"].on {
   color: #c4b5fd;
   background: rgba(139, 92, 246, 0.2);
   border-color: rgba(139, 92, 246, 0.4);
+}
+
+.tab[data-tab="disputes"]:hover { color: #e11d48; background: rgba(225, 29, 72, 0.08); }
+.tab[data-tab="disputes"].on {
+  color: #be123c;
+  background: rgba(225, 29, 72, 0.12);
+  border-color: rgba(225, 29, 72, 0.35);
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.16);
+}
+html[data-theme="dark"] .tab[data-tab="disputes"].on {
+  color: #fda4af;
+  background: rgba(225, 29, 72, 0.22);
+  border-color: rgba(225, 29, 72, 0.45);
 }
 
 .tab[data-tab="rules"]:hover { color: #d97706; background: rgba(217, 119, 6, 0.08); }
@@ -722,15 +740,7 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   .main{padding:0 16px 32px}
   .topbar-inner{padding:12px 16px 0}
   .tabs{padding:6px 10px 8px;gap:5px;grid-template-columns:repeat(12,1fr)}
-  .tab{font-size:14px;padding:10px 1px;border-radius:11px;letter-spacing:-.035em}
-  .tab:nth-child(1), .tab:nth-child(2), .tab:nth-child(3) {
-    grid-column: span 4;
-    font-size: 15px;
-  }
-  .tab:nth-child(4), .tab:nth-child(5), .tab:nth-child(6), .tab:nth-child(7) {
-    grid-column: span 3;
-    font-size: 13.5px;
-  }
+  .tab{font-size:13.5px;padding:10px 1px;border-radius:11px;letter-spacing:-.035em;grid-column:span 3;}
   .hero{padding:18px 0 14px}
   .hero-sub{font-size:13px}
   .search-wrap{top:calc(var(--header-h, 138px) + 2px)}
