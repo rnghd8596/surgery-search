@@ -2477,9 +2477,38 @@ function getBasicSurgerySummary(g) {
   };
 }
 
-function getNdaiVerdictSummary(g) {
+function getNdaiVerdictSummary(g, cosList) {
   if (!g) return { badge: '확인 필요', summary: 'N대 담보 확인', badgeColor: 'var(--text-3)', bg: 'var(--surface-2)', border: 'var(--border)' };
   const { cos } = matchInfo(g);
+
+  // 회사 필터가 선택된 경우 (단일 회사 또는 복수 회사)
+  if (cosList && cosList.length > 0) {
+    const coveredCos = cosList.filter(c => Array.from(cos.keys()).some(k => k.includes(c.slice(0, 2)) || c.includes(k.slice(0, 2))));
+    if (coveredCos.length > 0) {
+      const firstCo = coveredCos[0];
+      const items = formatNdaItemsForCo(g, firstCo, null);
+      const tierDesc = items.length > 0 ? `${items[0].tierText} [${items[0].subClean}] 해당` : 'N대 특약 보장 해당';
+      return {
+        covered: true,
+        badge: `✓ ${coveredCos.join(', ')} 해당`,
+        badgeColor: '#059669',
+        bg: 'rgba(16, 185, 129, 0.05)',
+        border: 'rgba(16, 185, 129, 0.25)',
+        summary: `[${coveredCos.join(', ')}] ${tierDesc}`
+      };
+    } else {
+      return {
+        covered: false,
+        badge: `⚠️ ${cosList.join(', ')} 미해당`,
+        badgeColor: 'var(--text-3)',
+        bg: 'var(--surface-2)',
+        border: 'var(--border)',
+        summary: `선택하신 [${cosList.join(', ')}] N대 특약 분류표에는 미포함 (종수술비 청구)`
+      };
+    }
+  }
+
+  // 회사 미선택(전체)인 경우
   if (cos && cos.size > 0) {
     const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험'];
     const matchedMajors = majorCos.filter(m => Array.from(cos.keys()).some(k => k.includes(m.slice(0, 2))));
@@ -2641,7 +2670,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
     : '';
 
   const basicSurg = getBasicSurgerySummary(g);
-  const ndaiVerdict = getNdaiVerdictSummary(g);
+  const ndaiVerdict = getNdaiVerdictSummary(g, cosList);
 
   return `
   <article class="card" data-gi="${gi}">
@@ -2681,13 +2710,19 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
           </div>
         </div>
 
-        <!-- 3. N대질병 -->
-        <div class="qvb-row" style="background:rgba(16,185,129,0.05);border:1.5px solid rgba(16,185,129,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <!-- 3. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
+        <div class="qvb-row btn-toggle-quick-ndai" style="background:rgba(16,185,129,0.05);border:1.5px solid rgba(16,185,129,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
           <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#059669;white-space:nowrap;">🏢 N대질병</span>
+            <span style="font-size:12.5px;font-weight:900;color:#059669;white-space:nowrap;display:flex;align-items:center;gap:4px;">
+              🏢 N대질병
+              <span class="qndai-arrow" style="font-size:11px;font-weight:750;color:#059669;">(터치 시 회사별 N대 상세 ▾)</span>
+            </span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(ndaiVerdict.summary)}</span>
           </div>
           <span style="font-size:11px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
+        </div>
+        <div class="quick-ndai-drawer" style="display:none;margin-top:2px;">
+          ${renderNdaiDetailsHTML(g, cosList, null)}
         </div>
       </div>
 
@@ -4276,18 +4311,18 @@ function formatNdaLinesForCo(g, co, nTier) {
   return items.map(it => `${it.tierText} [${it.subClean}] 해당`);
 }
 
-function cardNdaiHTML(gi, q) {
-  const g = state.D.g[gi];
+function renderNdaiDetailsHTML(g, cosList, nTier) {
+  if (!g) return '';
   const { cos } = matchInfo(g);
-  const cosList = state.ndaiCos && state.ndaiCos.length ? state.ndaiCos : (state.ndaiCo ? [state.ndaiCo] : []);
-  const nTier = state.ndaiTier;
+  const cosArr = (cosList && cosList.length > 0)
+    ? cosList
+    : (state.ndaiCos && state.ndaiCos.length ? state.ndaiCos : (state.ndaiCo ? [state.ndaiCo] : []));
+  const tier = nTier || state.ndaiTier || null;
 
-  let contentHTML = '';
-
-  if (cosList.length > 0) {
-    const tierBadge = nTier ? ` ${nTier}` : '';
-    const blocks = cosList.map(c => {
-      const items = formatNdaItemsForCo(g, c, nTier);
+  if (cosArr.length > 0) {
+    const tierBadge = tier ? ` ${tier}` : '';
+    const blocks = cosArr.map(c => {
+      const items = formatNdaItemsForCo(g, c, tier);
       if (items.length > 0) {
         let multiNotice = '';
         if (items.length > 1) {
@@ -4333,31 +4368,39 @@ function cardNdaiHTML(gi, q) {
       }
     }).join('');
 
-    contentHTML = `
+    return `
       <div style="margin-top:4px;">
         <div style="font-size:11px;font-weight:800;color:var(--text-3);margin-bottom:6px;">🏢 선택하신 회사별 N대 보장 결과:</div>
         ${blocks}
         <div style="font-size:11px;color:var(--text-3);margin-top:4px;">각 회사별 증권에 기재된 가입금액 한도로 각각 지급됩니다.</div>
       </div>`;
   } else {
-    const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험', 'NH농협손해보험'];
-    const otherCos = Array.from(cos.keys()).filter(c => !majorCos.some(m => c.includes(m.slice(0, 2))));
-    const previewCos = [...majorCos, ...otherCos];
-    const previewItems = [];
-    previewCos.forEach(c => {
-      if (previewItems.length >= 8) return;
-      const items = formatNdaItemsForCo(g, c, nTier);
-      if (items.length > 0) previewItems.push(items[0]);
+    // 회사 미선택(전체): 해당 질환을 보장하는 전체 원수사를 정렬하여 표시
+    const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험', 'NH농협손해보험', '한화손해보험', '흥국화재', '롯데손해보험', 'MG손해보험', '삼성생명', '한화생명', '교보생명', '신한라이프', 'KB라이프', '동양생명', '흥국생명', '미래에셋생명', '라이나생명', 'AIA생명', 'DB생명', 'KDB생명', 'iM라이프'];
+    const allCos = Array.from(cos.keys());
+    const sortedCos = allCos.sort((a, b) => {
+      const idxA = majorCos.findIndex(m => a.includes(m.slice(0, 2)));
+      const idxB = majorCos.findIndex(m => b.includes(m.slice(0, 2)));
+      if (idxA >= 0 && idxB >= 0) return idxA - idxB;
+      if (idxA >= 0) return -1;
+      if (idxB >= 0) return 1;
+      return a.localeCompare(b);
     });
 
-    if (previewItems.length > 0) {
-      contentHTML = `
+    const allItems = [];
+    sortedCos.forEach(c => {
+      const items = formatNdaItemsForCo(g, c, tier);
+      items.forEach(it => allItems.push(it));
+    });
+
+    if (allItems.length > 0) {
+      return `
         <div class="ndai-res-box covered" style="border-left:4px solid #059669;margin-top:8px;background:var(--surface);">
           <div class="ndai-res-status" style="color:#059669;font-size:13px;font-weight:850;margin-bottom:8px;">
-            <span>✓ 주요 ${cos.size}개 보험사 N대 질병수술비 보장 해당</span>
+            <span>✓ 전 ${cos.size}개 보험사 N대 질병수술비 보장 해당 (전체)</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px;">
-            ${previewItems.map(it => `
+            ${allItems.map(it => `
               <div class="ndai-item-block">
                 <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co)}" data-sub="${esc(it.subClean)}">
                   <div class="nir-left">
@@ -4372,12 +4415,28 @@ function cardNdaiHTML(gi, q) {
               </div>
             `).join('')}
           </div>
-          <div style="font-size:11px;color:var(--text-3);padding-left:2px;">상단에서 보험사를 선택하시면 해당 회사의 증권 특약별 상세 판정을 비교할 수 있습니다.</div>
+          <div style="font-size:11px;color:var(--text-3);padding-left:2px;">상단에서 보험사를 선택하시면 해당 회사의 증권 특약별 상세 판정만 보실 수 있습니다.</div>
         </div>`;
     } else {
-      contentHTML = `
+      return `
         <div class="ndai-res-box not-covered" style="border-left:4px solid var(--line);margin-top:8px;background:var(--surface-2);">
           <div class="ndai-res-status" style="font-size:12.5px;font-weight:800;color:var(--text-3);">
+            <span>⚠️ N대 질병수술비 특약 미포함 (종수술비 청구)</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">
+            N대 질병수술비 분류표에는 제외된 질환이므로 1~5종 종수술비로 청구를 진행합니다.
+          </div>
+        </div>`;
+    }
+  }
+}
+
+function cardNdaiHTML(gi, q) {
+  const g = state.D.g[gi];
+  const cosList = state.ndaiCos && state.ndaiCos.length ? state.ndaiCos : (state.ndaiCo ? [state.ndaiCo] : []);
+  const nTier = state.ndaiTier;
+
+  const contentHTML = renderNdaiDetailsHTML(g, cosList, nTier);
             <span>⚠️ N대 질병수술비 특약 미포함 (종수술비 청구)</span>
           </div>
           <div style="font-size:11px;color:var(--text-3);margin-top:2px;">
@@ -4591,7 +4650,76 @@ function parseDiagnosisAndSurgeries(text) {
     });
   }
 
-  return { codes, surgeries, diseaseNames };
+  // 3. 가입 증권 / 가입제안서 정보 추출 (PDF 및 사진 전수 분석)
+  const policyInfo = {
+    hasPolicy: false,
+    company: null,
+    productName: null,
+    customerName: null,
+    contractYear: null,
+    tierAmounts: {},
+    cancerSurgAmount: null
+  };
+
+  const KNOWN_INSURERS = [
+    '미래에셋생명', '현대해상', '삼성화재', 'DB손해보험', 'KB손해보험', '메리츠화재',
+    'NH농협손해보험', '한화손해보험', '흥국화재', '롯데손해보험', 'MG손해보험',
+    '삼성생명', '한화생명', '교보생명', '신한라이프', 'KB라이프', '동양생명',
+    '흥국생명', '라이나생명', 'AIA생명', 'DB생명', 'KDB생명', 'iM라이프', '농협생명'
+  ];
+
+  for (const ins of KNOWN_INSURERS) {
+    const shortName = ins.slice(0, 2);
+    if (text.includes(ins) || (text.includes(shortName) && /(생명|손해|화재|해상|보험)/.test(text))) {
+      policyInfo.company = ins;
+      policyInfo.hasPolicy = true;
+      break;
+    }
+  }
+
+  const prodMatch = text.match(/([가-힣A-Za-z0-9\-]+(?:건강보험|종합보험|수술보험|보장보험|암보험|케어보험|케어건강보험))/);
+  if (prodMatch) {
+    policyInfo.productName = prodMatch[1];
+    policyInfo.hasPolicy = true;
+  }
+
+  const custMatch = text.match(/(?:피보험자|계약자|고객명)[\s:]*([가-힣]{2,4})(?:님|\()/);
+  if (custMatch) {
+    policyInfo.customerName = custMatch[1];
+  } else {
+    const custMatch2 = text.match(/([가-힣]{2,4})님을위한/);
+    if (custMatch2) policyInfo.customerName = custMatch2[1];
+  }
+
+  const yearMatch = text.match(/(?:발행일|계약일|청약일|가입일)[\s:]*(20\d{2})/);
+  if (yearMatch) {
+    policyInfo.contractYear = parseInt(yearMatch[1], 10);
+  }
+
+  // 1-5종 수술특약 가입금액 파싱 (예: 1-5종수술특약(1종) ... 20 만원)
+  for (let tier = 1; tier <= 5; tier++) {
+    const reTier = new RegExp(`(?:1-5종수술특약|수술특약|종수술)[^\\n]*[(]?${tier}종[)]?[^\\n]*\\n\\s*([0-9,]+)`, 'i');
+    const m = text.match(reTier);
+    if (m) {
+      let num = parseInt(m[1].replace(/,/g, ''), 10);
+      if (num < 10000) num *= 10000;
+      policyInfo.tierAmounts[tier] = num;
+      policyInfo.hasPolicy = true;
+    }
+  }
+
+  // 백업 패턴 (텍스트에 '1종 20만원', '2종 30만원' 등)
+  if (!policyInfo.tierAmounts[1] && /1종\s*20\s*만/.test(text)) policyInfo.tierAmounts[1] = 200000;
+  if (!policyInfo.tierAmounts[2] && /2종\s*30\s*만/.test(text)) policyInfo.tierAmounts[2] = 300000;
+  if (!policyInfo.tierAmounts[3] && /3종\s*(?:100|200)\s*만/.test(text)) policyInfo.tierAmounts[3] = 2000000;
+  if (!policyInfo.tierAmounts[4] && /4종\s*(?:200|700)\s*만/.test(text)) policyInfo.tierAmounts[4] = 7000000;
+  if (!policyInfo.tierAmounts[5] && /5종\s*(?:1,000|1000|1,500|1500)\s*만/.test(text)) policyInfo.tierAmounts[5] = 15000000;
+
+  if (text.includes('암수술') && /500\s*만/.test(text)) {
+    policyInfo.cancerSurgAmount = 5000000;
+  }
+
+  return { codes, surgeries, diseaseNames, policyInfo };
 }
 
 function bindOcrTab() {
@@ -4762,6 +4890,45 @@ function bindOcrTab() {
     window.resetOcrTab();
   });
 
+  async function extractTextFromPdf(file, onProgress) {
+    if (typeof pdfjsLib === 'undefined') {
+      console.warn('PDF.js not loaded');
+      return '';
+    }
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      const totalPages = Math.min(pdf.numPages, 20);
+      for (let i = 1; i <= totalPages; i++) {
+        if (onProgress) onProgress(i, totalPages);
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageStr = textContent.items.map(it => it.str).join(' ');
+        fullText += `\n--- [PDF ${file.name} P.${i}] ---\n` + pageStr;
+
+        if (pageStr.replace(/\s+/g, '').length < 30 && typeof Tesseract !== 'undefined') {
+          try {
+            const viewport = page.getViewport({ scale: 1.5 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport }).promise;
+            const ocrRes = await Tesseract.recognize(canvas, 'kor+eng');
+            fullText += '\n' + (ocrRes?.data?.text || '');
+          } catch (e) {
+            console.warn('PDF page canvas OCR error:', e);
+          }
+        }
+      }
+      return fullText;
+    } catch (err) {
+      console.error('extractTextFromPdf error:', err);
+      return '';
+    }
+  }
+
   async function handleOcrFiles(files) {
     if (!files.length) return;
     previewBox.style.display = 'block';
@@ -4769,37 +4936,48 @@ function bindOcrTab() {
       <div style="display:flex;align-items:center;gap:10px;padding:12px 6px;">
         <span class="spin"></span>
         <div>
-          <div style="font-weight:850;color:var(--text);font-size:13.5px;">사진 AI 판독 중…</div>
-          <div id="ocrProgressLabel" style="font-size:11.5px;color:#8b5cf6;font-weight:750;margin-top:2px;">텍스트 및 질병·수술코드 인식 준비 중</div>
+          <div style="font-weight:850;color:var(--text);font-size:13.5px;">서류 및 사진 AI 분석 중… (총 ${files.length}개 파일)</div>
+          <div id="ocrProgressLabel" style="font-size:11.5px;color:#8b5cf6;font-weight:750;margin-top:2px;">파일 형식 파악 및 텍스트·PDF 분석 준비 중</div>
         </div>
       </div>`;
 
-    let extractedText = '';
+    let allExtractedText = '';
 
-    // Tesseract.js가 로드되어 있으면 실제 OCR 실행
-    if (typeof Tesseract !== 'undefined') {
-      try {
-        const file = files[0];
-        const res = await Tesseract.recognize(file, 'kor+eng', {
-          logger: m => {
-            const pEl = $('#ocrProgressLabel');
-            if (pEl && m.status === 'recognizing text') {
-              const pct = Math.floor((m.progress || 0) * 100);
-              pEl.textContent = `글자 인식 중... (${pct}%)`;
-            }
-          }
+    for (let fIdx = 0; fIdx < files.length; fIdx++) {
+      const file = files[fIdx];
+      const pEl = $('#ocrProgressLabel');
+      if (pEl) pEl.textContent = `[${fIdx + 1}/${files.length}] ${file.name} 분석 중…`;
+
+      const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+      if (isPdf) {
+        const pdfText = await extractTextFromPdf(file, (p, total) => {
+          if (pEl) pEl.textContent = `[${fIdx + 1}/${files.length}] ${file.name} PDF 읽는 중 (${p}/${total}쪽)`;
         });
-        extractedText = res?.data?.text || '';
-      } catch (err) {
-        console.warn('Tesseract OCR error:', err);
+        allExtractedText += `\n\n=== [문서: ${file.name}] ===\n` + pdfText;
+      } else {
+        if (typeof Tesseract !== 'undefined') {
+          try {
+            const res = await Tesseract.recognize(file, 'kor+eng', {
+              logger: m => {
+                if (pEl && m.status === 'recognizing text') {
+                  const pct = Math.floor((m.progress || 0) * 100);
+                  pEl.textContent = `[${fIdx + 1}/${files.length}] ${file.name} 글자 인식 중... (${pct}%)`;
+                }
+              }
+            });
+            allExtractedText += `\n\n=== [사진: ${file.name}] ===\n` + (res?.data?.text || '');
+          } catch (err) {
+            console.warn('Tesseract OCR error:', err);
+          }
+        }
       }
     }
 
-    if (!extractedText.trim()) {
-      extractedText = files.map(f => f.name).join(' ');
+    if (!allExtractedText.trim()) {
+      allExtractedText = files.map(f => f.name).join(' ');
     }
 
-    renderOcrAnalysisResult(extractedText, files.length);
+    renderOcrAnalysisResult(allExtractedText, files.length);
   }
 
   function handleOcrText(rawText) {
@@ -4816,10 +4994,21 @@ function bindOcrTab() {
 
   function renderOcrAnalysisResult(rawText, fileCount) {
     const parsed = parseDiagnosisAndSurgeries(rawText);
+
+    // 증권/제안서에서 회사가 인식된 경우 회사 필터 자동 동기화
+    if (parsed.policyInfo && parsed.policyInfo.hasPolicy && parsed.policyInfo.company) {
+      ocrCos = [parsed.policyInfo.company];
+      ocrCo = parsed.policyInfo.company;
+      const b = $('#ocrCoBadge');
+      if (b) b.textContent = ocrCo;
+      const sb = $('#ocrSummaryBadge');
+      if (sb) sb.textContent = `(${ocrCo})`;
+    }
+
     const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
     const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
 
-    const sourceLabel = fileCount > 0 ? `서류 사진 ${fileCount}장 판독 완료` : `진단서 텍스트 분석 완료`;
+    const sourceLabel = fileCount > 0 ? `서류 및 사진 ${fileCount}건 AI 통합 판독 완료` : `진단서 텍스트 분석 완료`;
 
     let html = `
       <div style="font-weight:850;color:#8b5cf6;font-size:14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
@@ -4827,7 +5016,66 @@ function bindOcrTab() {
         <span style="font-size:11.5px;color:var(--text-2);font-weight:700;">${coText} ${dtText}</span>
       </div>`;
 
-    // 1. 인식된 질병코드 칩 나열
+    // 1. [증권/제안서 인식 정보 카드]
+    if (parsed.policyInfo && parsed.policyInfo.hasPolicy) {
+      const p = parsed.policyInfo;
+      const tierPills = Object.entries(p.tierAmounts).sort((a,b)=>a[0]-b[0]).map(([tier, amt]) => `
+        <span style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.3);padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:850;color:#1d4ed8;">
+          1~5종 [${tier}종]: ${(amt / 10000).toLocaleString()}만원
+        </span>
+      `).join('');
+
+      html += `
+        <div style="background:linear-gradient(135deg,rgba(49,130,246,0.08),rgba(37,99,235,0.04));border:1.5px solid #2563eb;border-radius:14px;padding:13px 14px;margin-bottom:12px;text-align:left;box-shadow:var(--shadow-1);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid rgba(37,99,235,0.2);padding-bottom:8px;flex-wrap:wrap;gap:6px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:18px;">📄</span>
+              <span style="font-size:14px;font-weight:900;color:#1d4ed8;">인식된 가입내역: ${esc(p.company || '가입 보험사')}</span>
+              ${p.productName ? `<span style="font-size:12px;color:var(--text-2);font-weight:750;">(${esc(p.productName)})</span>` : ''}
+            </div>
+            ${p.customerName ? `<span style="background:#2563eb;color:#fff;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:850;">피보험자: ${esc(p.customerName)} 님</span>` : ''}
+          </div>
+          <div style="font-size:12px;color:var(--text);line-height:1.55;">
+            <div style="font-size:11px;font-weight:800;color:var(--text-3);margin-bottom:5px;">가입 특약별 지급 기준금액:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;">
+              ${tierPills || '<span style="font-size:11.5px;color:var(--text-2);">특약 금액 세부 확인 필요</span>'}
+              ${p.cancerSurgAmount ? `<span style="background:rgba(219,39,119,0.08);border:1px solid rgba(219,39,119,0.3);padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:850;color:#db2777;">암수술: ${(p.cancerSurgAmount / 10000).toLocaleString()}만원</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // 2. [최종 예상 지급 수술비 정산 결과 카드] (증권 담보와 진단서 수술이 결합된 경우!)
+    if (parsed.policyInfo && parsed.policyInfo.hasPolicy && parsed.surgeries.length > 0) {
+      const p = parsed.policyInfo;
+      const topTier = Math.max(...parsed.surgeries.map(s => s.tier5Num || 1));
+      const payableAmount = p.tierAmounts[topTier] || (topTier === 1 ? 200000 : (topTier === 2 ? 300000 : 0));
+      const isSameSite = parsed.surgeries.every(s => s.site === parsed.surgeries[0].site);
+      const siteName = parsed.surgeries[0].site || '해당 신체부위';
+
+      html += `
+        <div style="background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.06));border:2px solid #059669;border-radius:14px;padding:14px;margin-bottom:14px;text-align:left;box-shadow:var(--shadow-1);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;border-bottom:1px solid rgba(16,185,129,0.25);padding-bottom:8px;flex-wrap:wrap;gap:6px;">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span style="font-size:20px;">💰</span>
+              <div>
+                <span style="font-size:14.5px;font-weight:900;color:#047857;">최종 예상 지급 수술비 정산 결과</span>
+                <div style="font-size:11px;color:var(--text-2);margin-top:1px;">가입제안서 담보 × 의무기록 수술 대조 판정</div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:18px;font-weight:900;color:#059669;">${payableAmount > 0 ? payableAmount.toLocaleString() + '원' : '약관 기준 확인'}</span>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text);line-height:1.6;font-weight:750;">
+            • <b>${esc(p.company || '가입 보험사')}</b> 1~5종 수술특약: <b>[ ${topTier}종 ${(payableAmount / 10000).toLocaleString()}만원 지급 ]</b><br>
+            ${isSameSite ? `• <b>동시수술 판정</b>: 동일 부위(<strong>${esc(siteName)}</strong>) 총 ${parsed.surgeries.length}개 수술 동시 시행 → 약관 규정에 따라 최고 종수인 <b>[ ${topTier}종 1회만 지급 ]</b><br>` : ''}
+            • <b>세부 적용 내역</b>: ${parsed.surgeries.map(s => `${s.name.split('(')[0].trim()}(${s.tier5})`).join(' + ')} 중 최고 등급인 <b>${topTier}종 가입금액 지급</b> (중복 지급 불가)
+          </div>
+        </div>`;
+    }
+
+    // 3. 인식된 질병코드 칩 나열
     if (parsed.codes.length > 0) {
       const codeChips = parsed.codes.map(c => `
         <span style="background:rgba(139,92,246,0.12);color:#7c3aed;padding:3px 8px;border-radius:6px;font-size:11.5px;font-weight:850;border:1px solid rgba(139,92,246,0.25);">
@@ -4844,8 +5092,8 @@ function bindOcrTab() {
         </div>`;
     }
 
-    // 2. 복합 동시수술 판정 배너 (수술이 2개 이상일 때)
-    if (parsed.surgeries.length >= 2) {
+    // 4. 복합 동시수술 판정 배너 (증권 미첨부이고 수술이 2개 이상일 때)
+    if (!parsed.policyInfo?.hasPolicy && parsed.surgeries.length >= 2) {
       const topTier = Math.max(...parsed.surgeries.map(s => s.tier5Num));
       const isSameSite = parsed.surgeries.every(s => s.site === parsed.surgeries[0].site);
       const siteName = parsed.surgeries[0].site || '해당 신체부위';
@@ -4867,8 +5115,44 @@ function bindOcrTab() {
         </div>`;
     }
 
-    // 3. 개별 수술별 판정 카드 렌더링
-    if (parsed.surgeries.length > 0) {
+    // 5. [빠른검색 카드 규격으로 추출 질환/수술별 카드 렌더링!]
+    const matchedGiSet = new Set();
+    const parsedObj = {
+      cos: ocrCos,
+      co: ocrCos.length === 1 ? ocrCos[0] : (ocrCos.length > 1 ? ocrCos.join(', ') : null),
+      year: (ocrGen === 'recent' ? 2024 : 2018),
+      month: 1
+    };
+
+    // 1) 인식된 질병코드로 매칭 (J34.2, J34.3, J32.0, J32.2 등)
+    parsed.codes.forEach(c => {
+      const code = c.code.toUpperCase();
+      const cleanCode = code.replace(/[^A-Z0-9]/g, '');
+      const baseCode = cleanCode.slice(0, 3);
+      for (const target in state.D.codeIndex) {
+        const cleanTarget = target.replace(/[^A-Z0-9]/g, '');
+        if (cleanTarget === cleanCode || cleanTarget === baseCode || cleanCode.startsWith(cleanTarget) || cleanTarget.startsWith(cleanCode)) {
+          (state.D.codeIndex[target] || []).forEach(gi => matchedGiSet.add(gi));
+        }
+      }
+    });
+
+    // 2) 인식된 수술명으로 매칭
+    parsed.surgeries.forEach(s => {
+      const sRes = search(s.name) || { groups: [] };
+      (sRes.groups || []).slice(0, 2).forEach(gi => matchedGiSet.add(gi));
+      if (s.edi) {
+        const ediRes = search(s.edi) || { groups: [] };
+        (ediRes.groups || []).slice(0, 1).forEach(gi => matchedGiSet.add(gi));
+      }
+    });
+
+    const matchedGis = Array.from(matchedGiSet);
+
+    if (matchedGis.length > 0) {
+      html += `<div style="font-size:12.5px;font-weight:900;color:var(--text);margin:14px 0 8px 4px;">추출 질환·수술별 빠른 판정 결과 (총 ${matchedGis.length}건):</div>`;
+      html += matchedGis.slice(0, 8).map(gi => cardQuickHTML(gi, state.D.g[gi].n, null, parsedObj)).join('');
+    } else if (parsed.surgeries.length > 0) {
       html += `<div style="font-size:12px;font-weight:850;color:var(--text);margin-bottom:8px;text-align:left;">추출된 수술별 세부 판정 내역:</div>`;
 
       parsed.surgeries.forEach((s, idx) => {
@@ -4914,6 +5198,7 @@ function bindOcrTab() {
     }
 
     resultCard.innerHTML = html;
+    bindCardActions(resultCard);
   }
 }
 
@@ -5104,6 +5389,23 @@ function bindCardActions(box) {
       }
     });
   });
+
+  // N대질병 행 클릭 시 회사별 N대 상세 서랍 토글 바인딩
+  $$('.btn-toggle-quick-ndai', box).forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const parent = row.closest('.quick-3verdict-box') || row.parentElement;
+      const drawer = parent ? parent.querySelector('.quick-ndai-drawer') : null;
+      const arrow = row.querySelector('.qndai-arrow');
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'block' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '(접기 ∧)' : '(터치 시 회사별 N대 상세 ▾)';
+    });
+  });
+
+  // N대 서랍 내부 [질병코드 보기 ▾] 서랍 이벤트 바인딩
+  bindNdaiCodeExpand(box);
 
   // 빠른검색 카드에서 정밀진단으로 즉시 점프
   $$('.btn-jump-tier', box).forEach(btn => {
