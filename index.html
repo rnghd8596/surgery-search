@@ -90,7 +90,8 @@ window.onerror = function(msg, url, line, col, err) {
     <nav class="tabs" id="tabs" role="tablist">
       <button class="tab on" data-tab="home" role="tab">홈</button>
       <button class="tab" data-tab="quick" role="tab">빠른검색</button>
-      <button class="tab" data-tab="tier" role="tab">종수술비</button>
+      <button class="tab" data-tab="tier" role="tab">3·5종수술</button>
+      <button class="tab" data-tab="tier78" role="tab">7·8종수술</button>
       <button class="tab" data-tab="ndai" role="tab">N대질병</button>
       <button class="tab" data-tab="ocr" role="tab">사진검색</button>
     </nav>
@@ -123,11 +124,22 @@ window.onerror = function(msg, url, line, col, err) {
           <div style="display:flex;align-items:center;gap:12px;">
             <span style="font-size:26px;">📋</span>
             <div style="text-align:left;">
-              <div style="font-size:15.5px;font-weight:900;color:#1d4ed8;">종수술비 정밀검색 (1~3종 · 1~5종)</div>
-              <div style="font-size:12px;color:var(--text-3);margin-top:2px;">가입 년·월 및 1~3종·1~5종 약관 맞춤 판정</div>
+              <div style="font-size:15.5px;font-weight:900;color:#1d4ed8;">종수술비 정밀검색 (3종 · 5종)</div>
+              <div style="font-size:12px;color:var(--text-3);margin-top:2px;">가입 년·월 및 1~3종·1~5종 약관 맞춤 대조</div>
             </div>
           </div>
           <span style="font-size:17px;color:#1d4ed8;font-weight:800;">→</span>
+        </button>
+
+        <button type="button" class="quick-shortcut-banner" data-go="tier78" style="background:rgba(13,148,136,0.06);border:1.5px solid rgba(13,148,136,0.3);border-radius:14px;padding:15px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;box-shadow:var(--shadow-1);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:26px;">📑</span>
+            <div style="text-align:left;">
+              <div style="font-size:15.5px;font-weight:900;color:#0d9488;">종수술비 정밀검색 (7종 · 8종)</div>
+              <div style="font-size:12px;color:var(--text-3);margin-top:2px;">현대·메리츠 7종(급여) 및 삼성화재 8종 KDRG 코드 판정</div>
+            </div>
+          </div>
+          <span style="font-size:17px;color:#0d9488;font-weight:800;">→</span>
         </button>
 
         <button type="button" class="quick-shortcut-banner" data-go="ndai" style="background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.3);border-radius:14px;padding:15px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;box-shadow:var(--shadow-1);">
@@ -308,6 +320,35 @@ window.onerror = function(msg, url, line, col, err) {
       </div>
 
       <div id="results-tier" class="results" aria-live="polite"></div>
+    </section>
+
+    <!-- ───────── 2-2. 7·8종수술비 정밀검색 (1~7종 급여수술 · 1~8종 질병·상해) ───────── -->
+    <section id="pane-tier78" class="pane" hidden>
+      <div class="hero" id="hero-tier78">
+        <p class="hero-eyebrow" style="color:#0d9488;background:rgba(13,148,136,0.12);">1~7종 · 1~8종 수술비 정밀검색</p>
+        <h2 class="hero-title"><span style="background:linear-gradient(100deg,#0d9488,#14b8a6 55%,#2dd4bf);-webkit-background-clip:text;background-clip:text;color:transparent;">종수술비 판정</span> (7종 · 8종)</h2>
+        <p class="hero-sub">현대해상·메리츠 1~7종(급여) 및 삼성화재 1~8종 KDRG ADRG 수술코드 대조</p>
+      </div>
+
+      <!-- 검색 공식 가이드 -->
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:10px;text-align:left;">
+        <div style="font-size:12px;font-weight:850;color:#0d9488;margin-bottom:2px;">💡 수술명 또는 KDRG ADRG 수술코드를 입력하세요</div>
+        <div style="font-size:12.5px;font-weight:800;color:var(--text);line-height:1.4;">[수술명] 또는 [ADRG 수술코드]</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">예시: A010, B173, 간이식, 추간판, 충수, 백내장, 위절제, 골절, 인공관절</div>
+      </div>
+
+      <!-- 7·8종 검색창 -->
+      <div class="search-wrap" style="margin-bottom:12px;" id="tier78SearchWrap">
+        <div class="searchbox">
+          <svg class="s-ico" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="#0d9488" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
+          <input id="q-tier78" type="search" placeholder="수술명 · KDRG 코드 입력 (예: A010, 추간판)" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-label="7·8종수술비 검색어">
+          <button id="clearBtn-tier78" class="clear-btn" hidden aria-label="지우기">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="results-tier78" class="results" aria-live="polite"></div>
     </section>
 
     <!-- ───────── 3. N대질병수술비 정밀검색 (손해 13 · 생명 18 전사 & 계층 트리) ───────── -->
@@ -555,7 +596,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261109zzh"></script>
-<script src="app.js?v=20261109zzh"></script>
+<script src="assets/curated.js?v=20261109zzi"></script>
+<script src="app.js?v=20261109zzi"></script>
 </body>
 </html>

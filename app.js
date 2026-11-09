@@ -858,18 +858,19 @@ async function decryptBlob(buf, key) {
   return JSON.parse(new TextDecoder().decode(decompressed));
 }
 async function unlockWithKey(key) {
-  const [d, e, x, b, t] = await Promise.all([
+  const [d, e, x, b, t, k78] = await Promise.all([
     fetch('assets/data/diseases.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
     fetch('assets/data/edi.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
     fetch('assets/data/exc.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
     fetch('assets/data/bunri.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)),
     fetch('assets/data/tiers.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)).catch(() => null),
+    fetch('assets/data/kdrg78.dat').then(r => r.arrayBuffer()).then(buf => decryptBlob(buf, key)).catch(() => null),
   ]);
-  return { d, e, x, b, t };
+  return { d, e, x, b, t, k78 };
 }
 
 /* ───────────────────────── 인덱스 빌드 ───────────────────────── */
-let idx = { name: [], syn: [], edi: [], tier: [], tierCode: new Map() };
+let idx = { name: [], syn: [], edi: [], tier: [], tierCode: new Map(), kdrg78: [] };
 
 function buildIndex() {
   const D = state.D;
@@ -929,6 +930,9 @@ function buildIndex() {
       if (!arr.includes(t.i)) arr.push(t.i);
     });
   });
+
+  /* 7·8종 급여 수술비 (KDRG ADRG 분류) */
+  idx.kdrg78 = (state.K78 && Array.isArray(state.K78.rows)) ? state.K78.rows : [];
 }
 
 const CHOSUNG = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -1020,6 +1024,7 @@ function start(data) {
   state.X = data.x;
   state.B = data.b;
   state.T = data.t || null;
+  state.K78 = data.k78 || null;
 
   buildIndex();
 
@@ -1030,6 +1035,7 @@ function start(data) {
   bindNavTabs();
   bindQuickTab();
   bindTierTab();
+  bindTier78Tab();
   bindNdaiTab();
   bindOcrTab();
 
@@ -1056,6 +1062,7 @@ function switchTab(tabKey, targetQ = '') {
   if ($('#pane-home')) $('#pane-home').hidden = tabKey !== 'home';
   $('#pane-quick').hidden = tabKey !== 'quick';
   $('#pane-tier').hidden = tabKey !== 'tier';
+  if ($('#pane-tier78')) $('#pane-tier78').hidden = tabKey !== 'tier78';
   $('#pane-ndai').hidden = tabKey !== 'ndai';
   $('#pane-ocr').hidden = tabKey !== 'ocr';
   if ($('#pane-about')) $('#pane-about').hidden = tabKey !== 'about';
@@ -1092,6 +1099,19 @@ function switchTab(tabKey, targetQ = '') {
       renderTierEmptyExample();
     }
     $('#q-tier')?.focus();
+  } else if (tabKey === 'tier78') {
+    if (targetQ) {
+      if ($('#q-tier78')) $('#q-tier78').value = targetQ;
+      state.tier78Q = targetQ;
+      if ($('#clearBtn-tier78')) $('#clearBtn-tier78').hidden = false;
+      runTier78Search(targetQ);
+    } else {
+      if ($('#q-tier78')) $('#q-tier78').value = '';
+      state.tier78Q = '';
+      if ($('#clearBtn-tier78')) $('#clearBtn-tier78').hidden = true;
+      renderTier78EmptyExample();
+    }
+    $('#q-tier78')?.focus();
   } else if (tabKey === 'ndai') {
     if (targetQ) {
       if ($('#q-ndai')) $('#q-ndai').value = targetQ;
@@ -3080,6 +3100,159 @@ function cardTierHTML(gi, q, matchedEdi) {
 
     <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
+}
+
+/* ───────────────────────── 2-2. 7·8종 급여 수술비 정밀검색 (KDRG ADRG 분류) ───────────────────────── */
+function bindTier78Tab() {
+  const qEl = $('#q-tier78');
+  const clearBtn = $('#clearBtn-tier78');
+  if (!qEl) return;
+
+  qEl.addEventListener('input', debounce((e) => {
+    const q = e.target.value.trim();
+    if (clearBtn) clearBtn.hidden = !q;
+    runTier78Search(q);
+  }, 70));
+
+  clearBtn?.addEventListener('click', () => {
+    qEl.value = '';
+    clearBtn.hidden = true;
+    renderTier78EmptyExample();
+    qEl.focus();
+  });
+
+  renderTier78EmptyExample();
+}
+
+function runTier78Search(rawQ) {
+  const q = (rawQ || '').trim();
+  const resEl = $('#results-tier78');
+  if (!resEl) return;
+  const clearBtn = $('#clearBtn-tier78');
+  if (clearBtn) clearBtn.hidden = !q;
+
+  if (!q) {
+    renderTier78EmptyExample();
+    return;
+  }
+
+  const rows = idx.kdrg78 || [];
+  const qNorm = norm(q);
+  const qUpper = q.toUpperCase();
+
+  const matches = rows.filter(r => {
+    return (r.c && r.c.toUpperCase().includes(qUpper)) ||
+           (r.n && (r.n.includes(q) || norm(r.n).includes(qNorm))) ||
+           (r.g && (r.g.includes(q) || norm(r.g).includes(qNorm)));
+  });
+
+  if (matches.length === 0) {
+    resEl.innerHTML = `
+      <div class="empty-box" style="text-align:center;padding:32px 16px;">
+        <span style="font-size:32px;display:block;margin-bottom:8px;">🔍</span>
+        <h3 style="font-size:16px;font-weight:900;color:var(--text);margin-bottom:4px;">“${esc(q)}”에 대한 7·8종 검색 결과가 없습니다</h3>
+        <p style="font-size:12.5px;color:var(--text-3);margin:0;">KDRG 수술코드(예: A010, B173) 또는 한글 수술명(간이식, 추간판, 충수)으로 검색해 보세요.</p>
+      </div>`;
+    return;
+  }
+
+  resEl.innerHTML = `
+    <div style="font-size:12px;font-weight:800;color:#0d9488;margin:8px 0 12px;display:flex;align-items:center;justify-content:space-between;">
+      <span>“${esc(q)}” 7·8종 검색 결과</span>
+      <span style="background:rgba(13,148,136,0.12);color:#0d9488;padding:2px 8px;border-radius:6px;font-size:11px;">분류 ${matches.length}건</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      ${matches.map(item => cardTier78HTML(item, q)).join('')}
+    </div>`;
+}
+
+function cardTier78HTML(item, q) {
+  const t7Badge = item.t7 ? `<span class="proc-tag t${item.t7}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;margin-top:1px;">${item.t7}종</span>` : `<span class="proc-tag t-none" style="font-size:12px;font-weight:800;padding:2px 6px;border-radius:5px;flex-shrink:0;">비해당</span>`;
+  const t8Badge = item.t8 ? `<span class="proc-tag t${item.t8}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;margin-top:1px;">${item.t8}종</span>` : `<span class="proc-tag t-none" style="font-size:12px;font-weight:800;padding:2px 6px;border-radius:5px;flex-shrink:0;">비해당</span>`;
+
+  return `
+  <article class="card" style="border:1.5px solid rgba(13,148,136,0.22);border-radius:14px;padding:14px 16px;background:var(--surface);">
+    <div class="card-head">
+      <div class="card-top" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span class="kcd-badge-big" style="background:rgba(13,148,136,0.12);color:#0d9488;border:1.5px solid rgba(13,148,136,0.3);font-size:13px;font-weight:900;padding:2px 8px;border-radius:6px;">${esc(item.c)}</span>
+        <h3 class="card-name" style="font-size:16px;font-weight:900;color:var(--text);margin:0;flex:1;">${hl(item.n, q)}</h3>
+        ${item.g ? `<span style="font-size:11.5px;color:var(--text-3);font-weight:800;background:var(--surface-2);padding:2px 8px;border-radius:5px;border:1px solid var(--border);white-space:nowrap;">${esc(item.g)}</span>` : ''}
+      </div>
+
+      <div class="judge-box" style="background:var(--surface-2);border:1.5px solid rgba(13,148,136,0.25);border-radius:10px;padding:10px 12px;">
+        <div class="judge-head-meta" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span class="meta-type" style="font-size:11.5px;font-weight:850;color:#0d9488;">종수술비 정밀 판정 (7종 · 8종 대조)</span>
+          <span class="meta-co" style="font-size:10.5px;color:var(--text-3);font-weight:700;">KDRG ADRG 분류</span>
+        </div>
+
+        <!-- 1~7종 vs 1~8종 2분할 대조 박스 (좌우 5:5 동일 크기 고정) -->
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 10px 0;">
+          <!-- 1~7종 특약 -->
+          <div style="background:var(--surface);border:1.5px solid rgba(13,148,136,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:11px;font-weight:850;color:#0d9488;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+              <span>1~7종 급여수술특약</span>
+              <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">현대·메리츠</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:7px;">
+              ${t7Badge}
+              <span style="font-size:11.5px;font-weight:800;color:var(--text);line-height:1.35;word-break:keep-all;">${item.t7 ? '급여 수술 7종 분류표 ' + item.t7 + '종' : '1~7종 분류표 비해당'}</span>
+            </div>
+          </div>
+
+          <!-- 1~8종 특약 -->
+          <div style="background:var(--surface);border:1.5px solid rgba(13,148,136,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
+            <div style="font-size:11px;font-weight:850;color:#0f766e;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+              <span>1~8종 질병·상해특약</span>
+              <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">삼성화재</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:7px;">
+              ${t8Badge}
+              <span style="font-size:11.5px;font-weight:800;color:var(--text);line-height:1.35;word-break:keep-all;">${item.t8 ? '질병·상해 8종 분류표 ' + item.t8 + '종' : '1~8종 분류표 비해당'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="judge-main-row" style="margin-top:6px;">
+          <div class="judge-main-info" style="width:100%;">
+            <div style="font-size:12px;color:var(--text-2);line-height:1.4;">
+              건강보험심사평가원 KDRG 버전 4.4 / ADRG 코드: <strong style="color:var(--text);">${esc(item.c)}</strong> ${item.g ? ' · 대분류: ' + esc(item.g) : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderTier78EmptyExample() {
+  const resEl = $('#results-tier78');
+  if (!resEl) return;
+  resEl.innerHTML = `
+    <div class="empty-example-card" style="background:rgba(13,148,136,0.05);border:1.5px solid rgba(13,148,136,0.25);border-radius:14px;padding:16px 18px;margin-top:8px;">
+      <div style="font-size:12.5px;font-weight:850;color:#0d9488;margin-bottom:4px;">💡 7·8종 수술비 검색 예시</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.45;">
+        KDRG 수술코드(A010, B173 등)나 수술명(추간판, 간이식, 충수, 백내장)을 입력하면 <strong>현대·메리츠 1~7종</strong>과 <strong>삼성화재 1~8종</strong>의 종수를 한눈에 대조합니다.
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+        <span style="font-size:11px;font-weight:800;color:var(--text-3);line-height:24px;">추천 검색:</span>
+        <button type="button" class="f-chip" data-q78="A010" style="font-size:11.5px;padding:3px 9px;">A010 (간이식)</button>
+        <button type="button" class="f-chip" data-q78="B173" style="font-size:11.5px;padding:3px 9px;">B173 (추간판)</button>
+        <button type="button" class="f-chip" data-q78="C061" style="font-size:11.5px;padding:3px 9px;">C061 (백내장)</button>
+        <button type="button" class="f-chip" data-q78="G241" style="font-size:11.5px;padding:3px 9px;">G241 (충수절제)</button>
+        <button type="button" class="f-chip" data-q78="J061" style="font-size:11.5px;padding:3px 9px;">J061 (유방절제)</button>
+      </div>
+    </div>`;
+
+  $$('#results-tier78 [data-q78]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q78;
+      const qEl = $('#q-tier78');
+      if (qEl) {
+        qEl.value = q;
+        runTier78Search(q);
+      }
+    });
+  });
 }
 
 /* ───────────────────────── 3. N대질병수술비 정밀검색 (판정 & 약관 트리) ───────────────────────── */
