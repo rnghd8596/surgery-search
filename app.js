@@ -1104,10 +1104,9 @@ function switchTab(tabKey, targetQ = '') {
     window.resetOcrTab();
   }
 
-  if (tabKey === 'disputes') {
-    renderDisputesList('all');
-    $$('#disputesFilterChips .f-chip').forEach(c => c.classList.toggle('on', c.dataset.dfilter === 'all'));
-  }
+  if (tabKey === 'home') {
+    // 메인 홈 화면
+  } else if (tabKey === 'quick') {
     if (targetQ) {
       if ($('#q-quick')) $('#q-quick').value = targetQ;
       state.quickQ = targetQ;
@@ -1123,6 +1122,7 @@ function switchTab(tabKey, targetQ = '') {
     $('#q-quick')?.focus();
   } else if (tabKey === 'disputes') {
     renderDisputesList('all');
+    $$('#disputesFilterChips .f-chip').forEach(c => c.classList.toggle('on', c.dataset.dfilter === 'all'));
   } else if (tabKey === 'tier') {
     if (targetQ) {
       if ($('#q-tier')) $('#q-tier').value = targetQ;
