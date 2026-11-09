@@ -5211,31 +5211,43 @@ function bindNdaiCodeExpand(container) {
   });
 }
 
-/* ───────────────────────── 5. 수술비 지급기준 (4대 유형) ───────────────────────── */
+/* ───────────────────────── 5. 동시수술 4대 약관 타입별 판정 ───────────────────────── */
 function bindRulesTab() {
-  const navBtns = $$('.rule-type-btn');
-  navBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      navBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const ruleNum = btn.dataset.rule;
-      for (let i = 1; i <= 4; i++) {
-        const card = $(`#ruleCard-${i}`);
-        if (card) card.style.display = (String(i) === String(ruleNum)) ? 'block' : 'none';
-      }
-    });
-  });
-
-  // 아코디언 버튼 토글
-  $$('.rules-accordion-btn').forEach(btn => {
+  // 약관 펼쳐보기 버튼 토글
+  $$('.btn-toggle-clause').forEach(btn => {
     btn.addEventListener('click', () => {
       const targetId = btn.dataset.target;
       const targetEl = $(`#${targetId}`);
-      const arrow = btn.querySelector('.acc-arrow');
+      const arrow = btn.querySelector('.toggle-arrow');
       if (targetEl) {
         const isOpen = targetEl.classList.toggle('open');
         if (arrow) arrow.textContent = isOpen ? '▴' : '▾';
       }
+    });
+  });
+
+  // 약관 회사 서브 탭 스위처
+  $$('.co-sub-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.closest('.co-sub-tab-bar');
+      if (group) {
+        group.querySelectorAll('.co-sub-btn').forEach(b => b.classList.remove('on'));
+      }
+      btn.classList.add('on');
+
+      const targetImgId = btn.dataset.targetImg;
+      const targetCapId = btn.dataset.targetCap;
+      const imgSrc = btn.dataset.imgSrc;
+      const fullSrc = btn.dataset.fullSrc;
+      const caption = btn.dataset.caption;
+
+      const imgEl = $(`#${targetImgId}`);
+      const capEl = $(`#${targetCapId}`);
+      const frameEl = imgEl ? imgEl.closest('.clause-photo-frame') : null;
+
+      if (imgEl && imgSrc) imgEl.src = imgSrc;
+      if (capEl && caption) capEl.textContent = caption + ' (터치 시 원본 확대)';
+      if (frameEl && fullSrc) frameEl.dataset.modalTarget = fullSrc;
     });
   });
 
@@ -5260,12 +5272,21 @@ function bindRulesTab() {
     if (modalImg) modalImg.src = '';
   };
 
-  $$('.rules-img-box[data-img], .btn-zoom-clause[data-img]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openModal(el.dataset.img);
+  // 약관 사진 클릭 시 고해상도 전체 모달
+  $$('.clause-photo-frame').forEach(frame => {
+    frame.addEventListener('click', () => {
+      const fullSrc = frame.dataset.modalTarget || frame.querySelector('img')?.src;
+      if (fullSrc) openModal(fullSrc);
     });
   });
+
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+}
 
   if (modalClose) modalClose.addEventListener('click', closeModal);
   if (modal) {
