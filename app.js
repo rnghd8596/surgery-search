@@ -1038,6 +1038,7 @@ function start(data) {
   bindTier78Tab();
   bindNdaiTab();
   bindOcrTab();
+  bindRulesTab();
 
   $$('.quick-shortcut-banner[data-go]').forEach(b => {
     b.addEventListener('click', () => switchTab(b.dataset.go));
@@ -1065,6 +1066,7 @@ function switchTab(tabKey, targetQ = '') {
   if ($('#pane-tier78')) $('#pane-tier78').hidden = tabKey !== 'tier78';
   $('#pane-ndai').hidden = tabKey !== 'ndai';
   $('#pane-ocr').hidden = tabKey !== 'ocr';
+  if ($('#pane-rules')) $('#pane-rules').hidden = tabKey !== 'rules';
   if ($('#pane-about')) $('#pane-about').hidden = tabKey !== 'about';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5207,6 +5209,70 @@ function bindNdaiCodeExpand(container) {
       });
     });
   });
+}
+
+/* ───────────────────────── 5. 수술비 지급기준 (4대 유형) ───────────────────────── */
+function bindRulesTab() {
+  const navBtns = $$('.rule-type-btn');
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      navBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const ruleNum = btn.dataset.rule;
+      for (let i = 1; i <= 4; i++) {
+        const card = $(`#ruleCard-${i}`);
+        if (card) card.style.display = (String(i) === String(ruleNum)) ? 'block' : 'none';
+      }
+    });
+  });
+
+  // 아코디언 버튼 토글
+  $$('.rules-accordion-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const targetEl = $(`#${targetId}`);
+      const arrow = btn.querySelector('.acc-arrow');
+      if (targetEl) {
+        const isOpen = targetEl.classList.toggle('open');
+        if (arrow) arrow.textContent = isOpen ? '▴' : '▾';
+      }
+    });
+  });
+
+  // 이미지 모달 뷰어
+  const modal = $('#rulesModal');
+  const modalImg = $('#rulesModalImg');
+  const modalClose = $('#btnRulesModalClose');
+
+  const openModal = (src) => {
+    if (!modal || !modalImg) return;
+    modalImg.src = src;
+    modal.classList.add('show');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeModal = () => {
+    if (!modal) return;
+    modal.classList.remove('show');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (modalImg) modalImg.src = '';
+  };
+
+  $$('.rules-img-box[data-img], .btn-zoom-clause[data-img]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openModal(el.dataset.img);
+    });
+  });
+
+  if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
 }
 
 })();
