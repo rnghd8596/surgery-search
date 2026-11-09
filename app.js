@@ -3017,29 +3017,29 @@ function cardTierHTML(gi, q, matchedEdi) {
           <span class="meta-co">${esc(co ? co : '전사 기준')}</span>
         </div>
 
-        <!-- 1~3종 vs 1~5종 2분할 대조 박스 -->
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 10px 0;">
+        <!-- 1~3종 vs 1~5종 2분할 대조 박스 (좌우 5:5 동일 크기 고정, 글자 길면 2줄 자동 줄바꿈) -->
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 10px 0;">
           <!-- 1~3종 특약 -->
-          <div style="background:var(--surface);border:1.5px solid rgba(49,130,246,0.3);border-radius:10px;padding:9px 11px;text-align:left;">
+          <div style="background:var(--surface);border:1.5px solid rgba(49,130,246,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
             <div style="font-size:11px;font-weight:850;color:#1d4ed8;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
               <span>1~3종 수술특약</span>
               <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">2006년 이전</span>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span class="proc-tag ${'t' + (parseInt(tier3Info.tier3) || 2)}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;">${tier3Info.tier3}</span>
-              <span style="font-size:11.5px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tier3Info.note3}</span>
+            <div style="display:flex;align-items:flex-start;gap:7px;">
+              <span class="proc-tag ${'t' + (parseInt(tier3Info.tier3) || 2)}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;margin-top:1px;">${tier3Info.tier3}</span>
+              <span style="font-size:11.5px;font-weight:800;color:var(--text);line-height:1.35;word-break:keep-all;">${tier3Info.note3}</span>
             </div>
           </div>
 
           <!-- 1~5종 특약 -->
-          <div style="background:var(--surface);border:1.5px solid rgba(49,130,246,0.3);border-radius:10px;padding:9px 11px;text-align:left;">
+          <div style="background:var(--surface);border:1.5px solid rgba(49,130,246,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
             <div style="font-size:11px;font-weight:850;color:#2563eb;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
               <span>1~5종 수술특약</span>
               <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">2006년 이후</span>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;">${esc(evalRes.tier)}</span>
-              <span style="font-size:11.5px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(evalRes.note)}</span>
+            <div style="display:flex;align-items:flex-start;gap:7px;">
+              <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;margin-top:1px;">${esc(evalRes.tier)}</span>
+              <span style="font-size:11.5px;font-weight:800;color:var(--text);line-height:1.35;word-break:keep-all;">${esc(evalRes.note)}</span>
             </div>
           </div>
         </div>
