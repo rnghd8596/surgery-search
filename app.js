@@ -1192,7 +1192,7 @@ function search(rawQ) {
         scored.push({ i: t.i, sc, pay: (t.x5 > 0 || t.x3 > 0) ? 0 : 1, len: t.nn.length });
       });
       scored.sort((a, b) => (a.sc - b.sc) || (a.pay - b.pay) || (a.len - b.len));
-      scored.slice(0, 6).forEach(o => tAdd(o.i));
+      scored.slice(0, 5).forEach(o => tAdd(o.i));
     }
   }
 
@@ -1362,7 +1362,7 @@ function search(rawQ) {
   }
 
   const primarySyn = matchingSyns.length > 0 ? matchingSyns[0] : null;
-  return { groups: gi.map(([i]) => i), edi: ediHits.slice(0, MAX_EDI), syn: primarySyn, q, matchedEdi, tiers: tierHits.slice(0, 5) };
+  return { groups: gi.map(([i]) => i), edi: ediHits.slice(0, MAX_EDI), syn: primarySyn, q, matchedEdi, tiers: tierHits.slice(0, 4) };
 }
 
 /* ───────────────────────── 수술코드 분류표(3종·5종) 판정 카드 ───────────────────────── */
@@ -1499,7 +1499,7 @@ function runQuickSearch(q, parsed) {
         <div class="res-title"><em>${esc(q)}</em> 빠른 판정 결과</div>
         ${subInfo}
       </div>
-      <div class="res-count">분류 ${res.groups.length}건</div>
+      <div class="res-count">${res.groups.length ? `분류 ${res.groups.length}건` : ""}${res.groups.length && (res.tiers||[]).length ? " · " : ""}${(res.tiers||[]).length ? `수술코드 ${res.tiers.length}건` : ""}</div>
     </div>`;
 
   if (!res.groups.length && !res.edi.length && !compPair && !exclProc && !tierHTML) {
@@ -2828,7 +2828,7 @@ function runTierSearch(q, family) {
   const head = `
     <div class="res-head">
       <div class="res-title"><em>${esc(q)}</em> 종수술비 정밀 결과 <span style="font-size:11.5px;color:var(--brand);font-weight:700;">[${esc(cLabel)} · ${esc(dtText)}]</span></div>
-      <div class="res-count">분류 ${res.groups.length}건</div>
+      <div class="res-count">${res.groups.length ? `분류 ${res.groups.length}건` : ""}${res.groups.length && (res.tiers||[]).length ? " · " : ""}${(res.tiers||[]).length ? `수술코드 ${res.tiers.length}건` : ""}</div>
     </div>
     ${familyBarHTML}`;
 
@@ -3429,7 +3429,7 @@ function runNdaiSearch(q, family) {
   const head = `
     <div class="res-head">
       <div class="res-title"><em>${esc(q)}</em> N대 수술비 판정 <span style="font-size:11.5px;color:#8b5cf6;font-weight:800;">[${esc(cLabel)}${esc(tLabel)}]</span></div>
-      <div class="res-count">분류 ${res.groups.length}건</div>
+      <div class="res-count">${res.groups.length ? `분류 ${res.groups.length}건` : ""}${res.groups.length && (res.tiers||[]).length ? " · " : ""}${(res.tiers||[]).length ? `수술코드 ${res.tiers.length}건` : ""}</div>
     </div>
     ${familyBarHTML}`;
 
