@@ -2364,6 +2364,85 @@ function renderBasicSurgeryBox(info) {
 
 
 
+/* ───────────────────────── 1~3종 특약 (2006년 이전 구약관) 종수 산출 ───────────────────────── */
+function get3TierForDisease(g, evalRes) {
+  const codes = (g.c || []).map(c => c.toUpperCase());
+  const name = g.n || '';
+
+  // 1. 암 / 악성신생물: 1~3종은 제80항 악성신생물 근치수술 [3종] (당시 최고 등급)
+  if (codes.some(c => c.startsWith('C') || c.startsWith('D0'))) {
+    return { tier3: '3종', note3: '구 1~3종 제80항 악성신생물 근치 (3종)' };
+  }
+
+  // 2. 인공관절치환술 (고관절·슬관절): 1~3종 제13-2항 사지관절관혈 [2종] (1~5종은 4종)
+  if (codes.some(c => c.startsWith('M17') || c.startsWith('M16') || c.startsWith('M15')) || name.includes('인공관절') || name.includes('치환술')) {
+    return { tier3: '2종', note3: '구 1~3종 제13-2항 사지관절관혈 (2종)' };
+  }
+
+  // 3. 개복·개흉 대수술 (위, 폐, 간, 신장, 대장 등 4종 해당 장기절제): 1~3종 제33·35·43항 등 [3종]
+  const tier5Num = parseInt(evalRes?.tier) || tierOf(g);
+  if (tier5Num >= 4) {
+    return { tier3: '3종', note3: '구 1~3종 개복·개흉 장기절제 (3종)' };
+  }
+
+  // 4. 척추 디스크 관혈수술: 1~3종 제9항 척추골·추간판 관혈 [3종]
+  if (codes.some(c => c.startsWith('M50') || c.startsWith('M51') || c.startsWith('M48')) || name.includes('추간판') || name.includes('디스크')) {
+    return { tier3: '3종', note3: '구 1~3종 제9항 척추골·추간판 관혈 (3종)' };
+  }
+
+  // 5. 요실금: 1~3종은 [2종] 지급! (2008년 이전 생보 2종 -> 1~5종은 1종으로 축소)
+  if (codes.some(c => c.startsWith('N39.3') || c.startsWith('N39.4') || c.startsWith('R32')) || name.includes('요실금')) {
+    return { tier3: '2종', note3: '구 1~3종 방광류·요실금 (2종)' };
+  }
+
+  // 6. 요로결석 체외충격파쇄석술 (ESWL): 1~3종 제86항 [2종]
+  if (codes.some(c => c.startsWith('N20') || c.startsWith('N21') || c.startsWith('N22') || c.startsWith('N23')) || name.includes('결석') || name.includes('쇄석')) {
+    return { tier3: '2종', note3: '구 1~3종 제86항 체내결석파쇄술 (2종)' };
+  }
+
+  // 7. 대장용종 (폴립절제술): 1~3종 제36항/제87항 [2종] (내시경 1~2종)
+  if (codes.some(c => c.startsWith('K63.5') || c.startsWith('D12') || c.startsWith('K62.1')) || name.includes('폴립') || name.includes('용종')) {
+    return { tier3: '2종', note3: '구 1~3종 폴립·종양절제 (2종)' };
+  }
+
+  // 8. 맘모톰 / 유방 종양: 1~3종 제4항 기타 유방수술 [2종] 준용
+  if (codes.some(c => c.startsWith('D24') || c.startsWith('N60') || c.startsWith('N63')) || name.includes('유방') || name.includes('맘모톰')) {
+    return { tier3: '2종', note3: '구 1~3종 제4항 유방수술 (2종 준용)' };
+  }
+
+  // 9. 백내장: 1~3종 제68항 백내장·수정체 관혈 [1종]
+  if (codes.some(c => c.startsWith('H25') || c.startsWith('H26')) || name.includes('백내장') || name.includes('수정체')) {
+    return { tier3: '1종', note3: '구 1~3종 제68항 백내장 관혈 (1종)' };
+  }
+
+  // 10. 치핵 / 치루: 1~3종 제44항 치루·치핵 근본수술 [1종]
+  if (codes.some(c => c.startsWith('K60') || c.startsWith('K64') || c.startsWith('K62')) || name.includes('치핵') || name.includes('치루') || name.includes('치질')) {
+    return { tier3: '1종', note3: '구 1~3종 제44항 치핵 근본수술 (1종)' };
+  }
+
+  // 11. 제왕절개: 1~3종 제54항 [1종]
+  if (codes.some(c => c.startsWith('O82')) || name.includes('제왕절개')) {
+    return { tier3: '1종', note3: '구 1~3종 제54항 제왕절개만출술 (1종)' };
+  }
+
+  // 12. 충수염 (맹장): 1~3종 제41항 [2종]
+  if (codes.some(c => c.startsWith('K35') || c.startsWith('K37')) || name.includes('충수') || name.includes('맹장')) {
+    return { tier3: '2종', note3: '구 1~3종 제41항 충수절제술 (2종)' };
+  }
+
+  // 13. 담석증: 1~3종 제36항 [2종]
+  if (codes.some(c => c.startsWith('K80') || c.startsWith('K81')) || name.includes('담석') || name.includes('담낭')) {
+    return { tier3: '2종', note3: '구 1~3종 제36항 담낭 관혈 (2종)' };
+  }
+
+  // 14. 일반 변환
+  if (tier5Num === 1) return { tier3: '1종', note3: '구 1~3종 수술분류표 기준 1종' };
+  if (tier5Num === 2) return { tier3: '2종', note3: '구 1~3종 수술분류표 기준 2종' };
+  if (tier5Num === 3) return { tier3: '2종', note3: '구 1~3종 수술분류표 기준 2종' };
+  if (tier5Num >= 4) return { tier3: '3종', note3: '구 1~3종 수술분류표 기준 3종' };
+  return { tier3: '2종', note3: '구 1~3종 수술분류표 기준' };
+}
+
 function cardQuickHTML(gi, q, matchedEdi, parsed) {
   const g = state.D.g[gi];
   const t = tierOf(g);
@@ -2434,9 +2513,14 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
             <span style="font-size:12.5px;font-weight:900;color:#2563eb;white-space:nowrap;">📋 종수 (1~3종 · 1~5종)</span>
             <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(t.w || g.n + ' 수술')} <span style="color:var(--text-3);font-size:10.5px;">(${esc(evalRes.note)})</span></span>
           </div>
-          <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
             ${diffPillHTML}
-            <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:12px;font-weight:900;padding:3px 8px;border-radius:5px;">${esc(evalRes.tier)}</span>
+            <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(49,130,246,0.12);border:1.5px solid rgba(49,130,246,0.4);padding:3px 7px;border-radius:6px;font-size:11px;font-weight:850;color:#1d4ed8;">
+              <span style="font-size:10px;color:var(--text-3);font-weight:700;">1~3종</span> <strong style="font-size:12.5px;font-weight:900;">${get3TierForDisease(g, evalRes).tier3}</strong>
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:4px;background:#2563eb;border:1.5px solid #1d4ed8;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:850;color:#fff;box-shadow:0 1px 3px rgba(37,99,235,0.25);">
+              <span style="font-size:10px;opacity:0.85;font-weight:700;">1~5종</span> <strong style="font-size:12.5px;font-weight:900;">${esc(evalRes.tier)}</strong>
+            </span>
           </div>
         </div>
 
@@ -2887,6 +2971,7 @@ function cardTierHTML(gi, q, matchedEdi) {
     : (co ? co.split(',').map(s => s.trim()).filter(Boolean) : []);
 
   const evalRes = evaluateSurgery(g, cosList, year, month);
+  const tier3Info = get3TierForDisease(g, evalRes);
 
   let ediBanner = '';
   if (matchedEdi) {
@@ -2928,15 +3013,41 @@ function cardTierHTML(gi, q, matchedEdi) {
 
       <div class="judge-box">
         <div class="judge-head-meta">
-          <span class="meta-type">종수술비 정밀 판정 (1~3종 · 1~5종)</span>
+          <span class="meta-type">종수술비 정밀 판정 (1~3종 · 1~5종 대조)</span>
           <span class="meta-co">${esc(co ? co : '전사 기준')}</span>
         </div>
+
+        <!-- 1~3종 vs 1~5종 2분할 대조 박스 -->
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:8px 0 10px 0;">
+          <!-- 1~3종 특약 -->
+          <div style="background:var(--surface);border:1.5px solid rgba(49,130,246,0.3);border-radius:10px;padding:9px 11px;text-align:left;">
+            <div style="font-size:11px;font-weight:850;color:#1d4ed8;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+              <span>1~3종 수술특약</span>
+              <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">2006년 이전</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="proc-tag ${'t' + (parseInt(tier3Info.tier3) || 2)}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;">${tier3Info.tier3}</span>
+              <span style="font-size:11.5px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tier3Info.note3}</span>
+            </div>
+          </div>
+
+          <!-- 1~5종 특약 -->
+          <div style="background:var(--surface);border:1.5px solid rgba(49,130,246,0.3);border-radius:10px;padding:9px 11px;text-align:left;">
+            <div style="font-size:11px;font-weight:850;color:#2563eb;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+              <span>1~5종 수술특약</span>
+              <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">2006년 이후</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;">${esc(evalRes.tier)}</span>
+              <span style="font-size:11.5px;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(evalRes.note)}</span>
+            </div>
+          </div>
+        </div>
+
         <div class="judge-main-row">
-          <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)} judge-tier-badge">${esc(evalRes.tier)}</span>
-          <div class="judge-main-info">
+          <div class="judge-main-info" style="width:100%;">
             <div class="judge-proc-title">${esc(g.n)} 수술</div>
             ${diffPillHTML}
-            <div class="judge-sub-note">${esc(evalRes.note)}</div>
           </div>
         </div>
         ${evalRes.boxHTML}
