@@ -6162,9 +6162,26 @@ function renderDisputesList(filterKey = 'all') {
       const id = btn.dataset.id;
       const item = allCases.find(x => x.id === id);
       if (!item) return;
-      copyToClipboard(item.customerMsg, btn, '✓ 고객 안내문 복사완료!');
+      const text = item.customerMsg;
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<span>✓ 고객 안내문 복사완료!</span>';
+          btn.style.background = '#059669';
+          setTimeout(() => { btn.innerHTML = orig; btn.style.background = 'linear-gradient(135deg,#e11d48,#be123c)'; }, 1500);
+        });
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✓ 고객 안내문 복사완료!</span>';
+        btn.style.background = '#059669';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.background = 'linear-gradient(135deg,#e11d48,#be123c)'; }, 1500);
+      }
     });
   });
 }
+
+window.renderDisputesList = renderDisputesList;
 
 })();
