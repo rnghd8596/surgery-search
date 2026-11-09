@@ -5288,12 +5288,4 @@ function bindRulesTab() {
   }
 }
 
-  if (modalClose) modalClose.addEventListener('click', closeModal);
-  if (modal) {
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
-  }
-}
-
 })();
