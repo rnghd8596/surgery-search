@@ -2191,6 +2191,8 @@ function renderBasicSurgeryBox(info) {
     </div>`;
 }
 
+
+
 function cardQuickHTML(gi, q, matchedEdi, parsed) {
   const g = state.D.g[gi];
   const t = tierOf(g);
