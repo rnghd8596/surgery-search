@@ -4437,14 +4437,6 @@ function cardNdaiHTML(gi, q) {
   const nTier = state.ndaiTier;
 
   const contentHTML = renderNdaiDetailsHTML(g, cosList, nTier);
-            <span>⚠️ N대 질병수술비 특약 미포함 (종수술비 청구)</span>
-          </div>
-          <div style="font-size:11px;color:var(--text-3);margin-top:2px;">
-            N대 질병수술비 분류표에는 제외된 질환이므로 1~5종 종수술비로 청구를 진행합니다.
-          </div>
-        </div>`;
-    }
-  }
 
   return `
   <article class="card" data-gi="${gi}">
