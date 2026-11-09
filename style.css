@@ -13,8 +13,8 @@
   --shadow-pop:0 16px 48px rgba(17,24,39,.16);
 
   --t1:#0284C7; --t1-bg:#E0F2FE;
-  --t2:#15803D; --t2-bg:#DCFCE7;
-  --t3:#1D4ED8; --t3-bg:#DBEAFE;
+  --t2:#1D4ED8; --t2-bg:#DBEAFE;
+  --t3:#4338CA; --t3-bg:#E0E7FF;
   --t4:#7E22CE; --t4-bg:#F3E8FF;
   --t5:#BE123C; --t5-bg:#FFE4E6;
 
@@ -36,8 +36,8 @@ html[data-theme="dark"]{
   --shadow-pop:0 18px 52px rgba(0,0,0,.55);
 
   --t1:#38BDF8; --t1-bg:#082F49;
-  --t2:#4ADE80; --t2-bg:#052E16;
-  --t3:#60A5FA; --t3-bg:#172554;
+  --t2:#60A5FA; --t2-bg:#172554;
+  --t3:#818CF8; --t3-bg:#1E1B4B;
   --t4:#C084FC; --t4-bg:#3B0764;
   --t5:#FB7185; --t5-bg:#4C0519;
 
@@ -427,8 +427,8 @@ html[data-theme="dark"] .tab[data-tab="ocr"].on {
 }
 .badge .b-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.85}
 .badge.t1{color:var(--t1);background:var(--t1-bg);border:1px solid rgba(2,132,199,0.3)}
-.badge.t2{color:var(--t2);background:var(--t2-bg);border:1px solid rgba(21,128,61,0.3)}
-.badge.t3{color:var(--t3);background:var(--t3-bg);border:1px solid rgba(29,78,216,0.3)}
+.badge.t2{color:var(--t2);background:var(--t2-bg);border:1px solid rgba(29,78,216,0.3)}
+.badge.t3{color:var(--t3);background:var(--t3-bg);border:1px solid rgba(67,56,202,0.3)}
 .badge.t4{color:var(--t4);background:var(--t4-bg);border:1px solid rgba(126,34,206,0.3)}
 .badge.t5{color:var(--t5);background:var(--t5-bg);border:1px solid rgba(190,18,60,0.3)}
 .badge.nda{color:var(--brand);background:var(--brand-3)}
@@ -612,8 +612,8 @@ html[data-theme="dark"] .tab[data-tab="ocr"].on {
   font-size:12px;font-weight:850;letter-spacing:-.01em;flex:0 0 auto;text-align:center;
 }
 .proc-tag.t1{color:var(--t1);background:var(--t1-bg);border:1.5px solid rgba(2,132,199,0.35)}
-.proc-tag.t2{color:var(--t2);background:var(--t2-bg);border:1.5px solid rgba(21,128,61,0.35)}
-.proc-tag.t3{color:var(--t3);background:var(--t3-bg);border:1.5px solid rgba(29,78,216,0.35)}
+.proc-tag.t2{color:var(--t2);background:var(--t2-bg);border:1.5px solid rgba(29,78,216,0.35)}
+.proc-tag.t3{color:var(--t3);background:var(--t3-bg);border:1.5px solid rgba(67,56,202,0.35)}
 .proc-tag.t4{color:var(--t4);background:var(--t4-bg);border:1.5px solid rgba(126,34,206,0.35)}
 .proc-tag.t5{color:var(--t5);background:var(--t5-bg);border:1.5px solid rgba(190,18,60,0.35)}
 .proc-tag.t-mix{color:#8b5cf6;background:rgba(139,92,246,0.12)}
