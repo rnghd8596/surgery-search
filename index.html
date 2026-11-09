@@ -94,7 +94,7 @@ window.onerror = function(msg, url, line, col, err) {
       <button class="tab" data-tab="tier" role="tab">3·5종수술</button>
       <button class="tab" data-tab="tier78" role="tab">7·8종수술</button>
       <button class="tab" data-tab="ndai" role="tab">N대질병</button>
-      <button class="tab" data-tab="rules" role="tab">지급기준</button>
+      <button class="tab" data-tab="rules" role="tab">동시수술</button>
     </nav>
   </header>
 
@@ -169,8 +169,8 @@ window.onerror = function(msg, url, line, col, err) {
           <div style="display:flex;align-items:center;gap:12px;">
             <span style="font-size:26px;">⚖️</span>
             <div style="text-align:left;">
-              <div style="font-size:15.5px;font-weight:900;color:#d97706;">수술비 지급기준 · 지급횟수 판정</div>
-              <div style="font-size:12px;color:var(--text-3);margin-top:2px;">동일/다른 질병 × 동일/다른 부위 4대 유형별 약관 대조</div>
+              <div style="font-size:15.5px;font-weight:900;color:#d97706;">동시수술 판정 (지급횟수 확인)</div>
+              <div style="font-size:12px;color:var(--text-3);margin-top:2px;">동일질병 · 다른질병 × 동일부위 · 다른부위 수술비 지급횟수 확인</div>
             </div>
           </div>
           <span style="font-size:17px;color:#d97706;font-weight:800;">→</span>
@@ -594,12 +594,12 @@ window.onerror = function(msg, url, line, col, err) {
       </div>
     </section>
 
-    <!-- ───────── 5. 수술비 지급기준 · 4대 유형별 약관 판정 ───────── -->
+    <!-- ───────── 5. 동시수술 판정 · 4대 유형별 지급횟수 확인 ───────── -->
     <section id="pane-rules" class="pane" hidden>
       <div class="hero" id="hero-rules" style="padding:18px 0 14px;">
-        <p class="hero-eyebrow" style="color:#d97706;background:rgba(217,119,6,0.12);">⚖️ 4대 유형별 수술비 지급기준 & 지급횟수</p>
-        <h2 class="hero-title"><span style="background:linear-gradient(100deg,#d97706,#f59e0b 55%,#fbbf24);-webkit-background-clip:text;background-clip:text;color:transparent;">수술비 지급기준</span> 판정</h2>
-        <p class="hero-sub" style="font-weight:700;color:var(--text-2);">동일·다른 질병 × 동일·다른 부위 상황별 지급횟수 및 약관 원문 대조</p>
+        <p class="hero-eyebrow" style="color:#d97706;background:rgba(217,119,6,0.12);">⚖️ 동시수술 지급횟수 판정</p>
+        <h2 class="hero-title"><span style="background:linear-gradient(100deg,#d97706,#f59e0b 55%,#fbbf24);-webkit-background-clip:text;background-clip:text;color:transparent;">동시수술 판정</span> (지급횟수)</h2>
+        <p class="hero-sub" style="font-weight:700;color:var(--text-2);">동일질병 · 다른질병 × 동일부위 · 다른부위 기준 몇 번 지급되는지 확인</p>
       </div>
 
       <!-- 4대 유형 원터치 스위처 탭 바 -->
@@ -607,22 +607,22 @@ window.onerror = function(msg, url, line, col, err) {
         <button type="button" class="rule-type-btn active" data-rule="1">
           <span class="rt-num">타입 1</span>
           <span class="rt-title">동일질병 / 동일부위</span>
-          <span class="rt-badge badge-once">원칙 1회 (365일)</span>
+          <span class="rt-badge badge-once">지급횟수: 1회 (365일)</span>
         </button>
         <button type="button" class="rule-type-btn" data-rule="2">
           <span class="rt-num">타입 2</span>
           <span class="rt-title">동일질병 / 다른부위</span>
-          <span class="rt-badge badge-warn">원칙 1회 (양안 분쟁)</span>
+          <span class="rt-badge badge-warn">지급횟수: 원칙 1회</span>
         </button>
         <button type="button" class="rule-type-btn" data-rule="3">
           <span class="rt-num">타입 3</span>
           <span class="rt-title">다른질병 / 동일부위</span>
-          <span class="rt-badge badge-once">1회만 (위+대장용종)</span>
+          <span class="rt-badge badge-once">지급횟수: 1회만 (복부)</span>
         </button>
         <button type="button" class="rule-type-btn" data-rule="4">
           <span class="rt-num">타입 4</span>
           <span class="rt-title">다른질병 / 다른부위</span>
-          <span class="rt-badge badge-each">신약관 각각 지급 (N번)</span>
+          <span class="rt-badge badge-each">지급횟수: 각각 N번</span>
         </button>
       </div>
 
@@ -1079,7 +1079,7 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
-<script src="assets/curated.js?v=20261109zzq"></script>
-<script src="app.js?v=20261109zzq"></script>
+<script src="assets/curated.js?v=20261109zzr"></script>
+<script src="app.js?v=20261109zzr"></script>
 </body>
 </html>
