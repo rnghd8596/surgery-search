@@ -5113,11 +5113,11 @@ function bindOcrTab() {
     const surgeries = parsed.surgeries || [];
     const codes = parsed.codes || [];
 
-    // 환자 진단 및 수술 특성 판정
-    const isCerebroDiag = codes.some(c => /^I6\d/.test(c.code)) || /뇌혈관|뇌경색|뇌출혈|거미막하|모야모야/i.test(rawText);
-    const isHeartDiag = codes.some(c => /^I2[0-5]/.test(c.code)) || /허혈|협심증|심근경색/i.test(rawText);
-    const isCancerDiag = codes.some(c => /^[CD]\d/.test(c.code)) || /악성신생물|제자리암|상피내암/i.test(rawText);
-    const isEntSurgery = codes.some(c => /^J3\d/.test(c.code)) || /비강|비중격|하비갑개|부비동|상악동|사골동/i.test(rawText);
+    // 환자 진단 및 수술 특성 판정 (진단서 질병코드 및 실제 상병/수술명 기준 - 제안서 담보명 단독 매칭 방지)
+    const isCerebroDiag = codes.some(c => /^I6\d/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:뇌혈관|뇌경색|뇌출혈|거미막하|모야모야)/i.test(rawText) || /(?:개두술|뇌동맥류|혈전제거술|뇌혈관문합술)/i.test(rawText);
+    const isHeartDiag = codes.some(c => /^I2[0-5]/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:허혈|협심증|심근경색)/i.test(rawText) || /(?:스텐트삽입|관상동맥|CABG)/i.test(rawText);
+    const isCancerDiag = codes.some(c => /^[CD]\d/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:악성신생물|제자리암|상피내암|암종|육종)/i.test(rawText);
+    const isEntSurgery = codes.some(c => /^J3\d/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:비강|비중격|하비갑개|부비동|상악동|사골동)/i.test(rawText) || /(?:비중격|하비갑개|부비동|상악동|사골동)/i.test(rawText);
 
     let topTier = null;
     if (surgeries.length > 0) {
