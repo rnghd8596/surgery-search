@@ -2132,72 +2132,92 @@ html[data-theme="dark"] .badge-warn {
   display: block;
 }
 
-/* 약관 원문 고해상도 확대 모달 */
+/* 약관 원문 고해상도 확대 모달 (260-surgery 소식지 뷰어 스타일) */
 .rules-modal {
   display: none;
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: rgba(15, 23, 42, 0.88);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 20px;
+  background: rgba(10, 15, 30, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 16px;
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
+  animation: fadeInModal 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes fadeInModal {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
 }
 .rules-modal.show {
   display: flex;
 }
 .rules-modal-inner {
-  max-width: 900px;
+  max-width: 960px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 94vh;
   display: flex;
   flex-direction: column;
   background: var(--surface);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.12);
 }
 .rules-modal-head {
-  padding: 14px 18px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
+  background: var(--surface);
 }
 .rules-modal-title {
   font-size: 15px;
-  font-weight: 850;
+  font-weight: 900;
   color: var(--text);
+  letter-spacing: -0.2px;
 }
 .rules-modal-close {
   background: var(--line-2);
   border: 0;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   cursor: pointer;
   display: grid;
   place-items: center;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 800;
   color: var(--text);
+  transition: all 0.15s ease;
+}
+.rules-modal-close:hover {
+  background: var(--border);
+  transform: scale(1.08);
 }
 .rules-modal-body {
   overflow: auto;
-  padding: 16px;
+  padding: 18px;
   text-align: center;
-  background: #f8fafc;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
 }
 html[data-theme="dark"] .rules-modal-body {
-  background: #0f172a;
+  background: #090d16;
 }
 .rules-modal-body img {
   max-width: 100%;
+  max-height: 80vh;
   height: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+  object-fit: contain;
 }
 
 

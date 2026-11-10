@@ -1122,12 +1122,29 @@ function switchTab(tabKey, targetQ = '') {
 
   // 6. 동시수술 약관 리셋
   if (tabKey !== 'rules') {
-    $$('#pane-rules .clause-body').forEach(b => { b.style.display = 'none'; });
-    $$('#pane-rules .btn-clause-toggle .arr').forEach(a => { a.textContent = '▾'; });
+    $$('#pane-rules .clause-expand-body').forEach(b => {
+      b.classList.remove('open');
+      b.style.display = '';
+    });
+    $$('#pane-rules .btn-toggle-clause .toggle-arrow').forEach(a => { a.textContent = '▾'; });
     $$('#pane-rules .co-sub-tab-bar').forEach(group => {
       const btns = group.querySelectorAll('.co-sub-btn');
       btns.forEach((b, idx) => b.classList.toggle('on', idx === 0));
     });
+    ['A', 'B', 'C', 'D'].forEach(type => {
+      const firstBtn = $(`#clause-body-${type} .co-sub-btn`);
+      if (firstBtn) {
+        const img = $(`#img-clause-${type}`);
+        const cap = $(`#caption-clause-${type}`);
+        const frame = $(`#frame-clause-${type}`);
+        const quote = $(`#quote-clause-${type}`);
+        if (img && firstBtn.dataset.imgSrc) img.src = firstBtn.dataset.imgSrc;
+        if (cap && firstBtn.dataset.caption) cap.textContent = firstBtn.dataset.caption + ' (터치 시 원본 확대)';
+        if (frame && firstBtn.dataset.fullSrc) frame.dataset.modalTarget = firstBtn.dataset.fullSrc;
+        if (quote && firstBtn.dataset.quote) quote.textContent = firstBtn.dataset.quote;
+      }
+    });
+    if (typeof window.closeRulesModal === 'function') window.closeRulesModal();
   }
 
   // 7. 분쟁사례 리셋
@@ -1161,7 +1178,11 @@ function switchTab(tabKey, targetQ = '') {
       if ($('#q-tier')) $('#q-tier').value = targetQ;
       state.tierQ = targetQ;
       if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = false;
-      runTierSearch(targetQ);
+      if (typeof window.resetTierFilters === 'function') window.resetTierFilters();
+      const parsed = parseSmartQuery(targetQ);
+      runTierSearch(parsed.cleanQ || targetQ, parsed.family);
+      const qTierEl = $('#q-tier');
+      if (qTierEl) qTierEl.value = targetQ;
     } else {
       if ($('#q-tier')) $('#q-tier').value = '';
       state.tierQ = '';
@@ -2724,9 +2745,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
             d.style.display = 'none';
             if (arr) arr.textContent = '펼쳐보기 ▾';
           }
-        " style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:800;color:var(--text-2);">
+        " style="width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;background:rgba(49,130,246,0.08);border:1.5px solid rgba(49,130,246,0.4);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13.5px;font-weight:900;color:#1d4ed8;transition:all 0.15s ease;">
           <span>🔍 수술 방식에 따른 다른 결과 확인하기</span>
-          <span class="arrow-ico" style="font-size:11.5px;color:var(--brand);font-weight:850;">펼쳐보기 ▾</span>
+          <span class="arrow-ico" style="font-size:12.5px;color:#1d4ed8;font-weight:900;">펼쳐보기 ▾</span>
         </button>
         <div id="${drawerId}" style="display:none;margin-top:8px;flex-direction:column;gap:6px;">
           ${procs.val.map(p => {
@@ -2794,27 +2815,26 @@ function cardQuickHTML(gi, q, matchedEdi, parsed) {
         </div>
 
         <!-- 3. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
-        <div class="qvb-row btn-toggle-quick-ndai" style="background:rgba(16,185,129,0.05);border:1.5px solid rgba(16,185,129,0.25);border-radius:10px;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-            <span style="font-size:12.5px;font-weight:900;color:#059669;white-space:nowrap;display:flex;align-items:center;gap:4px;">
+        <div class="qvb-row btn-toggle-quick-ndai" style="background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.35);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
+          <div style="display:flex;flex-direction:column;gap:3px;min-width:0;">
+            <span style="font-size:13px;font-weight:900;color:#059669;white-space:nowrap;display:flex;align-items:center;gap:6px;">
               🏢 N대질병
-              <span class="qndai-arrow" style="font-size:11px;font-weight:750;color:#059669;">(터치 시 회사별 N대 상세 ▾)</span>
+              <span class="qndai-arrow" style="font-size:11px;font-weight:850;color:#059669;background:rgba(16,185,129,0.12);padding:2px 7px;border-radius:5px;">(터치 시 14개사별 N대 특약 및 질병코드 펼쳐짐 ▾)</span>
             </span>
-            <span style="font-size:11px;color:var(--text-2);line-height:1.35;">${esc(ndaiVerdict.summary)}</span>
+            <span style="font-size:11.5px;color:var(--text-2);line-height:1.35;">${esc(ndaiVerdict.summary)}</span>
           </div>
           <span style="font-size:11px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
         </div>
-        <div class="quick-ndai-drawer" style="display:none;margin-top:2px;">
+        <div class="quick-ndai-drawer" style="display:none;margin-top:4px;">
+          <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11.5px;color:#047857;font-weight:800;text-align:center;">
+            💡 아래 각 회사 행 또는 [질병코드 보기 ▾]를 터치하시면 포함 질병코드와 세부 약관이 더 상세히 펼쳐집니다.
+          </div>
           ${renderNdaiDetailsHTML(g, cosList, null)}
         </div>
       </div>
 
       ${evalRes.boxHTML}
       ${procsHTML}
-
-      <div style="font-size:11.5px;color:#db2777;font-weight:800;text-align:center;margin:8px 0;background:rgba(236,72,153,0.06);border:1px solid rgba(236,72,153,0.22);border-radius:9px;padding:7px 10px;">
-        🔍 상세 내용은 지급기준근거 및 바로가기 확인
-      </div>
 
       <!-- 정밀 진단 바로가기 버튼 2종 -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">
@@ -3227,9 +3247,9 @@ function cardTierHTML(gi, q, matchedEdi) {
             d.style.display = 'none';
             if (arr) arr.textContent = '펼쳐보기 ▾';
           }
-        " style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:8px 12px;cursor:pointer;font-size:12px;font-weight:800;color:var(--text-2);">
+        " style="width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;background:rgba(49,130,246,0.08);border:1.5px solid rgba(49,130,246,0.4);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13.5px;font-weight:900;color:#1d4ed8;transition:all 0.15s ease;">
           <span>🔍 수술 방식에 따른 다른 결과 확인하기</span>
-          <span class="arrow-ico" style="font-size:11.5px;color:var(--brand);font-weight:850;">펼쳐보기 ▾</span>
+          <span class="arrow-ico" style="font-size:12.5px;color:#1d4ed8;font-weight:900;">펼쳐보기 ▾</span>
         </button>
         <div id="${drawerId}" style="display:none;margin-top:8px;flex-direction:column;gap:6px;">
           ${procs.val.map(p => {
@@ -5149,55 +5169,34 @@ function bindOcrTab() {
         });
       }
 
-      // 2) 뇌혈관질환수술비
-      if (p.hasCerebro) {
-        if (isCerebroDiag) {
-          totalPayable += p.cerebroAmount;
-          payableItems.push({
-            name: '뇌혈관질환수술비',
-            amount: p.cerebroAmount,
-            reason: '뇌혈관질환(I60~I69) 직접 치료 수술 인정'
-          });
-        } else {
-          unpayableItems.push({
-            name: `뇌혈관질환수술비 (${p.cerebroAmount.toLocaleString()}원)`,
-            reason: `❌ 부지급 (진단서 질병코드 ${codes.map(c=>c.code).join(', ')||'J34/J32'}는 뇌혈관질환 I60~I69 미해당)`
-          });
-        }
+      // 2) 뇌혈관질환수술비 (진단서 질환이 실제 뇌혈관질환인 경우에만 평가 및 지급, 무관한 코/비염 수술일 때는 부지급 내역 자체를 노출하지 않음!)
+      if (p.hasCerebro && isCerebroDiag) {
+        totalPayable += p.cerebroAmount;
+        payableItems.push({
+          name: '뇌혈관질환수술비',
+          amount: p.cerebroAmount,
+          reason: '뇌혈관질환(I60~I69) 직접 치료 수술 인정'
+        });
       }
 
-      // 3) 허혈성심장질환수술비
-      if (p.hasHeart) {
-        if (isHeartDiag) {
-          totalPayable += p.heartAmount;
-          payableItems.push({
-            name: '허혈성심장질환수술비',
-            amount: p.heartAmount,
-            reason: '허혈성 심장질환(I20~I25) 직접 치료 수술 인정'
-          });
-        } else {
-          unpayableItems.push({
-            name: `허혈성심장질환수술비 (${p.heartAmount.toLocaleString()}원)`,
-            reason: `❌ 부지급 (심장질환 미해당)`
-          });
-        }
+      // 3) 허혈성심장질환수술비 (진단서 질환이 실제 심장 질환인 경우에만 평가)
+      if (p.hasHeart && isHeartDiag) {
+        totalPayable += p.heartAmount;
+        payableItems.push({
+          name: '허혈성심장질환수술비',
+          amount: p.heartAmount,
+          reason: '허혈성 심장질환(I20~I25) 직접 치료 수술 인정'
+        });
       }
 
-      // 4) 암수술비
-      if (p.hasCancer) {
-        if (isCancerDiag) {
-          totalPayable += p.cancerAmount;
-          payableItems.push({
-            name: '암수술비',
-            amount: p.cancerAmount,
-            reason: '악성신생물 치료 수술 인정'
-          });
-        } else {
-          unpayableItems.push({
-            name: `암수술비 (${p.cancerAmount.toLocaleString()}원)`,
-            reason: `❌ 부지급 (악성신생물 미해당)`
-          });
-        }
+      // 4) 암수술비 (진단서 질환이 실제 악성신생물 질환인 경우에만 평가)
+      if (p.hasCancer && isCancerDiag) {
+        totalPayable += p.cancerAmount;
+        payableItems.push({
+          name: '암수술비',
+          amount: p.cancerAmount,
+          reason: '악성신생물 치료 수술 인정'
+        });
       }
 
       // 5) 기본 질병수술비
@@ -5311,13 +5310,11 @@ function bindOcrTab() {
 
           <!-- 부지급 및 미가입 사유 분석 리스트 -->
           <div style="background:rgba(225,29,72,0.04);border-radius:12px;padding:12px 14px;border:1px solid rgba(225,29,72,0.2);margin-bottom:12px;">
-            <div style="font-size:12px;font-weight:850;color:#be123c;margin-bottom:8px;">🚫 담보 대조 분석 결과:</div>
+            <div style="font-size:12px;font-weight:850;color:#be123c;margin-bottom:8px;">🚫 가입 담보 검토 내역:</div>
             <div style="display:flex;flex-direction:column;gap:6px;">
-              ${unpayableItems.map(item => `
-                <div style="padding:8px 12px;background:var(--surface);border:1px solid rgba(225,29,72,0.2);border-radius:8px;font-size:12px;line-height:1.45;">
-                  <span style="font-weight:850;color:#e11d48;">• ${esc(item.name)}:</span> ${esc(item.reason)}
-                </div>
-              `).join('')}
+              <div style="padding:9px 12px;background:var(--surface);border:1px solid rgba(225,29,72,0.25);border-radius:8px;font-size:12px;line-height:1.5;">
+                <span style="font-weight:850;color:#e11d48;">• 제안서 담보 분석:</span> 제출하신 플랜(<b>${esc(p.company || '')} ${esc(p.productName || '가입제안서')}</b>)은 ${p.hasCerebro ? '<b>[뇌혈관질환 전용 특화 플랜]</b>' : '<b>[특정질환 전용 플랜]</b>'}으로, 진단서의 수술(<b>${esc(surgeries.map(s=>s.name).join(', ')||'수술')}</b>)을 보장하는 일반 수술 담보(1~5종 수술특약, 기본 질병수술비)가 가입되어 있지 않습니다.
+              </div>
               ${missingRiders.map(item => `
                 <div style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12px;line-height:1.45;color:var(--text-2);">
                   <span style="font-weight:850;color:var(--text);">• ${esc(item.name)}:</span> <span style="color:#d97706;font-weight:800;">🚫 플랜 미가입</span> (${esc(item.reason)})
@@ -5329,7 +5326,7 @@ function bindOcrTab() {
           <!-- 설계사 실무 조언 박스 -->
           <div style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.25);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.5;">
             <span style="font-weight:850;color:#1d4ed8;">💡 [설계사 실무 조언]</span><br>
-            현재 검토하신 제안서는 <b>[${unpayableItems.map(u=>u.name).join(', ') || '특정 목적 플랜'}]</b> 전용 플랜으로 구성되어 있어, 본 진단서의 수술(${surgeries.map(s=>s.name.split(' ')[0]).join(', ') || '코 수술'})은 보장되지 않습니다. 고객님의 다른 기가입 보험(종합보험 등)에 <b>1~5종 수술비</b> 또는 <b>질병수술비</b> 특약이 가입되어 있는지 확인하여 청구해야 합니다.
+            진단서의 시행 수술(<b>${esc(surgeries.map(s=>s.name).join(', '))}</b>)은 고객님이 기가입하신 종합보험의 <b>[질병수술비]</b> 또는 <b>[1~5종 수술특약 (1~2종)]</b>에서 정상 청구 가능하므로 기가입 증권을 확인해 주세요.
           </div>
 
           <!-- 세부 지급 근거 접이식 서랍 토글 버튼 -->
@@ -5648,7 +5645,7 @@ function bindCardActions(box) {
       if (!drawer) return;
       const isHidden = drawer.style.display === 'none' || !drawer.style.display;
       drawer.style.display = isHidden ? 'block' : 'none';
-      if (arrow) arrow.textContent = isHidden ? '(접기 ∧)' : '(터치 시 회사별 N대 상세 ▾)';
+      if (arrow) arrow.textContent = isHidden ? '(접기 ▴)' : '(터치 시 14개사별 N대 특약 및 질병코드 펼쳐짐 ▾)';
     });
   });
 
@@ -5658,16 +5655,18 @@ function bindCardActions(box) {
   // 빠른검색 카드에서 정밀진단으로 즉시 점프
   $$('.btn-jump-tier', box).forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      const q = btn.dataset.q;
+      const q = btn.dataset.q || btn.getAttribute('data-q') || '';
       switchTab('tier', q);
     });
   });
 
   $$('.btn-jump-ndai', box).forEach(btn => {
     btn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      const q = btn.dataset.q;
+      const q = btn.dataset.q || btn.getAttribute('data-q') || '';
       switchTab('ndai', q);
     });
   });
@@ -6209,21 +6208,25 @@ function bindRulesTab() {
 
       const targetImgId = btn.dataset.targetImg;
       const targetCapId = btn.dataset.targetCap;
+      const targetQuoteId = btn.dataset.targetQuote;
       const imgSrc = btn.dataset.imgSrc;
       const fullSrc = btn.dataset.fullSrc;
       const caption = btn.dataset.caption;
+      const quote = btn.dataset.quote;
 
       const imgEl = $(`#${targetImgId}`);
       const capEl = $(`#${targetCapId}`);
+      const quoteEl = targetQuoteId ? $(`#${targetQuoteId}`) : null;
       const frameEl = imgEl ? imgEl.closest('.clause-photo-frame') : null;
 
       if (imgEl && imgSrc) imgEl.src = imgSrc;
       if (capEl && caption) capEl.textContent = caption + ' (터치 시 원본 확대)';
       if (frameEl && fullSrc) frameEl.dataset.modalTarget = fullSrc;
+      if (quoteEl && quote) quote.textContent = quote;
     });
   });
 
-  // 이미지 모달 뷰어
+  // 이미지 모달 뷰어 (소식지 260-surgery 스타일 고해상도 라이트박스)
   const modal = $('#rulesModal');
   const modalImg = $('#rulesModalImg');
   const modalClose = $('#btnRulesModalClose');
@@ -6243,6 +6246,7 @@ function bindRulesTab() {
     document.body.style.overflow = '';
     if (modalImg) modalImg.src = '';
   };
+  window.closeRulesModal = closeModal;
 
   // 약관 사진 클릭 시 고해상도 전체 모달
   $$('.clause-photo-frame').forEach(frame => {
@@ -6252,12 +6256,27 @@ function bindRulesTab() {
     });
   });
 
+  // 원문 크게보기 버튼 클릭 시 모달
+  $$('.btn-open-clause-modal').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const targetImgId = btn.dataset.targetImg;
+      const imgEl = $(`#${targetImgId}`);
+      const frameEl = imgEl ? imgEl.closest('.clause-photo-frame') : null;
+      const fullSrc = frameEl?.dataset.modalTarget || imgEl?.src;
+      if (fullSrc) openModal(fullSrc);
+    });
+  });
+
   if (modalClose) modalClose.addEventListener('click', closeModal);
   if (modal) {
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
+      if (e.target === modal || e.target.classList.contains('rules-modal-close')) closeModal();
     });
   }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && modal.classList.contains('show')) closeModal();
+  });
 }
 
 /* ───────────────────────── 8. 수술비 청구 분쟁사례 ───────────────────────── */
