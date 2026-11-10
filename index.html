@@ -934,24 +934,24 @@ window.onerror = function(msg, url, line, col, err) {
         <p class="hero-sub" style="font-size:13.5px;color:var(--text-3);margin:0;">보상과 삭감 · 부지급 다툼 시 현장 설계사 필수 반박 근거</p>
       </div>
 
-      <!-- 질병별 빠른 필터 칩 그리드 (신의료기술 중복 제거, 순수 질병별 구성) -->
+      <!-- 질병별 빠른 필터 칩 그리드 (2열 대칭 정형화 박스 그리드) -->
       <div style="margin-bottom:16px;">
         <div style="font-size:12px;font-weight:850;color:var(--text-2);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
           <span>🏷️ 질병별 분쟁사례 바로보기:</span>
           <span style="font-size:11px;color:var(--text-3);font-weight:700;">(터치 시 해당 질병 사례로 즉시 이동)</span>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;" id="disputesFilterChips">
-          <button type="button" class="f-chip on" data-dfilter="all" style="font-size:12px;padding:6px 14px;font-weight:850;">전체 질병 (10건)</button>
-          <button type="button" class="f-chip" data-dfilter="유방질환" style="font-size:12px;padding:6px 11px;">🌸 유방 (맘모톰)</button>
-          <button type="button" class="f-chip" data-dfilter="자궁질환" style="font-size:12px;padding:6px 11px;">🌺 자궁 (하이푸)</button>
-          <button type="button" class="f-chip" data-dfilter="하지정맥류" style="font-size:12px;padding:6px 11px;">🦵 하지정맥 (베나실)</button>
-          <button type="button" class="f-chip" data-dfilter="척추질환" style="font-size:12px;padding:6px 11px;">🦴 척추 (신경성형술)</button>
-          <button type="button" class="f-chip" data-dfilter="비강질환" style="font-size:12px;padding:6px 11px;">👃 비강 (비밸브)</button>
-          <button type="button" class="f-chip" data-dfilter="무릎질환" style="font-size:12px;padding:6px 11px;">🦿 무릎 (줄기세포)</button>
-          <button type="button" class="f-chip" data-dfilter="비뇨기질환" style="font-size:12px;padding:6px 11px;">💧 비뇨기 (쇄석술)</button>
-          <button type="button" class="f-chip" data-dfilter="안과질환" style="font-size:12px;padding:6px 11px;">👁️ 안과 (백내장)</button>
-          <button type="button" class="f-chip" data-dfilter="대장질환" style="font-size:12px;padding:6px 11px;">🩺 대장 (용종개정)</button>
-          <button type="button" class="f-chip" data-dfilter="항문질환" style="font-size:12px;padding:6px 11px;">🏥 항문 (치핵면책)</button>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="disputesFilterChips">
+          <button type="button" class="f-chip on" data-dfilter="all" style="grid-column:1 / -1;min-height:42px;font-size:12.5px;font-weight:900;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:6px;">전체 분쟁사례 보기 (10건)</button>
+          <button type="button" class="f-chip" data-dfilter="유방질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🌸</span> <span>유방 (맘모톰)</span></button>
+          <button type="button" class="f-chip" data-dfilter="자궁질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🌺</span> <span>자궁 (하이푸)</span></button>
+          <button type="button" class="f-chip" data-dfilter="하지정맥류" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🦵</span> <span>하지정맥 (베나실)</span></button>
+          <button type="button" class="f-chip" data-dfilter="척추질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🦴</span> <span>척추 (신경성형술)</span></button>
+          <button type="button" class="f-chip" data-dfilter="비강질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>👃</span> <span>비강 (비밸브)</span></button>
+          <button type="button" class="f-chip" data-dfilter="무릎질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🦿</span> <span>무릎 (줄기세포)</span></button>
+          <button type="button" class="f-chip" data-dfilter="비뇨기질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>💧</span> <span>비뇨기 (쇄석술)</span></button>
+          <button type="button" class="f-chip" data-dfilter="안과질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>👁️</span> <span>안과 (백내장)</span></button>
+          <button type="button" class="f-chip" data-dfilter="대장질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🩺</span> <span>대장 (용종개정)</span></button>
+          <button type="button" class="f-chip" data-dfilter="항문질환" style="min-height:42px;font-size:12px;font-weight:800;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:5px;"><span>🏥</span> <span>항문 (치핵면책)</span></button>
         </div>
       </div>
 
