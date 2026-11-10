@@ -4041,7 +4041,8 @@ function bindNdaiTab() {
     if (ndaiCoToggleIcon) ndaiCoToggleIcon.textContent = '펼치기 ∨';
     updateNdaiBadges();
     renderDynamicNdaiTierChips();
-    if (ndaiTreeBody && ndaiTreeBody.style.display !== 'none') renderNdaiTree();
+    const treeBody = $('#ndaiTreeBody');
+    if (treeBody && treeBody.style.display !== 'none' && typeof renderNdaiTree === 'function') renderNdaiTree();
   }
   window.resetNdaiFilters = resetNdaiFilters;
 
