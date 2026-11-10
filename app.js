@@ -4586,22 +4586,17 @@ function renderNdaiDetailsHTML(g, cosList, nTier) {
           <div class="ndai-res-box covered" style="border-left:4px solid #059669;margin-bottom:8px;background:var(--surface);">
             <div class="ndai-res-status" style="color:#059669;font-size:13px;font-weight:850;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
               <span>✓ [${esc(c)}${esc(tierBadge)}] N대 질병수술비</span>
-              <span style="font-size:11px;background:rgba(16,185,129,0.12);color:#059669;padding:2px 7px;border-radius:6px;font-weight:800;">보장 해당</span>
+              <span style="font-size:11px;background:rgba(16,185,129,0.12);color:#059669;padding:2px 7px;border-radius:6px;font-weight:800;">${items.length}개 특약 해당</span>
             </div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
               ${items.map(it => `
-                <div class="ndai-item-block">
-                  <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || c)}" data-sub="${esc(it.subClean)}">
-                    <div class="nir-left-2lines">
-                      <div class="nir-co-line">
-                        <span class="nir-bullet">•</span>
-                        <b class="nir-co-name">${esc(it.co || c)}</b>
-                      </div>
-                      <div class="nir-tier-line">
-                        <span class="nir-tier-text">${esc(it.tierText)}</span>
-                      </div>
+                <div class="ndai-item-block" style="margin-bottom:2px;">
+                  <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || c)}" data-sub="${esc(it.subClean)}" style="min-height:42px;padding:7px 10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                    <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+                      <span style="color:#059669;font-weight:900;font-size:11px;">•</span>
+                      <span style="font-size:12px;color:var(--text);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(it.tierText)}</span>
                     </div>
-                    <div class="nir-sub-pill" data-sub-text="${esc(it.subClean)}">
+                    <div class="nir-sub-pill" data-sub-text="${esc(it.subClean)}" style="font-size:11.5px;font-weight:850;color:#047857;background:rgba(16,185,129,0.1);border:1.5px solid rgba(16,185,129,0.35);padding:4px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0;">
                       <span class="nir-sub-title">[${esc(it.subClean)}]</span>
                       <span class="nir-arrow">▾</span>
                     </div>
@@ -4632,7 +4627,7 @@ function renderNdaiDetailsHTML(g, cosList, nTier) {
         <div style="font-size:11px;color:var(--text-3);margin-top:4px;">각 회사별 증권에 기재된 가입금액 한도로 각각 지급됩니다.</div>
       </div>`;
   } else {
-    // 회사 미선택(전체): 해당 질환을 보장하는 전체 원수사를 정렬하여 표시
+    // 회사 미선택(전체): 해당 질환을 보장하는 전체 원수사를 보험사별 1개 그룹으로 묶어 표시
     const majorCos = ['현대해상', 'KB손해보험', '메리츠화재', '삼성화재', 'DB손해보험', 'NH농협손해보험', '한화손해보험', '흥국화재', '롯데손해보험', 'MG손해보험', '삼성생명', '한화생명', '교보생명', '신한라이프', 'KB라이프', '동양생명', '흥국생명', '미래에셋생명', '라이나생명', 'AIA생명', 'DB생명', 'KDB생명', 'iM라이프'];
     const allCos = Array.from(cos.keys());
     const sortedCos = allCos.sort((a, b) => {
@@ -4644,41 +4639,56 @@ function renderNdaiDetailsHTML(g, cosList, nTier) {
       return a.localeCompare(b);
     });
 
-    const allItems = [];
+    const coveredCos = [];
     sortedCos.forEach(c => {
       const items = formatNdaItemsForCo(g, c, tier);
-      items.forEach(it => allItems.push(it));
+      if (items.length > 0) {
+        coveredCos.push({ co: c, items });
+      }
     });
 
-    if (allItems.length > 0) {
+    if (coveredCos.length > 0) {
       return `
         <div class="ndai-res-box covered" style="border-left:4px solid #059669;margin-top:8px;background:var(--surface);">
-          <div class="ndai-res-status" style="color:#059669;font-size:13px;font-weight:850;margin-bottom:8px;">
-            <span>✓ 전 ${cos.size}개 보험사 N대 질병수술비 보장 해당 (전체)</span>
+          <div class="ndai-res-status" style="color:#059669;font-size:13px;font-weight:850;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+            <span>✓ 전 ${coveredCos.length}개 보험사 N대 질병수술비 보장 해당 (보험사별 묶음)</span>
+            <span style="font-size:11px;color:var(--text-3);font-weight:700;">회사 터치 시 특약 펼침 ▾</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px;">
-            ${allItems.map(it => `
-              <div class="ndai-item-block">
-                <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co)}" data-sub="${esc(it.subClean)}">
-                  <div class="nir-left-2lines">
-                    <div class="nir-co-line">
-                      <span class="nir-bullet">•</span>
-                      <b class="nir-co-name">${esc(it.co)}</b>
-                    </div>
-                    <div class="nir-tier-line">
-                      <span class="nir-tier-text">${esc(it.tierText)}</span>
-                    </div>
+            ${coveredCos.map(group => `
+              <div class="ndai-co-group-block" style="border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.03);">
+                <div class="btn-toggle-co-group" style="padding:10px 12px;min-height:46px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface-2);user-select:none;transition:background .15s ease;">
+                  <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+                    <span style="font-size:13px;font-weight:900;color:var(--text);white-space:nowrap;">🏢 ${esc(group.co)}</span>
+                    <span style="font-size:11px;font-weight:850;color:#059669;background:rgba(16,185,129,0.12);padding:2px 8px;border-radius:6px;border:1px solid rgba(16,185,129,0.25);white-space:nowrap;">
+                      ${group.items.length}개 N대 특약
+                    </span>
                   </div>
-                  <div class="nir-sub-pill" data-sub-text="${esc(it.subClean)}">
-                    <span class="nir-sub-title">[${esc(it.subClean)}]</span>
-                    <span class="nir-arrow">▾</span>
+                  <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                    <span class="co-group-arrow" style="font-size:11px;font-weight:800;color:var(--brand);background:var(--surface);padding:3px 8px;border-radius:6px;border:1px solid var(--border);">펼쳐보기 ▾</span>
                   </div>
                 </div>
-                <div class="ndai-codes-drawer" style="display:none;"></div>
+                <div class="co-group-drawer" style="display:none;padding:8px 10px;background:var(--surface);border-top:1px dashed var(--line);flex-direction:column;gap:5px;">
+                  ${group.items.map(it => `
+                    <div class="ndai-item-block" style="margin-bottom:2px;">
+                      <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || group.co)}" data-sub="${esc(it.subClean)}" style="min-height:42px;padding:7px 10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                        <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+                          <span style="color:#059669;font-weight:900;font-size:11px;">•</span>
+                          <span style="font-size:12px;color:var(--text);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(it.tierText)}</span>
+                        </div>
+                        <div class="nir-sub-pill" data-sub-text="${esc(it.subClean)}" style="font-size:11.5px;font-weight:850;color:#047857;background:rgba(16,185,129,0.1);border:1.5px solid rgba(16,185,129,0.35);padding:4px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0;">
+                          <span class="nir-sub-title">[${esc(it.subClean)}]</span>
+                          <span class="nir-arrow">▾</span>
+                        </div>
+                      </div>
+                      <div class="ndai-codes-drawer" style="display:none;"></div>
+                    </div>
+                  `).join('')}
+                </div>
               </div>
             `).join('')}
           </div>
-          <div style="font-size:11px;color:var(--text-3);padding-left:2px;">상단에서 보험사를 선택하시면 해당 회사의 증권 특약별 상세 판정만 보실 수 있습니다.</div>
+          <div style="font-size:11px;color:var(--text-3);padding-left:2px;">보험사를 터치하시면 해당 회사의 가입 시기·담보별 N대 상세 분류가 펼쳐집니다.</div>
         </div>`;
     } else {
       return `
@@ -5980,6 +5990,20 @@ function bindCardActions(box) {
       }
     });
   }
+
+  // 보험사별 N대 그룹 아코디언 토글 바인딩
+  $$('.btn-toggle-co-group', box).forEach(bar => {
+    bar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const parent = bar.closest('.ndai-co-group-block');
+      const drawer = parent ? parent.querySelector('.co-group-drawer') : null;
+      const arrow = bar.querySelector('.co-group-arrow');
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'flex' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
+    });
+  });
 
   // N대 서랍 내부 [질병코드 보기 ▾] 서랍 이벤트 바인딩
   bindNdaiCodeExpand(box);
