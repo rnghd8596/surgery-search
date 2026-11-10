@@ -1179,8 +1179,7 @@ function switchTab(tabKey, targetQ = '') {
       state.tierQ = targetQ;
       if ($('#clearBtn-tier')) $('#clearBtn-tier').hidden = false;
       if (typeof window.resetTierFilters === 'function') window.resetTierFilters();
-      const parsed = parseSmartQuery(targetQ);
-      runTierSearch(parsed.cleanQ || targetQ, parsed.family);
+      runTierSearch(targetQ);
       const qTierEl = $('#q-tier');
       if (qTierEl) qTierEl.value = targetQ;
     } else {
@@ -1224,6 +1223,7 @@ function switchTab(tabKey, targetQ = '') {
     renderAbout();
   }
 }
+window.switchTab = switchTab;
 
 function bindNavTabs() {
   $('#tabs').addEventListener('click', (e) => {
@@ -5648,6 +5648,29 @@ function bindCardActions(box) {
       if (arrow) arrow.textContent = isHidden ? '(접기 ▴)' : '(터치 시 14개사별 N대 특약 및 질병코드 펼쳐짐 ▾)';
     });
   });
+
+  // 전역 바로가기 이벤트 위임 (빠른검색/N대 어디서든 종수술비 및 N대로 100% 확실 점프)
+  if (!window._jumpDelegated) {
+    window._jumpDelegated = true;
+    document.addEventListener('click', (e) => {
+      const btnTier = e.target.closest('.btn-jump-tier');
+      if (btnTier) {
+        e.preventDefault();
+        e.stopPropagation();
+        const q = btnTier.dataset.q || btnTier.getAttribute('data-q') || '';
+        if (q) switchTab('tier', q);
+        return;
+      }
+      const btnNdai = e.target.closest('.btn-jump-ndai');
+      if (btnNdai) {
+        e.preventDefault();
+        e.stopPropagation();
+        const q = btnNdai.dataset.q || btnNdai.getAttribute('data-q') || '';
+        if (q) switchTab('ndai', q);
+        return;
+      }
+    });
+  }
 
   // N대 서랍 내부 [질병코드 보기 ▾] 서랍 이벤트 바인딩
   bindNdaiCodeExpand(box);
