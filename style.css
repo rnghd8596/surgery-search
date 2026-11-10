@@ -1526,74 +1526,128 @@ html[data-theme="dark"] .type-D .type-desc-banner { color: #fcd34d; }
 }
 html[data-theme="dark"] .cp-title { color: #fbbf24; }
 
-/* 2x2 모바일 최적화 미디어 쿼리 */
+/* 동시수술 모바일 최적화: 1열 풀위드 전개로 시원한 가독성 확보 */
 @media (max-width: 640px) {
   .type-matrix-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 12px;
     margin-top: 10px;
   }
   .type-card {
-    padding: 12px 8px 10px;
-    border-radius: 14px;
+    padding: 15px 14px 14px;
+    border-radius: 16px;
   }
   .type-head {
-    margin-bottom: 6px;
-    gap: 4px;
+    margin-bottom: 8px;
+    gap: 6px;
   }
   .type-pill {
+    font-size: 12px;
+    padding: 2px 7px;
+  }
+  .type-code-pill {
     font-size: 11.5px;
     padding: 2px 6px;
   }
-  .type-code-pill {
+  .type-co-tag {
     font-size: 11px;
     padding: 2px 5px;
-  }
-  .type-co-tag {
-    font-size: 10px;
-    padding: 1px 4px;
   }
   .type-desc-banner {
-    font-size: 11px;
-    padding: 6px 8px;
-    margin-bottom: 8px;
-    line-height: 1.4;
-  }
-  .type-freq-list {
-    gap: 5px;
-    margin-bottom: 8px;
-  }
-  .freq-item {
-    padding: 6px 7px;
-    border-radius: 8px;
-    gap: 4px;
-  }
-  .freq-label {
-    font-size: 11px;
-    letter-spacing: -0.025em;
-  }
-  .freq-val-pill {
-    font-size: 11px;
-    padding: 2px 5px;
-  }
-  .btn-toggle-clause {
-    padding: 7px 8px;
-    font-size: 11px;
-    border-radius: 8px;
-  }
-  .type-checkpoint-box {
+    font-size: 12px;
     padding: 8px 10px;
-    font-size: 11px;
+    margin-bottom: 10px;
     line-height: 1.45;
   }
-  .cp-title {
+  .type-freq-list {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .freq-item {
+    padding: 8px 10px;
+    border-radius: 9px;
+    gap: 6px;
+  }
+  .freq-label {
+    font-size: 12px;
+    letter-spacing: -0.02em;
+  }
+  .freq-val-pill {
+    font-size: 12px;
+    padding: 3px 7px;
+  }
+  .btn-toggle-clause {
+    padding: 11px 12px;
+    font-size: 12.5px;
+    border-radius: 10px;
+  }
+  .type-checkpoint-box {
+    padding: 10px 12px;
     font-size: 11.5px;
+    line-height: 1.5;
+  }
+  .cp-title {
+    font-size: 12px;
   }
 }
 @media (max-width: 330px) {
   .type-matrix-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* 회사별 약관 원문 칩 버튼 그리드 (모바일 2열) */
+.co-clause-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+@media (max-width: 420px) {
+  .co-clause-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+}
+.btn-co-clause {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  transition: all 0.15s ease;
+  text-align: left;
+  box-sizing: border-box;
+}
+.btn-co-clause:hover {
+  border-color: #d97706;
+  background: rgba(217, 119, 6, 0.05);
+  transform: translateY(-1px);
+}
+.btn-co-name {
+  font-size: 12.5px;
+  font-weight: 850;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+.btn-co-badge {
+  font-size: 11px;
+  font-weight: 850;
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.12);
+  padding: 3px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* 약관 펼쳐보기 버튼 및 사진 뷰어 */

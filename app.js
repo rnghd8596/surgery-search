@@ -1127,23 +1127,6 @@ function switchTab(tabKey, targetQ = '') {
       b.style.display = '';
     });
     $$('#pane-rules .btn-toggle-clause .toggle-arrow').forEach(a => { a.textContent = '▾'; });
-    $$('#pane-rules .co-sub-tab-bar').forEach(group => {
-      const btns = group.querySelectorAll('.co-sub-btn');
-      btns.forEach((b, idx) => b.classList.toggle('on', idx === 0));
-    });
-    ['A', 'B', 'C', 'D'].forEach(type => {
-      const firstBtn = $(`#clause-body-${type} .co-sub-btn`);
-      if (firstBtn) {
-        const img = $(`#img-clause-${type}`);
-        const cap = $(`#caption-clause-${type}`);
-        const frame = $(`#frame-clause-${type}`);
-        const quote = $(`#quote-clause-${type}`);
-        if (img && firstBtn.dataset.imgSrc) img.src = firstBtn.dataset.imgSrc;
-        if (cap && firstBtn.dataset.caption) cap.textContent = firstBtn.dataset.caption + ' (터치 시 원본 확대)';
-        if (frame && firstBtn.dataset.fullSrc) frame.dataset.modalTarget = firstBtn.dataset.fullSrc;
-        if (quote && firstBtn.dataset.quote) quote.textContent = firstBtn.dataset.quote;
-      }
-    });
     if (typeof window.closeRulesModal === 'function') window.closeRulesModal();
   }
 
@@ -6530,43 +6513,25 @@ function bindRulesTab() {
     });
   });
 
-  // 약관 회사 서브 탭 스위처
-  $$('.co-sub-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const group = btn.closest('.co-sub-tab-bar');
-      if (group) {
-        group.querySelectorAll('.co-sub-btn').forEach(b => b.classList.remove('on'));
-      }
-      btn.classList.add('on');
-
-      const targetImgId = btn.dataset.targetImg;
-      const targetCapId = btn.dataset.targetCap;
-      const targetQuoteId = btn.dataset.targetQuote;
-      const imgSrc = btn.dataset.imgSrc;
-      const fullSrc = btn.dataset.fullSrc;
-      const caption = btn.dataset.caption;
-      const quote = btn.dataset.quote;
-
-      const imgEl = $(`#${targetImgId}`);
-      const capEl = $(`#${targetCapId}`);
-      const quoteEl = targetQuoteId ? $(`#${targetQuoteId}`) : null;
-      const frameEl = imgEl ? imgEl.closest('.clause-photo-frame') : null;
-
-      if (imgEl && imgSrc) imgEl.src = imgSrc;
-      if (capEl && caption) capEl.textContent = caption + ' (터치 시 원본 확대)';
-      if (frameEl && fullSrc) frameEl.dataset.modalTarget = fullSrc;
-      if (quoteEl && quote) quote.textContent = quote;
-    });
-  });
-
   // 이미지 모달 뷰어 (소식지 260-surgery 스타일 고해상도 라이트박스)
   const modal = $('#rulesModal');
   const modalImg = $('#rulesModalImg');
   const modalClose = $('#btnRulesModalClose');
+  const modalTitle = $('#rulesModalTitle');
+  const modalQuote = $('#rulesModalQuote');
 
-  const openModal = (src) => {
+  const openModal = (src, title, quote) => {
     if (!modal || !modalImg) return;
     modalImg.src = src;
+    if (modalTitle) modalTitle.textContent = title || '📋 약관 원문 고해상도 전체 보기';
+    if (modalQuote) {
+      if (quote) {
+        modalQuote.innerHTML = `<strong>💡 핵심 조항 원문:</strong><br>${quote}`;
+        modalQuote.style.display = 'block';
+      } else {
+        modalQuote.style.display = 'none';
+      }
+    }
     modal.classList.add('show');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -6578,26 +6543,20 @@ function bindRulesTab() {
     modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     if (modalImg) modalImg.src = '';
+    if (modalQuote) modalQuote.style.display = 'none';
   };
   window.closeRulesModal = closeModal;
 
-  // 약관 사진 클릭 시 고해상도 전체 모달
-  $$('.clause-photo-frame').forEach(frame => {
-    frame.addEventListener('click', () => {
-      const fullSrc = frame.dataset.modalTarget || frame.querySelector('img')?.src;
-      if (fullSrc) openModal(fullSrc);
-    });
-  });
-
-  // 원문 크게보기 버튼 클릭 시 모달
-  $$('.btn-open-clause-modal').forEach(btn => {
+  // 회사 약관 원문 버튼 클릭 시 고해상도 모달 열기
+  $$('.btn-co-clause').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const targetImgId = btn.dataset.targetImg;
-      const imgEl = $(`#${targetImgId}`);
-      const frameEl = imgEl ? imgEl.closest('.clause-photo-frame') : null;
-      const fullSrc = frameEl?.dataset.modalTarget || imgEl?.src;
-      if (fullSrc) openModal(fullSrc);
+      const modalSrc = btn.dataset.modalSrc;
+      const co = btn.dataset.co || '보험사';
+      const type = btn.dataset.type || '';
+      const quote = btn.dataset.quote || '';
+      const title = `🏢 ${co} 동시수술 약관 ${type ? `[${type}]` : ''}`;
+      if (modalSrc) openModal(modalSrc, title, quote);
     });
   });
 

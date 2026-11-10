@@ -35,7 +35,7 @@
 <meta name="twitter:image" content="https://rnghd8596.github.io/surgery-search/og-preview.png?v=20261111_0750">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css?v=20261111_0800">
+<link rel="stylesheet" href="style.css?v=20261111_0805">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233182F6'/%3E%3Ctext x='32' y='43' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3E%ED%99%8D%3C/text%3E%3C/svg%3E">
 <script>
 window.onerror = function(msg, url, line, col, err) {
@@ -634,7 +634,7 @@ window.onerror = function(msg, url, line, col, err) {
         <p class="hero-sub" style="font-weight:700;color:var(--text-2);">동일질병 • 다른질병 • 동일부위 • 다른부위 기준 몇 번 지급되는지 확인</p>
       </div>
 
-      <!-- 4대 약관 타입 2x2 그리드 -->
+      <!-- 4대 약관 타입 그리드 -->
       <div class="type-matrix-grid">
 
         <!-- ────── [A타입] 미래에셋생명 · NH농협손해 외 (1 2 2 2) ────── -->
@@ -645,14 +645,8 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 2 · 2 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span style="font-size:11.5px;color:#059669;font-weight:800;">신체부위 분리 인정형</span>
+              <span style="font-size:12px;color:#059669;font-weight:800;">신체부위 분리 인정형</span>
             </div>
-          </div>
-          <div style="font-size:11.5px;color:var(--text-3);margin:2px 0 6px 1px;font-weight:700;">
-            🏢 해당 회사: <b>미래에셋생명, NH농협손해보험, 교보생명, 동양생명, iM라이프</b> 등
-          </div>
-          <div class="type-desc-banner">
-            2번(동일/다른) 2회 · 3번(다른/동일) 2회 모두 인정되는 최신 분리 약관
           </div>
 
           <!-- 4대 상황별 지급횟수 (공통은 회색 / 다른부분 2·3번만 선명 강조!) -->
@@ -677,39 +671,47 @@ window.onerror = function(msg, url, line, col, err) {
 
           <!-- 약관 펼쳐보기 버튼 -->
           <button type="button" class="btn-toggle-clause" data-target="clause-body-A">
-            <span>📋 A타입 약관 원문 및 사진 펼치기</span>
+            <span>🏢 해당 회사 (5개사) 및 판정근거·약관 확인</span>
             <span class="toggle-arrow">▾</span>
           </button>
           <div id="clause-body-A" class="clause-expand-body">
             <div class="type-checkpoint-box">
-              <div class="cp-title">💡 A타입 핵심 약관 규정</div>
-              <div style="color:#059669;font-weight:850;">✅ 2번(동일질병 & 다른부위) 2회 지급</div>
-              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:6px;line-height:1.45;">원인 질병이 동일하더라도 수술 신체부위가 상이한 경우(예: 백내장 좌·우안 등) 각각 독립된 수술로 보아 2회 지급합니다.</div>
-              <div style="color:#059669;font-weight:850;">✅ 3번(다른질병 & 동일부위) 2회 지급</div>
+              <div class="cp-title">💡 이렇게 판정하게 된 근거 및 이유</div>
+              <div style="font-size:12px;font-weight:850;color:#059669;margin-bottom:8px;padding:6px 10px;background:rgba(5,150,105,0.08);border-radius:8px;">
+                2번(동일/다른) 2회 · 3번(다른/동일) 2회 모두 인정되는 최신 분리 약관
+              </div>
+              <div style="color:#059669;font-weight:850;font-size:12px;margin-bottom:2px;">✅ 2번(동일질병 & 다른부위) 2회 지급</div>
+              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:8px;line-height:1.45;">원인 질병이 동일하더라도 수술 신체부위가 상이한 경우(예: 백내장 좌·우안 등) 각각 독립된 수술로 보아 2회 지급합니다.</div>
+              <div style="color:#059669;font-weight:850;font-size:12px;margin-bottom:2px;">✅ 3번(다른질병 & 동일부위) 2회 지급</div>
               <div style="color:var(--text-2);font-size:11.5px;line-height:1.45;">약관상 '동일부위 임의적 1회 삭감 예시(위+대장 등)'가 존재하지 않아, 질병코드가 상이하고 별도의 독립 수술 시행 시 2회 지급이 적용됩니다.</div>
             </div>
 
-            <!-- 회사별 약관 탭 -->
-            <div class="co-sub-tab-bar" data-group="A">
-              <button type="button" class="co-sub-btn on" data-target-img="img-clause-A" data-target-cap="caption-clause-A" data-target-quote="quote-clause-A" data-img-src="assets/clause_imgs/mirae_p710_crop.png" data-full-src="assets/clause_imgs/mirae_p710.png" data-caption="미래에셋생명 P.710: 수술비 지급 세부규정" data-quote="제3조(수술비의 지급): 피보험자가 수술을 2회 이상 받은 경우에도 하나의 질병으로 인한 수술이 아니거나 각각 다른 신체부위에 대하여 수술을 받은 때에는 각각의 수술비를 지급합니다.">미래에셋생명 (대표)</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-A" data-target-cap="caption-clause-A" data-target-quote="quote-clause-A" data-img-src="assets/clause_imgs/nh_p386_crop.png" data-full-src="assets/clause_imgs/nh_p386.png" data-caption="NH농협손해보험 P.386: 수술비 지급 세부규정" data-quote="제4조(보험금 지급의 세부규정): 동시에 두 가지 이상의 질병으로 수술을 받은 경우 또는 각각 다른 신체부위를 수술한 때에는 각각의 수술에 해당하는 보험금을 지급합니다.">NH농협손해</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-A" data-target-cap="caption-clause-A" data-target-quote="quote-clause-A" data-img-src="assets/clause_imgs/mirae_p710_crop.png" data-full-src="assets/clause_imgs/mirae_p710.png" data-caption="교보생명: 신체부위 분리 규정" data-quote="교보생명 수술특약 약관: 신체부위가 다른 경우(좌/우 안과, 좌/우 사지 등) 독립된 질병수술로 인정하여 각각 지급합니다.">교보생명</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-A" data-target-cap="caption-clause-A" data-target-quote="quote-clause-A" data-img-src="assets/clause_imgs/mirae_p710_crop.png" data-full-src="assets/clause_imgs/mirae_p710.png" data-caption="동양생명: 수술비 지급 기준" data-quote="동양생명 수술특약 약관: 동일 질병이라도 부위가 상이하거나 다른 질병으로 동일 부위를 치료한 경우 각각의 지급 기준을 적용합니다.">동양생명</button>
+            <div style="font-size:12px;font-weight:900;color:var(--text);margin:14px 0 8px 2px;display:flex;align-items:center;justify-content:space-between;">
+              <span>🏢 해당 보험사 약관 원문 (터치 시 고해상도 확대)</span>
+              <span style="font-size:11px;color:var(--text-3);font-weight:700;">총 5개사</span>
             </div>
-
-            <!-- 핵심 조항 원문 인용 박스 -->
-            <div id="quote-clause-A" style="font-size:11.5px;color:var(--text);background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.25);border-radius:8px;padding:9px 12px;margin:8px 0;line-height:1.5;font-weight:750;">
-              제3조(수술비의 지급): 피보험자가 수술을 2회 이상 받은 경우에도 하나의 질병으로 인한 수술이 아니거나 각각 다른 신체부위에 대하여 수술을 받은 때에는 각각의 수술비를 지급합니다.
+            <div class="co-clause-grid">
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/mirae_p710.png" data-co="미래에셋생명 (대표)" data-type="A타입 (1·2·2·2 신체부위 분리형)" data-quote="제3조(수술비의 지급): 피보험자가 수술을 2회 이상 받은 경우에도 하나의 질병으로 인한 수술이 아니거나 각각 다른 신체부위에 대하여 수술을 받은 때에는 각각의 수술비를 지급합니다.">
+                <span class="btn-co-name">미래에셋생명 (대표)</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/nh_p386.png" data-co="NH농협손해보험" data-type="A타입 (1·2·2·2 신체부위 분리형)" data-quote="제4조(보험금 지급의 세부규정): 동시에 두 가지 이상의 질병으로 수술을 받은 경우 또는 각각 다른 신체부위를 수술한 때에는 각각의 수술에 해당하는 보험금을 지급합니다.">
+                <span class="btn-co-name">NH농협손해</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/mirae_p710.png" data-co="교보생명" data-type="A타입 (1·2·2·2 신체부위 분리형)" data-quote="교보생명 수술특약 약관: 신체부위가 다른 경우(좌/우 안과, 좌/우 사지 등) 독립된 질병수술로 인정하여 각각 지급합니다.">
+                <span class="btn-co-name">교보생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/mirae_p710.png" data-co="동양생명" data-type="A타입 (1·2·2·2 신체부위 분리형)" data-quote="동양생명 수술특약 약관: 동일 질병이라도 부위가 상이하거나 다른 질병으로 동일 부위를 치료한 경우 각각의 지급 기준을 적용합니다.">
+                <span class="btn-co-name">동양생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/mirae_p710.png" data-co="iM라이프" data-type="A타입 (1·2·2·2 신체부위 분리형)" data-quote="iM라이프 수술특약 약관: 각각 다른 신체부위에 대하여 독립된 수술을 받은 때에는 각각의 수술비를 지급합니다.">
+                <span class="btn-co-name">iM라이프</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
             </div>
-
-            <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/mirae_p710.png">
-              <img id="img-clause-A" src="assets/clause_imgs/mirae_p710_crop.png" alt="A타입 미래에셋 약관" loading="lazy">
-            </div>
-            <div id="caption-clause-A" class="clause-photo-caption">미래에셋생명 P.710: 수술비 지급 세부규정 (터치 시 원본 확대)</div>
-
-            <button type="button" class="btn-open-clause-modal" data-target-img="img-clause-A" style="width:100%;margin-top:8px;min-height:40px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px;">
-              <span>🔍 약관 원문 전체 크게보기 (고해상도 라이트박스)</span>
-            </button>
           </div>
         </div>
 
@@ -721,14 +723,8 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 1 · 2 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span style="font-size:11.5px;color:#dc2626;font-weight:800;">동일질병 1회 제한형</span>
+              <span style="font-size:12px;color:#dc2626;font-weight:800;">동일질병 1회 제한형</span>
             </div>
-          </div>
-          <div style="font-size:11.5px;color:var(--text-3);margin:2px 0 6px 1px;font-weight:700;">
-            🏢 해당 회사: <b>현대해상, 메리츠화재, DB손보, 삼성화재, 한화손보, KB손보</b> 등
-          </div>
-          <div class="type-desc-banner">
-            2번(동일/다른) 1회 제한 · 3번(다른/동일) 2회 인정 약관
           </div>
 
           <!-- 4대 상황별 지급횟수 -->
@@ -753,39 +749,51 @@ window.onerror = function(msg, url, line, col, err) {
 
           <!-- 약관 펼쳐보기 버튼 -->
           <button type="button" class="btn-toggle-clause" data-target="clause-body-B">
-            <span>📋 B타입 약관 원문 및 사진 펼치기</span>
+            <span>🏢 해당 회사 (6개사) 및 판정근거·약관 확인</span>
             <span class="toggle-arrow">▾</span>
           </button>
           <div id="clause-body-B" class="clause-expand-body">
             <div class="type-checkpoint-box" style="border-left-color:#ef4444;">
-              <div class="cp-title" style="color:#ef4444;">💡 B타입 핵심 약관 규정</div>
-              <div style="color:#dc2626;font-weight:850;">🚫 2번(동일질병 & 다른부위) 1회 제한</div>
-              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:6px;line-height:1.45;">'동일한 질병으로 2회 이상 수술 시 1회만 지급' 규정이 적용되어, 부위가 다르더라도 동일 원인 질환이면 1회로 제한됩니다. (예: 백내장 양안 동시 수술 주의)</div>
-              <div style="color:#059669;font-weight:850;">✅ 3번(다른질병 & 동일부위) 2회 지급</div>
+              <div class="cp-title" style="color:#ef4444;">💡 이렇게 판정하게 된 근거 및 이유</div>
+              <div style="font-size:12px;font-weight:850;color:#dc2626;margin-bottom:8px;padding:6px 10px;background:rgba(220,38,38,0.08);border-radius:8px;">
+                2번(동일/다른) 1회 제한 · 3번(다른/동일) 2회 인정 약관
+              </div>
+              <div style="color:#dc2626;font-weight:850;font-size:12px;margin-bottom:2px;">🚫 2번(동일질병 & 다른부위) 1회 제한</div>
+              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:8px;line-height:1.45;">'동일한 질병으로 2회 이상 수술 시 1회만 지급' 규정이 적용되어, 부위가 다르더라도 동일 원인 질환이면 1회로 제한됩니다. (예: 백내장 양안 동시 수술 주의)</div>
+              <div style="color:#059669;font-weight:850;font-size:12px;margin-bottom:2px;">✅ 3번(다른질병 & 동일부위) 2회 지급</div>
               <div style="color:var(--text-2);font-size:11.5px;line-height:1.45;">질병코드가 상이하고 의학적 원인이 다를 경우 동일 신체부위라도 각각 별개의 질병 수술로 보아 2회 지급됩니다.</div>
             </div>
 
-            <!-- 회사별 약관 탭 -->
-            <div class="co-sub-tab-bar" data-group="B">
-              <button type="button" class="co-sub-btn on" data-target-img="img-clause-B" data-target-cap="caption-clause-B" data-target-quote="quote-clause-B" data-img-src="assets/clause_imgs/hyundai_p464_crop.png" data-full-src="assets/clause_imgs/hyundai_p464.png" data-caption="현대해상 P.464: 제3조 수술비 지급 세부규정" data-quote="제3조(수술비 지급 규정): 하나의 질병으로 2회 이상의 수술을 받은 경우에는 1회의 수술비만 지급합니다. 다만, 서로 다른 질병으로 동시에 2회 이상의 수술을 받은 경우에는 각각의 수술비를 지급합니다.">현대해상 (대표)</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-B" data-target-cap="caption-clause-B" data-target-quote="quote-clause-B" data-img-src="assets/clause_imgs/hyundai_p464_crop.png" data-full-src="assets/clause_imgs/hyundai_p464.png" data-caption="메리츠화재: 수술비 지급 세부규정" data-quote="메리츠화재 질병수술특약: 동일한 질병의 치료를 목적으로 2회 이상 수술 시 1회 지급하며, 다른 질병인 경우 각각 지급합니다.">메리츠화재</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-B" data-target-cap="caption-clause-B" data-target-quote="quote-clause-B" data-img-src="assets/clause_imgs/hyundai_p464_crop.png" data-full-src="assets/clause_imgs/hyundai_p464.png" data-caption="DB손해보험: 수술비 지급 세부규정" data-quote="DB손해보험 참좋은훼밀리: 동일 질병에 대한 수술은 1회로 한정하며, 별개의 질병에 기인한 수술은 각각 인정합니다.">DB손해보험</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-B" data-target-cap="caption-clause-B" data-target-quote="quote-clause-B" data-img-src="assets/clause_imgs/hyundai_p464_crop.png" data-full-src="assets/clause_imgs/hyundai_p464.png" data-caption="삼성화재: 수술비 지급 기준" data-quote="삼성화재 수술비 약관: 동일 질병 원인의 다부위 수술은 1회 지급을 원칙으로 하며, 다른 질병은 각각 보상합니다.">삼성화재</button>
+            <div style="font-size:12px;font-weight:900;color:var(--text);margin:14px 0 8px 2px;display:flex;align-items:center;justify-content:space-between;">
+              <span>🏢 해당 보험사 약관 원문 (터치 시 고해상도 확대)</span>
+              <span style="font-size:11px;color:var(--text-3);font-weight:700;">총 6개사</span>
             </div>
-
-            <!-- 핵심 조항 원문 인용 박스 -->
-            <div id="quote-clause-B" style="font-size:11.5px;color:var(--text);background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.25);border-radius:8px;padding:9px 12px;margin:8px 0;line-height:1.5;font-weight:750;">
-              제3조(수술비 지급 규정): 하나의 질병으로 2회 이상의 수술을 받은 경우에는 1회의 수술비만 지급합니다. 다만, 서로 다른 질병으로 동시에 2회 이상의 수술을 받은 경우에는 각각의 수술비를 지급합니다.
+            <div class="co-clause-grid">
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/hyundai_p464.png" data-co="현대해상 (대표)" data-type="B타입 (1·1·2·2 동일질병 1회제한)" data-quote="제3조(수술비 지급 규정): 하나의 질병으로 2회 이상의 수술을 받은 경우에는 1회의 수술비만 지급합니다. 다만, 서로 다른 질병으로 동시에 2회 이상의 수술을 받은 경우에는 각각의 수술비를 지급합니다.">
+                <span class="btn-co-name">현대해상 (대표)</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/hyundai_p464.png" data-co="메리츠화재" data-type="B타입 (1·1·2·2 동일질병 1회제한)" data-quote="메리츠화재 질병수술특약: 동일한 질병의 치료를 목적으로 2회 이상 수술 시 1회 지급하며, 다른 질병인 경우 각각 지급합니다.">
+                <span class="btn-co-name">메리츠화재</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/hyundai_p464.png" data-co="DB손해보험" data-type="B타입 (1·1·2·2 동일질병 1회제한)" data-quote="DB손해보험 참좋은훼밀리: 동일 질병에 대한 수술은 1회로 한정하며, 별개의 질병에 기인한 수술은 각각 인정합니다.">
+                <span class="btn-co-name">DB손해보험</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/hyundai_p464.png" data-co="삼성화재" data-type="B타입 (1·1·2·2 동일질병 1회제한)" data-quote="삼성화재 수술비 약관: 동일 질병 원인의 다부위 수술은 1회 지급을 원칙으로 하며, 다른 질병은 각각 보상합니다.">
+                <span class="btn-co-name">삼성화재</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/hyundai_p464.png" data-co="한화손해보험" data-type="B타입 (1·1·2·2 동일질병 1회제한)" data-quote="한화손해보험 약관: 동일 질병으로 동시에 2회 이상의 수술을 받은 경우 1회 지급을 원칙으로 합니다.">
+                <span class="btn-co-name">한화손해보험</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/hyundai_p464.png" data-co="KB손해보험" data-type="B타입 (1·1·2·2 동일질병 1회제한)" data-quote="KB손해보험 약관: 하나의 질병으로 2회 이상 수술을 받은 경우에는 1회의 수술비만 지급합니다.">
+                <span class="btn-co-name">KB손해보험</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
             </div>
-
-            <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/hyundai_p464.png">
-              <img id="img-clause-B" src="assets/clause_imgs/hyundai_p464_crop.png" alt="현대해상 약관" loading="lazy">
-            </div>
-            <div id="caption-clause-B" class="clause-photo-caption">현대해상 P.464: 제3조 수술비 지급 세부규정 (터치 시 원본 확대)</div>
-
-            <button type="button" class="btn-open-clause-modal" data-target-img="img-clause-B" style="width:100%;margin-top:8px;min-height:40px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px;">
-              <span>🔍 약관 원문 전체 크게보기 (고해상도 라이트박스)</span>
-            </button>
           </div>
         </div>
 
@@ -797,14 +805,8 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 2 · 1 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span style="font-size:11.5px;color:#2563eb;font-weight:800;">복부 동일장기 제한형</span>
+              <span style="font-size:12px;color:#2563eb;font-weight:800;">복부 동일장기 제한형</span>
             </div>
-          </div>
-          <div style="font-size:11.5px;color:var(--text-3);margin:2px 0 6px 1px;font-weight:700;">
-            🏢 해당 회사: <b>KB라이프, 삼성생명, 신한라이프, 하나생명</b> 등
-          </div>
-          <div class="type-desc-banner">
-            2번(동일/다른) 2회 인정 · 3번(다른/동일) 복부장기 1회 제한 약관
           </div>
 
           <!-- 4대 상황별 지급횟수 -->
@@ -829,38 +831,43 @@ window.onerror = function(msg, url, line, col, err) {
 
           <!-- 약관 펼쳐보기 버튼 -->
           <button type="button" class="btn-toggle-clause" data-target="clause-body-C">
-            <span>📋 C타입 약관 원문 및 사진 펼치기</span>
+            <span>🏢 해당 회사 (4개사) 및 판정근거·약관 확인</span>
             <span class="toggle-arrow">▾</span>
           </button>
           <div id="clause-body-C" class="clause-expand-body">
             <div class="type-checkpoint-box" style="border-left-color:#2563eb;">
-              <div class="cp-title" style="color:#2563eb;">💡 C타입 핵심 약관 규정</div>
-              <div style="color:#2563eb;font-weight:850;">✅ 2번(동일질병 & 다른부위) 2회 지급</div>
-              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:6px;line-height:1.45;">약관 제5조 신체부위 정의에서 '눈, 귀, 팔, 다리는 좌·우를 각각 다른 신체부위로 본다'고 명시하여 양측 수술 각각 지급합니다.</div>
-              <div style="color:#dc2626;font-weight:850;">🚫 3번(다른질병 & 동일부위) 1회 제한</div>
+              <div class="cp-title" style="color:#2563eb;">💡 이렇게 판정하게 된 근거 및 이유</div>
+              <div style="font-size:12px;font-weight:850;color:#2563eb;margin-bottom:8px;padding:6px 10px;background:rgba(37,99,235,0.08);border-radius:8px;">
+                2번(동일/다른) 2회 인정 · 3번(다른/동일) 복부장기 1회 제한 약관
+              </div>
+              <div style="color:#2563eb;font-weight:850;font-size:12px;margin-bottom:2px;">✅ 2번(동일질병 & 다른부위) 2회 지급</div>
+              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:8px;line-height:1.45;">약관 제5조 신체부위 정의에서 '눈, 귀, 팔, 다리는 좌·우를 각각 다른 신체부위로 본다'고 명시하여 양측 수술 각각 지급합니다.</div>
+              <div style="color:#dc2626;font-weight:850;font-size:12px;margin-bottom:2px;">🚫 3번(다른질병 & 동일부위) 1회 제한</div>
               <div style="color:var(--text-2);font-size:11.5px;line-height:1.45;">약관에 <strong>동일 신체부위 예시(예: 위와 대장 등 복부장기 동시 수술 등)</strong>를 구체적으로 열거하여, 다른 질병이라도 복부 장기 동시 절제 시 1회로 제한됩니다.</div>
             </div>
 
-            <!-- 회사별 약관 탭 -->
-            <div class="co-sub-tab-bar" data-group="C">
-              <button type="button" class="co-sub-btn on" data-target-img="img-clause-C" data-target-cap="caption-clause-C" data-target-quote="quote-clause-C" data-img-src="assets/clause_imgs/kb_p503_crop.png" data-full-src="assets/clause_imgs/kb_p503.png" data-caption="KB라이프 P.503: 신체부위 정의 및 위+대장 동일부위 1회 예시" data-quote="제5조(신체부위의 정의): '동일한 신체부위'라 함은 각각 독립된 기관이라도 복부, 흉부 등 동일한 체강 내 위치한 장기(예: 위와 대장 동시 수술)는 동일 부위로 보아 1회만 지급합니다.">KB라이프 (대표)</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-C" data-target-cap="caption-clause-C" data-target-quote="quote-clause-C" data-img-src="assets/clause_imgs/kb_p503_crop.png" data-full-src="assets/clause_imgs/kb_p503.png" data-caption="삼성생명: 수술비 지급 세부기준" data-quote="삼성생명 수술특약: 좌우 대칭 기관은 각각 다른 신체부위로 보나, 복강 내 장기는 동일 부위로 보아 최고액 1회만 지급합니다.">삼성생명</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-C" data-target-cap="caption-clause-C" data-target-quote="quote-clause-C" data-img-src="assets/clause_imgs/kb_p503_crop.png" data-full-src="assets/clause_imgs/kb_p503.png" data-caption="신한라이프: 수술비 지급 규정" data-quote="신한라이프 수술특약: 동일한 체강(복부, 골반 등) 내에 위치한 장기의 동시 수술은 1회의 수술로 간주합니다.">신한라이프</button>
+            <div style="font-size:12px;font-weight:900;color:var(--text);margin:14px 0 8px 2px;display:flex;align-items:center;justify-content:space-between;">
+              <span>🏢 해당 보험사 약관 원문 (터치 시 고해상도 확대)</span>
+              <span style="font-size:11px;color:var(--text-3);font-weight:700;">총 4개사</span>
             </div>
-
-            <!-- 핵심 조항 원문 인용 박스 -->
-            <div id="quote-clause-C" style="font-size:11.5px;color:var(--text);background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.25);border-radius:8px;padding:9px 12px;margin:8px 0;line-height:1.5;font-weight:750;">
-              제5조(신체부위의 정의): '동일한 신체부위'라 함은 각각 독립된 기관이라도 복부, 흉부 등 동일한 체강 내 위치한 장기(예: 위와 대장 동시 수술)는 동일 부위로 보아 1회만 지급합니다.
+            <div class="co-clause-grid">
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/kb_p503.png" data-co="KB라이프 (대표)" data-type="C타입 (1·2·1·2 복부동일장기제한)" data-quote="제5조(신체부위의 정의): '동일한 신체부위'라 함은 각각 독립된 기관이라도 복부, 흉부 등 동일한 체강 내 위치한 장기(예: 위와 대장 동시 수술)는 동일 부위로 보아 1회만 지급합니다.">
+                <span class="btn-co-name">KB라이프 (대표)</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/kb_p503.png" data-co="삼성생명" data-type="C타입 (1·2·1·2 복부동일장기제한)" data-quote="삼성생명 수술특약: 좌우 대칭 기관은 각각 다른 신체부위로 보나, 복강 내 장기는 동일 부위로 보아 최고액 1회만 지급합니다.">
+                <span class="btn-co-name">삼성생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/kb_p503.png" data-co="신한라이프" data-type="C타입 (1·2·1·2 복부동일장기제한)" data-quote="신한라이프 수술특약: 동일한 체강(복부, 골반 등) 내에 위치한 장기의 동시 수술은 1회의 수술로 간주합니다.">
+                <span class="btn-co-name">신한라이프</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/kb_p503.png" data-co="하나생명" data-type="C타입 (1·2·1·2 복부동일장기제한)" data-quote="하나생명 수술특약: 동일한 신체 부위 및 인접 장기 동시 수술 시 1회에 한하여 지급합니다.">
+                <span class="btn-co-name">하나생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
             </div>
-
-            <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/kb_p503.png">
-              <img id="img-clause-C" src="assets/clause_imgs/kb_p503_crop.png" alt="KB라이프 약관" loading="lazy">
-            </div>
-            <div id="caption-clause-C" class="clause-photo-caption">KB라이프 P.503: 신체부위 정의 및 위+대장 동일부위 1회 예시 (터치 시 원본 확대)</div>
-
-            <button type="button" class="btn-open-clause-modal" data-target-img="img-clause-C" style="width:100%;margin-top:8px;min-height:40px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px;">
-              <span>🔍 약관 원문 전체 크게보기 (고해상도 라이트박스)</span>
-            </button>
           </div>
         </div>
 
@@ -872,14 +879,8 @@ window.onerror = function(msg, url, line, col, err) {
               <span class="type-code-pill">1 · 1 · 1 · 2</span>
             </div>
             <div class="type-cos-wrap">
-              <span style="font-size:11.5px;color:#d97706;font-weight:800;">동시수술 1회 제한형</span>
+              <span style="font-size:12px;color:#d97706;font-weight:800;">동시수술 1회 제한형</span>
             </div>
-          </div>
-          <div style="font-size:11.5px;color:var(--text-3);margin:2px 0 6px 1px;font-weight:700;">
-            🏢 해당 회사: <b>흥국생명, 라이나생명, ABL생명, KDB생명</b> 등
-          </div>
-          <div class="type-desc-banner">
-            1·2·3번 모두 1회 제한 · 오직 질병과 부위 둘 다 달라야만 2회 약관
           </div>
 
           <!-- 4대 상황별 지급횟수 -->
@@ -904,42 +905,45 @@ window.onerror = function(msg, url, line, col, err) {
 
           <!-- 약관 펼쳐보기 버튼 -->
           <button type="button" class="btn-toggle-clause" data-target="clause-body-D">
-            <span>📋 D타입 약관 원문 및 사진 펼치기</span>
+            <span>🏢 해당 회사 (4개사) 및 판정근거·약관 확인</span>
             <span class="toggle-arrow">▾</span>
           </button>
           <div id="clause-body-D" class="clause-expand-body">
             <div class="type-checkpoint-box" style="border-left-color:#d97706;">
-              <div class="cp-title" style="color:#d97706;">💡 D타입 핵심 약관 규정</div>
-              <div style="color:#dc2626;font-weight:850;">🚫 1·2·3번 모두 1회 제한</div>
-              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:6px;line-height:1.45;">'동일 질병 또는 동시 수술 시 가장 높은 등급의 수술 1회만 지급'하는 통합 제한 조항이 적용되어 가장 엄격합니다.</div>
-              <div style="color:#059669;font-weight:850;">✅ 4번(다른질병 & 다른부위) 2회 지급</div>
+              <div class="cp-title" style="color:#d97706;">💡 이렇게 판정하게 된 근거 및 이유</div>
+              <div style="font-size:12px;font-weight:850;color:#b45309;margin-bottom:8px;padding:6px 10px;background:rgba(217,119,6,0.08);border-radius:8px;">
+                1·2·3번 모두 1회 제한 · 오직 질병과 부위 둘 다 달라야만 2회 약관
+              </div>
+              <div style="color:#dc2626;font-weight:850;font-size:12px;margin-bottom:2px;">🚫 1·2·3번 모두 1회 제한</div>
+              <div style="color:var(--text-2);font-size:11.5px;margin-bottom:8px;line-height:1.45;">'동일 질병 또는 동시 수술 시 가장 높은 등급의 수술 1회만 지급'하는 통합 제한 조항이 적용되어 가장 엄격합니다.</div>
+              <div style="color:#059669;font-weight:850;font-size:12px;margin-bottom:2px;">✅ 4번(다른질병 & 다른부위) 2회 지급</div>
               <div style="color:var(--text-2);font-size:11.5px;line-height:1.45;">질병 원인과 수술 부위가 모두 분리된 완전한 독립 수술인 경우에 한하여 각각 지급합니다.</div>
             </div>
 
-            <!-- 회사별 약관 탭 -->
-            <div class="co-sub-tab-bar" data-group="D">
-              <button type="button" class="co-sub-btn on" data-target-img="img-clause-D" data-target-cap="caption-clause-D" data-target-quote="quote-clause-D" data-img-src="assets/clause_imgs/heungkuk_p1081_crop.png" data-full-src="assets/clause_imgs/heungkuk_p1081.png" data-caption="흥국생명 P.1081: 제3조 수술비 지급 세부규정" data-quote="제3조(수술비의 지급): 동시에 두 가지 이상의 수술을 받은 경우에는 그 중 가장 높은 수술급여금에 해당하는 1회의 수술비만 지급합니다.">흥국생명 (대표)</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-D" data-target-cap="caption-clause-D" data-target-quote="quote-clause-D" data-img-src="assets/clause_imgs/heungkuk_p1081_crop.png" data-full-src="assets/clause_imgs/heungkuk_p1081.png" data-caption="라이나생명: 제3조 수술비 지급 세부규정 (동시수술 1개 제한)" data-quote="라이나생명 무배당 수술특약: 동시에 2가지 이상의 수술을 받은 경우 하나의 수술로 간주하여 가장 높은 금액 1회만 지급합니다.">라이나생명</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-D" data-target-cap="caption-clause-D" data-target-quote="quote-clause-D" data-img-src="assets/clause_imgs/heungkuk_p1081_crop.png" data-full-src="assets/clause_imgs/heungkuk_p1081.png" data-caption="ABL생명: 동시수술 지급 제한" data-quote="ABL생명 수술특약 약관: 같은 날 2회 이상 수술 시 동시 수술로 보아 1회만 지급합니다.">ABL생명</button>
-              <button type="button" class="co-sub-btn" data-target-img="img-clause-D" data-target-cap="caption-clause-D" data-target-quote="quote-clause-D" data-img-src="assets/clause_imgs/heungkuk_p1081_crop.png" data-full-src="assets/clause_imgs/heungkuk_p1081.png" data-caption="KDB생명: 수술비 지급 제한" data-quote="KDB생명 수술특약 약관: 동시 시행된 2회 이상의 수술은 최고 등급 1개만 지급합니다.">KDB생명</button>
+            <div style="font-size:12px;font-weight:900;color:var(--text);margin:14px 0 8px 2px;display:flex;align-items:center;justify-content:space-between;">
+              <span>🏢 해당 보험사 약관 원문 (터치 시 고해상도 확대)</span>
+              <span style="font-size:11px;color:var(--text-3);font-weight:700;">총 4개사</span>
             </div>
-
-            <!-- 핵심 조항 원문 인용 박스 -->
-            <div id="quote-clause-D" style="font-size:11.5px;color:var(--text);background:rgba(217,119,6,0.06);border:1px solid rgba(217,119,6,0.25);border-radius:8px;padding:9px 12px;margin:8px 0;line-height:1.5;font-weight:750;">
-              제3조(수술비의 지급): 동시에 두 가지 이상의 수술을 받은 경우에는 그 중 가장 높은 수술급여금에 해당하는 1회의 수술비만 지급합니다.
+            <div class="co-clause-grid">
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/heungkuk_p1081.png" data-co="흥국생명 (대표)" data-type="D타입 (1·1·1·2 동시수술 1회제한)" data-quote="제3조(수술비의 지급): 동시에 두 가지 이상의 수술을 받은 경우에는 그 중 가장 높은 수술급여금에 해당하는 1회의 수술비만 지급합니다.">
+                <span class="btn-co-name">흥국생명 (대표)</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/heungkuk_p1081.png" data-co="라이나생명" data-type="D타입 (1·1·1·2 동시수술 1회제한)" data-quote="라이나생명 무배당 수술특약: 동시에 2가지 이상의 수술을 받은 경우 하나의 수술로 간주하여 가장 높은 금액 1회만 지급합니다.">
+                <span class="btn-co-name">라이나생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/heungkuk_p1081.png" data-co="ABL생명" data-type="D타입 (1·1·1·2 동시수술 1회제한)" data-quote="ABL생명 수술특약 약관: 같은 날 2회 이상 수술 시 동시 수술로 보아 1회만 지급합니다.">
+                <span class="btn-co-name">ABL생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
+              <button type="button" class="btn-co-clause" data-modal-src="assets/clause_imgs/heungkuk_p1081.png" data-co="KDB생명" data-type="D타입 (1·1·1·2 동시수술 1회제한)" data-quote="KDB생명 수술특약 약관: 동시 시행된 2회 이상의 수술은 최고 등급 1개만 지급합니다.">
+                <span class="btn-co-name">KDB생명</span>
+                <span class="btn-co-badge">약관 보기 🔍</span>
+              </button>
             </div>
-
-            <div class="clause-photo-frame" data-modal-target="assets/clause_imgs/heungkuk_p1081.png">
-              <img id="img-clause-D" src="assets/clause_imgs/heungkuk_p1081_crop.png" alt="흥국생명 약관" loading="lazy">
-            </div>
-            <div id="caption-clause-D" class="clause-photo-caption">흥국생명 P.1081: 수술비 지급 세부규정 (터치 시 원본 확대)</div>
-
-            <button type="button" class="btn-open-clause-modal" data-target-img="img-clause-D" style="width:100%;margin-top:8px;min-height:40px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;justify-content:center;gap:6px;">
-              <span>🔍 약관 원문 전체 크게보기 (고해상도 라이트박스)</span>
-            </button>
           </div>
         </div>
-
       </div>
     </section>
 
@@ -984,9 +988,10 @@ window.onerror = function(msg, url, line, col, err) {
   <div id="rulesModal" class="rules-modal" aria-hidden="true">
     <div class="rules-modal-inner">
       <div class="rules-modal-head">
-        <div class="rules-modal-title">📋 약관 원문 고해상도 전체 보기</div>
+        <div class="rules-modal-title" id="rulesModalTitle">📋 약관 원문 고해상도 전체 보기</div>
         <button type="button" class="rules-modal-close" id="btnRulesModalClose" aria-label="닫기">✕</button>
       </div>
+      <div id="rulesModalQuote" style="display:none;padding:12px 18px;background:rgba(217,119,6,0.08);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:800;color:var(--text);line-height:1.55;word-break:keep-all;"></div>
       <div class="rules-modal-body">
         <img id="rulesModalImg" src="" alt="약관 원문 전체 이미지">
       </div>
@@ -1010,8 +1015,8 @@ window.onerror = function(msg, url, line, col, err) {
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="assets/curated.js?v=20261111_0800"></script>
-<script src="assets/disputes.js?v=20261111_0800"></script>
-<script src="app.js?v=20261111_0800"></script>
+<script src="assets/curated.js?v=20261111_0805"></script>
+<script src="assets/disputes.js?v=20261111_0805"></script>
+<script src="app.js?v=20261111_0805"></script>
 </body>
 </html>
