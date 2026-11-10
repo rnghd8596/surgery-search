@@ -6292,6 +6292,14 @@ function renderDisputesList(filterKey = 'all') {
   box.innerHTML = filtered.map(c => {
     const drawerId = `disp-drawer-${c.id}`;
     const arrowId = `disp-arrow-${c.id}`;
+    const title = c.surgeryName || c.title || '';
+    const claim = (c.summaryClaim || c.disputeCore || '').replace(/^보상과:\s*“?|”?$/g, '');
+    const counter = (c.summaryCounter || c.counterCore || '').replace(/^핵심 반박:\s*“?|”?$/g, '');
+    const insurerHtml = Array.isArray(c.insurerLogic) ? c.insurerLogic.map(l => '• ' + esc(l)).join('<br>') : esc(c.insurerArg || '');
+    const courtHtml = Array.isArray(c.courtLogic) ? c.courtLogic.map(l => '• ' + esc(l)).join('<br><br>') : esc(c.precedent || '');
+    const tipsHtml = Array.isArray(c.fieldTips) ? c.fieldTips.map(l => '• ' + esc(l)).join('<br>') : esc(c.docTips || '');
+    const kakaoText = c.customerMsg || c.kakaoMsg || '';
+
     return `
     <div class="dispute-banner-item" style="margin-bottom:10px;border:1.5px solid var(--border);border-radius:14px;background:var(--surface);overflow:hidden;box-shadow:var(--shadow-1);">
       <!-- 1줄 홈 배너형 토글 바 (클릭 시 펼치기) -->
@@ -6312,11 +6320,11 @@ function renderDisputesList(filterKey = 'all') {
           </div>
           <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;">
             <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <span style="font-size:15px;font-weight:900;color:var(--text);letter-spacing:-.02em;">${esc(c.title)}</span>
+              <span style="font-size:15px;font-weight:900;color:var(--text);letter-spacing:-.02em;">${esc(title)}</span>
               <span style="font-size:11px;font-weight:850;color:${c.badgeColor};background:${c.badgeBg};padding:2px 7px;border-radius:5px;white-space:nowrap;">${esc(c.badge)}</span>
             </div>
             <div style="font-size:12px;color:var(--text-3);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-              <span style="color:#dc2626;">🚫 보상과:</span> ${esc(c.disputeCore)} · <span style="color:#059669;">✅ 반박:</span> ${esc(c.counterCore)}
+              <span style="color:#dc2626;">🚫 보상과:</span> ${esc(claim)} · <span style="color:#059669;">✅ 반박:</span> ${esc(counter)}
             </div>
           </div>
         </div>
@@ -6329,28 +6337,28 @@ function renderDisputesList(filterKey = 'all') {
         <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:12px;">
           <div style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.25);border-radius:10px;padding:10px 12px;">
             <div style="font-size:12px;font-weight:900;color:#dc2626;margin-bottom:4px;">🚫 보험사 보상과 주요 삭감·부지급 주장:</div>
-            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${esc(c.insurerArg)}</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${insurerHtml}</div>
           </div>
           <div style="background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.25);border-radius:10px;padding:10px 12px;">
             <div style="font-size:12px;font-weight:900;color:#059669;margin-bottom:4px;">✅ 설계사 현장 반박 핵심 근거:</div>
-            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${esc(c.ourArg)}</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${counter ? '• ' + esc(counter) + '<br>' : ''}• 병변 완전 절제 치료 목적 입증 시 약관상 2종 전액 수령</div>
           </div>
         </div>
 
         <!-- 2. 금감원 분쟁조정례 / 판례 -->
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:10px;">
           <div style="font-size:12px;font-weight:850;color:#1d4ed8;margin-bottom:4px;">⚖️ 관련 판례 및 금융감독원 분쟁조정례:</div>
-          <div style="font-size:12px;color:var(--text-2);line-height:1.5;white-space:pre-line;">${esc(c.precedent)}</div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${courtHtml}</div>
         </div>
 
         <!-- 3. 현장 서류 발급 팁 -->
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:12px;">
           <div style="font-size:12px;font-weight:850;color:#d97706;margin-bottom:4px;">📝 청구 필수 구비서류 및 의사 진단서 발급 팁:</div>
-          <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${esc(c.docTips)}</div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${tipsHtml}</div>
         </div>
 
         <!-- 4. 고객 안내 카톡 복사 버튼 -->
-        <button type="button" class="btn-copy-dispute-kakao f-chip" data-copy-text="${esc(c.customerMsg || c.kakaoMsg)}" style="width:100%;padding:10px 0;background:#fee500;color:#191919;font-weight:850;font-size:12.5px;border:0;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.08);cursor:pointer;">
+        <button type="button" class="btn-copy-dispute-kakao f-chip" data-copy-text="${esc(kakaoText)}" style="width:100%;padding:10px 0;background:#fee500;color:#191919;font-weight:850;font-size:12.5px;border:0;border-radius:9px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,0.08);cursor:pointer;">
           <span style="font-size:14px;">💬</span>
           <span>고객 안내 카톡 복사하기</span>
         </button>
