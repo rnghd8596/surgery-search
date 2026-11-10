@@ -1240,16 +1240,17 @@ html[data-theme="dark"] .ncd-item.is-match .ncd-name {
 
 /* 정밀 진단 & 질수 바로가기 버튼 공통 */
 .btn-jump-action {
-  min-height: 44px;
-  padding: 10px 12px;
-  font-size: 13.5px;
-  font-weight: 900;
-  letter-spacing: -0.025em;
-  border-radius: 12px;
+  min-height: 42px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  white-space: nowrap;
+  gap: 4px;
   cursor: pointer;
   transition: all .15s var(--ease);
 }

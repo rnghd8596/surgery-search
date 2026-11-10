@@ -2826,48 +2826,39 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
   }
 
   const innerCardHTML = `
-      <!-- 빠른검색 3대 핵심 담보 판정 (질병수술 · 1~5종 · N대) -->
+      <!-- 빠른검색 3대 핵심 담보 판정 (질병수술 · 1~5종 · N대) : 회색 설명글 전면 삭제, 간결하고 균일한 레이아웃 -->
       <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px 0;">
         <!-- 1. 질병수술 (기본 질병수술비/정액) -->
-        <div class="qvb-row" style="background:rgba(219,39,119,0.06);border:1.5px solid rgba(219,39,119,0.3);border-radius:10px;padding:9px 12px;min-height:54px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;">
-            <div style="font-size:12.5px;font-weight:900;color:#db2777;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-              <span>💡 질병수술</span>
-            </div>
-            <span style="font-size:11px;color:var(--text-2);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(basicSurg.summary)}</span>
+        <div class="qvb-row" style="background:rgba(219,39,119,0.06);border:1.5px solid rgba(219,39,119,0.3);border-radius:10px;padding:10px 14px;min-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div style="font-size:13px;font-weight:900;color:#db2777;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+            <span>💡 질병수술</span>
           </div>
-          <span style="font-size:11px;font-weight:850;color:${basicSurg.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${basicSurg.border};white-space:nowrap;flex-shrink:0;">${esc(basicSurg.badge)}</span>
+          <span style="font-size:11.5px;font-weight:850;color:${basicSurg.badgeColor};background:var(--surface);padding:3px 8px;border-radius:5px;border:1px solid ${basicSurg.border};white-space:nowrap;flex-shrink:0;">${esc(basicSurg.badge)}</span>
         </div>
 
-        <!-- 2. 종수술비 (3종·5종) -->
-        <div class="qvb-row" style="background:rgba(49,130,246,0.05);border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:9px 12px;min-height:54px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;">
-            <div style="font-size:12.5px;font-weight:900;color:#2563eb;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-              <span>📋 종수술비 (3종·5종)</span>
-              ${diffPillHTML}
+        <!-- 2. 종수술비 (1~5종 메인 표기, 3종은 접이식 서랍으로 분리하여 우측 뱃지 규격 완전 통일) -->
+        <div class="qvb-row btn-toggle-quick-tier" style="background:rgba(49,130,246,0.05);border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:10px 14px;min-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
+          <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;">
+            <div style="font-size:13px;font-weight:900;color:#2563eb;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+              <span>📋 종수술비</span>
+              <span class="qtier-arrow" style="font-size:10.5px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.12);padding:2px 6px;border-radius:4px;white-space:nowrap;">구 1~3종 ▾</span>
             </div>
-            <span style="font-size:11px;color:var(--text-2);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(t.w || g.n + ' 수술')}</span>
+            ${diffPillHTML ? `<div style="display:flex;">${diffPillHTML}</div>` : ''}
           </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <span style="display:inline-flex;align-items:center;gap:4px;background:rgba(49,130,246,0.12);border:1.5px solid rgba(49,130,246,0.4);padding:3px 7px;border-radius:6px;font-size:11px;font-weight:850;color:#1d4ed8;white-space:nowrap;">
-              <span style="font-size:10px;color:var(--text-3);font-weight:700;">1~3종</span> <strong style="font-size:12.5px;font-weight:900;">${get3TierForDisease(g, evalRes).tier3}</strong>
-            </span>
-            <span style="display:inline-flex;align-items:center;gap:4px;background:#2563eb;border:1.5px solid #1d4ed8;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:850;color:#fff;box-shadow:0 1px 3px rgba(37,99,235,0.25);white-space:nowrap;">
-              <span style="font-size:10px;opacity:0.85;font-weight:700;">1~5종</span> <strong style="font-size:12.5px;font-weight:900;">${esc(evalRes.tier)}</strong>
-            </span>
-          </div>
+          <span style="font-size:11.5px;font-weight:850;color:#2563eb;background:var(--surface);padding:3px 8px;border-radius:5px;border:1px solid #93c5fd;white-space:nowrap;flex-shrink:0;">⭕ ${esc(evalRes.tier)} 해당</span>
+        </div>
+        <div class="quick-tier3-drawer" style="display:none;margin-top:4px;padding:9px 12px;background:rgba(49,130,246,0.06);border:1px solid rgba(49,130,246,0.25);border-radius:8px;font-size:11.5px;color:var(--text);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-weight:800;color:var(--text);">📜 구 1~3종 특약 (2006년 이전 계약):</span>
+          <span style="font-weight:900;color:#1d4ed8;font-size:12.5px;">${get3TierForDisease(g, evalRes).tier3}</span>
         </div>
 
         <!-- 3. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
-        <div class="qvb-row btn-toggle-quick-ndai" style="background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.35);border-radius:10px;padding:9px 12px;min-height:54px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
-          <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1;">
-            <div style="font-size:12.5px;font-weight:900;color:#059669;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-              <span>🏢 N대질병</span>
-              <span class="qndai-arrow" style="font-size:10.5px;font-weight:850;color:#059669;background:rgba(16,185,129,0.12);padding:2px 6px;border-radius:4px;white-space:nowrap;">(상세 펼치기 ▾)</span>
-            </div>
-            ${ndaiSummaryHTML}
+        <div class="qvb-row btn-toggle-quick-ndai" style="background:rgba(16,185,129,0.06);border:1.5px solid rgba(16,185,129,0.35);border-radius:10px;padding:10px 14px;min-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
+          <div style="font-size:13px;font-weight:900;color:#059669;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+            <span>🏢 N대질병</span>
+            <span class="qndai-arrow" style="font-size:10.5px;font-weight:850;color:#059669;background:rgba(16,185,129,0.12);padding:2px 6px;border-radius:4px;white-space:nowrap;">상세확인 ▾</span>
           </div>
-          <span style="font-size:11px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 7px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
+          <span style="font-size:11.5px;font-weight:850;color:${ndaiVerdict.badgeColor};background:var(--surface);padding:3px 8px;border-radius:5px;border:1px solid ${ndaiVerdict.border};white-space:nowrap;flex-shrink:0;">${esc(ndaiVerdict.badge)}</span>
         </div>
         <div class="quick-ndai-drawer" style="display:none;margin-top:4px;">
           <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11.5px;color:#047857;font-weight:800;text-align:center;">
@@ -2880,15 +2871,13 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       ${revisionSectionHTML}
       ${procsHTML}
 
-      <!-- 정밀 진단 바로가기 버튼 2종 -->
+      <!-- 정밀 진단 바로가기 버튼 2종 (완벽한 단일행 대칭 규격) -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-jump-action btn-jump-tier" data-q="${esc(g.n)}">
-          <span style="font-size:12.5px;font-weight:900;">📋 종수술비 (3종·5종)</span>
-          <span class="bja-sub" style="font-size:11.5px;font-weight:800;opacity:0.85;">바로가기</span>
+          <span>📋 종수술비 바로가기</span>
         </button>
         <button type="button" class="btn-jump-action btn-jump-ndai" data-q="${esc(g.n)}">
-          <span style="font-size:12.5px;font-weight:900;">🏢 N대질병</span>
-          <span class="bja-sub" style="font-size:11.5px;font-weight:800;opacity:0.85;">바로가기</span>
+          <span>🏢 N대질병 바로가기</span>
         </button>
       </div>
       <div style="font-size:11px;color:var(--text-3);text-align:center;margin-top:6px;line-height:1.4;">
@@ -3416,17 +3405,14 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           <span class="meta-co">${esc(co ? co : '전사 기준')}</span>
         </div>
 
-        <!-- 1~5종 메인 박스 (압도적 다수가 가입한 핵심 수술비: 2종 등급 강조, 설명 간소화) -->
+        <!-- 1~5종 메인 박스 (압도적 다수가 가입한 핵심 수술비: 2종 등급 강조, 회색글씨 제거) -->
         <div style="background:rgba(49,130,246,0.06);border:1.5px solid rgba(49,130,246,0.35);border-radius:12px;padding:12px 14px;margin:6px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;">
           <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;">
             <div style="display:flex;align-items:center;gap:6px;">
               <span style="font-size:13.5px;font-weight:900;color:#2563eb;">1~5종 수술특약</span>
               <span style="font-size:10px;font-weight:700;color:var(--text-3);background:var(--surface);padding:1px 6px;border-radius:4px;border:1px solid var(--line);">2006년 이후 가입</span>
-              ${diffPillHTML}
             </div>
-            <div style="font-size:12px;color:var(--text-2);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-              ${esc(evalRes.note || '표준 1~5종 수술분류표 기준')}
-            </div>
+            ${diffPillHTML ? `<div style="margin-top:2px;">${diffPillHTML}</div>` : ''}
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
             <span class="proc-tag ${'t' + (parseInt(evalRes.tier) || 2)}" style="font-size:17px;font-weight:900;padding:4px 14px;border-radius:8px;box-shadow:0 1px 3px rgba(37,99,235,0.25);">
@@ -3453,23 +3439,17 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           </div>
         </div>
 
-        <div class="judge-main-row" style="margin-top:4px;">
-          <div class="judge-main-info" style="width:100%;">
-            <div class="judge-proc-title" style="font-size:12.5px;color:var(--text-2);">${esc(t.w || g.n + ' 수술')}</div>
-          </div>
-        </div>
         ${revisionSectionHTML}
         ${procsHTML}
       </div>
 
-      <!-- 질병수술비 확인 및 N대질병 바로가기 버튼 2종 (2줄 대칭 정렬) -->
+      <!-- 질병수술비 확인 및 N대질병 바로가기 버튼 2종 -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-toggle-basic-surg">
           <span>💡 질병수술비 요약 ▾</span>
         </button>
         <button type="button" class="btn-jump-action btn-jump-ndai" data-q="${esc(g.n)}">
-          <span style="font-size:12.5px;font-weight:900;">🏢 N대질병</span>
-          <span class="bja-sub" style="font-size:11.5px;font-weight:800;opacity:0.85;">바로가기</span>
+          <span>🏢 N대질병 바로가기</span>
         </button>
       </div>
       <div class="basic-surg-drawer" style="display:none;margin-top:8px;">
@@ -4702,14 +4682,13 @@ function cardNdaiHTML(gi, q, isSub = false) {
   const innerCardHTML = `
       ${contentHTML}
 
-      <!-- 질병수술비 확인 및 종수술비 바로가기 버튼 2종 (2줄 대칭 정렬) -->
+      <!-- 질병수술비 확인 및 종수술비 바로가기 버튼 2종 -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-toggle-basic-surg">
           <span>💡 질병수술비 요약 ▾</span>
         </button>
         <button type="button" class="btn-jump-action btn-jump-tier" data-q="${esc(g.n)}">
-          <span style="font-size:12.5px;font-weight:900;">📋 종수술비</span>
-          <span class="bja-sub" style="font-size:11.5px;font-weight:800;opacity:0.85;">바로가기</span>
+          <span>📋 종수술비 바로가기</span>
         </button>
       </div>
       <div class="basic-surg-drawer" style="display:none;margin-top:8px;">
@@ -5942,6 +5921,20 @@ function bindCardActions(box) {
     });
   });
 
+  // 종수술비 행 클릭 시 구 1~3종 서랍 토글 바인딩
+  $$('.btn-toggle-quick-tier', box).forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const parent = row.closest('.quick-3verdict-box') || row.parentElement;
+      const drawer = parent ? parent.querySelector('.quick-tier3-drawer') : null;
+      const arrow = row.querySelector('.qtier-arrow');
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'flex' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '접기 ▴' : '구 1~3종 ▾';
+    });
+  });
+
   // N대질병 행 클릭 시 회사별 N대 상세 서랍 토글 바인딩
   $$('.btn-toggle-quick-ndai', box).forEach(row => {
     row.addEventListener('click', (e) => {
@@ -5952,7 +5945,7 @@ function bindCardActions(box) {
       if (!drawer) return;
       const isHidden = drawer.style.display === 'none' || !drawer.style.display;
       drawer.style.display = isHidden ? 'block' : 'none';
-      if (arrow) arrow.textContent = isHidden ? '(접기 ▴)' : '(터치 시 14개사별 N대 특약 및 질병코드 펼쳐짐 ▾)';
+      if (arrow) arrow.textContent = isHidden ? '접기 ▴' : '상세확인 ▾';
     });
   });
 
