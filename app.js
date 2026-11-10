@@ -3539,18 +3539,6 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
     <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
 }
-      <button class="card-toggle">
-        <span>지급기준근거 ∨</span>
-      </button>
-      <button class="btn-copy">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-        고객 안내문 복사
-      </button>
-    </div>
-
-    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
-  </article>`;
-}
 
 /* ───────────────────────── 2-2. 7·8종 급여 수술비 정밀검색 (KDRG ADRG 분류) ───────────────────────── */
 const KDRG_DISEASE_MAP = [
