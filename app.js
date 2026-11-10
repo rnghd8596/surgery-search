@@ -2894,16 +2894,11 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           <span style="font-size:13.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${hl(g.n, q)}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-          <span style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:3px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.25);">${esc(evalRes.tier)}</span>
           <span class="sub-disease-arrow" style="font-size:11.5px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);">펼쳐보기 ▾</span>
         </div>
       </div>
       <div class="sub-disease-drawer" style="display:none;padding:12px 14px 14px 14px;border-top:1px dashed var(--line);background:var(--surface);">
         <div class="card-head" style="padding:0;margin-bottom:8px;">
-          <div class="card-top" style="margin-bottom:6px;">
-            <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
-            <h3 class="card-name" style="font-size:16px;">${hl(g.n, q)}</h3>
-          </div>
           ${ediBanner}
           ${innerCardHTML}
         </div>
@@ -3466,16 +3461,11 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           <span style="font-size:13.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${hl(g.n, q)}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-          <span style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:3px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.25);">${esc(evalRes.tier)}</span>
           <span class="sub-disease-arrow" style="font-size:11.5px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);">펼쳐보기 ▾</span>
         </div>
       </div>
       <div class="sub-disease-drawer" style="display:none;padding:12px 14px 14px 14px;border-top:1px dashed var(--line);background:var(--surface);">
         <div class="card-head" style="padding:0;margin-bottom:8px;">
-          <div class="card-top" style="margin-bottom:6px;">
-            <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
-            <h3 class="card-name" style="font-size:16px;">${hl(g.n, q)}</h3>
-          </div>
           ${ediBanner}
           ${innerCardHTML}
         </div>
@@ -4710,10 +4700,6 @@ function cardNdaiHTML(gi, q, isSub = false) {
       </div>
       <div class="sub-disease-drawer" style="display:none;padding:12px 14px 14px 14px;border-top:1px dashed var(--line);background:var(--surface);">
         <div class="card-head" style="padding:0;margin-bottom:8px;">
-          <div class="card-top" style="margin-bottom:6px;">
-            <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
-            <h3 class="card-name" style="font-size:16px;">${hl(g.n, q)}</h3>
-          </div>
           ${innerCardHTML}
         </div>
         <div class="card-actions" style="margin-top:10px;">
