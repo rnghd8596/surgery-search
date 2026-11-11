@@ -2746,9 +2746,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
             d.style.display = 'none';
             if (arr) arr.textContent = '펼쳐보기 ▾';
           }
-        " style="width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;background:rgba(49,130,246,0.08);border:1.5px solid rgba(49,130,246,0.4);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13.5px;font-weight:900;color:#1d4ed8;transition:all 0.15s ease;">
+        " style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;background:rgba(49,130,246,0.08);border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;padding:0 14px;cursor:pointer;font-size:13px;font-weight:900;color:#1d4ed8;transition:all 0.15s ease;">
           <span>🔍 수술 방식에 따른 다른 결과 확인하기</span>
-          <span class="arrow-ico" style="font-size:12.5px;color:#1d4ed8;font-weight:900;">펼쳐보기 ▾</span>
+          <span class="arrow-ico" style="font-size:11.5px;font-weight:850;background:rgba(49,130,246,0.16);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#1d4ed8;">펼쳐보기 ▾</span>
         </button>
         <div id="${drawerId}" style="display:none;margin-top:8px;flex-direction:column;gap:6px;">
           ${procs.val.map(p => {
@@ -2798,9 +2798,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
     }
     revisionSectionHTML = `
       <div class="quick-rev-wrapper" style="margin:6px 0;">
-        <button type="button" class="btn-toggle-quick-rev" style="width:100%;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:9px 12px;min-height:42px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:12px;font-weight:850;color:#b45309;transition:all .15s ease;">
+        <button type="button" class="btn-toggle-quick-rev" style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:900;color:#b45309;transition:all .15s ease;">
           <span>${revTitle}</span>
-          <span class="qrev-arrow" style="font-size:11px;font-weight:800;background:rgba(245,158,11,0.18);padding:2px 8px;border-radius:5px;white-space:nowrap;">펼쳐보기 ▾</span>
+          <span class="qrev-arrow" style="font-size:11.5px;font-weight:850;background:rgba(245,158,11,0.18);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#b45309;">펼쳐보기 ▾</span>
         </button>
         <div class="quick-rev-drawer" style="display:none;margin-top:4px;">
           ${evalRes.boxHTML}
@@ -2810,39 +2810,38 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
 
   const tier3Val = get3TierForDisease(g, evalRes).tier3;
   const innerCardHTML = `
-      <!-- 빠른검색 4대 핵심 담보 판정 (질병수술 · 1~5종 · 1~3종 · N대) : 박스크기·간격(8px) 동일, 중립 배경 톤다운, 우측 4~5자 정형 뱃지 칼정렬 -->
+      <!-- 빠른검색 4대 핵심 담보 판정 (질병수술 · 1~5종 · 1~3종 · N대) : 50px 균일 순백색 박스, 칸 테두리 구분, 좌측 검정 텍스트 규격 통일, 우측 포인트 뱃지 -->
       <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:8px;margin:8px 0 8px 0;">
-        <!-- 1. 질병수술 (기본 질병수술비/정액) -->
+        <!-- 1. 질병수술 -->
         <div class="qvb-row">
-          <div style="font-size:13px;font-weight:900;color:#e11d48;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+          <div class="qvb-left-label">
             <span>💡 질병수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid ${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};color:${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};background:${basicSurg.badge.startsWith('⭕') ? 'rgba(225,29,72,0.04)' : (basicSurg.badge.startsWith('⚠️') ? 'rgba(217,119,6,0.04)' : 'rgba(239,68,68,0.04)')};">${esc(basicSurg.badge)}</span>
+          <span class="qvb-badge" style="border:1.5px solid ${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};color:${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};">${esc(basicSurg.badge)}</span>
         </div>
 
-        <!-- 2. 1~5종 수술특약 -->
+        <!-- 2. 1~5종 수술 -->
         <div class="qvb-row">
-          <div style="font-size:13px;font-weight:900;color:#2563eb;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-            <span>📋 1~5종 수술특약</span>
+          <div class="qvb-left-label">
+            <span>📋 1~5종 수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;background:rgba(37,99,235,0.04);">${evalRes.tier && evalRes.tier !== '부지급' && evalRes.tier !== '0원' ? `⭕ ${esc(evalRes.tier)} 해당` : '❌ 미해당'}</span>
+          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;">${evalRes.tier && evalRes.tier !== '부지급' && evalRes.tier !== '0원' ? `⭕ ${esc(evalRes.tier)} 해당` : '❌ 미해당'}</span>
         </div>
 
-        <!-- 3. 1~3종 수술특약 -->
+        <!-- 3. 1~3종 수술 -->
         <div class="qvb-row">
-          <div style="font-size:13px;font-weight:900;color:#2563eb;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-            <span>📜 1~3종 수술특약</span>
+          <div class="qvb-left-label">
+            <span>📜 1~3종 수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;background:rgba(37,99,235,0.04);">${tier3Val && tier3Val !== '부지급' && tier3Val !== '0원' ? `⭕ ${esc(tier3Val)} 해당` : '❌ 미해당'}</span>
+          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;">${tier3Val && tier3Val !== '부지급' && tier3Val !== '0원' ? `⭕ ${esc(tier3Val)} 해당` : '❌ 미해당'}</span>
         </div>
 
         <!-- 4. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
         <div class="qvb-row btn-toggle-quick-ndai" style="cursor:pointer;">
-          <div style="font-size:13px;font-weight:900;color:#059669;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+          <div class="qvb-left-label">
             <span>🏢 N대질병</span>
-            <span class="qndai-arrow" style="font-size:11px;font-weight:850;color:#059669;background:rgba(5,150,105,0.08);border:1px solid rgba(5,150,105,0.25);padding:2.5px 7px;border-radius:5px;white-space:nowrap;">상세확인 ▾</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid ${ndaiVerdict.covered ? '#059669' : 'var(--border)'};color:${ndaiVerdict.covered ? '#059669' : 'var(--text-3)'};background:${ndaiVerdict.covered ? 'rgba(5,150,105,0.04)' : 'var(--surface-2)'};">${esc(ndaiVerdict.badge)}</span>
+          <span class="qvb-badge qndai-arrow-badge" style="border:1.5px solid ${ndaiVerdict.covered ? '#059669' : 'var(--border)'};color:${ndaiVerdict.covered ? '#059669' : 'var(--text-3)'};">${esc(ndaiVerdict.badge)} ▾</span>
         </div>
         <div class="quick-ndai-drawer" style="display:none;margin-top:4px;">
           ${renderNdaiDetailsHTML(g, cosList, null)}
@@ -2883,16 +2882,6 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           ${ediBanner}
           ${innerCardHTML}
         </div>
-        <div class="card-actions" style="margin-top:10px;">
-          <button class="card-toggle">
-            <span>지급기준근거 ∨</span>
-          </button>
-          <button class="btn-copy">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-            고객 안내문 복사
-          </button>
-        </div>
-        <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
       </div>
     </div>`;
   }
@@ -2909,18 +2898,6 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       ${ediBanner}
       ${innerCardHTML}
     </div>
-
-    <div class="card-actions">
-      <button class="card-toggle">
-        <span>지급기준근거 ∨</span>
-      </button>
-      <button class="btn-copy">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-        고객 안내문 복사
-      </button>
-    </div>
-
-    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
 }
 
@@ -3386,28 +3363,24 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
 
   const innerCardHTML = `
       <div class="judge-box" style="background:transparent;border:none;padding:0;margin-top:6px;">
-        <!-- 1. 1~5종 수술특약 (동일 규격 쌍둥이 박스, 단색 중립 배경, 우측 포인트 등급 뱃지) -->
-        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:0 14px;height:52px;min-height:52px;max-height:52px;box-sizing:border-box;margin:6px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-            <span style="font-size:14px;font-weight:900;color:#2563eb;white-space:nowrap;">1~5종 수술특약</span>
+        <!-- 1. 1~5종 수술 (50px 균일 순백색 박스, 칸 테두리 구분, 좌측 검정 텍스트 규격 통일, 우측 포인트 뱃지) -->
+        <div class="qvb-row" style="margin:6px 0;">
+          <div class="qvb-left-label">
+            <span>📋 1~5종 수술</span>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <span style="min-width:76px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.06);border:1.5px solid #2563eb;border-radius:8px;white-space:nowrap;box-sizing:border-box;">
-              ${esc(evalRes.tier)}
-            </span>
-          </div>
+          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;">
+            ${esc(evalRes.tier)}
+          </span>
         </div>
 
-        <!-- 2. 1~3종 수술특약 (동일 규격 쌍둥이 박스, 단색 중립 배경, 우측 포인트 등급 뱃지) -->
-        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:0 14px;height:52px;min-height:52px;max-height:52px;box-sizing:border-box;margin:6px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-            <span style="font-size:14px;font-weight:900;color:#2563eb;white-space:nowrap;">1~3종 수술특약</span>
+        <!-- 2. 1~3종 수술 (50px 균일 순백색 박스, 칸 테두리 구분, 좌측 검정 텍스트 규격 통일, 우측 포인트 뱃지) -->
+        <div class="qvb-row" style="margin:6px 0;">
+          <div class="qvb-left-label">
+            <span>📜 1~3종 수술</span>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-            <span style="min-width:76px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.06);border:1.5px solid #2563eb;border-radius:8px;white-space:nowrap;box-sizing:border-box;">
-              ${esc(tier3Info.tier3)}
-            </span>
-          </div>
+          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;">
+            ${esc(tier3Info.tier3)}
+          </span>
         </div>
 
         ${revisionSectionHTML}
@@ -3445,16 +3418,6 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           ${ediBanner}
           ${innerCardHTML}
         </div>
-        <div class="card-actions" style="margin-top:10px;">
-          <button class="card-toggle">
-            <span>지급기준근거 ∨</span>
-          </button>
-          <button class="btn-copy">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-            고객 안내문 복사
-          </button>
-        </div>
-        <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
       </div>
     </div>`;
   }
@@ -3471,18 +3434,6 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
       ${ediBanner}
       ${innerCardHTML}
     </div>
-
-    <div class="card-actions">
-      <button class="card-toggle">
-        <span>지급기준근거 ∨</span>
-      </button>
-      <button class="btn-copy">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-        고객 안내문 복사
-      </button>
-    </div>
-
-    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
 }
 
@@ -4406,7 +4357,6 @@ function runNdaiSearch(q, family) {
   }
   box.innerHTML = html;
   bindCardActions(box);
-  bindNdaiCodeExpand(box);
 
   // 패밀리 버튼 클릭 바인딩
   box.querySelectorAll('.fam-btn').forEach(btn => {
@@ -4655,16 +4605,6 @@ function cardNdaiHTML(gi, q, isSub = false) {
         <div class="card-head" style="padding:0;margin-bottom:8px;">
           ${innerCardHTML}
         </div>
-        <div class="card-actions" style="margin-top:10px;">
-          <button class="card-toggle">
-            <span>지급기준근거 ∨</span>
-          </button>
-          <button class="btn-copy">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-            고객 안내문 복사
-          </button>
-        </div>
-        <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
       </div>
     </div>`;
   }
@@ -4679,18 +4619,6 @@ function cardNdaiHTML(gi, q, isSub = false) {
       </div>
       ${innerCardHTML}
     </div>
-
-    <div class="card-actions">
-      <button class="card-toggle">
-        <span>지급기준근거 ∨</span>
-      </button>
-      <button class="btn-copy">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.6"/><path d="M6 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V6"/></svg>
-        고객 안내문 복사
-      </button>
-    </div>
-
-    <div class="card-body"><div class="cb-inner"><div class="cb-pad"></div></div></div>
   </article>`;
 }
 
@@ -5491,25 +5419,27 @@ function bindOcrTab() {
             </div>
           </div>
 
-          <!-- 부지급 및 미가입 사유 분석 리스트 -->
-          <div style="background:rgba(225,29,72,0.04);border-radius:12px;padding:12px 14px;border:1px solid rgba(225,29,72,0.2);margin-bottom:12px;">
-            <div style="font-size:12px;font-weight:850;color:#be123c;margin-bottom:8px;">🚫 가입 담보 검토 내역:</div>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="padding:9px 12px;background:var(--surface);border:1px solid rgba(225,29,72,0.25);border-radius:8px;font-size:12px;line-height:1.5;">
-                <span style="font-weight:850;color:#e11d48;">• 제안서 담보 분석:</span> 제출하신 플랜(<b>${esc(p.company || '')} ${esc(p.productName || '가입제안서')}</b>)은 ${p.hasCerebro ? '<b>[뇌혈관질환 전용 특화 플랜]</b>' : '<b>[특정질환 전용 플랜]</b>'}으로, 진단서의 수술(<b>${esc(surgeries.map(s=>s.name).join(', ')||'수술')}</b>)을 보장하는 일반 수술 담보(1~5종 수술특약, 기본 질병수술비)가 가입되어 있지 않습니다.
+          <!-- 청구 가능여부 및 청구처 핵심 결과 박스 2종 (불필요한 무관 담보 문구 전면 배제) -->
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <!-- 1. 본 제안서 청구 가능여부 -->
+            <div style="padding:12px 14px;background:rgba(225,29,72,0.04);border:1.5px solid rgba(225,29,72,0.25);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <span style="font-size:12px;font-weight:750;color:#e11d48;">보험금 청구 가능여부</span>
+                <span style="font-size:14px;font-weight:900;color:#be123c;">❌ 본 제안서 청구 불가 (0원)</span>
+                <span style="font-size:11px;color:var(--text-2);">시행 수술(${esc(surgeries.map(s=>s.name).join(', ')||'수술')})에 해당하는 일반 수술 담보 미가입</span>
               </div>
-              ${missingRiders.map(item => `
-                <div style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12px;line-height:1.45;color:var(--text-2);">
-                  <span style="font-weight:850;color:var(--text);">• ${esc(item.name)}:</span> <span style="color:#d97706;font-weight:800;">🚫 플랜 미가입</span> (${esc(item.reason)})
-                </div>
-              `).join('')}
+              <span style="font-size:12.5px;font-weight:900;color:#e11d48;background:var(--surface);border:1.5px solid #e11d48;padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;">청구 불가</span>
             </div>
-          </div>
 
-          <!-- 설계사 실무 조언 박스 -->
-          <div style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.25);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.5;">
-            <span style="font-weight:850;color:#1d4ed8;">💡 [설계사 실무 조언]</span><br>
-            진단서의 시행 수술(<b>${esc(surgeries.map(s=>s.name).join(', '))}</b>)은 고객님이 기가입하신 종합보험의 <b>[질병수술비]</b> 또는 <b>[1~5종 수술특약 (1~2종)]</b>에서 정상 청구 가능하므로 기가입 증권을 확인해 주세요.
+            <!-- 2. 어디서 청구 가능한지 (정상 청구 가능한 기가입 담보 안내) -->
+            <div style="padding:12px 14px;background:rgba(37,99,235,0.05);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <span style="font-size:12px;font-weight:750;color:#2563eb;">어디서 청구 가능한가요?</span>
+                <span style="font-size:14px;font-weight:900;color:#1d4ed8;">⭕ 기가입 종합보험에서 청구 가능</span>
+                <span style="font-size:11px;color:var(--text-2);">고객님의 기가입 증권 중 <b>[질병수술비]</b> 및 <b>[1~5종 수술특약 (1~2종)]</b>에서 정상 보장</span>
+              </div>
+              <span style="font-size:12.5px;font-weight:900;color:#2563eb;background:var(--surface);border:1.5px solid #2563eb;padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;">종합보험 청구</span>
+            </div>
           </div>
 
           <!-- 세부 지급 근거 접이식 서랍 토글 버튼 -->
@@ -5874,17 +5804,20 @@ function bindCardActions(box) {
     });
   });
 
-  // N대질병 행 클릭 시 회사별 N대 상세 서랍 토글 바인딩
+  // N대질병 행 클릭 시 회사별 N대 상세 서랍 토글 바인딩 (우측 뱃지 화살표 토글)
   $$('.btn-toggle-quick-ndai', box).forEach(row => {
     row.addEventListener('click', (e) => {
       e.stopPropagation();
       const parent = row.closest('.quick-3verdict-box') || row.parentElement;
       const drawer = parent ? parent.querySelector('.quick-ndai-drawer') : null;
-      const arrow = row.querySelector('.qndai-arrow');
+      const badge = row.querySelector('.qndai-arrow-badge');
       if (!drawer) return;
       const isHidden = drawer.style.display === 'none' || !drawer.style.display;
       drawer.style.display = isHidden ? 'block' : 'none';
-      if (arrow) arrow.textContent = isHidden ? '상세확인 ▴' : '상세확인 ▾';
+      if (badge) {
+        const base = badge.textContent.replace(/[▾▴\s]+$/, '').trim();
+        badge.textContent = isHidden ? `${base} ▴` : `${base} ▾`;
+      }
     });
   });
 
@@ -6353,6 +6286,8 @@ function renderAbout() {
 function bindNdaiCodeExpand(container) {
   if (!container) return;
   container.querySelectorAll('.btn-expand-ndai-codes').forEach(btn => {
+    if (btn._ndaiCodeBound) return;
+    btn._ndaiCodeBound = true;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const ri = parseInt(btn.dataset.ri, 10);
@@ -6363,16 +6298,12 @@ function bindNdaiCodeExpand(container) {
       if (!block) return;
       const drawer = block.querySelector('.ndai-codes-drawer');
       if (!drawer) return;
-      const toggleTag = btn.querySelector('.nir-sub-pill');
+      const arrow = btn.querySelector('.nir-arrow');
 
       const isOpen = drawer.style.display === 'block';
       if (isOpen) {
         drawer.style.display = 'none';
-        if (toggleTag) {
-          toggleTag.classList.remove('is-open');
-          const origText = toggleTag.dataset.subText || sub;
-          toggleTag.innerHTML = `<span class="nir-sub-title">[${esc(origText)}]</span> <span class="nir-arrow">▾</span>`;
-        }
+        if (arrow) arrow.textContent = '질병코드 보기 ▾';
         return;
       }
 
@@ -6434,22 +6365,14 @@ function bindNdaiCodeExpand(container) {
 
       drawer.innerHTML = drawerHTML;
       drawer.style.display = 'block';
-      if (toggleTag) {
-        toggleTag.classList.add('is-open');
-        const origText = toggleTag.dataset.subText || sub;
-        toggleTag.innerHTML = `<span class="nir-sub-title">[${esc(origText)}]</span> <span class="nir-arrow">▴</span>`;
-      }
+      if (arrow) arrow.textContent = '질병코드 닫기 ▴';
 
       const closeBtn = drawer.querySelector('.ncd-close-btn');
       if (closeBtn) {
         closeBtn.addEventListener('click', (ev) => {
           ev.stopPropagation();
           drawer.style.display = 'none';
-          if (toggleTag) {
-            toggleTag.classList.remove('is-open');
-            const origText = toggleTag.dataset.subText || sub;
-            toggleTag.innerHTML = `<span class="nir-sub-title">[${esc(origText)}]</span> <span class="nir-arrow">▾</span>`;
-          }
+          if (arrow) arrow.textContent = '질병코드 보기 ▾';
         });
       }
 

@@ -8,6 +8,7 @@
   --surface:#FFFFFF; --surface-2:#F9FAFB;
   --text:#191F28; --text-2:#4E5968; --text-3:#8B95A1;
   --line:#E5E8EB; --line-2:#EFF1F4;
+  --border:#CBD5E1;
   --shadow-1:0 1px 2px rgba(17,24,39,.04), 0 4px 16px rgba(17,24,39,.04);
   --shadow-2:0 8px 32px rgba(17,24,39,.10);
   --shadow-pop:0 16px 48px rgba(17,24,39,.16);
@@ -31,6 +32,7 @@ html[data-theme="dark"]{
   --surface:#151A23; --surface-2:#1A202B;
   --text:#EDF1F6; --text-2:#A9B3C1; --text-3:#6E7887;
   --line:#242C39; --line-2:#1D242F;
+  --border:#334155;
   --shadow-1:0 1px 2px rgba(0,0,0,.3), 0 4px 18px rgba(0,0,0,.24);
   --shadow-2:0 10px 36px rgba(0,0,0,.42);
   --shadow-pop:0 18px 52px rgba(0,0,0,.55);
@@ -810,7 +812,7 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 }
 
 /* ══════════════════ 수술비 판정 카드 모바일 최적화 레이아웃 ══════════════════ */
-/* 빠른검색 3대 담보 균일 박스 및 정형 뱃지 */
+/* 빠른검색 4대 담보 균일 박스 및 정형 뱃지 (순백색 배경 + 또렷한 테두리 구분선 + 좌측 검정 + 우측 포인트 뱃지) */
 .qvb-row {
   background: var(--surface);
   border: 1.5px solid var(--border);
@@ -824,10 +826,21 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .qvb-row:hover {
-  border-color: var(--line);
+  border-color: #94A3B8;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.qvb-left-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13.5px;
+  font-weight: 900;
+  color: var(--text);
+  white-space: nowrap;
 }
 .qvb-badge {
   min-width: 98px;
@@ -847,6 +860,7 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   white-space: nowrap;
   flex-shrink: 0;
   letter-spacing: -0.2px;
+  background: var(--surface);
 }
 .judge-box {
   background: var(--surface-2);
