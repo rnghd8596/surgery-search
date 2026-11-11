@@ -880,7 +880,13 @@ function buildIndex() {
   const D = state.D;
   idx.name = [];
   D.g.forEach((g, i) => {
+    if ((g.c || []).includes('N62') && !g.n.includes('여유증')) {
+      g.n = '유방의 비대 (여성형 유방증 · 여유증)';
+    }
     const names = [g.n].concat(g.vs || []);
+    if ((g.c || []).includes('N62')) {
+      names.push('여유증', '여성형유방', '여성형유방증', '유방비대', '유방비대증', '여유증수술', '여성형 유방증');
+    }
     names.forEach(name => {
       const nn = norm(name);
       const ch = getChosung(name);
@@ -1235,7 +1241,12 @@ function search(rawQ) {
 
   // 암/악성 vs 양성 질환 의도 구분 (자궁암 검색 시 평활근종 배제 등)
   const isCancerQuery = /(암|악성|신생물|카르시노마|육종|림프종|백혈병)/.test(nq) || /^C\d/.test(up);
-  const isBenignQuery = /(근종|양성|폴립|용종|결절|비대|낭종)/.test(nq);
+  const isBenignQuery = /(근종|양성|폴립|용종|결절|비대|낭종|여유증)/.test(nq);
+
+  // 여유증 / 여성형유방 직접 검색 지원
+  if (nq === '여유증' || nq === '여성형유방' || nq === '여유' || nq.includes('여유증') || nq.includes('여성형유방')) {
+    (state.D.codeIndex['N62'] || []).forEach(i => add(i, 0.001));
+  }
 
   // 1. 수술코드(EDI 코드) 직접 매칭 (예: Q7701, O1421, S5111 등)
   const looksEdi = /^[A-Z]\d{4}/.test(up);
@@ -2411,7 +2422,7 @@ const REVISION_RULES = [
   {
     id: 'breast_hyper',
     name: '유방비대증 수술',
-    match: (g) => (g.c || []).some(c => c.startsWith('N62') || c.startsWith('N60') || c.startsWith('N64')) || (g.n || '').includes('유방의 비대') || (g.n || '').includes('여유증'),
+    match: (g) => (g.c || []).some(c => c.startsWith('N62') || c.startsWith('N60') || c.startsWith('N64')) || (g.n || '').includes('유방의 비대') || (g.n || '').includes('유방비대') || (g.n || '').includes('여유증') || (g.n || '').includes('여성형유방'),
     evaluate: function(cosInput) {
       const cosList = parseCosList(cosInput);
       if (cosList.length === 0) {
@@ -2917,25 +2928,25 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
   // 개정약관/하향 안내 접이식 서랍화 (대장용종 2종→1종 하향 개정 등)
   let revisionSectionHTML = '';
   if (evalRes.boxHTML) {
-    let revTitle = '⚠️ 가입시기 및 보험사별 약관 기준 확인';
+    let revTitle = '⚠️ 가입시기 및 보험사별 약관 기준';
     const gn = g.n || '';
     const gc = g.c || [];
     if (gn.includes('대장') || gn.includes('용종') || gn.includes('폴립')) {
-      revTitle = '⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳 확인';
+      revTitle = '⚠️ 대장용종 2종 ➔ 1종 하향 개정';
     } else if (gn.includes('결석') || gn.includes('쇄석') || gc.some(c => c.startsWith('N20'))) {
-      revTitle = '⚠️ 체외충격파쇄석술(ESWL) 2종 ➔ 1종 하향 개정 손보사 5곳 확인';
-    } else if (gn.includes('유방') || gc.some(c => c.startsWith('N62'))) {
-      revTitle = '⚠️ 유방비대(여유증) 3종 ➔ 1·2종 하향 개정 손보사 6곳 확인';
+      revTitle = '⚠️ 체외충격파 2종 ➔ 1종 하향 개정';
+    } else if (gn.includes('유방') || gn.includes('여유증') || gc.some(c => c.startsWith('N62') || c.startsWith('N60') || c.startsWith('N64'))) {
+      revTitle = '⚠️ 여유증·유방비대 1·2종 하향 개정';
     } else if (gn.includes('담석') || gn.includes('담낭') || gc.some(c => c.startsWith('K80'))) {
-      revTitle = '⚠️ 담석증(K80) 3종 ➔ 2종 하향 개정(메리츠) 확인';
+      revTitle = '⚠️ 담석증 복강경 2종 하향 개정';
     } else if (evalRes.diffBadge) {
-      revTitle = `⚠️ ${evalRes.diffBadge.replace(/[\[\]]/g, '')} 약관 기준 확인`;
+      revTitle = `⚠️ ${evalRes.diffBadge.replace(/[\[\]]/g, '')} 약관 기준`;
     }
     revisionSectionHTML = `
       <div class="quick-rev-wrapper" style="margin:6px 0;">
-        <button type="button" class="btn-toggle-quick-rev" style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:900;color:#b45309;transition:all .15s ease;">
-          <span>${revTitle}</span>
-          <span class="qrev-arrow" style="font-size:11.5px;font-weight:850;background:rgba(245,158,11,0.18);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#b45309;">펼쳐보기 ▾</span>
+        <button type="button" class="btn-toggle-quick-rev" style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-size:13px;font-weight:900;color:#b45309;transition:all .15s ease;">
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;text-align:left;">${revTitle}</span>
+          <span class="qrev-arrow" style="font-size:11.5px;font-weight:850;background:rgba(245,158,11,0.18);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#b45309;flex-shrink:0;margin-left:8px;">펼쳐보기 ▾</span>
         </button>
         <div class="quick-rev-drawer" style="display:none;margin-top:4px;">
           ${evalRes.boxHTML}
@@ -3507,25 +3518,25 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
   // 1~5종 개정약관/하향 안내 접이식 서랍화 (대장용종 2종→1종 등)
   let revisionSectionHTML = '';
   if (evalRes.boxHTML) {
-    let revTitle = '⚠️ 가입시기 및 보험사별 약관 기준 확인';
+    let revTitle = '⚠️ 가입시기 및 보험사별 약관 기준';
     const gn = g.n || '';
     const gc = g.c || [];
     if (gn.includes('대장') || gn.includes('용종') || gn.includes('폴립')) {
-      revTitle = '⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳 확인';
+      revTitle = '⚠️ 대장용종 2종 ➔ 1종 하향 개정';
     } else if (gn.includes('결석') || gn.includes('쇄석') || gc.some(c => c.startsWith('N20'))) {
-      revTitle = '⚠️ 체외충격파쇄석술(ESWL) 2종 ➔ 1종 하향 개정 손보사 5곳 확인';
-    } else if (gn.includes('유방') || gc.some(c => c.startsWith('N62'))) {
-      revTitle = '⚠️ 유방비대(여유증) 3종 ➔ 1·2종 하향 개정 손보사 6곳 확인';
+      revTitle = '⚠️ 체외충격파 2종 ➔ 1종 하향 개정';
+    } else if (gn.includes('유방') || gn.includes('여유증') || gc.some(c => c.startsWith('N62') || c.startsWith('N60') || c.startsWith('N64'))) {
+      revTitle = '⚠️ 여유증·유방비대 1·2종 하향 개정';
     } else if (gn.includes('담석') || gn.includes('담낭') || gc.some(c => c.startsWith('K80'))) {
-      revTitle = '⚠️ 담석증(K80) 3종 ➔ 2종 하향 개정(메리츠) 확인';
+      revTitle = '⚠️ 담석증 복강경 2종 하향 개정';
     } else if (evalRes.diffBadge) {
-      revTitle = `⚠️ ${evalRes.diffBadge.replace(/[\[\]]/g, '')} 약관 기준 확인`;
+      revTitle = `⚠️ ${evalRes.diffBadge.replace(/[\[\]]/g, '')} 약관 기준`;
     }
     revisionSectionHTML = `
       <div class="quick-rev-wrapper" style="margin:6px 0;">
-        <button type="button" class="btn-toggle-quick-rev" style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:900;color:#b45309;transition:all .15s ease;">
-          <span>${revTitle}</span>
-          <span class="qrev-arrow" style="font-size:11.5px;font-weight:850;background:rgba(245,158,11,0.18);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#b45309;">펼쳐보기 ▾</span>
+        <button type="button" class="btn-toggle-quick-rev" style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;font-size:13px;font-weight:900;color:#b45309;transition:all .15s ease;">
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;text-align:left;">${revTitle}</span>
+          <span class="qrev-arrow" style="font-size:11.5px;font-weight:850;background:rgba(245,158,11,0.18);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#b45309;flex-shrink:0;margin-left:8px;">펼쳐보기 ▾</span>
         </button>
         <div class="quick-rev-drawer" style="display:none;margin-top:4px;">
           ${evalRes.boxHTML}

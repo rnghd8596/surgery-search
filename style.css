@@ -1002,6 +1002,15 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 .rev-alert-box.blue .rab-title {
   color: #2563eb;
 }
+
+/* 개정약관 서랍 내부: 상단 중복 타이틀 완전 제거 및 상단 여백 최적화 */
+.quick-rev-drawer .rab-title {
+  display: none !important;
+}
+.quick-rev-drawer .rev-alert-box {
+  margin: 4px 0 0 0;
+  padding: 8px 10px;
+}
 .rab-card {
   display: flex;
   flex-direction: column;
