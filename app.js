@@ -1243,9 +1243,10 @@ function search(rawQ) {
   const isCancerQuery = /(암|악성|신생물|카르시노마|육종|림프종|백혈병)/.test(nq) || /^C\d/.test(up);
   const isBenignQuery = /(근종|양성|폴립|용종|결절|비대|낭종|여유증)/.test(nq);
 
-  // 여유증 / 여성형유방 직접 검색 지원
-  if (nq === '여유증' || nq === '여성형유방' || nq === '여유' || nq.includes('여유증') || nq.includes('여성형유방')) {
-    (state.D.codeIndex['N62'] || []).forEach(i => add(i, 0.001));
+  // 여유증 / 여성형유방 직접 검색 지원 -> N62(유방의 비대)를 최우선 1순위 대표 질환으로 확정
+  if (nq === '여유증' || nq === '여성형유방' || nq === '여유' || nq.includes('여유증') || nq.includes('여성형유방') || nq === '유방비대') {
+    (state.D.codeIndex['N62'] || []).forEach(i => scores.set(i, 0.00001));
+    scores.set(155, 0.8); // N60~N64 상위 포괄 항목은 서랍으로 하향
   }
 
   // 1. 수술코드(EDI 코드) 직접 매칭 (예: Q7701, O1421, S5111 등)
@@ -5146,7 +5147,7 @@ function bindOcrTab() {
   if (!dropZone || dropZone.dataset.bound) return;
   dropZone.dataset.bound = '1';
 
-  let ocrGen = 'recent';
+  let ocrYear = null;
   let ocrCos = [];
   let ocrCo = '';
 
@@ -5163,21 +5164,37 @@ function bindOcrTab() {
 
   function updateOcrSummary() {
     if (!summaryBadge) return;
-    const dt = ocrGen === 'recent' ? '2020년 이후' : '2020년 이전';
-    const co = ocrCos.length ? ocrCos.join(', ') : '전체';
-    summaryBadge.textContent = `[${co} · ${dt}]`;
+    const co = ocrCos.length ? ocrCos.join(', ') : '';
+    if (co && ocrYear) {
+      summaryBadge.textContent = `(${co} · ${ocrYear}년)`;
+    } else if (co) {
+      summaryBadge.textContent = `(${co})`;
+    } else if (ocrYear) {
+      summaryBadge.textContent = `(${ocrYear}년)`;
+    } else {
+      summaryBadge.textContent = '';
+    }
   }
 
-  $$('#ocrGenChips .f-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      $$('#ocrGenChips .f-chip').forEach(b => b.classList.remove('on'));
-      btn.classList.add('on');
-      ocrGen = btn.dataset.ocrgen;
-      const badge = $('#ocrDateBadge');
-      if (badge) badge.textContent = ocrGen === 'recent' ? '2020년 이후' : '2020년 이전';
-      updateOcrSummary();
+  const ocrYearGrid = $('#ocrYearGrid');
+  if (ocrYearGrid) {
+    ocrYearGrid.innerHTML = `
+      <button class="f-chip ocr-y-chip on" data-y="" type="button" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">년도 전체 (기본)</button>
+      ${ALL_CONTRACT_YEARS.map(y => `
+        <button class="f-chip ocr-y-chip" data-y="${y}" type="button" style="padding:6px 0;font-size:11px;font-weight:750;">${y}년</button>
+      `).join('')}
+    `;
+    $$('#ocrYearGrid .ocr-y-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('#ocrYearGrid .ocr-y-chip').forEach(b => b.classList.remove('on'));
+        btn.classList.add('on');
+        ocrYear = btn.dataset.y ? parseInt(btn.dataset.y, 10) : null;
+        const badge = $('#ocrDateBadge');
+        if (badge) badge.textContent = ocrYear ? `${ocrYear}년 계약` : '년도 전체';
+        updateOcrSummary();
+      });
     });
-  });
+  }
 
   const btnOcrSonbo = $('#btnOcrSonbo');
   const btnOcrSaengbo = $('#btnOcrSaengbo');
@@ -5418,8 +5435,9 @@ function bindOcrTab() {
       if (sb) sb.textContent = `(${ocrCo})`;
     }
 
-    const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : '[전체 보험사]';
-    const dtText = ocrGen === 'recent' ? '[2020년 이후 계약]' : '[2020년 이전 계약]';
+    const coText = ocrCos.length ? `[${esc(ocrCos.join(', '))}]` : (ocrYear ? '' : '[전체 보험사]');
+    const dtText = ocrYear ? `[${ocrYear}년 계약]` : '';
+    const headerCompanyLine = [coText, dtText].filter(Boolean).join(' ');
     const sourceLabel = fileCount > 0 ? `서류 및 사진 ${fileCount}건 AI 통합 판독 완료` : `진단서 텍스트 분석 완료`;
 
     const p = parsed.policyInfo || {};
@@ -5515,7 +5533,7 @@ function bindOcrTab() {
     let html = `
       <div style="font-weight:850;color:#8b5cf6;font-size:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
         <span>✓ ${sourceLabel}</span>
-        <span style="font-size:11.5px;color:var(--text-2);font-weight:700;">${coText} ${dtText}</span>
+        <span style="font-size:11.5px;color:var(--text-2);font-weight:700;">${headerCompanyLine}</span>
       </div>`;
 
     // 핵심 요약 카드: [어디에서 얼마]
