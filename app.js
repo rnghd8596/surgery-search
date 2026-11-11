@@ -1364,7 +1364,7 @@ function search(rawQ) {
     matchingSyns.push(syn);
 
     const baseScore = matchType === 'exact' ? 0.01 : (matchType === 'prefix' ? 0.08 : 0.6);
-    const targets = syn.main || syn.codes || [];
+    const targets = Array.from(new Set((syn.main || []).concat(syn.codes || [])));
     targets.forEach((cp, rank) => {
       const cleanCp = cp.replace(/[^A-Z0-9]/g, '').toUpperCase();
       for (const code in state.D.codeIndex) {
