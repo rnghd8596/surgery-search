@@ -3147,13 +3147,15 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       </div>`;
   }
 
-  // 사용자가 특정 수술명(유로리프트, 베나실, 하이푸, 신경성형술 등)으로 검색한 경우 해당 수술 행 매칭
+  // 사용자가 특정 수술기법(유로리프트, 베나실, 하이푸, 신경성형술, 클라리베인, 워터젯, 홀렙, 비밸브 등)으로 검색한 경우 해당 수술 행 매칭
   let matchedProc = null;
-  if (procs && procs.val) {
+  const procKeywords = ['유로리프트', '베나실', '하이푸', '신경성형', '클라리베인', '워터젯', '레줌', '홀렙', '비밸브'];
+  const hasProcKeyword = procKeywords.some(k => (q || '').includes(k));
+  if (hasProcKeyword && procs && procs.val) {
     const qNorm = norm(q || '');
     matchedProc = procs.val.find(p => {
       const sNorm = norm(p.s);
-      return qNorm && (sNorm.includes(qNorm) || qNorm.includes(sNorm.slice(0, 4)) || (p.s.includes('유로리프트') && qNorm.includes('유로리프트')) || (p.s.includes('베나실') && qNorm.includes('베나실')) || (p.s.includes('하이푸') && qNorm.includes('하이푸')) || (p.s.includes('신경성형') && qNorm.includes('신경성형')));
+      return procKeywords.some(k => qNorm.includes(k) && sNorm.includes(k));
     });
   }
 
@@ -3763,13 +3765,15 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
   const evalRes = evaluateSurgery(g, cosList, year, month);
   const tier3Info = get3TierForDisease(g, evalRes);
 
-  // 사용자가 특정 수술명(유로리프트, 베나실, 하이푸, 신경성형술 등)으로 검색한 경우 해당 수술 행 매칭
+  // 사용자가 특정 수술기법(유로리프트, 베나실, 하이푸, 신경성형술, 클라리베인, 워터젯, 홀렙, 비밸브 등)으로 검색한 경우 해당 수술 행 매칭
   let matchedProc = null;
-  if (procs && procs.val) {
+  const procKeywords = ['유로리프트', '베나실', '하이푸', '신경성형', '클라리베인', '워터젯', '레줌', '홀렙', '비밸브'];
+  const hasProcKeyword = procKeywords.some(k => (q || '').includes(k));
+  if (hasProcKeyword && procs && procs.val) {
     const qNorm = norm(q || '');
     matchedProc = procs.val.find(p => {
       const sNorm = norm(p.s);
-      return qNorm && (sNorm.includes(qNorm) || qNorm.includes(sNorm.slice(0, 4)) || (p.s.includes('유로리프트') && qNorm.includes('유로리프트')) || (p.s.includes('베나실') && qNorm.includes('베나실')) || (p.s.includes('하이푸') && qNorm.includes('하이푸')) || (p.s.includes('신경성형') && qNorm.includes('신경성형')));
+      return procKeywords.some(k => qNorm.includes(k) && sNorm.includes(k));
     });
   }
 
