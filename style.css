@@ -810,6 +810,44 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 }
 
 /* ══════════════════ 수술비 판정 카드 모바일 최적화 레이아웃 ══════════════════ */
+/* 빠른검색 3대 담보 균일 박스 및 정형 뱃지 */
+.qvb-row {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  padding: 0 14px;
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.qvb-row:hover {
+  border-color: var(--line);
+}
+.qvb-badge {
+  min-width: 98px;
+  max-width: 98px;
+  width: 98px;
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 850;
+  box-sizing: border-box;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: -0.2px;
+}
 .judge-box {
   background: var(--surface-2);
   border-radius: 14px;
