@@ -5,6 +5,10 @@
 (() => {
 'use strict';
 
+window.addEventListener('error', (e) => {
+  window.__LAST_ERR = (e.message || '') + ' at ' + (e.filename || '') + ':' + (e.lineno || '');
+});
+
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -6789,5 +6793,6 @@ function renderDisputesList(filterKey = 'all') {
 }
 
 window.renderDisputesList = renderDisputesList;
+window.__DEBUG = { state, search, runQuickSearch };
 
 })();
