@@ -1482,7 +1482,7 @@ function tierPillHTML(x, raw, jun, accent) {
     </div>`;
 }
 
-function renderTierMatchCards(ids, q) {
+function renderTierMatchCards(ids, q, looksEdi = false) {
   if (!ids || !ids.length) return '';
   const rows = ids.map(i => idx.tier[i]).filter(Boolean);
   if (!rows.length) return '';
