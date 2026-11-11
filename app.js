@@ -2468,7 +2468,7 @@ function getBasicSurgerySummary(g) {
   if (codes.some(c => c.startsWith('N39.3') || c.startsWith('N39.4') || c.startsWith('R32')) || name.includes('요실금')) {
     return {
       status: 'no',
-      badge: '❌ 보장불가',
+      badge: '❌ 보상제외',
       badgeColor: '#ef4444',
       badgeBg: 'rgba(239, 68, 68, 0.05)',
       border: '#ef4444',
@@ -2484,7 +2484,7 @@ function getBasicSurgerySummary(g) {
   if (codes.some(c => c.startsWith('K60') || c.startsWith('K61') || c.startsWith('K62') || c.startsWith('K64')) || name.includes('치핵') || name.includes('치루') || name.includes('치열')) {
     return {
       status: 'no',
-      badge: '❌ 보장불가',
+      badge: '❌ 보상제외',
       badgeColor: '#ef4444',
       badgeBg: 'rgba(239, 68, 68, 0.05)',
       border: '#ef4444',
@@ -2500,7 +2500,7 @@ function getBasicSurgerySummary(g) {
   if (codes.some(c => c.startsWith('O82') || c.startsWith('O80') || c.startsWith('O84')) || name.includes('제왕절개') || vs.some(v => v.includes('제왕절개') || v.includes('출산') || v.includes('분만'))) {
     return {
       status: 'no',
-      badge: '❌ 보장불가',
+      badge: '❌ 보상제외',
       badgeColor: '#ef4444',
       badgeBg: 'rgba(239, 68, 68, 0.05)',
       border: '#ef4444',
@@ -2516,7 +2516,7 @@ function getBasicSurgerySummary(g) {
   if (codes.some(c => ['N20', 'N21', 'N22', 'N23'].some(t => c.startsWith(t))) || name.includes('결석') || vs.some(v => v.includes('쇄석') || v.includes('ESWL'))) {
     return {
       status: 'no',
-      badge: '❌ 보장불가',
+      badge: '❌ 보상제외',
       badgeColor: '#ef4444',
       badgeBg: 'rgba(239, 68, 68, 0.05)',
       border: '#ef4444',
@@ -2532,7 +2532,7 @@ function getBasicSurgerySummary(g) {
   if (codes.some(c => c.startsWith('H25') || c.startsWith('H26')) || name.includes('백내장') || vs.some(v => v.includes('다초점') || v.includes('인공수정체'))) {
     return {
       status: 'warning',
-      badge: '⚠️ 특약확인',
+      badge: '⚠️ 별도확인',
       badgeColor: '#d97706',
       badgeBg: 'rgba(217, 119, 6, 0.05)',
       border: '#d97706',
@@ -2808,9 +2808,10 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       </div>`;
   }
 
+  const tier3Val = get3TierForDisease(g, evalRes).tier3;
   const innerCardHTML = `
-      <!-- 빠른검색 3대 핵심 담보 판정 (질병수술 · 1~5종 · N대) : 박스크기 동일, 단색 배경으로 톤 다운, 섹터별 포인트 컬러 강조, 우측 뱃지 동일 규격 칼정렬 -->
-      <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:6px;margin:8px 0 6px 0;">
+      <!-- 빠른검색 4대 핵심 담보 판정 (질병수술 · 1~5종 · 1~3종 · N대) : 박스크기·간격(8px) 동일, 중립 배경 톤다운, 우측 4~5자 정형 뱃지 칼정렬 -->
+      <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:8px;margin:8px 0 8px 0;">
         <!-- 1. 질병수술 (기본 질병수술비/정액) -->
         <div class="qvb-row">
           <div style="font-size:13px;font-weight:900;color:#e11d48;display:flex;align-items:center;gap:6px;white-space:nowrap;">
@@ -2819,20 +2820,23 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           <span class="qvb-badge" style="border:1.5px solid ${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};color:${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};background:${basicSurg.badge.startsWith('⭕') ? 'rgba(225,29,72,0.04)' : (basicSurg.badge.startsWith('⚠️') ? 'rgba(217,119,6,0.04)' : 'rgba(239,68,68,0.04)')};">${esc(basicSurg.badge)}</span>
         </div>
 
-        <!-- 2. 종수술비 (1~5종 메인 표기, 1~3종 확인 토글 및 동일 뱃지 규격 결과 노출) -->
-        <div class="qvb-row btn-toggle-quick-tier" style="cursor:pointer;">
+        <!-- 2. 1~5종 수술특약 -->
+        <div class="qvb-row">
           <div style="font-size:13px;font-weight:900;color:#2563eb;display:flex;align-items:center;gap:6px;white-space:nowrap;">
-            <span>📋 종수술비</span>
-            <span class="qtier-arrow" style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25);padding:2.5px 7px;border-radius:5px;white-space:nowrap;">1-3종 수술확인 ▾</span>
+            <span>📋 1~5종 수술특약</span>
           </div>
           <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;background:rgba(37,99,235,0.04);">${evalRes.tier && evalRes.tier !== '부지급' && evalRes.tier !== '0원' ? `⭕ ${esc(evalRes.tier)} 해당` : '❌ 미해당'}</span>
         </div>
-        <div class="quick-tier3-drawer" style="display:none;margin-top:4px;padding:0 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;height:48px;min-height:48px;max-height:48px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:13px;font-weight:850;color:var(--text);">구 1~3종 수술특약 결과</span>
-          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;background:rgba(37,99,235,0.04);">⭕ ${esc(get3TierForDisease(g, evalRes).tier3)} 해당</span>
+
+        <!-- 3. 1~3종 수술특약 -->
+        <div class="qvb-row">
+          <div style="font-size:13px;font-weight:900;color:#2563eb;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+            <span>📜 1~3종 수술특약</span>
+          </div>
+          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;background:rgba(37,99,235,0.04);">${tier3Val && tier3Val !== '부지급' && tier3Val !== '0원' ? `⭕ ${esc(tier3Val)} 해당` : '❌ 미해당'}</span>
         </div>
 
-        <!-- 3. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
+        <!-- 4. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
         <div class="qvb-row btn-toggle-quick-ndai" style="cursor:pointer;">
           <div style="font-size:13px;font-weight:900;color:#059669;display:flex;align-items:center;gap:6px;white-space:nowrap;">
             <span>🏢 N대질병</span>
@@ -3799,128 +3803,117 @@ function runTier78Search(rawQ) {
     return;
   }
 
-  let guideBannerHTML = '';
-  if (matchedEntries.length > 0) {
-    const mainEntry = matchedEntries[0];
-    const isNewTech = !!mainEntry.isNewTech;
+  const guideBannerHTML = `
+    <div style="font-size:12px;color:#ea580c;background:rgba(234,88,12,0.06);border:1.5px solid rgba(234,88,12,0.25);border-radius:10px;padding:9px 14px;margin-bottom:12px;font-weight:800;text-align:center;">
+      💡 7·8종(급여 수술비)은 국민건강보험 <strong>[급여]</strong> 적용 수술만 보장되며, 전액 비급여 시술은 제외됩니다.
+    </div>`;
 
-    guideBannerHTML = `
-      <div style="background:${isNewTech ? 'rgba(225,29,72,0.06)' : 'rgba(234,88,12,0.06)'};border:1.5px solid ${isNewTech ? 'rgba(225,29,72,0.35)' : 'rgba(234,88,12,0.3)'};border-radius:12px;padding:12px 15px;margin-bottom:12px;text-align:left;">
-        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
-          <span style="font-size:13px;font-weight:900;color:${isNewTech ? '#e11d48' : '#ea580c'};">💡 “${esc(mainEntry.disease)}” 수술방식별 7·8종 판정</span>
-          <span style="font-size:11px;font-weight:850;color:#fff;background:${isNewTech ? '#e11d48' : '#ea580c'};padding:2px 8px;border-radius:5px;">${isNewTech ? '⚠️ 비급여 시술 전액 부지급 주의' : '⚠️ 급여 전용 (비급여 제외)'}</span>
+  let groupsHTML = '';
+  if (matchedRows.length > 0) {
+    // 1순위 대표 수술 1건: 메인 카드로 단정하게 노출!
+    const mainRow = matchedRows[0];
+    groupsHTML += cardTier78HTML(mainRow, q, false);
+
+    // 2순위 이후 연관 수술들: 질환/수술별 가로 배너 아코디언으로 접어두기!
+    if (matchedRows.length > 1) {
+      const subItems = matchedRows.slice(1);
+      groupsHTML += `
+        <div style="margin:16px 0 8px 4px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+            📂 연관 7·8종 수술 분류 <span style="color:#ea580c;font-weight:900;">(${subItems.length}건)</span>
+          </span>
+          <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 상세 펼침 ▾</span>
         </div>
-        <div style="font-size:12px;color:var(--text);font-weight:750;line-height:1.45;">
-          ${esc(mainEntry.desc)}
+        <div class="sub-tier78-list" style="display:flex;flex-direction:column;gap:8px;">
+          ${subItems.map(item => cardTier78HTML(item, q, true)).join('')}
         </div>
-        <div style="font-size:11px;color:${isNewTech ? '#be123c' : 'var(--text-2)'};margin-top:6px;padding-top:6px;border-top:1px dashed ${isNewTech ? 'rgba(225,29,72,0.25)' : 'rgba(234,88,12,0.2)'};line-height:1.4;font-weight:${isNewTech ? '800' : '600'};">
-          ${isNewTech
-            ? '🔒 <strong>[필수 실무 유의]</strong> 맘모톰, 하이푸, 베나실, 유로리프트, 비밸브, 신경성형술 등 <strong>법정 비급여 신의료기술은 7·8종(급여 수술비)에서 전액 부지급(보상 제외)</strong>됩니다. 건강보험 [급여] 적용 수술 시에만 해당 등급이 지급됩니다. (※ 1~5종 종수술비는 비급여도 수술 요건 충족 시 정상 지급)'
-            : '🔒 <strong>7·8종 필수 유의사항:</strong> 국민건강보험 <strong>[급여]</strong> 적용 수술만 보장되며, <strong>전액 비급여 시술은 약관상 보상 제외(부지급)</strong>됩니다.'}
-        </div>
-      </div>`;
-  } else {
-    guideBannerHTML = `
-      <div style="font-size:11.5px;color:#e11d48;background:rgba(225,29,72,0.06);border:1px solid rgba(225,29,72,0.2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-weight:750;text-align:left;">
-        🔒 <strong>7·8종(KDRG) 급여 수술 안내:</strong> 건강보험 [급여] 적용 수술만 보장 대상이며, 100% 비급여 시술은 전액 보상 제외됩니다.
-      </div>`;
+      `;
+    }
   }
 
   resEl.innerHTML = `
     ${guideBannerHTML}
     <div style="font-size:12px;font-weight:800;color:#ea580c;margin:8px 0 12px;display:flex;align-items:center;justify-content:space-between;">
       <span>“${esc(q)}” 7·8종 수술 분류</span>
-      <span style="background:rgba(234,88,12,0.12);color:#ea580c;padding:2px 8px;border-radius:6px;font-size:11px;">수술 ${matchedRows.length}건</span>
+      <span style="background:rgba(234,88,12,0.12);color:#ea580c;padding:2px 8px;border-radius:6px;font-size:11px;">총 ${matchedRows.length}건</span>
     </div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      ${matchedRows.map(item => cardTier78HTML(item, q)).join('')}
-    </div>`;
+    ${groupsHTML}`;
+
+  // 7·8종 연관 수술 서랍 토글 바인딩
+  resEl.querySelectorAll('.btn-toggle-sub-tier78').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = btn.closest('.sub-tier78-item');
+      if (!item) return;
+      const drawer = item.querySelector('.sub-tier78-drawer');
+      const arrow = item.querySelector('.sub-arrow');
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'block' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
+    });
+  });
 }
 
-function cardTier78HTML(item, q) {
+function cardTier78HTML(item, q, isSub = false) {
   const t7Val = item.t7 ? String(item.t7) : '';
   const t8Val = item.t8 ? String(item.t8) : '';
   const isSame = (t7Val && t8Val && t7Val === t8Val && t7Val !== '0');
 
-  const t7Badge = item.t7 && item.t7 !== '0' ? `<span class="proc-tag t${item.t7}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;">${item.t7}종</span>` : `<span class="proc-tag t-none" style="font-size:12px;font-weight:800;padding:2px 6px;border-radius:5px;flex-shrink:0;">비해당</span>`;
-  const t8Badge = item.t8 && item.t8 !== '0' ? `<span class="proc-tag t${item.t8}" style="font-size:14px;font-weight:900;padding:2px 8px;border-radius:5px;flex-shrink:0;">${item.t8}종</span>` : `<span class="proc-tag t-none" style="font-size:12px;font-weight:800;padding:2px 6px;border-radius:5px;flex-shrink:0;">비해당</span>`;
-
   let verdictBoxHTML = '';
   if (isSame) {
-    // 7종과 8종이 동일한 경우: 하나로 깔끔하게 통합 표시
+    // 7종과 8종이 동일한 경우: 52px 단일행 깔끔한 쌍둥이 박스로 정렬
     verdictBoxHTML = `
-      <div style="background:var(--surface);border:1.5px solid rgba(234,88,12,0.35);border-radius:10px;padding:11px 13px;margin:8px 0 10px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--shadow-1);">
-        <div style="display:flex;flex-direction:column;gap:3px;text-align:left;min-width:0;">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <span style="font-size:12.5px;font-weight:900;color:#ea580c;">1~7종 · 1~8종 공통</span>
-            <span style="font-size:10px;color:var(--text-3);font-weight:750;">(현대·메리츠 7종 & 삼성화재 8종 동일)</span>
-          </div>
-          <div style="font-size:11.5px;color:var(--text);font-weight:800;">
-            급여 수술 분류표 기준 <strong style="color:#ea580c;font-size:13px;">${item.t7}종</strong> 보장
-          </div>
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:0 14px;height:52px;min-height:52px;max-height:52px;box-sizing:border-box;margin:6px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+          <span style="font-size:13.5px;font-weight:900;color:#ea580c;white-space:nowrap;">1~7종 · 1~8종 (급여수술)</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-          <span class="proc-tag t${item.t7}" style="font-size:15px;font-weight:900;padding:4px 10px;border-radius:6px;box-shadow:0 1px 3px rgba(234,88,12,0.25);">${item.t7}종</span>
+          <span style="min-width:76px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.06);border:1.5px solid #ea580c;border-radius:8px;white-space:nowrap;box-sizing:border-box;">
+            ${item.t7}종
+          </span>
         </div>
       </div>`;
   } else {
-    // 7종과 8종이 다른 경우: 좌|우 2분할 대조
+    // 7종과 8종이 다른 경우: 52px 균일 박스 2개로 정렬
     verdictBoxHTML = `
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 10px 0;">
-        <!-- 1~7종 특약 -->
-        <div style="background:var(--surface);border:1.5px solid rgba(234,88,12,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
-          <div style="font-size:11px;font-weight:850;color:#ea580c;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
-            <span>1~7종 급여수술특약</span>
-            <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">현대·메리츠</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:7px;">
-            ${t7Badge}
-            <span style="font-size:11.5px;font-weight:800;color:var(--text);line-height:1.35;word-break:keep-all;">${item.t7 && item.t7 !== '0' ? '급여 수술 7종 분류표 ' + item.t7 + '종' : '1~7종 분류표 비해당'}</span>
-          </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin:6px 0;">
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:0 14px;height:52px;min-height:52px;max-height:52px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <span style="font-size:13.5px;font-weight:900;color:#ea580c;white-space:nowrap;">1~7종 급여수술 (현대·메리츠)</span>
+          <span style="min-width:76px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.06);border:1.5px solid #ea580c;border-radius:8px;white-space:nowrap;box-sizing:border-box;">${item.t7 && item.t7 !== '0' ? item.t7 + '종' : '비해당'}</span>
         </div>
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:0 14px;height:52px;min-height:52px;max-height:52px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <span style="font-size:13.5px;font-weight:900;color:#c2410c;white-space:nowrap;">1~8종 급여수술 (삼성화재)</span>
+          <span style="min-width:76px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#c2410c;background:rgba(194,65,12,0.06);border:1.5px solid #c2410c;border-radius:8px;white-space:nowrap;box-sizing:border-box;">${item.t8 && item.t8 !== '0' ? item.t8 + '종' : '비해당'}</span>
+        </div>
+      </div>`;
+  }
 
-        <!-- 1~8종 특약 -->
-        <div style="background:var(--surface);border:1.5px solid rgba(194,65,12,0.3);border-radius:10px;padding:9px 11px;text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;">
-          <div style="font-size:11px;font-weight:850;color:#c2410c;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
-            <span>1~8종 질병·상해특약</span>
-            <span style="font-size:9.5px;color:var(--text-3);font-weight:700;">삼성화재</span>
+  if (isSub) {
+    return `
+      <div class="sub-tier78-item" style="border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden;">
+        <div class="btn-toggle-sub-tier78" style="padding:11px 14px;min-height:46px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;transition:background .15s ease;">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
+            <span style="font-size:11.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.1);padding:2px 6px;border-radius:4px;flex-shrink:0;">${esc(item.c)}</span>
+            <span style="font-size:13px;font-weight:850;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${hl(item.n, q)}</span>
           </div>
-          <div style="display:flex;align-items:flex-start;gap:7px;">
-            ${t8Badge}
-            <span style="font-size:11.5px;font-weight:800;color:var(--text);line-height:1.35;word-break:keep-all;">${item.t8 && item.t8 !== '0' ? '질병·상해 8종 분류표 ' + item.t8 + '종' : '1~8종 분류표 비해당'}</span>
-          </div>
+          <span class="sub-arrow" style="font-size:11px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">펼쳐보기 ▾</span>
+        </div>
+        <div class="sub-tier78-drawer" style="display:none;padding:10px 14px;background:var(--surface-2);border-top:1px dashed var(--line);">
+          ${verdictBoxHTML}
         </div>
       </div>`;
   }
 
   return `
-  <article class="card" style="border:1.5px solid rgba(234,88,12,0.22);border-radius:14px;padding:14px 16px;background:var(--surface);">
+  <article class="card" style="border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;background:var(--surface);box-shadow:var(--shadow-1);">
     <div class="card-head">
-      <div class="card-top" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-        <span class="kcd-badge-big" style="background:rgba(234,88,12,0.12);color:#ea580c;border:1.5px solid rgba(234,88,12,0.3);font-size:13px;font-weight:900;padding:2px 8px;border-radius:6px;">${esc(item.c)}</span>
-        <h3 class="card-name" style="font-size:16px;font-weight:900;color:var(--text);margin:0;flex:1;">${hl(item.n, q)}</h3>
-        ${item.g ? `<span style="font-size:11.5px;color:var(--text-3);font-weight:800;background:var(--surface-2);padding:2px 8px;border-radius:5px;border:1px solid var(--border);white-space:nowrap;">${esc(item.g)}</span>` : ''}
+      <div class="card-top" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span class="kcd-badge-big" style="background:rgba(234,88,12,0.1);color:#ea580c;border:1.5px solid rgba(234,88,12,0.3);font-size:12.5px;font-weight:900;padding:2px 8px;border-radius:6px;">${esc(item.c)}</span>
+        <h3 class="card-name" style="font-size:15px;font-weight:900;color:var(--text);margin:0;flex:1;word-break:keep-all;">${hl(item.n, q)}</h3>
+        ${item.g ? `<span style="font-size:11px;color:var(--text-3);font-weight:800;background:var(--surface-2);padding:2px 7px;border-radius:5px;border:1px solid var(--border);white-space:nowrap;">${esc(item.g)}</span>` : ''}
       </div>
-
-      <div class="judge-box" style="background:var(--surface-2);border:1.5px solid rgba(234,88,12,0.25);border-radius:10px;padding:10px 12px;">
-        <div class="judge-head-meta" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <span class="meta-type" style="font-size:11.5px;font-weight:850;color:#ea580c;">종수술비 정밀 판정 (7종 · 8종 대조)</span>
-          <span class="meta-co" style="font-size:10.5px;color:var(--text-3);font-weight:700;">KDRG ADRG 분류</span>
-        </div>
-
-        ${verdictBoxHTML}
-
-        <div class="judge-main-row" style="margin-top:6px;">
-          <div class="judge-main-info" style="width:100%;">
-            <div style="font-size:12px;color:var(--text-2);line-height:1.4;">
-              건강보험심사평가원 KDRG 버전 4.4 / ADRG 코드: <strong style="color:var(--text);">${esc(item.c)}</strong> ${item.g ? ' · 대분류: ' + esc(item.g) : ''}
-            </div>
-            <div style="font-size:11px;color:#e11d48;margin-top:4px;font-weight:750;">
-              ※ 건강보험 [급여] 적용 수술 시에만 보장되며, 전액 비급여 수술은 지급되지 않습니다.
-            </div>
-          </div>
-        </div>
-      </div>
+      ${verdictBoxHTML}
     </div>
   </article>`;
 }
