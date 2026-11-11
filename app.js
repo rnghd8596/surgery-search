@@ -73,7 +73,7 @@ const EDI_CODE_MAP = {
   'R3431': { codes: ['N40'], name: '경요도 전립선결찰술(유로리프트)', tier: '1~2종 (비급여/분쟁)' },
   'R3441': { codes: ['N40'], name: '홀뮴레이저 전립선적출술(HoLEP)', tier: '3종' },
   'R3461': { codes: ['N40'], name: '전립선고수압분사절제술(워터젯/아쿠아블레이션)', tier: '3종' },
-  'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '생보 2종 (손보 면책 다수)' },
+  'R3221': { codes: ['N20', 'N21', 'N22', 'N23'], name: '체외충격파쇄석술(ESWL)', tier: '회사별 상이 (1종 또는 2종)' },
   // 척추 및 치과 신의료기술/다빈도
   'O1441': { codes: ['J34.8', 'J34.2'], name: '비밸브재건술', tier: '2~3종' },
   'O1451': { codes: ['J32'], name: '풍선카테터부비동확장술', tier: '2종' },
@@ -1537,10 +1537,17 @@ function renderTierMatchCards(ids, q) {
   }).join('');
 
   return `
-    <div style="display:flex;align-items:center;gap:8px;margin:22px 3px 10px;padding-top:16px;border-top:1.5px dashed var(--border);">
-      <span style="font-size:13px;font-weight:900;color:var(--text);">🔖 세부 수술코드(EDI) 분류표 대조 (3종 · 5종)</span>
-      <span style="font-size:11px;font-weight:750;color:var(--text-3);">수술확인서 기재 코드 일치 여부 확인</span>
-    </div>` + cards;
+    <div class="edi-match-wrapper" style="margin:22px 0 14px;padding-top:16px;border-top:1.5px dashed var(--border);">
+      <button type="button" class="btn-toggle-edi-drawer" style="width:100%;height:46px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:850;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.02);user-select:none;">
+        <span style="display:flex;align-items:center;gap:6px;">
+          🔖 세부 수술코드(EDI) 3·5종 분류표 대조 <span style="color:#2563eb;font-weight:900;">(${rows.length}건)</span>
+        </span>
+        <span class="edi-drawer-arrow" style="font-size:11.5px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);">${looksEdi ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+      </button>
+      <div class="edi-match-drawer" style="display:${looksEdi ? 'flex' : 'none'};margin-top:10px;flex-direction:column;gap:10px;">
+        ${cards}
+      </div>
+    </div>`;
 }
 
 /* ───────────────────────── 1. 빠른 검색 ───────────────────────── */
@@ -1704,9 +1711,10 @@ function runQuickSearch(q, parsed) {
     subInfo = `<div style="font-size:12px;font-weight:750;color:var(--brand);margin-top:3px;">[${parts.join(' · ')} 인식]</div>`;
   }
 
+  const looksEdi = /^[A-Z]\d{4}/i.test(q.replace(/\s+/g, ''));
   const compHTML = compPair ? renderComparisonPairHTML(compPair) : '';
   const exclHTML = exclProc ? renderExcludedProcedureHTML(exclProc) : '';
-  const tierHTML = renderTierMatchCards(res.tiers, q);
+  const tierHTML = renderTierMatchCards(res.tiers, q, looksEdi);
 
   const head = `
     <div class="res-head">
@@ -1732,26 +1740,54 @@ function runQuickSearch(q, parsed) {
     const mainGi = res.groups[0];
     groupsHTML += cardQuickHTML(mainGi, q, res.matchedEdi, parsed, false);
 
-    // 2순위 이후 연관 질환: 깔끔한 정형화 가로 배너 바로 접어두기!
+    // 2순위 이후: 제자리암(D코드)과 기타 연관 질환을 완벽히 분리 정돈!
     if (res.groups.length > 1) {
-      const subItems = res.groups.slice(1, 15);
-      groupsHTML += `
-        <div style="margin:20px 0 10px 4px;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
-            📂 연관 질환 및 다른 질병코드 <span style="color:var(--brand);font-weight:900;">(${subItems.length}건)</span>
-          </span>
-          <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 상세 판정 펼쳐짐 ▾</span>
-        </div>
-        <div class="sub-diseases-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-          ${subItems.map(i => cardQuickHTML(i, q, res.matchedEdi, parsed, true)).join('')}
-        </div>
-      `;
+      const remainingGis = res.groups.slice(1, 15);
+      const inSituGis = [];
+      const otherGis = [];
+
+      remainingGis.forEach(gi => {
+        const itemG = state.D.g[gi];
+        const isDCode = (itemG.c || []).some(c => /^[D]\d/i.test(c)) || (itemG.n || '').includes('제자리암') || (itemG.n || '').includes('상피내암');
+        if (isDCode) {
+          inSituGis.push(gi);
+        } else {
+          otherGis.push(gi);
+        }
+      });
+
+      // 제자리암(상피내암) 별도 섹션
+      if (inSituGis.length > 0) {
+        groupsHTML += `
+          <div style="margin:20px 0 10px 4px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+              📂 연관 제자리암(상피내암) 질병코드별 확인 <span style="color:#2563eb;font-weight:900;">(${inSituGis.length}건)</span>
+            </span>
+            <span style="font-size:11px;color:#2563eb;font-weight:800;background:rgba(49,130,246,0.08);padding:3px 8px;border-radius:6px;border:1px solid rgba(49,130,246,0.25);">터치 시 상세 판정 ▾</span>
+          </div>
+          <div class="sub-diseases-list in-situ-diseases-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+            ${inSituGis.map(i => cardQuickHTML(i, q, res.matchedEdi, parsed, true)).join('')}
+          </div>
+        `;
+      }
+
+      // 기타 연관 질환 섹션
+      if (otherGis.length > 0) {
+        groupsHTML += `
+          <div style="margin:20px 0 10px 4px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+              📂 기타 연관 질환 및 다른 질병코드 <span style="color:var(--brand);font-weight:900;">(${otherGis.length}건)</span>
+            </span>
+            <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 상세 판정 펼쳐짐 ▾</span>
+          </div>
+          <div class="sub-diseases-list other-diseases-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+            ${otherGis.map(i => cardQuickHTML(i, q, res.matchedEdi, parsed, true)).join('')}
+          </div>
+        `;
+      }
     }
   }
 
-  // 검색어가 EDI 수술코드(예: Q7701, N07151 등)로 직접 검색된 경우에만 수술코드 카드를 맨 위에,
-  // 일반 질병명/수술명(인공관절, 치핵, 추간판, 백내장 등) 검색 시에는 질병수술·종수술비·N대질병 3대 담보 카드를 무조건 최상단 1순위로 노출!
-  const looksEdi = /^[A-Z]\d{4}/i.test(q.replace(/\s+/g, ''));
   let html = head;
   if (looksEdi) {
     html += tierHTML + compHTML + exclHTML + groupsHTML;
@@ -1922,7 +1958,7 @@ function parseCosList(coInput) {
 
 const REVISION_RULES = [
   {
-    id: 'eswl_hyundai_tier',
+    id: 'eswl_tier',
     name: '체외충격파쇄석술(ESWL) 보험사·특약별 지급 등급',
     match: (g) => {
       const codes = g.c || [];
@@ -1933,56 +1969,90 @@ const REVISION_RULES = [
     },
     standardTier: '2종',
     revisions: [
-      { co: '현대해상', ym: 202208, label: '현대해상 일반형(1종) vs 질병수술Ⅱ(2종)', matchKeys: ['현대', '현해'] }
+      { co: '농협손해보험', ym: 202501, label: '농협손보 2종➔1종 (2025.01~)', matchKeys: ['농협', '농손'] },
+      { co: '흥국화재', ym: 202108, label: '흥국화재 2종➔1종 (2021.08~)', matchKeys: ['흥국화', '흥화'] },
+      { co: '한화손해보험', ym: 202307, label: '한화손보 2종➔1종 (2023.07~)', matchKeys: ['한화손', '한손'] },
+      { co: '현대해상', ym: 201806, label: '현대해상 2종➔1종 (2018.06~)', matchKeys: ['현대', '현해'] },
+      { co: '롯데손해보험', ym: 202101, label: '롯데손보 2종➔1종 (2021.01~)', matchKeys: ['롯데', '롯손'] }
     ],
     evaluate: function(cosInput, year, month) {
       const cosList = parseCosList(cosInput);
-      const isHyundai = cosList.some(co => ['현대', '현해'].some(k => co.toLowerCase().includes(k)));
-      const isMeritz = cosList.some(co => ['메리츠', '멜츠'].some(k => co.toLowerCase().includes(k)));
 
-      if (cosList.length === 1 && !isHyundai) {
+      if (cosList.length === 0) {
         return {
-          tier: '2종',
-          hasDiff: false,
-          note: `${cosList[0]} 체외충격파쇄석술 2종 지급 (60일 이내 1회 한)`,
+          tier: '1·2종',
+          hasDiff: true,
+          diffBadge: '[회사·가입시기별 상이]',
+          note: '생보 전사 및 대형 손보(삼성·KB·DB·메리츠) 2종 유지, 농협·흥국·한화·현대·롯데 1종 하향 개정',
           boxHTML: `
-            <div class="rev-alert-box blue">
-              <div class="rab-title">✓ ${cosList[0]} 체외충격파쇄석술 [2종 지급]</div>
-              <div class="rab-desc" style="color:var(--text-2);margin-top:2px;">
-                1~5종 수술분류표에 따라 <b>2종</b>으로 지급됩니다. (수술개시일부터 60일 이내 2회 이상 수술은 1회로 간주)<br>
-                ※ 물리치료인 <b>체외충격파치료술(ESWT)은 전사 제외</b>입니다.
+            <div class="rev-alert-box">
+              <div class="rab-title">⚠️ 체외충격파쇄석술(ESWL) 2종 ➔ 1종 하향 개정 손보사 5곳</div>
+              <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin:6px 0;background:var(--surface);padding:8px 10px;border-radius:9px;border:1px solid var(--border);">
+                <div>• 농협손보 (2025.01~)</div>
+                <div>• 흥국화재 (2021.08~)</div>
+                <div>• 한화손보 (2023.07~)</div>
+                <div>• 현대해상 (2018.06~)</div>
+                <div>• 롯데손보 (2021.01~)</div>
+                <div style="color:#2563eb;font-weight:750;">• 생보 전사 및 대형 손보 2종 유지</div>
+              </div>
+              <div class="rab-desc" style="font-size:11px;color:var(--text-2);margin-top:2px;">
+                ※ 1~5종 수술분류표 제87항(생보 제37항) 체외충격파쇄석술 기준이며, 60일 이내 여러 번은 1회로 간주합니다.<br>
+                ※ 외래 물리치료인 <b>체외충격파치료술(ESWT)은 전사 면책</b>입니다.
               </div>
             </div>`
         };
       }
 
+      if (cosList.length === 1) {
+        const coStr = cosList[0];
+        const normCo = coStr.toLowerCase();
+        const rev = this.revisions.find(r => r.matchKeys.some(k => normCo.includes(k)));
+        if (!rev) {
+          return {
+            tier: '2종',
+            hasDiff: false,
+            note: `${coStr}는 체외충격파쇄석술 2종 지급 (60일 이내 1회 한)`,
+            boxHTML: `
+              <div class="rev-alert-box blue">
+                <div class="rab-title">✓ ${coStr} 체외충격파쇄석술 [2종 지급]</div>
+                <div class="rab-desc" style="color:var(--text-2);margin-top:2px;">1~5종 수술분류표에 따라 <b>2종</b>으로 지급됩니다. (60일 내 1회 / ESWT 제외)</div>
+              </div>`
+          };
+        }
+
+        const ymText = `${Math.floor(rev.ym / 100)}년 ${rev.ym % 100}월`;
+        return {
+          tier: '1·2종',
+          hasDiff: true,
+          diffBadge: '[가입시기별 상이]',
+          note: `${rev.co}는 ${ymText} 이후 1종으로 하향 개정`,
+          boxHTML: `
+            <div class="rev-alert-box">
+              <div class="rab-title">⚠️ ${rev.co} 체외충격파쇄석술 가입시기별 기준</div>
+              <div class="rab-card">
+                <div class="rab-row">
+                  <span class="rab-label">${ymText} 이전 계약</span>
+                  <span class="rab-val blue">2종 지급</span>
+                </div>
+                <div class="rab-row">
+                  <span class="rab-label">${ymText} 이후 계약</span>
+                  <span class="rab-val red">1종 적용 (하향)</span>
+                </div>
+              </div>
+              <div class="rab-desc">※ ${ymText} 이후 가입 고객은 1종으로 지급됩니다.</div>
+            </div>`
+        };
+      }
+
       return {
-        tier: isHyundai ? '1·2종' : '2종',
+        tier: '1·2종',
         hasDiff: true,
         diffBadge: '[특약별 상이]',
-        note: '생보 2종 / 메리츠 87항 2종 / 현대해상 일반형 85항 1종 vs 질병Ⅱ 85항 2종 (정액수술비는 부지급)',
+        note: '선택하신 보험사별 체외충격파쇄석술 약관 기준 비교',
         boxHTML: `
           <div class="rev-alert-box">
-            <div class="rab-title">⚠️ 체외충격파쇄석술(ESWL) 보험사·특약별 지급 등급 확인 (필수)</div>
-            <div class="rab-card">
-              <div class="rab-row">
-                <span class="rab-label">생명보험 전사 & 메리츠화재 (제87항)</span>
-                <span class="rab-val blue">2종 지급 (60일 내 1회)</span>
-              </div>
-              <div class="rab-row">
-                <span class="rab-label">현대해상 질병수술Ⅱ / 회당지급형</span>
-                <span class="rab-val blue">제85항 2종 지급</span>
-              </div>
-              <div class="rab-row">
-                <span class="rab-label">현대해상 일반형 1~5종 (과거 약관)</span>
-                <span class="rab-val orange">제85항 1종 지급</span>
-              </div>
-              <div class="rab-row">
-                <span class="rab-label">기본 정액 질병수술비 (손보 공통)</span>
-                <span class="rab-val red">부지급 (수술정의 제외)</span>
-              </div>
-            </div>
-            <div class="rab-desc">※ 약관 분류표 본문상 <b>체외충격파치료술(ESWT)은 전사 제외</b>이나, <b>체외충격파쇄석술(ESWL)</b>은 종수술비에서 1종 또는 2종으로 지급됩니다.</div>
+            <div class="rab-title">⚠️ 체외충격파쇄석술(ESWL) 보험사별 약관 기준</div>
+            <div class="rab-desc">생보 전사 및 대형 손보사는 2종, 일부 손보사는 개정 시점에 따라 1종으로 지급됩니다.</div>
           </div>`
       };
     }
@@ -2337,19 +2407,40 @@ const REVISION_RULES = [
   {
     id: 'breast_hyper',
     name: '유방비대증 수술',
-    match: (g) => (g.c || []).some(c => c.startsWith('N62')),
+    match: (g) => (g.c || []).some(c => c.startsWith('N62') || c.startsWith('N60') || c.startsWith('N64')) || (g.n || '').includes('유방의 비대') || (g.n || '').includes('여유증'),
     evaluate: function(cosInput) {
       const cosList = parseCosList(cosInput);
+      if (cosList.length === 0) {
+        return {
+          tier: '1~3종',
+          hasDiff: true,
+          diffBadge: '[개정약관별 상이]',
+          note: '표준 3종(유방절단술), 메리츠·하나·예별·흥국·한화 1종 하향, DB손보 2종 하향',
+          boxHTML: `
+            <div class="rev-alert-box">
+              <div class="rab-title">⚠️ 유방비대(여유증 N62) 유방절단 3종 ➔ 1·2종 하향 손보사 6곳</div>
+              <div style="color:var(--text);font-size:11.5px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px;margin:6px 0;background:var(--surface);padding:8px 10px;border-radius:9px;border:1px solid var(--border);">
+                <div>• 예별손보 3종➔1종 (2023.01~)</div>
+                <div>• 하나손보 3종➔1종 (2023.06~)</div>
+                <div>• 한화손보 3종➔1종 (2023.07~)</div>
+                <div>• 메리츠 3종➔1종 (2024.12~)</div>
+                <div>• 흥국화재 3종➔1종 (2025.09~)</div>
+                <div>• DB손보 3종➔2종 (2026.05~)</div>
+              </div>
+              <div class="rab-desc">※ 표준 1~5종 제3항 유방절단술은 3종이나, 위 6개 손보사는 가입 시기에 따라 1종 또는 2종으로 하향 지급됩니다.</div>
+            </div>`
+        };
+      }
       if (cosList.length > 1) {
         const coResults = cosList.map(co => ({
           co,
-          tier: co.includes('메리츠') ? '1종' : '3종',
-          note: co.includes('메리츠') ? '메리츠 개정약관 1종' : '표준 약관 3종'
+          tier: (co.includes('메리츠') || co.includes('하나') || co.includes('예별') || co.includes('흥국') || co.includes('한화')) ? '1종' : (co.includes('db') || co.includes('디비') ? '2종' : '3종'),
+          note: (co.includes('메리츠') || co.includes('하나') || co.includes('예별') || co.includes('흥국') || co.includes('한화')) ? '개정약관 1종' : (co.includes('db') || co.includes('디비') ? '개정약관 2종' : '표준 약관 3종')
         }));
         return {
           tier: coResults.every(r => r.tier === '3종') ? '3종' : '회사별 상이',
-          hasDiff: coResults.some(r => r.tier === '1종'),
-          diffBadge: coResults.some(r => r.tier === '1종') ? '[회사별 상이]' : '',
+          hasDiff: coResults.some(r => r.tier !== '3종'),
+          diffBadge: coResults.some(r => r.tier !== '3종') ? '[회사별 상이]' : '',
           note: `선택하신 ${cosList.length}개 보험사별 약관 비교`,
           boxHTML: `
             <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin:8px 0;">
@@ -2358,7 +2449,7 @@ const REVISION_RULES = [
                 ${coResults.map(cr => `
                   <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 9px;background:var(--surface-2);border-radius:7px;font-size:12px;border:1px solid var(--border);">
                     <span style="font-weight:800;color:var(--text);">${esc(cr.co)}</span>
-                    <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:${cr.tier === '1종' ? '#dc2626' : '#2563eb'};color:#fff;">${esc(cr.tier)}</span>
+                    <span style="font-weight:900;padding:2px 8px;border-radius:5px;font-size:11.5px;background:${cr.tier === '1종' ? '#dc2626' : (cr.tier === '2종' ? '#d97706' : '#2563eb')};color:#fff;">${esc(cr.tier)}</span>
                   </div>
                 `).join('')}
               </div>
@@ -2366,12 +2457,21 @@ const REVISION_RULES = [
         };
       }
       const coStr = cosList[0] || '';
-      if (coStr.includes('메리츠')) {
+      if (coStr.includes('메리츠') || coStr.includes('하나') || coStr.includes('예별') || coStr.includes('흥국') || coStr.includes('한화')) {
         return {
           tier: '1종',
           hasDiff: true,
-          diffBadge: '[메리츠 1종]',
-          note: '메리츠화재 1-5종 수술분류표Ⅱ는 유방비대(N62) 수술을 1종으로 별도 명시',
+          diffBadge: '[개정약관 1종]',
+          note: '개정약관에 따라 유방비대(여유증) 유방절단수술 1종 하향',
+          boxHTML: ''
+        };
+      }
+      if (coStr.includes('db') || coStr.includes('디비')) {
+        return {
+          tier: '2종',
+          hasDiff: true,
+          diffBadge: '[DB손보 2종]',
+          note: 'DB손해보험 2026.05 개정약관 유방비대 수술 2종 하향',
           boxHTML: ''
         };
       }
@@ -2387,9 +2487,32 @@ const REVISION_RULES = [
   {
     id: 'gallstone',
     name: '담석증 복강경수술',
-    match: (g) => (g.c || []).some(c => c.startsWith('K80')),
+    match: (g) => (g.c || []).some(c => c.startsWith('K80')) || (g.n || '').includes('담석'),
     evaluate: function(cosInput) {
       const cosList = parseCosList(cosInput);
+      if (cosList.length === 0) {
+        return {
+          tier: '2·3종',
+          hasDiff: true,
+          diffBadge: '[메리츠 2종 하향]',
+          note: '표준 1~5종 제36항 3종 지급, 메리츠화재는 2024.12 개정으로 2종 하향',
+          boxHTML: `
+            <div class="rev-alert-box">
+              <div class="rab-title">⚠️ 담석증(K80) 복강경 담낭절제 약관 기준</div>
+              <div class="rab-card">
+                <div class="rab-row">
+                  <span class="rab-label">표준 1~5종 (전 보험사 공통)</span>
+                  <span class="rab-val blue">제36항 3종 지급</span>
+                </div>
+                <div class="rab-row">
+                  <span class="rab-label">메리츠화재 (2024.12~ 개정약관Ⅱ)</span>
+                  <span class="rab-val red">2종 하향 적용</span>
+                </div>
+              </div>
+              <div class="rab-desc">※ 복강경 담낭절제술은 제36항(3종)이나, 메리츠화재 「1-5종 수술분류표Ⅱ」만 담석증을 2종으로 하향 규정하고 있습니다.</div>
+            </div>`
+        };
+      }
       if (cosList.length > 1) {
         const coResults = cosList.map(co => ({
           co,
@@ -2512,18 +2635,18 @@ function getBasicSurgerySummary(g) {
     };
   }
 
-  // 4. 체외충격파쇄석술 (ESWL / N20~N23)
+  // 4. 체외충격파쇄석술 (ESWL / N20~N23) - 요로결석 등
   if (codes.some(c => ['N20', 'N21', 'N22', 'N23'].some(t => c.startsWith(t))) || name.includes('결석') || vs.some(v => v.includes('쇄석') || v.includes('ESWL'))) {
     return {
-      status: 'no',
-      badge: '❌ 보상제외',
-      badgeColor: '#ef4444',
-      badgeBg: 'rgba(239, 68, 68, 0.05)',
-      border: '#ef4444',
+      status: 'check',
+      badge: '⚠️ 별도확인',
+      badgeColor: '#d97706',
+      badgeBg: 'rgba(245, 158, 11, 0.08)',
+      border: '#d97706',
       bg: 'var(--surface)',
       title: '기본 질병수술비 (정액)',
-      summary: '절단·절제 미충족: 삼성·KB·현대 등 제외 (DB 등 일부 증권 확인)',
-      tierSummary: '1~5종: ⭕ 생보/메리츠/삼성/KB 제87항 2종 (현대 일반형 1종, 질병수술Ⅱ 2종)',
+      summary: '절단·절제 미충족 시 제외(삼성·KB·현대 등)이나, DB손보 등 쇄석술 미제외 회사는 지급 가능하여 증권 확인 필수',
+      tierSummary: '1~5종: ⚠️ 회사·특약별 1종 또는 2종 (생보 2종, 손보사 개정 하향 확인)',
       hasDetail: true
     };
   }
@@ -2791,8 +2914,16 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
   let revisionSectionHTML = '';
   if (evalRes.boxHTML) {
     let revTitle = '⚠️ 가입시기 및 보험사별 약관 기준 확인';
-    if (g.n && (g.n.includes('대장') || g.n.includes('용종') || g.n.includes('폴립'))) {
+    const gn = g.n || '';
+    const gc = g.c || [];
+    if (gn.includes('대장') || gn.includes('용종') || gn.includes('폴립')) {
       revTitle = '⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳 확인';
+    } else if (gn.includes('결석') || gn.includes('쇄석') || gc.some(c => c.startsWith('N20'))) {
+      revTitle = '⚠️ 체외충격파쇄석술(ESWL) 2종 ➔ 1종 하향 개정 손보사 5곳 확인';
+    } else if (gn.includes('유방') || gc.some(c => c.startsWith('N62'))) {
+      revTitle = '⚠️ 유방비대(여유증) 3종 ➔ 1·2종 하향 개정 손보사 6곳 확인';
+    } else if (gn.includes('담석') || gn.includes('담낭') || gc.some(c => c.startsWith('K80'))) {
+      revTitle = '⚠️ 담석증(K80) 3종 ➔ 2종 하향 개정(메리츠) 확인';
     } else if (evalRes.diffBadge) {
       revTitle = `⚠️ ${evalRes.diffBadge.replace(/[\[\]]/g, '')} 약관 기준 확인`;
     }
@@ -2852,7 +2983,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       ${procsHTML}
 
       <!-- 정밀 진단 바로가기 버튼 2종 (완벽한 단일행 대칭 규격) -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;padding-top:12px;margin-bottom:4px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-jump-action btn-jump-tier" data-q="${esc(g.n)}">
           <span>📋 종수술비 바로가기</span>
         </button>
@@ -2860,7 +2991,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           <span>🏢 N대질병 바로가기</span>
         </button>
       </div>
-      <div style="font-size:11px;color:var(--text-3);text-align:center;margin-top:6px;line-height:1.4;">
+      <div style="font-size:11px;color:var(--text-3);text-align:center;margin-top:8px;margin-bottom:6px;line-height:1.4;">
         ※ 7·8종(급여 수술)은 상단 <strong>[7·8종수술]</strong> 메뉴에서 별도로 검색하실 수 있습니다.
       </div>
   `;
@@ -3197,9 +3328,10 @@ function runTierSearch(q, family) {
       </div>`;
   }
 
+  const looksEdi = /^[A-Z]\d{4}/i.test(q.replace(/\s+/g, ''));
   const compHTML = compPair ? renderComparisonPairHTML(compPair) : '';
   const exclHTML = exclProc ? renderExcludedProcedureHTML(exclProc) : '';
-  const tierHTML = renderTierMatchCards(res.tiers, q);
+  const tierHTML = renderTierMatchCards(res.tiers, q, looksEdi);
 
   const head = `
     <div class="res-head">
@@ -3223,26 +3355,54 @@ function runTierSearch(q, family) {
     const mainGi = res.groups[0];
     groupsHTML += cardTierHTML(mainGi, q, res.matchedEdi, false);
 
-    // 2순위 이후 연관 질환: 깔끔한 가로 배너 바로 접어두기!
+    // 2순위 이후: 제자리암(D코드)과 기타 연관 질환을 완벽히 분리 정돈!
     if (res.groups.length > 1) {
-      const subItems = res.groups.slice(1, 15);
-      groupsHTML += `
-        <div style="margin:20px 0 10px 4px;display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
-            📂 연관 질환 및 다른 질병코드 <span style="color:var(--brand);font-weight:900;">(${subItems.length}건)</span>
-          </span>
-          <span style="font-size:11px;color:var(--brand);font-weight:800;background:var(--surface-2);padding:2px 7px;border-radius:5px;border:1px solid var(--border);">터치 시 상세 판정 ▾</span>
-        </div>
-        <div class="sub-diseases-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
-          ${subItems.map(i => cardTierHTML(i, q, res.matchedEdi, true)).join('')}
-        </div>
-      `;
+      const remainingGis = res.groups.slice(1, 15);
+      const inSituGis = [];
+      const otherGis = [];
+
+      remainingGis.forEach(gi => {
+        const itemG = state.D.g[gi];
+        const isDCode = (itemG.c || []).some(c => /^[D]\d/i.test(c)) || (itemG.n || '').includes('제자리암') || (itemG.n || '').includes('상피내암');
+        if (isDCode) {
+          inSituGis.push(gi);
+        } else {
+          otherGis.push(gi);
+        }
+      });
+
+      // 제자리암(상피내암) 별도 섹션
+      if (inSituGis.length > 0) {
+        groupsHTML += `
+          <div style="margin:20px 0 10px 4px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+              📂 연관 제자리암(상피내암) 질병코드별 확인 <span style="color:#2563eb;font-weight:900;">(${inSituGis.length}건)</span>
+            </span>
+            <span style="font-size:11px;color:#2563eb;font-weight:800;background:rgba(49,130,246,0.08);padding:3px 8px;border-radius:6px;border:1px solid rgba(49,130,246,0.25);">터치 시 상세 판정 ▾</span>
+          </div>
+          <div class="sub-diseases-list in-situ-diseases-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+            ${inSituGis.map(i => cardTierHTML(i, q, res.matchedEdi, true)).join('')}
+          </div>
+        `;
+      }
+
+      // 기타 연관 질환 섹션
+      if (otherGis.length > 0) {
+        groupsHTML += `
+          <div style="margin:20px 0 10px 4px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+              📂 기타 연관 질환 및 다른 질병코드 <span style="color:var(--brand);font-weight:900;">(${otherGis.length}건)</span>
+            </span>
+            <span style="font-size:11px;color:var(--brand);font-weight:800;background:var(--surface-2);padding:2px 7px;border-radius:5px;border:1px solid var(--border);">터치 시 상세 판정 ▾</span>
+          </div>
+          <div class="sub-diseases-list other-diseases-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+            ${otherGis.map(i => cardTierHTML(i, q, res.matchedEdi, true)).join('')}
+          </div>
+        `;
+      }
     }
   }
 
-  // 검색어가 EDI 수술코드(예: Q7701, K0066 등)로 직접 검색된 경우에만 분류표 카드를 맨 위에,
-  // 일반 질병명(유방암, 갑상선암, 인공관절, 백내장 등) 검색 시에는 질병 카드(C50, C73 등)를 무조건 최상단 1순위로 노출!
-  const looksEdi = /^[A-Z]\d{4}/i.test(q.replace(/\s+/g, ''));
   let html = head;
   if (looksEdi) {
     html += tierHTML + compHTML + exclHTML + groupsHTML;
@@ -3344,16 +3504,24 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
   let revisionSectionHTML = '';
   if (evalRes.boxHTML) {
     let revTitle = '⚠️ 가입시기 및 보험사별 약관 기준 확인';
-    if (g.n && (g.n.includes('대장') || g.n.includes('용종') || g.n.includes('폴립'))) {
+    const gn = g.n || '';
+    const gc = g.c || [];
+    if (gn.includes('대장') || gn.includes('용종') || gn.includes('폴립')) {
       revTitle = '⚠️ 대장용종 2종 ➔ 1종 하향 개정 손보사 7곳 확인';
+    } else if (gn.includes('결석') || gn.includes('쇄석') || gc.some(c => c.startsWith('N20'))) {
+      revTitle = '⚠️ 체외충격파쇄석술(ESWL) 2종 ➔ 1종 하향 개정 손보사 5곳 확인';
+    } else if (gn.includes('유방') || gc.some(c => c.startsWith('N62'))) {
+      revTitle = '⚠️ 유방비대(여유증) 3종 ➔ 1·2종 하향 개정 손보사 6곳 확인';
+    } else if (gn.includes('담석') || gn.includes('담낭') || gc.some(c => c.startsWith('K80'))) {
+      revTitle = '⚠️ 담석증(K80) 3종 ➔ 2종 하향 개정(메리츠) 확인';
     } else if (evalRes.diffBadge) {
       revTitle = `⚠️ ${evalRes.diffBadge.replace(/[\[\]]/g, '')} 약관 기준 확인`;
     }
     revisionSectionHTML = `
       <div class="quick-rev-wrapper" style="margin:6px 0;">
-        <button type="button" class="btn-toggle-quick-rev" style="width:100%;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:9px 12px;min-height:42px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:12px;font-weight:850;color:#b45309;transition:all .15s ease;">
+        <button type="button" class="btn-toggle-quick-rev" style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.35);border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:900;color:#b45309;transition:all .15s ease;">
           <span>${revTitle}</span>
-          <span class="qrev-arrow" style="font-size:11px;font-weight:800;background:rgba(245,158,11,0.18);padding:2px 8px;border-radius:5px;white-space:nowrap;">펼쳐보기 ▾</span>
+          <span class="qrev-arrow" style="font-size:11.5px;font-weight:850;background:rgba(245,158,11,0.18);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#b45309;">펼쳐보기 ▾</span>
         </button>
         <div class="quick-rev-drawer" style="display:none;margin-top:4px;">
           ${evalRes.boxHTML}
@@ -3388,7 +3556,7 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
       </div>
 
       <!-- 질병수술비 확인 및 N대질병 바로가기 버튼 2종 -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;padding-top:12px;margin-bottom:4px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-toggle-basic-surg">
           <span>💡 질병수술비 가능여부 ▾</span>
         </button>
@@ -5244,11 +5412,11 @@ function bindOcrTab() {
     const surgeries = parsed.surgeries || [];
     const codes = parsed.codes || [];
 
-    // 환자 진단 및 수술 특성 판정 (진단서 질병코드 및 실제 상병/수술명 기준 - 제안서 담보명 단독 매칭 방지)
-    const isCerebroDiag = codes.some(c => /^I6\d/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:뇌혈관|뇌경색|뇌출혈|거미막하|모야모야)/i.test(rawText) || /(?:개두술|뇌동맥류|혈전제거술|뇌혈관문합술)/i.test(rawText);
-    const isHeartDiag = codes.some(c => /^I2[0-5]/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:허혈|협심증|심근경색)/i.test(rawText) || /(?:스텐트삽입|관상동맥|CABG)/i.test(rawText);
-    const isCancerDiag = codes.some(c => /^[CD]\d/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:악성신생물|제자리암|상피내암|암종|육종)/i.test(rawText);
-    const isEntSurgery = codes.some(c => /^J3\d/.test(c.code)) || /(?:진단명|상병명|상병|진단|주상병|부상병|병명)[^\n:]*(?:비강|비중격|하비갑개|부비동|상악동|사골동)/i.test(rawText) || /(?:비중격|하비갑개|부비동|상악동|사골동)/i.test(rawText);
+    // 환자 진단 및 수술 특성 판정 (진단서 질병코드 및 파싱된 수술명 기준으로만 엄격 판정! 제안서 PDF 텍스트 오염 절대 방지)
+    const isCerebroDiag = codes.some(c => /^I6\d/.test(c.code)) || surgeries.some(s => /(?:개두술|뇌동맥류|혈전제거술|뇌혈관문합술)/.test(s.name));
+    const isHeartDiag = codes.some(c => /^I2[0-5]/.test(c.code)) || surgeries.some(s => /(?:스텐트삽입|관상동맥|CABG)/.test(s.name));
+    const isCancerDiag = codes.some(c => /^[CD]\d/.test(c.code)) || surgeries.some(s => /(?:암절제|악성신생물|근치적)/.test(s.name));
+    const isEntSurgery = codes.some(c => /^J3\d/.test(c.code)) || surgeries.some(s => /(?:비강|비중격|하비갑개|부비동|상악동|사골동)/.test(s.name));
 
     let topTier = null;
     if (surgeries.length > 0) {
@@ -5425,20 +5593,32 @@ function bindOcrTab() {
             <div style="padding:12px 14px;background:rgba(225,29,72,0.04);border:1.5px solid rgba(225,29,72,0.25);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
               <div style="display:flex;flex-direction:column;gap:2px;">
                 <span style="font-size:12px;font-weight:750;color:#e11d48;">보험금 청구 가능여부</span>
-                <span style="font-size:14px;font-weight:900;color:#be123c;">❌ 본 제안서 청구 불가 (0원)</span>
-                <span style="font-size:11px;color:var(--text-2);">시행 수술(${esc(surgeries.map(s=>s.name).join(', ')||'수술')})에 해당하는 일반 수술 담보 미가입</span>
+                <span style="font-size:14px;font-weight:900;color:#be123c;">❌ 본 제안서 청구 미해당 (0원)</span>
+                <span style="font-size:11px;color:var(--text-2);">시행 수술(${esc(surgeries.map(s=>s.name).join(', ')||'수술')})에 해당하는 일반 수술 담보(1~5종·질병수술) 미가입</span>
               </div>
-              <span style="font-size:12.5px;font-weight:900;color:#e11d48;background:var(--surface);border:1.5px solid #e11d48;padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;">청구 불가</span>
+              <span style="font-size:12.5px;font-weight:900;color:#e11d48;background:var(--surface);border:1.5px solid #e11d48;padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;">청구 미해당</span>
             </div>
 
             <!-- 2. 어디서 청구 가능한지 (정상 청구 가능한 기가입 담보 안내) -->
-            <div style="padding:12px 14px;background:rgba(37,99,235,0.05);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <div style="display:flex;flex-direction:column;gap:2px;">
-                <span style="font-size:12px;font-weight:750;color:#2563eb;">어디서 청구 가능한가요?</span>
-                <span style="font-size:14px;font-weight:900;color:#1d4ed8;">⭕ 기가입 종합보험에서 청구 가능</span>
-                <span style="font-size:11px;color:var(--text-2);">고객님의 기가입 증권 중 <b>[질병수술비]</b> 및 <b>[1~5종 수술특약 (1~2종)]</b>에서 정상 보장</span>
+            <div style="padding:12px 14px;background:rgba(37,99,235,0.05);border:1.5px solid rgba(37,99,235,0.3);border-radius:10px;display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:12px;font-weight:800;color:#2563eb;">💡 실제 청구 가능한 기가입 보험 및 담보처:</span>
+                <span style="font-size:11px;font-weight:850;color:#2563eb;background:var(--surface);border:1px solid #2563eb;padding:2px 7px;border-radius:5px;">종합보험 청구</span>
               </div>
-              <span style="font-size:12.5px;font-weight:900;color:#2563eb;background:var(--surface);border:1.5px solid #2563eb;padding:4px 10px;border-radius:8px;white-space:nowrap;flex-shrink:0;">종합보험 청구</span>
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surface);border-radius:6px;font-size:12px;">
+                  <span>• <b>1~5종 종수술비</b> (최고 ${topTier || 1}종 해당)</span>
+                  <span style="color:#2563eb;font-weight:850;">고객 기가입 종합보험 종수술특약</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surface);border-radius:6px;font-size:12px;">
+                  <span>• <b>기본 질병수술비</b> (절제·절단 충족)</span>
+                  <span style="color:#db2777;font-weight:850;">고객 기가입 질병수술비 (정액)</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--surface);border-radius:6px;font-size:12px;">
+                  <span>• <b>N대 질병수술비</b> (${isEntSurgery ? '다빈도 호흡기 해당' : '해당 질환군 N대'})</span>
+                  <span style="color:#059669;font-weight:850;">고객 기가입 N대 특약 (${isEntSurgery ? '비염·부비동' : 'N대질병'})</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -5710,6 +5890,20 @@ function bindCardActions(box) {
       if (!drawer) return;
       const isHidden = drawer.style.display === 'none' || !drawer.style.display;
       drawer.style.display = isHidden ? 'block' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
+    });
+  });
+
+  // 세부 수술코드(EDI) 분류표 대조 서랍 토글 바인딩
+  $$('.btn-toggle-edi-drawer', box).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wrapper = btn.closest('.edi-match-wrapper');
+      const drawer = wrapper ? wrapper.querySelector('.edi-match-drawer') : null;
+      const arrow = btn.querySelector('.edi-drawer-arrow');
+      if (!drawer) return;
+      const isHidden = drawer.style.display === 'none' || !drawer.style.display;
+      drawer.style.display = isHidden ? 'flex' : 'none';
       if (arrow) arrow.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
     });
   });
