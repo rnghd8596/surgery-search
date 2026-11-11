@@ -3382,7 +3382,7 @@ function renderYearGrid() {
   if (!grid) return;
 
   grid.innerHTML = `
-    <button class="f-chip y-chip ${state.tYear === null ? 'on' : ''}" data-y="" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">년도 전체</button>
+    <button class="f-chip y-chip ${state.tYear === null ? 'on' : ''}" data-y="" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">전체</button>
     ${ALL_CONTRACT_YEARS.map(y => `
       <button class="f-chip y-chip ${state.tYear === y ? 'on' : ''}" data-y="${y}" style="padding:6px 0;font-size:11px;font-weight:750;">${y}년</button>
     `).join('')}
@@ -4477,7 +4477,7 @@ function renderNdaiYearGrid() {
   if (!grid) return;
 
   grid.innerHTML = `
-    <button class="f-chip ny-chip ${state.ndaiYear === null ? 'on' : ''}" data-ny="" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">년도 전체</button>
+    <button class="f-chip ny-chip ${state.ndaiYear === null ? 'on' : ''}" data-ny="" style="padding:6px 0;font-size:11px;font-weight:800;grid-column:span 4;">전체</button>
     ${ALL_CONTRACT_YEARS.map(y => `
       <button class="f-chip ny-chip ${state.ndaiYear === y ? 'on' : ''}" data-ny="${y}" style="padding:6px 0;font-size:11px;font-weight:750;">${y}년</button>
     `).join('')}
