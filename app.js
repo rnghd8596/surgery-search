@@ -3127,6 +3127,21 @@ function get3TierForDisease(g, evalRes) {
   return { tier3: '2종', note3: '구 1~3종 수술분류표 기준' };
 }
 
+function formatProcBadge(p) {
+  if (!p || !p.t) return '❌ 미해당';
+  const t = p.t;
+  if (t.includes('비해당') || t.includes('부지급') || t.includes('면책')) return '❌ 비해당';
+  if (t.includes('1~2종') || t.includes('1-2종')) return '⭕ 1·2종 해당';
+  if (t.includes('2~3종') || t.includes('2-3종')) return '⭕ 2·3종 해당';
+  if (t.includes('3~4종') || t.includes('3-4종')) return '⭕ 3·4종 해당';
+  if (t.includes('1종')) return '⭕ 1종 해당';
+  if (t.includes('2종')) return '⭕ 2종 해당';
+  if (t.includes('3종')) return '⭕ 3종 해당';
+  if (t.includes('4종')) return '⭕ 4종 해당';
+  if (t.includes('5종')) return '⭕ 5종 해당';
+  return '⚠️ 별도확인';
+}
+
 function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
   const g = state.D.g[gi];
   const t = tierOf(g);
@@ -3149,7 +3164,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
 
   // 사용자가 특정 수술기법(유로리프트, 베나실, 하이푸, 신경성형술, 클라리베인, 워터젯, 홀렙, 비밸브 등)으로 검색한 경우 해당 수술 행 매칭
   let matchedProc = null;
-  const procKeywords = ['유로리프트', '베나실', '하이푸', '신경성형', '클라리베인', '워터젯', '레줌', '홀렙', '비밸브'];
+  const procKeywords = ['유로리프트', '베나실', '하이푸', '신경성형', '클라리베인', '워터젯', '레줌', '홀렙', '비밸브', '맘모톰', '치조골', '원추절제', '체외충격파', '인공관절', '수근관'];
   const hasProcKeyword = procKeywords.some(k => (q || '').includes(k));
   if (hasProcKeyword && procs && procs.val) {
     const qNorm = norm(q || '');
@@ -3158,6 +3173,10 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       return procKeywords.some(k => qNorm.includes(k) && sNorm.includes(k));
     });
   }
+
+  const displayTitle = matchedProc
+    ? `${esc(matchedProc.s.split('(')[0].trim())} <span style="font-size:12px;font-weight:700;color:var(--text-3);margin-left:4px;">(${esc(g.n)})</span>`
+    : hl(g.n, q);
 
   let procsHTML = '';
   if (procs && procs.val && procs.val.length > 0) {
@@ -3249,6 +3268,30 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
   }
 
   const tier3Val = get3TierForDisease(g, evalRes).tier3;
+
+  let basicBadge = basicSurg.badge;
+  if (matchedProc) {
+    if (matchedProc.s.includes('신경성형') || matchedProc.s.includes('지방흡입')) {
+      basicBadge = '❌ 보상제외';
+    } else if (matchedProc.s.includes('유로리프트') || matchedProc.s.includes('베나실') || matchedProc.s.includes('클라리베인') || matchedProc.s.includes('하이푸') || matchedProc.s.includes('체외충격파')) {
+      basicBadge = '⚠️ 별도확인';
+    }
+  }
+  const basicColor = basicBadge.startsWith('⭕') ? '#e11d48' : (basicBadge.startsWith('⚠️') ? '#d97706' : '#ef4444');
+
+  const tier5Badge = matchedProc
+    ? formatProcBadge(matchedProc)
+    : (evalRes.tier && evalRes.tier !== '부지급' && evalRes.tier !== '0원' ? `⭕ ${esc(evalRes.tier)} 해당` : '❌ 미해당');
+  const tier5Color = tier5Badge.includes('비해당') || tier5Badge.includes('미해당') ? '#ef4444' : (tier5Badge.includes('별도확인') ? '#d97706' : '#2563eb');
+
+  let tier3Badge = tier3Val && tier3Val !== '부지급' && tier3Val !== '0원' ? `⭕ ${esc(tier3Val)} 해당` : '❌ 미해당';
+  if (matchedProc) {
+    if (matchedProc.s.includes('유로리프트') || matchedProc.s.includes('베나실') || matchedProc.s.includes('클라리베인') || matchedProc.s.includes('하이푸') || matchedProc.s.includes('신경성형')) {
+      tier3Badge = '❌ 비해당';
+    }
+  }
+  const tier3Color = tier3Badge.includes('비해당') || tier3Badge.includes('미해당') ? '#ef4444' : (tier3Badge.includes('별도확인') ? '#d97706' : '#2563eb');
+
   const innerCardHTML = `
       <!-- 빠른검색 4대 핵심 담보 판정 (질병수술 · 1~5종 · 1~3종 · N대) : 50px 균일 순백색 박스, 칸 테두리 구분, 좌측 검정 텍스트 규격 통일, 우측 포인트 뱃지 -->
       <div class="quick-3verdict-box" style="display:flex;flex-direction:column;gap:8px;margin:8px 0 8px 0;">
@@ -3257,7 +3300,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           <div class="qvb-left-label">
             <span>💡 질병수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid ${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};color:${basicSurg.badge.startsWith('⭕') ? '#e11d48' : (basicSurg.badge.startsWith('⚠️') ? '#d97706' : '#ef4444')};">${esc(basicSurg.badge)}</span>
+          <span class="qvb-badge" style="border:1.5px solid ${basicColor};color:${basicColor};">${esc(basicBadge)}</span>
         </div>
 
         <!-- 2. 1~5종 수술 -->
@@ -3265,8 +3308,8 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           <div class="qvb-left-label">
             <span>📋 1~5종 수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid ${matchedProc && matchedProc.t.includes('비해당') ? '#ef4444' : '#2563eb'};color:${matchedProc && matchedProc.t.includes('비해당') ? '#ef4444' : '#2563eb'};">
-            ${matchedProc ? (matchedProc.t.includes('비해당') ? '❌ 비해당' : `⭕ ${esc(matchedProc.s.split('(')[0].trim())} : ${esc(matchedProc.t)}`) : (evalRes.tier && evalRes.tier !== '부지급' && evalRes.tier !== '0원' ? `⭕ ${esc(evalRes.tier)} 해당` : '❌ 미해당')}
+          <span class="qvb-badge" style="border:1.5px solid ${tier5Color};color:${tier5Color};">
+            ${esc(tier5Badge)}
           </span>
         </div>
 
@@ -3275,7 +3318,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           <div class="qvb-left-label">
             <span>📜 1~3종 수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;">${tier3Val && tier3Val !== '부지급' && tier3Val !== '0원' ? `⭕ ${esc(tier3Val)} 해당` : '❌ 미해당'}</span>
+          <span class="qvb-badge" style="border:1.5px solid ${tier3Color};color:${tier3Color};">${esc(tier3Badge)}</span>
         </div>
 
         <!-- 4. N대질병 (클릭 시 해당 회사 목록 및 질병코드 서랍 펼침) -->
@@ -3313,7 +3356,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       <div class="btn-toggle-sub-disease" style="padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;background:var(--surface);user-select:none;">
         <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
           <span class="kcd-badge-big" style="font-size:11px;padding:3px 7px;flex-shrink:0;">${g.c.slice(0, 2).join(', ')}</span>
-          <span style="font-size:13.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${hl(g.n, q)}</span>
+          <span style="font-size:13.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayTitle}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
           <span class="sub-disease-arrow" style="font-size:11.5px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);">펼쳐보기 ▾</span>
@@ -3333,8 +3376,8 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
     <div class="card-head">
       <div class="card-top">
         <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
-        <h3 class="card-name">${hl(g.n, q)}</h3>
-        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">⭐ 대표 질환</span>
+        <h3 class="card-name">${displayTitle}</h3>
+        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">${matchedProc ? '⭐ 수술기법 판정' : '⭐ 대표 질환'}</span>
       </div>
 
       ${ediBanner}
@@ -3767,7 +3810,7 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
 
   // 사용자가 특정 수술기법(유로리프트, 베나실, 하이푸, 신경성형술, 클라리베인, 워터젯, 홀렙, 비밸브 등)으로 검색한 경우 해당 수술 행 매칭
   let matchedProc = null;
-  const procKeywords = ['유로리프트', '베나실', '하이푸', '신경성형', '클라리베인', '워터젯', '레줌', '홀렙', '비밸브'];
+  const procKeywords = ['유로리프트', '베나실', '하이푸', '신경성형', '클라리베인', '워터젯', '레줌', '홀렙', '비밸브', '맘모톰', '치조골', '원추절제', '체외충격파', '인공관절', '수근관'];
   const hasProcKeyword = procKeywords.some(k => (q || '').includes(k));
   if (hasProcKeyword && procs && procs.val) {
     const qNorm = norm(q || '');
@@ -3776,6 +3819,10 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
       return procKeywords.some(k => qNorm.includes(k) && sNorm.includes(k));
     });
   }
+
+  const displayTitle = matchedProc
+    ? `${esc(matchedProc.s.split('(')[0].trim())} <span style="font-size:12px;font-weight:700;color:var(--text-3);margin-left:4px;">(${esc(g.n)})</span>`
+    : hl(g.n, q);
 
   let ediBanner = '';
   if (matchedEdi) {
@@ -3861,6 +3908,19 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
       </div>`;
   }
 
+  const tier5Badge = matchedProc
+    ? formatProcBadge(matchedProc)
+    : (evalRes.tier && evalRes.tier !== '부지급' && evalRes.tier !== '0원' ? `⭕ ${esc(evalRes.tier)} 해당` : '❌ 미해당');
+  const tier5Color = tier5Badge.includes('비해당') || tier5Badge.includes('미해당') ? '#ef4444' : (tier5Badge.includes('별도확인') ? '#d97706' : '#2563eb');
+
+  let tier3Badge = tier3Info.tier3 && tier3Info.tier3 !== '부지급' && tier3Info.tier3 !== '0원' ? `⭕ ${esc(tier3Info.tier3)} 해당` : '❌ 미해당';
+  if (matchedProc) {
+    if (matchedProc.s.includes('유로리프트') || matchedProc.s.includes('베나실') || matchedProc.s.includes('클라리베인') || matchedProc.s.includes('하이푸') || matchedProc.s.includes('신경성형')) {
+      tier3Badge = '❌ 비해당';
+    }
+  }
+  const tier3Color = tier3Badge.includes('비해당') || tier3Badge.includes('미해당') ? '#ef4444' : (tier3Badge.includes('별도확인') ? '#d97706' : '#2563eb');
+
   const innerCardHTML = `
       <div class="judge-box" style="background:transparent;border:none;padding:0;margin-top:6px;">
         <!-- 1. 1~5종 수술 (50px 균일 순백색 박스, 칸 테두리 구분, 좌측 검정 텍스트 규격 통일, 우측 포인트 뱃지) -->
@@ -3868,8 +3928,8 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           <div class="qvb-left-label">
             <span>📋 1~5종 수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid ${matchedProc && matchedProc.t.includes('비해당') ? '#ef4444' : '#2563eb'};color:${matchedProc && matchedProc.t.includes('비해당') ? '#ef4444' : '#2563eb'};">
-            ${matchedProc ? (matchedProc.t.includes('비해당') ? '❌ 비해당' : `⭕ ${esc(matchedProc.s.split('(')[0].trim())} : ${esc(matchedProc.t)}`) : esc(evalRes.tier)}
+          <span class="qvb-badge" style="border:1.5px solid ${tier5Color};color:${tier5Color};">
+            ${esc(tier5Badge)}
           </span>
         </div>
 
@@ -3878,8 +3938,8 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           <div class="qvb-left-label">
             <span>📜 1~3종 수술</span>
           </div>
-          <span class="qvb-badge" style="border:1.5px solid #2563eb;color:#2563eb;">
-            ${esc(tier3Info.tier3)}
+          <span class="qvb-badge" style="border:1.5px solid ${tier3Color};color:${tier3Color};">
+            ${esc(tier3Badge)}
           </span>
         </div>
 
@@ -3907,7 +3967,7 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
       <div class="btn-toggle-sub-disease" style="padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;background:var(--surface);user-select:none;">
         <div style="display:flex;align-items:center;gap:8px;min-width:0;flex:1;">
           <span class="kcd-badge-big" style="font-size:11px;padding:3px 7px;flex-shrink:0;">${g.c.slice(0, 2).join(', ')}</span>
-          <span style="font-size:13.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${hl(g.n, q)}</span>
+          <span style="font-size:13.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayTitle}</span>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
           <span class="sub-disease-arrow" style="font-size:11.5px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);">펼쳐보기 ▾</span>
@@ -3927,8 +3987,8 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
     <div class="card-head">
       <div class="card-top">
         <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
-        <h3 class="card-name">${hl(g.n, q)}</h3>
-        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">⭐ 대표 질환</span>
+        <h3 class="card-name">${displayTitle}</h3>
+        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">${matchedProc ? '⭐ 수술기법 판정' : '⭐ 대표 질환'}</span>
       </div>
 
       ${ediBanner}
@@ -3953,12 +4013,19 @@ const KDRG_DISEASE_MAP = [
     codes: ['G525', 'G524', 'G523', 'G532', 'G151', 'G152', 'G141', 'G142', 'G131', 'G121'],
     desc: '내시경 용종절제(결장경 시술)는 1종, 복강경/개복 대장 수술은 4~6종으로 판정됩니다.'
   },
-  // 3. 위 - 용종, 궤양, 위암
+  // 3. 위 - 용종, 궤양
   {
-    keys: ['위용종', '위폴립', '위선종', '위궤양', '위염', '위암', 'k25', 'k26', 'k29', 'k31', 'd13.1', 'c16'],
-    disease: '위용종 · 소화성궤양 · 위암',
-    codes: ['G503', 'G504', 'G505', 'G081', 'G082', 'G091', 'G092'],
-    desc: '위내시경 절제/지혈 시술은 1종, 위절제술은 6~7종으로 판정됩니다.'
+    keys: ['위용종', '위폴립', '위선종', '위궤양', '위염', 'k25', 'k26', 'k29', 'k31', 'd13.1'],
+    disease: '위용종 · 소화성궤양 (위내시경 절제/지혈)',
+    codes: ['G503', 'G504', 'G505'],
+    desc: '위내시경 절제/지혈 시술은 1종으로 판정됩니다.'
+  },
+  // 3-B. 위암
+  {
+    keys: ['위암', '위악성', '위악성종양', 'c16'],
+    disease: '위암 (위아전절제술 · 위절제술)',
+    codes: ['G081', 'G082', 'G091'],
+    desc: '복강경/개복 위아전절제술(G081, G082)은 6종(7종특약) / 7종(8종특약)입니다.'
   },
   // 4. 안과 - 백내장, 수정체
   {
@@ -4034,25 +4101,32 @@ const KDRG_DISEASE_MAP = [
   },
   // 14. 부인과 - 자궁근종, 자궁선근증, 하이푸
   {
-    keys: ['자궁근종', '자궁선근증', '자궁혹', '자궁폴립', '자궁', '하이푸', 'hifu', 'd25', 'n80', 'n85'],
+    keys: ['자궁근종', '자궁선근증', '자궁혹', '자궁폴립', '하이푸', 'hifu', '자궁평활근종', '자궁적출', '자궁선종', 'd25', 'n80', 'n85'],
     disease: '자궁근종 · 자궁선근증 (하이푸 / 복강경 수술)',
-    codes: ['N130', 'N031', 'N032', 'N021', 'N022', 'N011', 'N012'],
+    codes: ['N130', 'N031', 'N032', 'N021', 'N022'],
     desc: '자궁경 수술(N130)은 1종, 단순 자궁근종절제술(N031) 및 주요 자궁절제술(N021)은 2종입니다. ⚠️ [비급여 신의료기술 주의] 비급여 하이푸(HIFU) 시술은 7·8종(급여 수술비)에서 전액 부지급(면책)됩니다. 복강경/개복 등 건강보험 급여 수술 시 2종 지급됩니다.',
     isNewTech: true
   },
   // 15. 부인과 - 난소낭종
   {
-    keys: ['난소낭종', '난소혹', '난소종양', '난소', 'd27', 'n83'],
+    keys: ['난소낭종', '난소혹', '난소종양', '난소물혹', '난소양성', 'd27', 'n83'],
     disease: '난소낭종 (난소 양성종양)',
-    codes: ['N061', 'N062'],
-    desc: '복강경 및 개복 난소 수술은 4종입니다.'
+    codes: ['N051', 'N052', 'N061', 'N062'],
+    desc: '복강경 및 개복 난소 수술은 2종입니다.'
   },
-  // 16. 부인과 - 자궁경부원추절제술, 자궁경부암, 자궁암
+  // 15-B. 난소암
   {
-    keys: ['자궁암', '자궁경부암', '자궁내막암', '자궁체부암', 'c53', 'c54', 'c55'],
-    disease: '자궁암 · 자궁경부암 (근치수술 · 악성 절제술)',
-    codes: ['N071', 'N072', 'N011', 'N021', 'N081'],
-    desc: '악성 자궁절제술(N071)은 5종(7종특약) / 6종(8종특약), 악성 골반내장전적출술(N011)은 7종(7종) / 8종(8종)입니다.'
+    keys: ['난소암', '난관암', '난소악성', 'c56', 'c57'],
+    disease: '난소암 · 난관암 (악성 난소 및 부속기 수술)',
+    codes: ['N041', 'N042'],
+    desc: '악성 난소 및 부속기 수술(N041, N042)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 16. 부인과 - 자궁암, 자궁경부암, 자궁내막암
+  {
+    keys: ['자궁암', '자궁경부암', '자궁내막암', '자궁체부암', '자궁악성', 'c53', 'c54', 'c55'],
+    disease: '자궁암 · 자궁경부암 · 자궁내막암 (악성 근치 자궁수술)',
+    codes: ['N011', 'N012', 'N071', 'N072'],
+    desc: '악성 자궁절제술(N011, N012)은 6종(7종특약) / 7종(8종특약), 악성 자궁경부 수술(N071, N072)은 5종(7종특약) / 6종(8종특약)입니다.'
   },
   {
     keys: ['원추절제', '원추절제술', 'leep', '자궁경부이형성', 'd06'],
@@ -4060,32 +4134,34 @@ const KDRG_DISEASE_MAP = [
     codes: ['N081', 'N082', 'N071', 'N072'],
     desc: '자궁경부 시술(원추절제술)은 1종, 악성 자궁절제술은 5~6종입니다.'
   },
-  // 17. 유방 - 맘모톰, 양성종양, 유방암
+  // 17. 유방암
   {
-    keys: ['유방암', '유방악성', 'c50'],
-    disease: '유방암 (악성 근치 유방절제술 · 유방암 수술)',
-    codes: ['J061', 'J062', 'J063', 'J071', 'J072'],
-    desc: '악성종양 근치 유방절제술(J061)은 5종(7종특약) / 6종(8종특약), 부분절제술(J062)은 4종(7종) / 5종(8종)입니다.'
+    keys: ['유방암', '유방악성', '유방암수술', 'c50'],
+    disease: '유방암 (근치 유방절제술 · 악성 유방수술)',
+    codes: ['J061', 'J062', 'J081'],
+    desc: '근치 유방절제술(J061)은 6종(7종특약) / 7종(8종특약), 악성 유방절제술(J062)은 6종(7종특약) / 7종(8종특약)입니다.'
   },
+  // 17-B. 유방 양성종양 (맘모톰)
   {
-    keys: ['유방', '맘모톰', '섬유선종', '유방결절', '유방혹', '유방선종', '유선종', '유방생검', 'd24', 'n60', 'n63'],
+    keys: ['맘모톰', '섬유선종', '유방결절', '유방혹', '유방선종', '유선종', '유방양성', '유방생검', 'd24', 'n60', 'n63'],
     disease: '유방 양성종양 (맘모톰) · 단순 절제술',
-    codes: ['J071', 'J072', 'J063', 'J061', 'J062'],
+    codes: ['J071', 'J072', 'J063'],
     desc: '진공흡입보조 단순 유방수술(J071) 및 절개 단순수술(J072)은 1종, 양성 유방절제술(J063)은 2종입니다. ⚠️ [비급여 신의료기술 주의] 일반 병원에서 비급여로 시행하는 맘모톰은 7·8종(급여 수술비)에서 전액 부지급(면책)됩니다. 건강보험 [급여] 적용 시에만 1종 지급됩니다. (※ 1~5종 종수술비는 비급여 맘모톰도 2종 정상 지급)',
     isNewTech: true
   },
-  // 18. 비뇨기 - 전립선암, 전립선비대증, 유로리프트
+  // 18. 전립선암
   {
     keys: ['전립선암', '전립선악성', 'c61'],
-    disease: '전립선암 (악성 근치 전립선적출술)',
-    codes: ['M021', 'M022', 'M041'],
-    desc: '악성 전립선 적출술(M021)은 4종(7종특약) / 5종(8종특약)입니다. (※ 단순 비대증 TURP는 2종)'
+    disease: '전립선암 (주요 전립선 적출술 · 악성 수술)',
+    codes: ['M021', 'M101'],
+    desc: '주요 전립선 적출술(M021)은 4종(7종특약) / 4종(8종특약)입니다. (※ 단순 비대증 TURP는 2종)'
   },
+  // 18-B. 전립선비대증
   {
-    keys: ['전립선', '전립선비대증', '전립선비대', '유로리프트', '전립선결찰', 'urolift', 'turp', '홀렙', 'holep', '워터젯', '레줌', 'n40'],
+    keys: ['전립선비대증', '전립선비대', '유로리프트', '전립선결찰', 'urolift', 'turp', '홀렙', 'holep', '워터젯', '레줌', 'n40'],
     disease: '전립선비대증 (유로리프트 / TURP 경요도절제술)',
-    codes: ['M041', 'M042', 'M043', 'M021', 'M022'],
-    desc: '경요도 전립선절제술(TURP, 홀렙)은 2종, 개복 적출술은 4~5종입니다. ⚠️ [비급여 신의료기술 주의] 비급여 유로리프트(전립선결찰술)는 7·8종에서 전액 부지급(면책)됩니다. 급여 수술 시 2종 지급됩니다.',
+    codes: ['M041', 'M042', 'M043'],
+    desc: '경요도 전립선절제술(TURP, 홀렙)은 2종입니다. ⚠️ [비급여 신의료기술 주의] 비급여 유로리프트(전립선결찰술)는 7·8종에서 전액 부지급(면책)됩니다. 급여 수술 시 2종 지급됩니다.',
     isNewTech: true
   },
   // 19. 비뇨기 - 요로결석
@@ -4125,12 +4201,19 @@ const KDRG_DISEASE_MAP = [
     codes: ['O011', 'O012'],
     desc: '제왕절개분만은 단태아·다태아 모두 2종입니다.'
   },
-  // 24. 내분비 - 갑상선
+  // 24. 갑상선암
   {
-    keys: ['갑상선', '갑상선암', '갑상선결절', '갑상선혹', 'c73', 'e04'],
-    disease: '갑상선 결절 · 갑상선암',
-    codes: ['K064', 'K063', 'K051', 'K052'],
-    desc: '주요 갑상선 악성종양 수술은 4종, 내시경 부갑상선 수술은 2종입니다.'
+    keys: ['갑상선암', '갑상선악성', 'c73'],
+    disease: '갑상선암 (주요 갑상선 악성 종양 수술)',
+    codes: ['K063', 'K064'],
+    desc: '주요 갑상선 악성 종양 수술(K063, K064)은 4종(7종특약) / 4종(8종특약)입니다.'
+  },
+  // 24-B. 갑상선 결절 (양성질환)
+  {
+    keys: ['갑상선결절', '갑상선혹', '갑상선선종', 'e04', 'd34'],
+    disease: '갑상선 결절 (양성질환)',
+    codes: ['K075', 'K076', 'K051'],
+    desc: '주요 갑상선 악성 종양 제외 수술은 2종, 내시경 부갑상선 수술은 2종입니다.'
   },
   // 25. 외상 - 골절, 핀제거
   {
@@ -4156,22 +4239,71 @@ const KDRG_DISEASE_MAP = [
   // 28. 뇌종양
   {
     keys: ['뇌종양', '뇌암', '수막종', '뇌하수체', 'd33', 'c71', 'd32', 'd35'],
-    disease: '뇌종양 (양성·악성)',
-    codes: ['B061', 'B062', 'B063', 'B064', 'B065', 'B066'],
-    desc: '천막상부·하부 뇌종양 절제술은 7종(7종특약) / 8종(8종특약)입니다.'
+    disease: '뇌종양 (천막상부 종양절제술)',
+    codes: ['B061', 'B062'],
+    desc: '천막상부 종양절제술(B061, B062)은 7종(7종특약) / 8종(8종특약)입니다.'
   },
   // 29. 간암
   {
     keys: ['간암', '간절제', 'c22'],
     disease: '간암 (간 절제술)',
-    codes: ['H041', 'H042', 'H043', 'H044', 'A010'],
-    desc: '주요 간절제술은 6종(7종특약) / 7종(8종특약)입니다.'
+    codes: ['H041', 'H156', 'H157'],
+    desc: '주요 간절제술(H041)은 6종(7종특약) / 7종(8종특약), 경피적 악성혈관시술(H156, H157)은 5~6종입니다.'
   },
-  // 30. 주요 암 (악성신생물) 전반
+  // 30. 대장암 / 결장암 / 직장암
   {
-    keys: ['암', '악성신생물', '위암', '대장암', '결장암', '직장암', '폐암', '간암', '유방암', '전립선암', '자궁암', '췌장암'],
+    keys: ['대장암', '결장암', '직장암', '결장악성', '직장악성', '대장악성', 'c18', 'c19', 'c20'],
+    disease: '대장암 · 결장암 · 직장암 (결장·직장 악성 절제술)',
+    codes: ['G121', 'G131', 'G141', 'G041', 'G151'],
+    desc: '결장 및 직장 전 절제술(G121), 결장절제술(G131)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-B. 폐암
+  {
+    keys: ['폐암', '폐악성', '폐종양', 'c34'],
+    disease: '폐암 (주요 폐 악성종양 수술)',
+    codes: ['E012'],
+    desc: '주요 폐 수술(악성종양의 경우, E012)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-C. 신장암 / 방광암
+  {
+    keys: ['신장암', '방광암', '신우암', '요관암', 'c64', 'c67'],
+    disease: '신장암 · 방광암 (신장 및 비뇨기계 악성종양 수술)',
+    codes: ['L021', 'L031'],
+    desc: '주요 신장·신우 신생물 수술(L021)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-D. 췌장암
+  {
+    keys: ['췌장암', '췌장악성', 'c25'],
+    disease: '췌장암 (췌장절제술)',
+    codes: ['H111'],
+    desc: '복강경 췌장절제술(H111)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-E. 식도암
+  {
+    keys: ['식도암', '식도악성', 'c15'],
+    disease: '식도암 (식도 악성종양 근치 수술)',
+    codes: ['G011'],
+    desc: '식도 악성종양 근치 수술 및 재건술(G011)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-F. 뼈암 / 골육종
+  {
+    keys: ['뼈암', '골육종', '골악성종양', 'c40', 'c41'],
+    disease: '뼈암 · 골악성종양 광범위 절제술',
+    codes: ['I121', 'I122', 'I123'],
+    desc: '골악성종양 광범위 절제술(I121, I122)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-G. 후두암 / 인두암 / 구강암
+  {
+    keys: ['후두암', '인두암', '구강암', '설암', 'c00', 'c14', 'c32'],
+    disease: '후두암 · 인두암 · 구강암 (악성종양 수술)',
+    codes: ['D101', 'D102', 'D090', 'D041', 'D042'],
+    desc: '주요 후두 및 인두 악성종양 수술(D101)은 6종(7종특약) / 7종(8종특약)입니다.'
+  },
+  // 30-H. 주요 암 (악성신생물) 전반
+  {
+    keys: ['암', '악성신생물', '악성종양', '카르시노마', '육종'],
     disease: '주요 암 (악성신생물) 근치 수술',
-    codes: ['G081', 'G131', 'J061', 'H041', 'M021', 'N011', 'H111'],
+    codes: ['G081', 'G121', 'G131', 'J061', 'H041', 'M021', 'N011', 'N041', 'H111', 'E012', 'K063'],
     desc: '주요 장기 악성종양 근치 절제술은 5~7종으로 판정됩니다.'
   },
   // 31. 장기이식
@@ -4229,9 +4361,22 @@ function runTier78Search(rawQ) {
   const qLower = q.toLowerCase();
 
   // 1. 질병명 / KCD 코드 매핑 검사
-  const matchedEntries = KDRG_DISEASE_MAP.filter(entry => {
+  const isCancerQuery = /(암|악성|신생물|카르시노마|육종|림프종|백혈병)/.test(qNorm) || /^C\d/i.test(qUpper);
+
+  let matchedEntries = KDRG_DISEASE_MAP.filter(entry => {
     return entry.keys.some(k => qLower.includes(k) || qNorm.includes(norm(k)));
   });
+
+  // 질병 매핑 시: 암 검색어인 경우, '암/악성'이 아닌 일반 양성질환 엔트리는 암 엔트리보다 뒤로 가도록 정렬!
+  if (isCancerQuery) {
+    matchedEntries.sort((a, b) => {
+      const aIsCancer = a.keys.some(k => k.includes('암') || k.includes('악성') || /^c\d/i.test(k));
+      const bIsCancer = b.keys.some(k => k.includes('암') || k.includes('악성') || /^c\d/i.test(k));
+      if (aIsCancer && !bIsCancer) return -1;
+      if (!aIsCancer && bIsCancer) return 1;
+      return 0;
+    });
+  }
 
   const rowMap = new Map();
   rows.forEach(r => { if (r && r.c) rowMap.set(r.c, r); });
@@ -4262,17 +4407,39 @@ function runTier78Search(rawQ) {
     }
   });
 
-  // 암/악성종양 검색 시 악성 근치수술(J061, N071, M021, G081 등)을 최우선 1순위 대표 수술로 강제 정렬!
-  const isCancerQuery = /(암|악성|신생물|카르시노마|육종|림프종|백혈병)/.test(qNorm) || /^C\d/i.test(qUpper);
+  // 암/악성종양 검색 시 악성 근치수술을 1순위 대표 수술로 강제 정렬!
+  function getCancerPriorityScore(row) {
+    const name = ((row.n || '') + ' ' + (row.g || '')).toLowerCase();
+    // 1. 악성종양 제외 문구가 명시된 경우 최하위로 감점 (-1000)
+    if (name.includes('악성종양 제외') || name.includes('악성종양제외') || name.includes('악성 종양 제외')) {
+      return -1000;
+    }
+    // 2. 명시적 악성/근치 수술 코드 최고 가중치 (+1000)
+    const topMalignantCodes = [
+      'N011', 'N012', 'N071', 'N072', 'N041', 'N042',
+      'J061', 'J062', 'J081',
+      'M021', 'M101',
+      'G081', 'G082', 'G091', 'G121', 'G131', 'G141', 'G041', 'G011',
+      'H041', 'H156', 'H157', 'H111',
+      'E012',
+      'K063', 'K064',
+      'L021',
+      'B061', 'B062',
+      'I121', 'I122', 'I123',
+      'D101', 'D102', 'D090', 'D041', 'D042'
+    ];
+    if (topMalignantCodes.includes(row.c)) return 1000;
+    if (name.includes('악성종양의 경우') || name.includes('악성종양의경우') || name.includes('악성 종양의 경우')) return 800;
+    if (name.includes('근치')) return 600;
+    if (name.includes('악성')) return 500;
+    return 0;
+  }
+
   if (isCancerQuery) {
     matchedRows.sort((a, b) => {
-      const aName = (a.n || '') + (a.g || '');
-      const bName = (b.n || '') + (b.g || '');
-      const aIsCancer = aName.includes('악성') || aName.includes('근치') || aName.includes('암') || ['J061', 'J062', 'N071', 'M021', 'G081', 'K051'].includes(a.c);
-      const bIsCancer = bName.includes('악성') || bName.includes('근치') || bName.includes('암') || ['J061', 'J062', 'N071', 'M021', 'G081', 'K051'].includes(b.c);
-      if (aIsCancer && !bIsCancer) return -1;
-      if (!aIsCancer && bIsCancer) return 1;
-      return 0;
+      const scoreA = getCancerPriorityScore(a);
+      const scoreB = getCancerPriorityScore(b);
+      return scoreB - scoreA;
     });
   }
 

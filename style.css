@@ -877,6 +877,8 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
 .qvb-badge {
   min-width: 98px;
   max-width: 98px;
+  min-width: 98px;
+  max-width: 98px;
   width: 98px;
   height: 32px;
   min-height: 32px;
@@ -886,10 +888,13 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   justify-content: center;
   text-align: center;
   border-radius: 8px;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 850;
   box-sizing: border-box;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 6px;
   flex-shrink: 0;
   letter-spacing: -0.2px;
   background: var(--surface);
