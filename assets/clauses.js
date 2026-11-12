@@ -2982,6 +2982,45 @@ window.POLICY_CLAUSES_DATA = {
                                       ],
                                       "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
                                   }
+                              },
+                              "tier": {
+                                  "title": "간편 1~5종 수술특약 (미판매 / 해당없음)",
+                                  "summary": "2006년 당시 유병자 간편심사 1~5종 수술특약은 미판매되었습니다.",
+                                  "clauseBody": {
+                                      "title": "간편 미판매 안내",
+                                      "quote": "2006년 3월 이전 계약에는 간편심사(유병자) 제도가 존재하지 않았으며 표준체 계약만 체결되었습니다.",
+                                      "clauses": [
+                                          {
+                                              "title": "미판매 안내",
+                                              "text": "일반 표준체 약관을 참고하십시오."
+                                          }
+                                      ]
+                                  },
+                                  "tableBody": {
+                                      "title": "간편 미판매 안내",
+                                      "headers": ["번호", "수술명", "해당 종수", "비고"],
+                                      "rows": [["-", "간편심사 미판매", "해당없음", "일반(표준체) 약관 참조"]]
+                                  },
+                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                              },
+                              "ndai": {
+                                  "title": "간편 성인병 수술특약 (미판매 / 해당없음)",
+                                  "summary": "2006년 당시 유병자 간편 성인병 수술특약은 미판매되었습니다.",
+                                  "clauseBody": {
+                                      "title": "간편 미판매 안내",
+                                      "quote": "2006년 3월 이전 계약에는 간편심사(유병자) 제도가 존재하지 않았으며 표준체 계약만 체결되었습니다.",
+                                      "clauses": [
+                                          {
+                                              "title": "미판매 안내",
+                                              "text": "일반 표준체 약관을 참고하십시오."
+                                          }
+                                      ]
+                                  },
+                                  "tableBody": {
+                                      "title": "간편 미판매 안내",
+                                      "groups": []
+                                  },
+                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
                               }
                           }
                       }

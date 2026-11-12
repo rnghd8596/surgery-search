@@ -7804,12 +7804,15 @@ function renderPeriodBoxHTML(co, p) {
 function renderRiderCardsHTML(cid, pid, ptype, riders) {
   if (!riders) return '';
 
-  return `
-    <!-- 1. 질병수술비 (10. 약관조항보기 + 보상제외조항보기 2칸 정형화) -->
+  let html = '';
+
+  // 1. 질병수술비 (10. 약관조항보기 + 보상제외조항보기 2칸 정형화)
+  if (riders.basic) {
+    html += `
     <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
       <div style="margin-bottom:6px;">
         <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;">💡 ${esc(riders.basic.title)}</div>
-        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary)}</div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary || '')}</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -7819,13 +7822,16 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
           🚫 보상제외 조항 보기
         </button>
       </div>
-    </div>
+    </div>`;
+  }
 
-    <!-- 2. 종수술비 (약관조항보기 + 수술분류표보기 + 개정 전/후 실제약관 사진보기) -->
+  // 2. 종수술비 (약관조항보기 + 수술분류표보기 + 개정 전/후 실제약관 사진보기)
+  if (riders.tier) {
+    html += `
     <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
       <div style="margin-bottom:6px;">
         <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;">📋 ${esc(riders.tier.title)}</div>
-        <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary)}</div>
+        <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary || '')}</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -7849,13 +7855,16 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
           📷 실제 약관 원문 사진 보기
         </button>
       </div>`}
-    </div>
+    </div>`;
+  }
 
-    <!-- 3. N대 질병수술비 (약관조항보기 + 질병분류표보기 전수 질병코드) -->
+  // 3. N대 질병수술비 (약관조항보기 + 질병분류표보기 전수 질병코드)
+  if (riders.ndai) {
+    html += `
     <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
       <div style="margin-bottom:6px;">
         <div style="font-size:13px;font-weight:850;color:#059669;word-break:keep-all;">🏢 ${esc(riders.ndai.title)}</div>
-        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary)}</div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary || '')}</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -7871,6 +7880,9 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
         </button>
       </div>
     </div>`;
+  }
+
+  return html;
 }
 
 function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
