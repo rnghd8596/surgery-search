@@ -7203,6 +7203,10 @@ function bindRulesTab() {
   });
 
   if (modalClose) modalClose.addEventListener('click', closeModal);
+  const modalBack = $('#btnRulesModalBack');
+  const modalFootBack = $('#btnRulesModalFootBack');
+  if (modalBack) modalBack.addEventListener('click', closeModal);
+  if (modalFootBack) modalFootBack.addEventListener('click', closeModal);
   if (modal) {
     modal.addEventListener('click', (e) => {
       if (e.target === modal || e.target.classList.contains('rules-modal-close')) closeModal();
@@ -7532,7 +7536,11 @@ function bindClausesTab() {
   // 모달 닫기 이벤트 바인딩
   const modal = $('#clauseModal');
   const modalClose = $('#btnClauseModalClose');
+  const modalBack = $('#btnClauseModalBack');
+  const modalFootBack = $('#btnClauseModalFootBack');
   if (modalClose) modalClose.addEventListener('click', closeClauseModal);
+  if (modalBack) modalBack.addEventListener('click', closeClauseModal);
+  if (modalFootBack) modalFootBack.addEventListener('click', closeClauseModal);
   if (modal) {
     modal.addEventListener('click', (e) => {
       if (e.target === modal || e.target.classList.contains('rules-modal-close')) closeClauseModal();
@@ -7804,7 +7812,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
         <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary)}</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
           📄 약관조항 보기
         </button>
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion" style="height:38px;border-radius:8px;border:1.5px solid #dc2626;background:rgba(220,38,38,0.08);color:#dc2626;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -7814,7 +7822,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
     </div>
 
     <!-- 2. 종수술비 (약관조항보기 + 수술분류표보기 + 개정 전/후 실제약관 사진보기) -->
-    <div class="rider-card" style="border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:11px 12px;background:rgba(49,130,246,0.025);">
+    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
       <div style="margin-bottom:6px;">
         <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;">📋 ${esc(riders.tier.title)}</div>
         <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary)}</div>
@@ -7967,6 +7975,19 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
   document.body.style.overflow = 'hidden';
 }
 
+function bindClauseChipEvents(box) {
+  if (!box) return;
+  box.querySelectorAll('.btn-clause-chip').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const q = btn.dataset.q;
+      const inp = $('#clauseInnerSearch');
+      if (inp) inp.value = q;
+      renderClauseModalContent(q);
+    });
+  });
+}
+
 function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   const box = $('#clauseModalContent');
   if (!box || !data) return;
@@ -7974,9 +7995,9 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   const { co, period, rider, targetRider, viewMode, activeModalTab, selectedPhotoRev } = data;
   const normQ = (filterQ || '').trim().toLowerCase();
 
-  // 1. 사진 모드 (4. 실제약관 사진 뷰어 & 8. 개정전/개정후 50:50 분리)
+  // 1. 사진 모드 (4. 실제약관 사진 뷰어 & 8. 개정전/개정후 & 다중 페이지 전수 뷰어 #26969)
   if (activeModalTab === 'photo') {
-    let imgSrc = rider.imgSrc || 'assets/clause_imgs/meritz_tier_rev_post.png';
+    let imgSrc = rider.imgSrc || 'assets/clause_imgs/meritz_tier_p1.png';
     const revPhotos = rider.revPhotos;
 
     if (revPhotos && revPhotos.length > 0) {
@@ -7995,10 +8016,26 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       }
     }
 
+    // 다중 페이지 배열 확인 (수술분류표 전수 3페이지 등 #26969)
+    let pages = rider.pages && rider.pages.length > 1 ? rider.pages : (targetRider === 'tier' ? [
+      'assets/clause_imgs/meritz_tier_p1.png',
+      'assets/clause_imgs/meritz_tier_p2.png',
+      'assets/clause_imgs/meritz_tier_p3.png'
+    ] : [imgSrc]);
+
+    if (selectedPhotoRev === 'pre' && revPhotos) {
+      const preObj = revPhotos.find(p => !p.isPost);
+      if (preObj) pages = [preObj.src];
+    }
+
+    const photoLayout = data.photoLayout || 'stack'; // 'stack' (전체 연속 펼쳐보기) vs 'single' (페이지별 넘기기)
+    const curPageIndex = data.curPageIndex || 0;
+    const curImg = pages[curPageIndex] || pages[0];
+
     box.innerHTML = `
       ${revPhotos && revPhotos.length > 1 ? `
       <!-- 개정 전 / 후 약관 사진 선택 바 (50:50 꽉 채움) -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;width:100%;">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;width:100%;">
         <button type="button" class="btn-sub-rev-photo ${selectedPhotoRev !== 'pre' ? 'active' : ''}" data-rev="post" style="height:36px;border-radius:8px;font-size:11.5px;font-weight:850;cursor:pointer;border:${selectedPhotoRev !== 'pre' ? '1.5px solid var(--brand)' : '1px solid var(--border)'};background:${selectedPhotoRev !== 'pre' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${selectedPhotoRev !== 'pre' ? 'var(--brand)' : 'var(--text-2)'};display:flex;align-items:center;justify-content:center;gap:4px;">
           📷 개정 후 약관 사진
         </button>
@@ -8007,11 +8044,55 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </button>
       </div>` : ''}
 
+      ${pages.length > 1 ? `
+      <!-- 다중 페이지 뷰어 컨트롤 바 (#26969) -->
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:12px;font-weight:900;color:var(--text);">📄 약관 원문 스캔</span>
+          <span style="font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:4px;">
+            총 ${pages.length}페이지 전수 수록
+          </span>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <button type="button" id="btnPhotoStack" style="padding:4px 8px;border-radius:6px;font-size:11px;font-weight:850;cursor:pointer;border:none;background:${photoLayout === 'stack' ? 'var(--brand)' : 'var(--surface)'};color:${photoLayout === 'stack' ? '#fff' : 'var(--text-2)'};box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+            📜 전체 연속 보기
+          </button>
+          <button type="button" id="btnPhotoSingle" style="padding:4px 8px;border-radius:6px;font-size:11px;font-weight:850;cursor:pointer;border:none;background:${photoLayout === 'single' ? 'var(--brand)' : 'var(--surface)'};color:${photoLayout === 'single' ? '#fff' : 'var(--text-2)'};box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+            📑 쪽별 보기
+          </button>
+        </div>
+      </div>` : ''}
+
       <div class="clause-photo-frame" style="text-align:center;">
-        <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;font-weight:700;">
+        <div style="font-size:11.5px;color:var(--text-3);margin-bottom:10px;font-weight:700;">
           🔍 터치/클릭하시면 동시수술처럼 약관 원문 고해상도 확대 모달로 전환됩니다.
         </div>
-        <img src="${imgSrc}" id="clauseModalPhotoImg" alt="약관 원문 사진" style="max-width:100%;height:auto;border-radius:10px;border:1.5px solid var(--border);box-shadow:var(--shadow-1);cursor:zoom-in;">
+
+        ${photoLayout === 'stack' && pages.length > 1 ? `
+          <!-- 전체 페이지 세로 연속 펼쳐보기 (1쪽부터 끝쪽까지 전수 노출 #26969) -->
+          <div class="multipage-stack" style="display:flex;flex-direction:column;gap:18px;">
+            ${pages.map((pSrc, pIdx) => `
+              <div style="text-align:center;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;box-shadow:var(--shadow-1);">
+                <div style="font-size:12px;font-weight:900;color:var(--text);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;">
+                  <span>📄 [제 ${pIdx + 1} 쪽] 수술분류표 세부 조항</span>
+                  <span style="font-size:11px;color:var(--brand);font-weight:850;">터치 시 고해상도 확대 🔍</span>
+                </div>
+                <img src="${pSrc}" class="clause-zoomable-img" data-src="${pSrc}" data-page="${pIdx + 1}" alt="약관 제 ${pIdx + 1} 쪽" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;">
+              </div>
+            `).join('')}
+          </div>
+        ` : `
+          <!-- 단일 페이지 보기 (이전/다음 네비게이션) -->
+          ${pages.length > 1 ? `
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:10px;">
+            <button type="button" id="btnPrevPage" style="padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:850;color:var(--text);cursor:pointer;" ${curPageIndex === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>◀ 이전 쪽</button>
+            <span style="font-size:12.5px;font-weight:900;color:var(--text);">${curPageIndex + 1} / ${pages.length} 쪽</span>
+            <button type="button" id="btnNextPage" style="padding:5px 12px;border-radius:7px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:850;color:var(--text);cursor:pointer;" ${curPageIndex === pages.length - 1 ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : ''}>다음 쪽 ▶</button>
+          </div>` : ''}
+          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;box-shadow:var(--shadow-1);">
+            <img src="${curImg}" class="clause-zoomable-img" data-src="${curImg}" data-page="${curPageIndex + 1}" alt="약관 원문 사진" style="max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;">
+          </div>
+        `}
       </div>
     `;
 
@@ -8023,17 +8104,54 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       });
     });
 
-    // 사진 클릭 시 rulesModal(동시수술 확대 라이트박스)로 풀스크린 뷰
-    const photoEl = box.querySelector('#clauseModalPhotoImg');
-    if (photoEl) {
-      photoEl.addEventListener('click', () => {
+    // 다중 페이지 레이아웃 전환
+    const btnStack = box.querySelector('#btnPhotoStack');
+    const btnSingle = box.querySelector('#btnPhotoSingle');
+    if (btnStack) {
+      btnStack.addEventListener('click', () => {
+        data.photoLayout = 'stack';
+        renderClauseModalContent('', data);
+      });
+    }
+    if (btnSingle) {
+      btnSingle.addEventListener('click', () => {
+        data.photoLayout = 'single';
+        renderClauseModalContent('', data);
+      });
+    }
+
+    // 이전 / 다음 페이지 버튼
+    const btnPrev = box.querySelector('#btnPrevPage');
+    const btnNext = box.querySelector('#btnNextPage');
+    if (btnPrev) {
+      btnPrev.addEventListener('click', () => {
+        if (data.curPageIndex > 0) {
+          data.curPageIndex--;
+          renderClauseModalContent('', data);
+        }
+      });
+    }
+    if (btnNext) {
+      btnNext.addEventListener('click', () => {
+        if (data.curPageIndex < pages.length - 1) {
+          data.curPageIndex++;
+          renderClauseModalContent('', data);
+        }
+      });
+    }
+
+    // 이미지 클릭 시 rulesModal(동시수술 확대 라이트박스)로 고해상도 풀스크린 확대
+    box.querySelectorAll('.clause-zoomable-img').forEach(imgEl => {
+      imgEl.addEventListener('click', () => {
+        const targetSrc = imgEl.dataset.src || imgSrc;
+        const pageNum = imgEl.dataset.page || '1';
         const rulesModal = $('#rulesModal');
         const rulesImg = $('#rulesModalImg');
         const rulesTitle = $('#rulesModalTitle');
         const rulesQuote = $('#rulesModalQuote');
         if (rulesModal && rulesImg) {
-          rulesImg.src = imgSrc;
-          if (rulesTitle) rulesTitle.textContent = `📋 [${co.name} (${co.shortName})] ${period.periodStr} · 약관 원문 고해상도 전체 보기`;
+          rulesImg.src = targetSrc;
+          if (rulesTitle) rulesTitle.textContent = `📋 [${co.name} (${co.shortName})] ${period.periodStr} · 약관 원문 고해상도 (제 ${pageNum} 쪽)`;
           if (rulesQuote) {
             rulesQuote.style.display = period.revSummary ? 'block' : 'none';
             rulesQuote.innerHTML = `<strong>⚠️ 개정 포인트 및 실무 안내:</strong><br>${esc(period.revSummary || '')}`;
@@ -8042,13 +8160,12 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           rulesModal.setAttribute('aria-hidden', 'false');
         }
       });
-    }
+    });
 
     return;
   }
 
-  // 2. 텍스트 / 표 모드
-  // 2-1. N대 질병수술비 / 성인주요질환 분류표 드릴다운 아코디언 뷰 (#26614 기존 N대 탭 방식 완벽 연동)
+  // 2-1. N대 질병수술비 / 성인주요질환 분류표 드릴다운 및 검색일치 연동 (#27027 #27036 IMG_4923 100% 동일 구현)
   if (viewMode === 'table' && (targetRider === 'ndai' || targetRider === 'adult')) {
     const tableData = rider.tableBody;
     if (!tableData) {
@@ -8056,20 +8173,170 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       return;
     }
 
-    let rows = tableData.rows || [];
+    // N대 검색 대표 빠른 선택 칩 (담석증, 뇌혈관, 심장질환, 만성신부전, 당뇨병, 갑상선 등)
+    const ndaiQuickChips = [
+      { name: '담석증', code: 'K80', q: '담석증' },
+      { name: '뇌혈관질환', code: 'I60~I69', q: '뇌혈관' },
+      { name: '허혈심장질환', code: 'I20~I25', q: '협심증' },
+      { name: '만성간질환', code: 'K70~K76', q: '간질환' },
+      { name: '만성신부전', code: 'N17~N19', q: '신부전' },
+      { name: '당뇨병', code: 'E10~E14', q: '당뇨' },
+      { name: '갑상선질환', code: 'E00~E07', q: '갑상선' },
+      { name: '위십이지장궤양', code: 'K25~K28', q: '위궤양' },
+      { name: '사타구니탈장', code: 'K40', q: '탈장' },
+      { name: '치핵', code: 'K64', q: '치핵' },
+      { name: '비뇨기결석', code: 'N20~N23', q: '요로결석' },
+      { name: '자궁근종', code: 'D25', q: '자궁근종' }
+    ];
+
+    const chipsHTML = `
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+          <span style="font-size:11.5px;font-weight:900;color:#059669;display:flex;align-items:center;gap:4px;">
+            🏢 N대 질병 대표 질환 원터치 빠른 검색:
+          </span>
+          <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 즉시 KCD 매칭</span>
+        </div>
+        <div class="clause-quick-chips" style="display:flex;flex-wrap:wrap;gap:5px;">
+          ${ndaiQuickChips.map(c => `
+            <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="padding:4px 9px;border-radius:7px;font-size:11.5px;font-weight:850;cursor:pointer;border:1px solid ${normQ === norm(c.q) ? '#059669' : 'var(--border)'};background:${normQ === norm(c.q) ? '#059669' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+              <span>${esc(c.name)}</span>
+              <span style="font-size:10px;font-weight:900;opacity:0.85;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'var(--surface-2)'};padding:1px 4px;border-radius:4px;color:${normQ === norm(c.q) ? '#fff' : '#059669'};">${esc(c.code)}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // 1) 검색어 입력 또는 칩 터치 시 (N대 질병 탭과 100% 똑같이 cardNdaiHTML + 🎯 검색일치 하이라이트 렌더링 #27027 #27036)
     if (normQ) {
-      rows = rows.filter(r => {
+      // 해당 회사로 N대 검색 컨텍스트 일시 고정
+      const oldCos = state.ndaiCos;
+      const oldCo = state.ndaiCo;
+      state.ndaiCos = [co.name];
+      state.ndaiCo = co.name;
+
+      const searchRes = search(normQ) || { groups: [], edi: [] };
+      const exclProc = findExcludedProcedure(normQ);
+
+      if (exclProc && exclProc.relatedCodes && (!searchRes.groups || searchRes.groups.length === 0)) {
+        exclProc.relatedCodes.forEach(code => {
+          (state.D.codeIndex[code] || []).forEach(gi => {
+            if (!searchRes.groups.includes(gi)) searchRes.groups.push(gi);
+          });
+        });
+      }
+
+      let ndaiCardsHTML = '';
+      if (searchRes.groups && searchRes.groups.length > 0) {
+        const mainGi = searchRes.groups[0];
+        ndaiCardsHTML += `
+          <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🔍 <em>'${esc(normQ)}'</em> N대 질병수술비 판정 결과</span>
+            <span style="font-size:11px;color:#059669;font-weight:850;">[${esc(co.name)}] 기준 적용</span>
+          </div>
+        `;
+        ndaiCardsHTML += cardNdaiHTML(mainGi, normQ, false);
+
+        if (searchRes.groups.length > 1) {
+          const subItems = searchRes.groups.slice(1, 6);
+          ndaiCardsHTML += `
+            <div style="margin:14px 0 8px 2px;font-size:12px;font-weight:850;color:var(--text-2);">
+              📂 연관 질환 및 다른 질병코드 (${subItems.length}건):
+            </div>
+            <div class="sub-diseases-list" style="display:flex;flex-direction:column;gap:6px;">
+              ${subItems.map(i => cardNdaiHTML(i, normQ, true)).join('')}
+            </div>
+          `;
+        }
+      }
+
+      // 약관 테이블 내 매칭 질병군 필터링
+      let matchedRows = (tableData.rows || []).filter(r => {
         const grpName = r[0];
         const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
         const matchesDetail = detailedList.some(d => d.name.toLowerCase().includes(normQ) || d.code.toLowerCase().includes(normQ) || d.desc.toLowerCase().includes(normQ));
         return matchesDetail || r.some(cell => String(cell).toLowerCase().includes(normQ));
       });
+
+      let tableMatchHTML = '';
+      if (matchedRows.length > 0) {
+        tableMatchHTML = `
+          <div style="margin-top:16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:5px;">
+                <span>📋 [${esc(co.name)}] 약관 별표 N대 질병분류표 매칭 군</span>
+                <span style="font-size:11px;color:#059669;font-weight:850;">(${matchedRows.length}개 군)</span>
+              </span>
+            </div>
+            <div class="ndai-group-list" style="display:flex;flex-direction:column;gap:8px;">
+              ${matchedRows.map((r, gi) => {
+                const grpName = r[0];
+                const summaryNames = r[1];
+                const rawCodes = r[2];
+                const benefit = r[3];
+                const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
+                return `
+                <div class="ndai-group-card" data-gi="${gi}" style="background:var(--surface-2);border:1px solid #a7f3d0;border-radius:9px;overflow:hidden;">
+                  <div class="ndai-group-head" style="padding:10px 12px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                    <div>
+                      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+                        <span style="font-size:12.5px;font-weight:900;color:#059669;">🏢 ${esc(grpName)}</span>
+                        <span style="font-size:10.5px;font-weight:850;color:#059669;background:rgba(5,150,105,0.1);padding:1px 5px;border-radius:4px;">${esc(benefit)}</span>
+                      </div>
+                      <div style="font-size:11.5px;color:var(--text-3);line-height:1.35;">포함: ${esc(summaryNames)}</div>
+                    </div>
+                    <span class="ndai-arrow-badge" style="font-size:10.5px;font-weight:850;color:#059669;background:var(--surface);padding:2px 6px;border-radius:4px;border:1px solid var(--border);">접기 ▴</span>
+                  </div>
+                  <div class="ndai-group-body" style="display:block;padding:8px 10px;background:var(--surface);border-top:1px dashed var(--line);">
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                      ${detailedList.map(item => {
+                        const isHit = item.code.toLowerCase().includes(normQ) || item.name.toLowerCase().includes(normQ);
+                        return `
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:6px;background:${isHit ? '#fff7ed' : 'var(--surface-2)'};border:${isHit ? '1.5px solid #f97316' : '1px solid var(--border)'};">
+                          <div style="display:flex;align-items:center;gap:6px;">
+                            <span style="font-size:11px;font-weight:900;color:${isHit ? '#fff' : '#2563eb'};background:${isHit ? '#ea580c' : 'rgba(37,99,235,0.08)'};padding:1px 5px;border-radius:4px;">${esc(item.code)}</span>
+                            <span style="font-size:12px;font-weight:850;color:${isHit ? '#c2410c' : 'var(--text)'};">${esc(item.name)}</span>
+                          </div>
+                          ${isHit ? '<span style="font-size:10px;font-weight:900;color:#fff;background:#ea580c;padding:1px 5px;border-radius:4px;">🎯 검색일치</span>' : ''}
+                        </div>`;
+                      }).join('')}
+                    </div>
+                  </div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // 복구
+      state.ndaiCos = oldCos;
+      state.ndaiCo = oldCo;
+
+      if (!ndaiCardsHTML && !tableMatchHTML) {
+        box.innerHTML = chipsHTML + `
+          <div style="padding:35px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-3);">
+            <div style="font-size:24px;margin-bottom:8px;">🔍</div>
+            <div style="font-size:13.5px;font-weight:900;color:var(--text);">'${esc(normQ)}' 일치하는 N대 질병코드가 없습니다</div>
+            <div style="font-size:12px;margin-top:4px;line-height:1.4;">상단 다빈도 질환 칩을 터치하거나 KCD 코드(K80, I60 등)로 검색해 보세요.</div>
+          </div>
+        `;
+      } else {
+        box.innerHTML = chipsHTML + ndaiCardsHTML + tableMatchHTML;
+      }
+
+      bindClauseChipEvents(box);
+      bindCardActions(box);
+      return;
     }
 
-    box.innerHTML = `
+    // 2) 검색어가 없는 첫 화면 (Idle 상태: 다빈도 칩 + N대 분류표 전체 드릴다운 아코디언)
+    let rows = tableData.rows || [];
+    box.innerHTML = chipsHTML + `
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-        <div style="font-size:13.5px;font-weight:900;color:var(--text);">
-          ${esc(tableData.title)} <span style="font-size:11.5px;color:var(--brand);font-weight:800;">(총 ${rows.length}개 군)</span>
+        <div style="font-size:13px;font-weight:900;color:var(--text);">
+          🏢 ${esc(tableData.title)} <span style="font-size:11.5px;color:#059669;font-weight:800;">(총 ${rows.length}개 군)</span>
         </div>
         <div style="display:flex;gap:6px;">
           <button type="button" id="btnExpandAllNdai" style="padding:4px 9px;border-radius:6px;font-size:11px;font-weight:850;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;">
@@ -8082,23 +8349,16 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       </div>
 
       <div class="ndai-group-list" style="display:flex;flex-direction:column;gap:8px;">
-        ${rows.length === 0 ? `
-          <div style="padding:30px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text-3);">
-            <div style="font-size:20px;margin-bottom:6px;">🔍</div>
-            <div style="font-size:13px;font-weight:800;color:var(--text);">일치하는 질병군 또는 KCD 코드가 없습니다</div>
-            <div style="font-size:11.5px;margin-top:2px;">질병명(담석, 뇌혈관 등)이나 KCD 코드(K80, I60 등)를 입력해 보세요.</div>
-          </div>
-        ` : rows.map((r, gi) => {
+        ${rows.map((r, gi) => {
           const grpName = r[0];
           const summaryNames = r[1];
           const rawCodes = r[2];
           const benefit = r[3];
           const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
-          const isAutoOpen = !!normQ || gi === 0;
+          const isAutoOpen = gi === 0;
 
           return `
           <div class="ndai-group-card" data-gi="${gi}" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-            <!-- 군 헤더 버튼 -->
             <div class="ndai-group-head" style="padding:11px 13px;cursor:pointer;background:var(--surface);display:flex;align-items:center;justify-content:space-between;gap:8px;user-select:none;">
               <div style="min-width:0;flex:1;">
                 <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
@@ -8113,7 +8373,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
               <span class="ndai-arrow-badge" style="font-size:11px;font-weight:850;color:#059669;background:var(--surface-2);padding:3px 7px;border-radius:5px;border:1px solid var(--border);flex-shrink:0;">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
             </div>
 
-            <!-- 세부 질병코드 드릴다운 서랍 -->
             <div class="ndai-group-body" style="display:${isAutoOpen ? 'block' : 'none'};padding:10px 12px;background:var(--surface-2);border-top:1px dashed var(--line);">
               <div style="font-size:11px;font-weight:850;color:#059669;margin-bottom:6px;">📋 수록 질병코드 (KCD 전수 분류표):</div>
               <div style="display:flex;flex-direction:column;gap:5px;">
@@ -8138,7 +8397,8 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       </div>
     `;
 
-    // N대 아코디언 토글 이벤트
+    bindClauseChipEvents(box);
+
     box.querySelectorAll('.ndai-group-head').forEach(head => {
       head.addEventListener('click', () => {
         const card = head.closest('.ndai-group-card');
@@ -8152,7 +8412,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       });
     });
 
-    // 전체 펼치기 / 접기 버튼
     const btnExpand = box.querySelector('#btnExpandAllNdai');
     const btnCollapse = box.querySelector('#btnCollapseAllNdai');
     if (btnExpand) {
@@ -8171,7 +8430,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     return;
   }
 
-  // 2-2. 1-5종 수술분류표 (종수술비: 모바일 좌우 스크롤 원천 차단 카드형 + 표형식 토글 #26599)
+  // 2-2. 1-5종 수술분류표 (종수술비: 빠른검색/N대 동일 규격 카드 + 다빈도 원터치 칩 + 약관분류표 매칭 #26858 #26894)
   if (viewMode === 'table' && targetRider === 'tier') {
     const tableData = rider.tableBody;
     if (!tableData) {
@@ -8179,17 +8438,156 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       return;
     }
 
-    let rows = tableData.rows || [];
+    // 가입시기 연도 파싱 (회사별 개정 판정 엔진 바인딩)
+    const yearMatch = (period.periodStr || '').match(/(\d{4})년/);
+    const evalYear = yearMatch ? parseInt(yearMatch[1], 10) : 2024;
+    const parsed = {
+      co: co.name,
+      cos: [co.name],
+      year: evalYear
+    };
+
+    // 다빈도 및 신의료기술 12대 대표 태그
+    const quickChips = [
+      { name: '대장용종', badge: '2종/1종', q: '대장용종' },
+      { name: '요로결석', badge: '2종', q: '요로결석' },
+      { name: '백내장', badge: '1종', q: '백내장' },
+      { name: '여유증', badge: '3종/1종', q: '여유증' },
+      { name: '담석증', badge: '3종/2종', q: '담석증' },
+      { name: '맘모톰', badge: '2종', q: '맘모톰' },
+      { name: '하이푸', badge: '2~3종', q: '하이푸' },
+      { name: '유로리프트', badge: '1~2종', q: '유로리프트' },
+      { name: '베나실', badge: '1~2종', q: '베나실' },
+      { name: '치핵', badge: '1종', q: '치핵' },
+      { name: '인공관절', badge: '4종', q: '인공관절' },
+      { name: '자궁근종', badge: '3종', q: '자궁근종' }
+    ];
+
+    const chipsHTML = `
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+          <span style="font-size:11.5px;font-weight:900;color:var(--brand);display:flex;align-items:center;gap:4px;">
+            ⚡ 다빈도·신의료기술 원터치 빠른 판정
+          </span>
+          <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 즉시 검색</span>
+        </div>
+        <div class="clause-quick-chips" style="display:flex;flex-wrap:wrap;gap:5px;">
+          ${quickChips.map(c => `
+            <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="padding:4px 9px;border-radius:7px;font-size:11.5px;font-weight:850;cursor:pointer;border:1px solid ${normQ === norm(c.q) ? 'var(--brand)' : 'var(--border)'};background:${normQ === norm(c.q) ? 'var(--brand)' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+              <span>${esc(c.name)}</span>
+              <span style="font-size:10px;font-weight:900;opacity:0.85;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'var(--surface-2)'};padding:1px 4px;border-radius:4px;color:${normQ === norm(c.q) ? '#fff' : 'var(--brand)'};">${esc(c.badge)}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // 1) 사용자가 검색어를 입력했거나 빠른 칩을 누른 경우 (빠른검색과 100% 동일한 통합 카드 렌더링)
     if (normQ) {
-      rows = rows.filter(r => r.some(cell => String(cell).toLowerCase().includes(normQ)));
+      const searchRes = search(normQ) || { groups: [], edi: [] };
+      const exclProc = findExcludedProcedure(normQ);
+
+      if (exclProc && exclProc.relatedCodes && (!searchRes.groups || searchRes.groups.length === 0)) {
+        exclProc.relatedCodes.forEach(code => {
+          (state.D.codeIndex[code] || []).forEach(gi => {
+            if (!searchRes.groups.includes(gi)) searchRes.groups.push(gi);
+          });
+        });
+      }
+
+      // 약관 테이블 내 매칭 행 필터링
+      let matchedRows = (tableData.rows || []).filter(r => r.some(cell => String(cell).toLowerCase().includes(normQ)));
+
+      let cardsHTML = '';
+      if (searchRes.groups && searchRes.groups.length > 0) {
+        // 1순위 대표 질환 메인 카드
+        const mainGi = searchRes.groups[0];
+        cardsHTML += `
+          <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+            <span>🔍 <em>'${esc(normQ)}'</em> 빠른 수술비 종합 판정 결과</span>
+            <span style="font-size:11px;color:var(--brand);font-weight:850;">[${esc(co.name)}] 기준 적용</span>
+          </div>
+        `;
+        cardsHTML += cardQuickHTML(mainGi, normQ, searchRes.matchedEdi, parsed, false);
+
+        // 연관 질환이 있는 경우 하단 접이식 목록 노출
+        if (searchRes.groups.length > 1) {
+          const subGis = searchRes.groups.slice(1, 5);
+          cardsHTML += `
+            <div style="margin:14px 0 8px 2px;font-size:12px;font-weight:850;color:var(--text-2);">
+              📂 연관 질환 및 다른 질병코드 (${subGis.length}건):
+            </div>
+            <div class="sub-diseases-list" style="display:flex;flex-direction:column;gap:6px;">
+              ${subGis.map(gi => cardQuickHTML(gi, normQ, searchRes.matchedEdi, parsed, true)).join('')}
+            </div>
+          `;
+        }
+      }
+
+      // 해당 회사의 약관 별표 수술분류표 내 매칭 조항 섹션
+      let tableSectionHTML = '';
+      if (matchedRows.length > 0) {
+        tableSectionHTML = `
+          <div style="margin-top:16px;background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:5px;">
+                <span>📋 [${esc(co.name)}] 약관 별표 수술분류표 매칭 항목</span>
+                <span style="font-size:11px;color:var(--brand);font-weight:850;">(${matchedRows.length}건)</span>
+              </span>
+            </div>
+            <div class="tier-card-list" style="display:flex;flex-direction:column;gap:6px;">
+              ${matchedRows.map(r => {
+                const no = r[0];
+                const name = r[1];
+                const tier = r[2];
+                const note = r[3];
+                const isHighlight = String(tier).includes('⚠️') || String(note).includes('△') || String(note).includes('하향') || String(note).includes('주의');
+                return `
+                <div class="tier-surgery-card" style="padding:10px 12px;background:var(--surface-2);border:1px solid ${isHighlight ? '#fde68a' : 'var(--border)'};border-radius:9px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px;">
+                    <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+                      <span style="font-size:11px;font-weight:900;color:var(--text-3);background:var(--surface);padding:2px 6px;border-radius:4px;flex-shrink:0;border:1px solid var(--border);">No.${esc(no)}</span>
+                      <span style="font-size:13px;font-weight:900;color:var(--text);word-break:keep-all;">${esc(name)}</span>
+                    </div>
+                    <span style="font-size:12px;font-weight:900;color:#fff;background:${isHighlight ? '#f59e0b' : 'var(--brand)'};padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;">${esc(tier)}</span>
+                  </div>
+                  ${note ? `
+                    <div style="font-size:11.5px;color:${isHighlight ? '#92400e' : 'var(--text-3)'};margin-top:4px;line-height:1.45;word-break:keep-all;">
+                      ${esc(note)}
+                    </div>` : ''}
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      if (!cardsHTML && !tableSectionHTML) {
+        box.innerHTML = chipsHTML + `
+          <div style="padding:35px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-3);">
+            <div style="font-size:24px;margin-bottom:8px;">🔍</div>
+            <div style="font-size:13.5px;font-weight:900;color:var(--text);">'${esc(normQ)}' 일치 항목이 없습니다</div>
+            <div style="font-size:12px;margin-top:4px;line-height:1.4;">상단 다빈도 칩을 터치하거나 질병명(대장용종, 담석 등)으로 검색해 보세요.</div>
+          </div>
+        `;
+      } else {
+        box.innerHTML = chipsHTML + cardsHTML + tableSectionHTML;
+      }
+
+      // 이벤트 바인딩
+      bindClauseChipEvents(box);
+      bindCardActions(box);
+      return;
     }
 
+    // 2) 검색어가 없는 첫 화면 (Idle 상태: 다빈도 칩 + 약관 수술분류표 전수 목록 렌더링)
     const layout = data.tierViewLayout || 'cards';
+    const allRows = tableData.rows || [];
 
-    box.innerHTML = `
+    box.innerHTML = chipsHTML + `
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-        <div style="font-size:13.5px;font-weight:900;color:var(--text);">
-          ${esc(tableData.title)} <span style="font-size:11.5px;color:var(--brand);font-weight:800;">(총 ${rows.length}개)</span>
+        <div style="font-size:13px;font-weight:900;color:var(--text);">
+          📑 ${esc(tableData.title)} <span style="font-size:11.5px;color:var(--brand);font-weight:800;">(총 ${allRows.length}개)</span>
         </div>
         <div style="display:flex;gap:4px;background:var(--surface-2);padding:2px;border-radius:7px;border:1px solid var(--border);">
           <button type="button" id="btnTierLayoutCards" style="padding:4px 8px;border-radius:5px;font-size:11px;font-weight:850;cursor:pointer;border:none;background:${layout === 'cards' ? 'var(--brand)' : 'transparent'};color:${layout === 'cards' ? '#fff' : 'var(--text-2)'};">
@@ -8201,30 +8599,22 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </div>
       </div>
 
-      ${rows.length === 0 ? `
-        <div style="padding:30px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text-3);">
-          <div style="font-size:20px;margin-bottom:6px;">🔍</div>
-          <div style="font-size:13px;font-weight:800;color:var(--text);">일치하는 수술 항목이 없습니다</div>
-          <div style="font-size:11.5px;margin-top:2px;">수술명(여유증, 담석, TURP 등)이나 종수(1종, 3종 등)를 입력해 보세요.</div>
-        </div>
-      ` : (layout === 'cards' ? `
-        <!-- 모바일 맞춤 수술 카드 리스트 (좌우 스크롤 0%, 한 화면 100% 쏙 들어옴) -->
+      ${layout === 'cards' ? `
         <div class="tier-card-list" style="display:flex;flex-direction:column;gap:6px;">
-          ${rows.map(r => {
+          ${allRows.map(r => {
             const no = r[0];
             const name = r[1];
             const tier = r[2];
             const note = r[3];
             const isHighlight = String(tier).includes('⚠️') || String(note).includes('△') || String(note).includes('하향') || String(note).includes('주의');
-
             return `
             <div class="tier-surgery-card" style="padding:10px 12px;background:var(--surface);border:1px solid ${isHighlight ? '#fde68a' : 'var(--border)'};border-radius:9px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;">
                 <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-                  <span style="font-size:11px;font-weight:900;color:var(--text-3);background:var(--surface-2);padding:2px 6px;border-radius:4px;flex-shrink:0;">No.${no}</span>
+                  <span style="font-size:11px;font-weight:900;color:var(--text-3);background:var(--surface-2);padding:2px 6px;border-radius:4px;flex-shrink:0;">No.${esc(no)}</span>
                   <span style="font-size:13px;font-weight:900;color:var(--text);word-break:keep-all;">${esc(name)}</span>
                 </div>
-                <span style="font-size:12px;font-weight:900;color:#fff;background:${isHighlight ? '#f59e0b' : 'var(--brand)'};padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${esc(tier)}</span>
+                <span style="font-size:12px;font-weight:900;color:#fff;background:${isHighlight ? '#f59e0b' : 'var(--brand)'};padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;">${esc(tier)}</span>
               </div>
               ${note ? `
                 <div style="font-size:11.5px;color:${isHighlight ? '#92400e' : 'var(--text-3)'};background:${isHighlight ? '#fffbeb' : 'var(--surface-2)'};padding:5px 8px;border-radius:6px;margin-top:4px;line-height:1.45;word-break:keep-all;border:${isHighlight ? '1px solid rgba(245,158,11,0.2)' : 'none'};">
@@ -8234,7 +8624,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           }).join('')}
         </div>
       ` : `
-        <!-- 정밀 표 형식 (모바일 맞춤 fixed 레이아웃) -->
         <div class="clause-table-wrap">
           <table class="clause-table">
             <thead>
@@ -8246,7 +8635,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
               </tr>
             </thead>
             <tbody>
-              ${rows.map(r => `
+              ${allRows.map(r => `
                 <tr>
                   <td style="font-weight:850;text-align:center;font-size:11px;">${esc(r[0])}</td>
                   <td style="font-weight:800;word-break:keep-all;">${esc(r[1])}</td>
@@ -8257,23 +8646,25 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
             </tbody>
           </table>
         </div>
-      `)}
+      `}
     `;
 
-    // 뷰 레이아웃 전환 버튼 바인딩
-    const btnC = box.querySelector('#btnTierLayoutCards');
-    const btnT = box.querySelector('#btnTierLayoutTable');
-    if (btnC && btnT) {
-      btnC.addEventListener('click', () => {
+    bindClauseChipEvents(box);
+
+    const btnCards = box.querySelector('#btnTierLayoutCards');
+    const btnTable = box.querySelector('#btnTierLayoutTable');
+    if (btnCards) {
+      btnCards.addEventListener('click', () => {
         data.tierViewLayout = 'cards';
-        renderClauseModalContent(filterQ, data);
-      });
-      btnT.addEventListener('click', () => {
-        data.tierViewLayout = 'table';
-        renderClauseModalContent(filterQ, data);
+        renderClauseModalContent('', data);
       });
     }
-
+    if (btnTable) {
+      btnTable.addEventListener('click', () => {
+        data.tierViewLayout = 'table';
+        renderClauseModalContent('', data);
+      });
+    }
     return;
   }
 
