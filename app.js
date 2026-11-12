@@ -3174,14 +3174,11 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
     });
   }
 
-  const displayTitle = matchedProc
-    ? `${esc(matchedProc.s.split('(')[0].trim())} <span style="font-size:12px;font-weight:700;color:var(--text-3);margin-left:4px;">(${esc(g.n)})</span>`
-    : hl(g.n, q);
+  const displayTitle = hl(g.n, q);
 
   let procsHTML = '';
   if (procs && procs.val && procs.val.length > 0) {
     const drawerId = `procs-drawer-${gi}-${Math.random().toString(36).slice(2, 7)}`;
-    const isAutoOpen = !!matchedProc;
     procsHTML = `
       <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-toggle-procs" onclick="
@@ -3196,9 +3193,9 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
           }
         " style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;background:rgba(49,130,246,0.08);border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;padding:0 14px;cursor:pointer;font-size:13px;font-weight:900;color:#1d4ed8;transition:all 0.15s ease;">
           <span>🔍 수술방식별 1~5종 지급 기준</span>
-          <span class="arrow-ico" style="font-size:11.5px;font-weight:850;background:rgba(49,130,246,0.16);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#1d4ed8;">${isAutoOpen ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+          <span class="arrow-ico" style="font-size:11.5px;font-weight:850;background:rgba(49,130,246,0.16);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#1d4ed8;">펼쳐보기 ▾</span>
         </button>
-        <div id="${drawerId}" style="display:${isAutoOpen ? 'flex' : 'none'};margin-top:8px;flex-direction:column;gap:6px;">
+        <div id="${drawerId}" style="display:none;margin-top:8px;flex-direction:column;gap:6px;">
           ${procs.val.map(p => {
             const isMatch = matchedProc && matchedProc.s === p.s;
             const rawTag = esc(p.t);
@@ -3377,7 +3374,7 @@ function cardQuickHTML(gi, q, matchedEdi, parsed, isSub = false) {
       <div class="card-top">
         <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
         <h3 class="card-name">${displayTitle}</h3>
-        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">${matchedProc ? '⭐ 수술기법 판정' : '⭐ 대표 질환'}</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">⭐ 대표 질환</span>
       </div>
 
       ${ediBanner}
@@ -3820,9 +3817,7 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
     });
   }
 
-  const displayTitle = matchedProc
-    ? `${esc(matchedProc.s.split('(')[0].trim())} <span style="font-size:12px;font-weight:700;color:var(--text-3);margin-left:4px;">(${esc(g.n)})</span>`
-    : hl(g.n, q);
+  const displayTitle = hl(g.n, q);
 
   let ediBanner = '';
   if (matchedEdi) {
@@ -3835,7 +3830,6 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
   let procsHTML = '';
   if (procs && procs.val && procs.val.length > 0) {
     const drawerId = `procs-drawer-${gi}-${Math.random().toString(36).slice(2, 7)}`;
-    const isAutoOpen = !!matchedProc;
     procsHTML = `
       <div style="margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);">
         <button type="button" class="btn-toggle-procs" onclick="
@@ -3850,9 +3844,9 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
           }
         " style="width:100%;height:46px;min-height:46px;max-height:46px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;background:rgba(49,130,246,0.08);border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;padding:0 14px;cursor:pointer;font-size:13px;font-weight:900;color:#1d4ed8;transition:all 0.15s ease;">
           <span>🔍 수술방식별 1~5종 지급 기준</span>
-          <span class="arrow-ico" style="font-size:11.5px;font-weight:850;background:rgba(49,130,246,0.16);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#1d4ed8;">${isAutoOpen ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+          <span class="arrow-ico" style="font-size:11.5px;font-weight:850;background:rgba(49,130,246,0.16);padding:3px 8px;border-radius:5px;white-space:nowrap;color:#1d4ed8;">펼쳐보기 ▾</span>
         </button>
-        <div id="${drawerId}" style="display:${isAutoOpen ? 'flex' : 'none'};margin-top:8px;flex-direction:column;gap:6px;">
+        <div id="${drawerId}" style="display:none;margin-top:8px;flex-direction:column;gap:6px;">
           ${procs.val.map(p => {
             const isMatch = matchedProc && matchedProc.s === p.s;
             const rawTag = esc(p.t);
@@ -3988,7 +3982,7 @@ function cardTierHTML(gi, q, matchedEdi, isSub = false) {
       <div class="card-top">
         <span class="kcd-badge-big">${g.c.slice(0, 3).join(', ')}</span>
         <h3 class="card-name">${displayTitle}</h3>
-        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">${matchedProc ? '⭐ 수술기법 판정' : '⭐ 대표 질환'}</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:850;color:#2563eb;background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.3);">⭐ 대표 질환</span>
       </div>
 
       ${ediBanner}
