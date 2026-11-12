@@ -809,7 +809,9 @@ const state = {
   ndaiCoTouched: false,
   ndaiMode: 'search', // 'search' | 'tree'
   activeTreeRider: null,
-  activeTreeSub: null
+  activeTreeSub: null,
+  clauseCat: 'nonLife',
+  clauseQ: ''
 };
 
 /* ───────────────────────── 테마 ───────────────────────── */
@@ -1089,6 +1091,7 @@ function start(data) {
   bindOcrTab();
   bindRulesTab();
   bindDisputesTab();
+  bindClausesTab();
 
   $$('.quick-shortcut-banner[data-go]').forEach(b => {
     b.addEventListener('click', () => switchTab(b.dataset.go));
@@ -1118,6 +1121,7 @@ function switchTab(tabKey, targetQ = '') {
   $('#pane-ocr').hidden = tabKey !== 'ocr';
   if ($('#pane-rules')) $('#pane-rules').hidden = tabKey !== 'rules';
   if ($('#pane-disputes')) $('#pane-disputes').hidden = tabKey !== 'disputes';
+  if ($('#pane-clauses')) $('#pane-clauses').hidden = tabKey !== 'clauses';
   if ($('#pane-about')) $('#pane-about').hidden = tabKey !== 'about';
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1183,6 +1187,11 @@ function switchTab(tabKey, targetQ = '') {
   if (tabKey !== 'disputes') {
     $$('#disputesList .dispute-banner-item [id^="disp-drawer-"]').forEach(d => { d.style.display = 'none'; });
     $$('#disputesList .dispute-banner-item [id^="disp-arrow-"]').forEach(a => { a.textContent = '펼치기 ▾'; });
+  }
+
+  // 8. 보험약관 리셋
+  if (tabKey !== 'clauses') {
+    if (typeof window.closeClauseModal === 'function') window.closeClauseModal();
   }
 
   // 대상 탭 진입 시 동작
@@ -1251,6 +1260,8 @@ function switchTab(tabKey, targetQ = '') {
     $('#q-ndai')?.focus();
   } else if (tabKey === 'ocr') {
     if (typeof window.resetOcrTab === 'function') window.resetOcrTab();
+  } else if (tabKey === 'clauses') {
+    if (typeof renderClausesCompanyList === 'function') renderClausesCompanyList(state.clauseQ || '');
   } else if (tabKey === 'about') {
     renderAbout();
   }
@@ -7329,6 +7340,499 @@ function renderDisputesList(filterKey = 'all') {
     });
   });
 }
+
+/* ───────────────────────── 9. 보험약관 및 별표 수술분류표 ───────────────────────── */
+let currentClauseModalData = null;
+
+function bindClausesTab() {
+  const btnNonLife = $('#btnCatNonLife');
+  const btnLife = $('#btnCatLife');
+  const qInput = $('#q-clause');
+  const clearBtn = $('#clearBtn-clause');
+
+  if (btnNonLife && btnLife) {
+    btnNonLife.addEventListener('click', () => {
+      state.clauseCat = 'nonLife';
+      btnNonLife.classList.add('active');
+      btnNonLife.style.border = '2px solid var(--brand)';
+      btnNonLife.style.background = 'rgba(49,130,246,0.1)';
+      btnNonLife.style.color = 'var(--brand)';
+
+      btnLife.classList.remove('active');
+      btnLife.style.border = '1.5px solid var(--border)';
+      btnLife.style.background = 'var(--surface)';
+      btnLife.style.color = 'var(--text-2)';
+
+      renderClausesCompanyList(state.clauseQ || '');
+    });
+
+    btnLife.addEventListener('click', () => {
+      state.clauseCat = 'life';
+      btnLife.classList.add('active');
+      btnLife.style.border = '2px solid var(--brand)';
+      btnLife.style.background = 'rgba(49,130,246,0.1)';
+      btnLife.style.color = 'var(--brand)';
+
+      btnNonLife.classList.remove('active');
+      btnNonLife.style.border = '1.5px solid var(--border)';
+      btnNonLife.style.background = 'var(--surface)';
+      btnNonLife.style.color = 'var(--text-2)';
+
+      renderClausesCompanyList(state.clauseQ || '');
+    });
+  }
+
+  if (qInput) {
+    qInput.addEventListener('input', () => {
+      const val = qInput.value.trim();
+      state.clauseQ = val;
+      if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+      renderClausesCompanyList(val);
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (qInput) qInput.value = '';
+      state.clauseQ = '';
+      clearBtn.style.display = 'none';
+      renderClausesCompanyList('');
+    });
+  }
+
+  // 모달 닫기 이벤트 바인딩
+  const modal = $('#clauseModal');
+  const modalClose = $('#btnClauseModalClose');
+  if (modalClose) modalClose.addEventListener('click', closeClauseModal);
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal || e.target.classList.contains('rules-modal-close')) closeClauseModal();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && modal.classList.contains('show')) closeClauseModal();
+  });
+
+  // 모달 내부 실시간 검색 바인딩
+  const innerSearch = $('#clauseInnerSearch');
+  if (innerSearch) {
+    innerSearch.addEventListener('input', () => {
+      const q = innerSearch.value.trim().toLowerCase();
+      filterClauseModalContent(q);
+    });
+  }
+
+  // 모달 본문 복사 버튼 바인딩
+  const copyBtn = $('#btnCopyClauseText');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      if (!currentClauseModalData) return;
+      const text = generateClauseCopyText(currentClauseModalData);
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => {
+          const origHTML = copyBtn.innerHTML;
+          copyBtn.innerHTML = '<span>✓ 약관 복사 완료!</span>';
+          copyBtn.style.background = '#059669';
+          copyBtn.style.borderColor = '#059669';
+          setTimeout(() => {
+            copyBtn.innerHTML = origHTML;
+            copyBtn.style.background = 'var(--brand)';
+            copyBtn.style.borderColor = 'var(--brand)';
+          }, 1500);
+        });
+      }
+    });
+  }
+
+  renderClausesCompanyList('');
+}
+
+function closeClauseModal() {
+  const modal = $('#clauseModal');
+  if (!modal) return;
+  modal.classList.remove('show');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  currentClauseModalData = null;
+  const innerSearch = $('#clauseInnerSearch');
+  if (innerSearch) innerSearch.value = '';
+}
+window.closeClauseModal = closeClauseModal;
+
+function renderClausesCompanyList(searchQuery = '') {
+  const container = $('#clausesCompanyList');
+  if (!container) return;
+
+  const cat = state.clauseCat || 'nonLife';
+  const dataList = window.POLICY_CLAUSES_DATA ? window.POLICY_CLAUSES_DATA[cat] : [];
+  if (!dataList || dataList.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-3);">탑재된 약관 데이터가 없습니다.</div>';
+    return;
+  }
+
+  const normQ = (searchQuery || '').trim().toLowerCase();
+  let filtered = dataList;
+  if (normQ) {
+    filtered = dataList.filter(co => {
+      if (co.name.toLowerCase().includes(normQ) || co.shortName.toLowerCase().includes(normQ) || co.desc.toLowerCase().includes(normQ)) return true;
+      return co.periods.some(p => {
+        if (p.periodStr.toLowerCase().includes(normQ) || (p.revBadge && p.revBadge.toLowerCase().includes(normQ)) || (p.revSummary && p.revSummary.toLowerCase().includes(normQ))) return true;
+        return false;
+      });
+    });
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:30px 20px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:8px;">🔍</div>
+        <div style="font-size:15px;font-weight:900;color:var(--text);">“${esc(searchQuery)}” 검색 결과가 없습니다</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:4px;">회사명(메리츠, 현대 등) 또는 개정 키워드(여유증, 체외충격파 등)로 검색해 보세요.</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map((co, cIdx) => {
+    const isFirst = cIdx === 0 && !normQ;
+    return `
+    <div class="card company-clause-card" data-cid="${co.id}" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);">
+      <!-- 회사 헤더 버튼 -->
+      <div class="btn-toggle-company-clause" data-cid="${co.id}" style="padding:14px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
+          <span class="co-logo-badge" style="width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff;background:${co.color};flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);">${co.logo}</span>
+          <div style="min-width:0;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <h3 style="margin:0;font-size:16.5px;font-weight:900;color:var(--text);letter-spacing:-.02em;">${esc(co.name)}</h3>
+              <span style="font-size:11px;font-weight:800;color:var(--text-3);background:var(--surface-2);padding:2px 6px;border-radius:5px;border:1px solid var(--border);">${co.periods.length}개 가입시기</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(co.desc)}</div>
+          </div>
+        </div>
+        <span class="co-arrow-badge" style="font-size:12px;font-weight:850;color:var(--brand);background:var(--surface-2);padding:4px 10px;border-radius:7px;border:1px solid var(--border);flex-shrink:0;margin-left:8px;">${normQ || isFirst ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+      </div>
+
+      <!-- 펼쳐지는 가입시기별 서랍 -->
+      <div id="co-periods-${co.id}" class="company-periods-drawer" style="display:${normQ || isFirst ? 'flex' : 'none'};flex-direction:column;gap:12px;padding:14px 16px 16px;border-top:1px dashed var(--line);background:var(--surface-2);">
+        ${co.periods.map(p => renderPeriodBoxHTML(co, p)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  // 회사 펼침/접힘 토글 이벤트
+  container.querySelectorAll('.btn-toggle-company-clause').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cid = btn.dataset.cid;
+      const drawer = document.getElementById(`co-periods-${cid}`);
+      const arrow = btn.querySelector('.co-arrow-badge');
+      if (drawer) {
+        if (drawer.style.display === 'none') {
+          drawer.style.display = 'flex';
+          if (arrow) arrow.textContent = '접기 ▴';
+        } else {
+          drawer.style.display = 'none';
+          if (arrow) arrow.textContent = '펼쳐보기 ▾';
+        }
+      }
+    });
+  });
+
+  // 표준체/유병자 전환 토글 버튼 이벤트
+  container.querySelectorAll('.btn-ptype').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const parent = btn.closest('.period-item-box');
+      if (!parent) return;
+      const ptype = btn.dataset.ptype;
+      parent.querySelectorAll('.btn-ptype').forEach(b => {
+        b.classList.remove('active');
+        b.style.border = '1px solid var(--border)';
+        b.style.background = 'var(--surface)';
+        b.style.color = 'var(--text-2)';
+      });
+      btn.classList.add('active');
+      btn.style.border = '1.5px solid var(--brand)';
+      btn.style.background = 'rgba(49,130,246,0.1)';
+      btn.style.color = 'var(--brand)';
+
+      const stdBox = parent.querySelector('.riders-std');
+      const simpBox = parent.querySelector('.riders-simp');
+      if (stdBox && simpBox) {
+        stdBox.style.display = ptype === 'standard' ? 'flex' : 'none';
+        simpBox.style.display = ptype === 'simplified' ? 'flex' : 'none';
+      }
+    });
+  });
+
+  // 약관 모달 열기 버튼 이벤트 바인딩
+  container.querySelectorAll('.btn-open-clause-modal').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const cid = btn.dataset.cid;
+      const pid = btn.dataset.pid;
+      const ptype = btn.dataset.ptype || 'standard';
+      const targetRider = btn.dataset.targetRider;
+      const viewMode = btn.dataset.viewMode; // 'clause' | 'table'
+      openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode);
+    });
+  });
+}
+
+function renderPeriodBoxHTML(co, p) {
+  const hasSimp = !!p.types.simplified;
+  const stdRiders = p.types.standard.riders;
+  const simpRiders = hasSimp ? p.types.simplified.riders : null;
+
+  return `
+  <div class="period-item-box" style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+    <!-- 시기 타이틀 & 개정 포인트 뱃지 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
+      <span style="font-size:14.5px;font-weight:900;color:var(--text);">${esc(p.periodStr)}</span>
+      ${p.hasRevision ? `<span style="font-size:11px;font-weight:850;color:#b45309;background:rgba(245,158,11,0.12);padding:3px 8px;border-radius:6px;border:1px solid rgba(245,158,11,0.3);flex-shrink:0;">⚠️ 개정 포인트</span>` : ''}
+    </div>
+
+    <!-- 개정 핵심 요약 박스 -->
+    ${p.revSummary ? `
+    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;line-height:1.48;word-break:keep-all;">
+      <span style="font-weight:850;">💡 개정 핵심 실무:</span> ${esc(p.revSummary)}
+    </div>` : ''}
+
+    <!-- 표준체 / 유병자 선택 토글 -->
+    ${hasSimp ? `
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <button type="button" class="btn-ptype active" data-ptype="standard" style="padding:6px 12px;font-size:12px;font-weight:850;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);cursor:pointer;transition:all .15s ease;">
+        🛡️ 일반 (표준체)
+      </button>
+      <button type="button" class="btn-ptype" data-ptype="simplified" style="padding:6px 12px;font-size:12px;font-weight:850;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .15s ease;">
+        🩺 간편 (유병자)
+      </button>
+    </div>` : ''}
+
+    <!-- 표준체 담보 리스트 -->
+    <div class="riders-std" style="display:flex;flex-direction:column;gap:8px;">
+      ${renderRiderCardsHTML(co.id, p.id, 'standard', stdRiders)}
+    </div>
+
+    <!-- 유병자 담보 리스트 -->
+    ${hasSimp ? `
+    <div class="riders-simp" style="display:none;flex-direction:column;gap:8px;">
+      ${renderRiderCardsHTML(co.id, p.id, 'simplified', simpRiders)}
+    </div>` : ''}
+  </div>`;
+}
+
+function renderRiderCardsHTML(cid, pid, ptype, riders) {
+  if (!riders) return '';
+
+  return `
+    <!-- 1. 질병수술비 (보통/특별약관) -->
+    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="min-width:0;flex:1;">
+          <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;">💡 ${esc(riders.basic.title)}</div>
+          <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary)}</div>
+        </div>
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="clause" style="padding:6px 11px;border-radius:7px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+          약관 조항 보기 🔍
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. 종수술비 (약관 본문 + 별표 수술분류표 버튼 2개 분리) -->
+    <div class="rider-card" style="border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:11px 12px;background:rgba(49,130,246,0.025);">
+      <div style="margin-bottom:6px;">
+        <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;">📋 ${esc(riders.tier.title)}</div>
+        <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary)}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+          📄 약관 본문 보기
+        </button>
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(49,130,246,0.25);">
+          📑 별표 수술분류표 보기
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. N대 질병수술비 (약관 본문 + 별표 대상질병분류표 버튼 2개 분리) -->
+    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
+      <div style="margin-bottom:6px;">
+        <div style="font-size:13px;font-weight:850;color:#059669;word-break:keep-all;">🏢 ${esc(riders.ndai.title)}</div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary)}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+          📄 약관 본문 보기
+        </button>
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid #059669;background:#059669;color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(5,150,105,0.25);">
+          📑 별표 대상질병분류표 보기
+        </button>
+      </div>
+    </div>`;
+}
+
+function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
+  const cat = state.clauseCat || 'nonLife';
+  const list = window.POLICY_CLAUSES_DATA ? window.POLICY_CLAUSES_DATA[cat] : [];
+  const co = list.find(c => c.id === cid);
+  if (!co) return;
+  const period = co.periods.find(p => p.id === pid);
+  if (!period) return;
+  const pData = period.types[ptype];
+  if (!pData) return;
+  const rider = pData.riders[targetRider];
+  if (!rider) return;
+
+  const modal = $('#clauseModal');
+  const modalBadge = $('#clauseModalBadge');
+  const modalTitle = $('#clauseModalTitle');
+  const modalAlert = $('#clauseModalAlert');
+  const modalContent = $('#clauseModalContent');
+  const innerSearch = $('#clauseInnerSearch');
+
+  if (!modal || !modalTitle || !modalContent) return;
+
+  if (innerSearch) innerSearch.value = '';
+
+  const typeName = pData.name;
+  let subModeStr = '약관 조항';
+  if (viewMode === 'table') {
+    subModeStr = targetRider === 'tier' ? '별표 수술분류표' : '별표 대상질병분류표';
+  } else {
+    subModeStr = '약관 조항 본문';
+  }
+
+  if (modalBadge) {
+    modalBadge.textContent = `🏢 [${co.name}] ${period.periodStr} · ${typeName}`;
+  }
+  modalTitle.textContent = `${rider.title} [${subModeStr}]`;
+
+  // 개정 알림 표시
+  if (period.revSummary) {
+    modalAlert.style.display = 'block';
+    modalAlert.innerHTML = `<strong>⚠️ 개정 포인트 및 실무 안내:</strong><br>${esc(period.revSummary)}`;
+  } else {
+    modalAlert.style.display = 'none';
+  }
+
+  currentClauseModalData = { co, period, pData, rider, targetRider, viewMode };
+
+  renderClauseModalContent('', currentClauseModalData);
+
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
+  const box = $('#clauseModalContent');
+  if (!box || !data) return;
+
+  const { rider, targetRider, viewMode } = data;
+  const normQ = (filterQ || '').trim().toLowerCase();
+
+  // 1. 별표 테이블 뷰
+  if (viewMode === 'table') {
+    const tableData = rider.tableBody;
+    if (!tableData) {
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);">분류표 데이터가 없습니다.</div>';
+      return;
+    }
+
+    let rows = tableData.rows;
+    if (normQ) {
+      rows = rows.filter(r => r.some(cell => String(cell).toLowerCase().includes(normQ)));
+    }
+
+    box.innerHTML = `
+      <div style="font-size:13.5px;font-weight:900;color:var(--text);margin-bottom:8px;">${esc(tableData.title)}</div>
+      <div class="clause-table-wrap">
+        <table class="clause-table">
+          <thead>
+            <tr>
+              ${tableData.headers.map(h => `<th>${esc(h)}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.length === 0 ? `<tr><td colspan="${tableData.headers.length}" style="text-align:center;padding:24px;color:var(--text-3);">검색어와 일치하는 분류 항목이 없습니다.</td></tr>` : rows.map(r => `
+              <tr>
+                ${r.map((cell, idx) => {
+                  const isHighlight = String(cell).includes('⚠️') || String(cell).includes('하향') || String(cell).includes('💎');
+                  return `<td style="${idx === 0 ? 'font-weight:850;width:50px;' : (idx === 2 ? 'font-weight:900;color:var(--brand);width:80px;' : '')}">${isHighlight ? `<span style="font-weight:900;color:#b45309;">${esc(cell)}</span>` : esc(cell)}</td>`;
+                }).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    return;
+  }
+
+  // 2. 약관 조항 뷰
+  const clauseObj = (targetRider === 'basic') ? rider : rider.clauseBody;
+  if (!clauseObj) {
+    box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);">약관 본문 데이터가 없습니다.</div>';
+    return;
+  }
+
+  let clauses = clauseObj.clauses || [];
+  if (normQ) {
+    clauses = clauses.filter(c => c.title.toLowerCase().includes(normQ) || c.text.toLowerCase().includes(normQ));
+  }
+
+  box.innerHTML = `
+    <!-- 약관 원문 인용문 -->
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+      <div style="font-size:12px;font-weight:850;color:var(--brand);margin-bottom:6px;">📖 공식 약관 조항 전문 (원문 발췌)</div>
+      <pre style="white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:var(--text);line-height:1.6;margin:0;word-break:keep-all;">${esc(clauseObj.quote)}</pre>
+    </div>
+
+    <!-- 세부 조항 카드 -->
+    <div style="font-size:13px;font-weight:850;color:var(--text);margin-bottom:8px;">📌 조항별 핵심 요약 및 해설:</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${clauses.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-3);">검색어와 일치하는 조항이 없습니다.</div>' : clauses.map(c => `
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;">
+          <div style="font-size:12.5px;font-weight:900;color:var(--text);margin-bottom:4px;">${esc(c.title)}</div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${esc(c.text)}</div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function filterClauseModalContent(q) {
+  renderClauseModalContent(q);
+}
+
+function generateClauseCopyText(data) {
+  if (!data) return '';
+  const { co, period, pData, rider, targetRider, viewMode } = data;
+  const lines = [];
+  lines.push(`[${co.name}] ${period.periodStr} · ${pData.name}`);
+  lines.push(`■ 담보명: ${rider.title}`);
+  if (period.revSummary) {
+    lines.push(`※ 개정 포인트: ${period.revSummary}`);
+  }
+  lines.push('');
+
+  if (viewMode === 'table') {
+    const tableData = rider.tableBody;
+    if (tableData) {
+      lines.push(`[${tableData.title}]`);
+      tableData.rows.forEach(r => {
+        lines.push(`• ${r.join(' | ')}`);
+      });
+    }
+  } else {
+    const clauseObj = (targetRider === 'basic') ? rider : rider.clauseBody;
+    if (clauseObj) {
+      lines.push('[약관 원문]');
+      lines.push(clauseObj.quote);
+    }
+  }
+  return lines.join('\n');
+}
+
+window.bindClausesTab = bindClausesTab;
+window.renderClausesCompanyList = renderClausesCompanyList;
 
 window.renderDisputesList = renderDisputesList;
 window.__DEBUG = { state, search, runQuickSearch };

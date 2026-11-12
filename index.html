@@ -35,7 +35,7 @@
 <meta name="twitter:image" content="https://rnghd8596.github.io/surgery-search/og-brand-bright.png?v=20261111_0815">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css?v=20261112_0945">
+<link rel="stylesheet" href="style.css?v=20261112_1015">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233182F6'/%3E%3Ctext x='32' y='43' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3E%ED%99%8D%3C/text%3E%3C/svg%3E">
 <script>
 window.onerror = function(msg, url, line, col, err) {
@@ -108,11 +108,12 @@ window.onerror = function(msg, url, line, col, err) {
       <button class="tab on" data-tab="home" role="tab">홈</button>
       <button class="tab" data-tab="quick" role="tab">빠른검색</button>
       <button class="tab" data-tab="ocr" role="tab">사진검색</button>
-      <button class="tab" data-tab="disputes" role="tab">분쟁사례</button>
       <button class="tab" data-tab="tier" role="tab">3·5종수술</button>
       <button class="tab" data-tab="tier78" role="tab">7·8종수술</button>
       <button class="tab" data-tab="ndai" role="tab">N대질병</button>
       <button class="tab" data-tab="rules" role="tab">동시수술</button>
+      <button class="tab" data-tab="disputes" role="tab">분쟁사례</button>
+      <button class="tab" data-tab="clauses" role="tab">보험약관</button>
     </nav>
   </header>
 
@@ -204,6 +205,17 @@ window.onerror = function(msg, url, line, col, err) {
             </div>
           </div>
           <span style="font-size:17px;color:#e11d48;font-weight:900;">→</span>
+        </button>
+
+        <button type="button" class="quick-shortcut-banner" data-go="clauses" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:15px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;box-shadow:var(--shadow-1);">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:26px;">📜</span>
+            <div style="text-align:left;">
+              <div style="font-size:15.5px;font-weight:900;color:var(--text);">보험약관 및 별표 수술분류표</div>
+              <div class="banner-sub" style="font-size:12px;color:var(--text-3);margin-top:2px;">손보·생보사 시기별 약관 원문 및 별표 분류표 즉시 조회</div>
+            </div>
+          </div>
+          <span style="font-size:17px;color:#0284c7;font-weight:900;">→</span>
         </button>
       </div>
     </section>
@@ -978,11 +990,40 @@ window.onerror = function(msg, url, line, col, err) {
       <div id="disputesList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:30px;"></div>
     </section>
 
+    <!-- ───────── 5-2. 보험약관 (회사별 · 시기별 약관 및 별표 수술분류표) ───────── -->
+    <section id="pane-clauses" class="pane" hidden>
+      <div class="hero" id="hero-clauses" style="text-align:center;padding:22px 0 16px;">
+        <p class="hero-eyebrow" style="color:#0284c7;">보험약관</p>
+        <h2 class="hero-title"><span class="grad">보험약관 및 별표 수술분류표</span></h2>
+        <p class="hero-sub" style="font-weight:700;color:var(--text-2);">손보·생보사별 시기별 약관 원문 및 별표 분류표 즉시 조회</p>
+      </div>
+
+      <!-- 손보 / 생보 선택 세그먼트 버튼 & 검색창 -->
+      <div class="panel" style="margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+          <button type="button" class="btn-clause-cat active" data-cat="nonLife" id="btnCatNonLife" style="height:48px;border-radius:12px;font-size:14.5px;font-weight:900;cursor:pointer;border:2px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);transition:all .15s ease;">
+            <span>🏢 손해보험사 (10개사)</span>
+          </button>
+          <button type="button" class="btn-clause-cat" data-cat="life" id="btnCatLife" style="height:48px;border-radius:12px;font-size:14.5px;font-weight:900;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);transition:all .15s ease;">
+            <span>🏛️ 생명보험사 (10개사)</span>
+          </button>
+        </div>
+
+        <div class="searchbox-wrap" style="position:relative;">
+          <input type="text" id="q-clause" class="searchbox" placeholder="보험사명, 개정이슈, 수술특약 검색... (예: 메리츠, 여유증, 체외충격파)" style="height:50px;font-size:14px;padding-left:16px;padding-right:40px;border-radius:12px;">
+          <button type="button" id="clearBtn-clause" class="searchbox-clear" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;font-size:18px;color:var(--text-3);cursor:pointer;">✕</button>
+        </div>
+      </div>
+
+      <!-- 회사별 약관 카드 목록 컨테이너 -->
+      <div id="clausesCompanyList" style="display:flex;flex-direction:column;gap:14px;margin-bottom:30px;"></div>
+    </section>
+
     <!-- ───────── 6. 안내 ───────── -->
     <section id="pane-about" class="pane" hidden></section>
   </main>
 
-  <!-- 약관 원문 고해상도 확대 모달 -->
+  <!-- 약관 원문 고해상도 확대 모달 (동시수술) -->
   <div id="rulesModal" class="rules-modal" aria-hidden="true">
     <div class="rules-modal-inner">
       <div class="rules-modal-head">
@@ -992,6 +1033,35 @@ window.onerror = function(msg, url, line, col, err) {
       <div id="rulesModalQuote" style="display:none;padding:12px 18px;background:rgba(217,119,6,0.08);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:800;color:var(--text);line-height:1.55;word-break:keep-all;"></div>
       <div class="rules-modal-body">
         <img id="rulesModalImg" src="" alt="약관 원문 전체 이미지">
+      </div>
+    </div>
+  </div>
+
+  <!-- 보험약관 전용 인터랙티브 뷰어 모달 -->
+  <div id="clauseModal" class="clause-modal" aria-hidden="true">
+    <div class="clause-modal-inner">
+      <div class="clause-modal-head">
+        <div style="min-width:0;flex:1;padding-right:12px;">
+          <div id="clauseModalBadge" style="display:inline-block;font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;margin-bottom:3px;">약관 원문 뷰어</div>
+          <div class="clause-modal-title" id="clauseModalTitle" style="font-size:16px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">약관 제목</div>
+        </div>
+        <button type="button" class="rules-modal-close" id="btnClauseModalClose" aria-label="닫기">✕</button>
+      </div>
+
+      <!-- 모달 상단 조항 내 실시간 검색바 & 본문 복사 버튼 -->
+      <div style="padding:10px 18px;background:var(--surface-2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <input type="text" id="clauseInnerSearch" placeholder="🔍 조항명, 수술명, 질병코드 빠른 검색..." style="flex:1;height:38px;border-radius:8px;border:1px solid var(--border);padding:0 12px;font-size:12.5px;background:var(--surface);color:var(--text);">
+        <button type="button" id="btnCopyClauseText" style="height:38px;padding:0 14px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;">
+          <span>📋 본문 복사</span>
+        </button>
+      </div>
+
+      <!-- 모달 알림 박스 (개정 포인트 / 실무 팁) -->
+      <div id="clauseModalAlert" style="display:none;padding:12px 18px;background:rgba(217,119,6,0.08);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:800;color:var(--text);line-height:1.55;word-break:keep-all;"></div>
+
+      <!-- 모달 본문 영역 -->
+      <div class="clause-modal-body" id="clauseModalBody" style="max-height:70vh;overflow-y:auto;padding:18px;">
+        <div id="clauseModalContent"></div>
       </div>
     </div>
   </div>
@@ -1013,8 +1083,9 @@ window.onerror = function(msg, url, line, col, err) {
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="assets/curated.js?v=20261112_0945"></script>
-<script src="assets/disputes.js?v=20261112_0945"></script>
-<script src="app.js?v=20261112_0945"></script>
+<script src="assets/curated.js?v=20261112_1015"></script>
+<script src="assets/disputes.js?v=20261112_1015"></script>
+<script src="assets/clauses.js?v=20261112_1015"></script>
+<script src="app.js?v=20261112_1015"></script>
 </body>
 </html>
