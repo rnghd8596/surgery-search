@@ -7363,6 +7363,7 @@ function bindClausesTab() {
       btnLife.style.background = 'var(--surface)';
       btnLife.style.color = 'var(--text-2)';
 
+      renderClausesAbbrBar();
       renderClausesCompanyList(state.clauseQ || '');
     });
 
@@ -7378,6 +7379,7 @@ function bindClausesTab() {
       btnNonLife.style.background = 'var(--surface)';
       btnNonLife.style.color = 'var(--text-2)';
 
+      renderClausesAbbrBar();
       renderClausesCompanyList(state.clauseQ || '');
     });
   }
@@ -7397,6 +7399,50 @@ function bindClausesTab() {
       state.clauseQ = '';
       clearBtn.style.display = 'none';
       renderClausesCompanyList('');
+    });
+  }
+
+  // 모달 탭 스위처 바인딩: 사진 vs 텍스트
+  const btnModalTabPhoto = $('#btnModalTabPhoto');
+  const btnModalTabText = $('#btnModalTabText');
+  if (btnModalTabPhoto && btnModalTabText) {
+    btnModalTabPhoto.addEventListener('click', () => {
+      if (!currentClauseModalData) return;
+      currentClauseModalData.activeModalTab = 'photo';
+      btnModalTabPhoto.classList.add('active');
+      btnModalTabPhoto.style.border = '1.5px solid var(--brand)';
+      btnModalTabPhoto.style.background = 'rgba(49,130,246,0.1)';
+      btnModalTabPhoto.style.color = 'var(--brand)';
+
+      btnModalTabText.classList.remove('active');
+      btnModalTabText.style.border = '1px solid var(--border)';
+      btnModalTabText.style.background = 'var(--surface)';
+      btnModalTabText.style.color = 'var(--text-2)';
+
+      const searchWrap = $('#clauseModalSearchWrap');
+      if (searchWrap) searchWrap.style.display = 'none';
+
+      renderClauseModalContent('', currentClauseModalData);
+    });
+
+    btnModalTabText.addEventListener('click', () => {
+      if (!currentClauseModalData) return;
+      currentClauseModalData.activeModalTab = 'text';
+      btnModalTabText.classList.add('active');
+      btnModalTabText.style.border = '1.5px solid var(--brand)';
+      btnModalTabText.style.background = 'rgba(49,130,246,0.1)';
+      btnModalTabText.style.color = 'var(--brand)';
+
+      btnModalTabPhoto.classList.remove('active');
+      btnModalTabPhoto.style.border = '1px solid var(--border)';
+      btnModalTabPhoto.style.background = 'var(--surface)';
+      btnModalTabPhoto.style.color = 'var(--text-2)';
+
+      const searchWrap = $('#clauseModalSearchWrap');
+      if (searchWrap) searchWrap.style.display = 'flex';
+
+      const innerSearch = $('#clauseInnerSearch');
+      renderClauseModalContent(innerSearch ? innerSearch.value.trim() : '', currentClauseModalData);
     });
   }
 
@@ -7444,6 +7490,7 @@ function bindClausesTab() {
     });
   }
 
+  renderClausesAbbrBar();
   renderClausesCompanyList('');
 }
 
@@ -7458,6 +7505,69 @@ function closeClauseModal() {
   if (innerSearch) innerSearch.value = '';
 }
 window.closeClauseModal = closeClauseModal;
+
+// 20개사 약어 원터치 퀵바 렌더링
+function renderClausesAbbrBar() {
+  const bar = $('#clausesAbbrBar');
+  if (!bar) return;
+
+  const cat = state.clauseCat || 'nonLife';
+  const dataList = window.POLICY_CLAUSES_DATA ? window.POLICY_CLAUSES_DATA[cat] : [];
+  if (!dataList || dataList.length === 0) {
+    bar.innerHTML = '';
+    return;
+  }
+
+  bar.innerHTML = `
+    <button type="button" class="co-abbr-chip active" data-abbr="" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:850;cursor:pointer;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);white-space:nowrap;flex-shrink:0;">
+      전체
+    </button>
+    ${dataList.map(co => `
+      <button type="button" class="co-abbr-chip" data-abbr="${esc(co.shortName)}" data-cid="${co.id}" style="padding:6px 12px;border-radius:8px;font-size:12px;font-weight:850;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);white-space:nowrap;flex-shrink:0;">
+        ${esc(co.shortName)}
+      </button>
+    `).join('')}
+  `;
+
+  bar.querySelectorAll('.co-abbr-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      bar.querySelectorAll('.co-abbr-chip').forEach(c => {
+        c.classList.remove('active');
+        c.style.border = '1px solid var(--border)';
+        c.style.background = 'var(--surface)';
+        c.style.color = 'var(--text)';
+      });
+      chip.classList.add('active');
+      chip.style.border = '1.5px solid var(--brand)';
+      chip.style.background = 'rgba(49,130,246,0.1)';
+      chip.style.color = 'var(--brand)';
+
+      const abbr = chip.dataset.abbr;
+      const qInput = $('#q-clause');
+      const clearBtn = $('#clearBtn-clause');
+      if (qInput) qInput.value = abbr;
+      if (clearBtn) clearBtn.style.display = abbr ? 'block' : 'none';
+      state.clauseQ = abbr;
+
+      renderClausesCompanyList(abbr);
+
+      // 특정 약어 선택 시 해당 회사 카드 자동 오픈 및 스크롤
+      const cid = chip.dataset.cid;
+      if (cid) {
+        const drawer = document.getElementById(`co-periods-${cid}`);
+        const card = document.querySelector(`.company-clause-card[data-cid="${cid}"]`);
+        if (drawer) {
+          drawer.style.display = 'flex';
+          const arrow = card ? card.querySelector('.co-arrow-badge') : null;
+          if (arrow) arrow.textContent = '접기 ▴';
+        }
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    });
+  });
+}
 
 function renderClausesCompanyList(searchQuery = '') {
   const container = $('#clausesCompanyList');
@@ -7475,6 +7585,7 @@ function renderClausesCompanyList(searchQuery = '') {
   if (normQ) {
     filtered = dataList.filter(co => {
       if (co.name.toLowerCase().includes(normQ) || co.shortName.toLowerCase().includes(normQ) || co.desc.toLowerCase().includes(normQ)) return true;
+      if (co.aliases && co.aliases.some(a => a.toLowerCase().includes(normQ))) return true;
       return co.periods.some(p => {
         if (p.periodStr.toLowerCase().includes(normQ) || (p.revBadge && p.revBadge.toLowerCase().includes(normQ)) || (p.revSummary && p.revSummary.toLowerCase().includes(normQ))) return true;
         return false;
@@ -7487,13 +7598,14 @@ function renderClausesCompanyList(searchQuery = '') {
       <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:30px 20px;text-align:center;">
         <div style="font-size:24px;margin-bottom:8px;">🔍</div>
         <div style="font-size:15px;font-weight:900;color:var(--text);">“${esc(searchQuery)}” 검색 결과가 없습니다</div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:4px;">회사명(메리츠, 현대 등) 또는 개정 키워드(여유증, 체외충격파 등)로 검색해 보세요.</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:4px;">회사명 또는 약어(멜츠, 삼화, 케손, 디손, 교보, 신라 등), 질병코드(K80, N20 등)로 검색해 보세요.</div>
       </div>`;
     return;
   }
 
-  container.innerHTML = filtered.map((co, cIdx) => {
-    const isFirst = cIdx === 0 && !normQ;
+  // 1. 첫 화면에 펼쳐진 회사 없게: 검색어 없을 땐 무조건 접힘 상태
+  container.innerHTML = filtered.map((co) => {
+    const isAutoOpen = !!normQ;
     return `
     <div class="card company-clause-card" data-cid="${co.id}" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);">
       <!-- 회사 헤더 버튼 -->
@@ -7503,22 +7615,23 @@ function renderClausesCompanyList(searchQuery = '') {
           <div style="min-width:0;">
             <div style="display:flex;align-items:center;gap:6px;">
               <h3 style="margin:0;font-size:16.5px;font-weight:900;color:var(--text);letter-spacing:-.02em;">${esc(co.name)}</h3>
+              <span class="co-short-badge" style="font-size:11.5px;font-weight:900;color:var(--brand);background:rgba(49,130,246,0.12);padding:2px 7px;border-radius:6px;border:1px solid rgba(49,130,246,0.25);flex-shrink:0;">${esc(co.shortName)}</span>
               <span style="font-size:11px;font-weight:800;color:var(--text-3);background:var(--surface-2);padding:2px 6px;border-radius:5px;border:1px solid var(--border);">${co.periods.length}개 가입시기</span>
             </div>
             <div style="font-size:12px;color:var(--text-3);margin-top:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(co.desc)}</div>
           </div>
         </div>
-        <span class="co-arrow-badge" style="font-size:12px;font-weight:850;color:var(--brand);background:var(--surface-2);padding:4px 10px;border-radius:7px;border:1px solid var(--border);flex-shrink:0;margin-left:8px;">${normQ || isFirst ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+        <span class="co-arrow-badge" style="font-size:12px;font-weight:850;color:var(--brand);background:var(--surface-2);padding:4px 10px;border-radius:7px;border:1px solid var(--border);flex-shrink:0;margin-left:8px;">${isAutoOpen ? '접기 ▴' : '펼쳐보기 ▾'}</span>
       </div>
 
-      <!-- 펼쳐지는 가입시기별 서랍 -->
-      <div id="co-periods-${co.id}" class="company-periods-drawer" style="display:${normQ || isFirst ? 'flex' : 'none'};flex-direction:column;gap:12px;padding:14px 16px 16px;border-top:1px dashed var(--line);background:var(--surface-2);">
+      <!-- 펼쳐지는 가입시기별 서랍 (2. 펼쳤을 때 가입시기별은 기본 접힘) -->
+      <div id="co-periods-${co.id}" class="company-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};flex-direction:column;gap:10px;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);">
         ${co.periods.map(p => renderPeriodBoxHTML(co, p)).join('')}
       </div>
     </div>`;
   }).join('');
 
-  // 회사 펼침/접힘 토글 이벤트
+  // 회사 펼침/접힘 토글 이벤트 바인딩
   container.querySelectorAll('.btn-toggle-company-clause').forEach(btn => {
     btn.addEventListener('click', () => {
       const cid = btn.dataset.cid;
@@ -7536,11 +7649,30 @@ function renderClausesCompanyList(searchQuery = '') {
     });
   });
 
-  // 표준체/유병자 전환 토글 버튼 이벤트
+  // 가입시기별 펼침/접힘 아코디언 토글 이벤트 바인딩
+  container.querySelectorAll('.btn-toggle-period').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const coId = btn.dataset.coId;
+      const pid = btn.dataset.pid;
+      const drawer = document.getElementById(`period-drawer-${coId}-${pid}`);
+      const arrow = btn.querySelector('.period-arrow-badge');
+      if (drawer) {
+        if (drawer.style.display === 'none') {
+          drawer.style.display = 'flex';
+          if (arrow) arrow.textContent = '접기 ▴';
+        } else {
+          drawer.style.display = 'none';
+          if (arrow) arrow.textContent = '펼쳐보기 ▾';
+        }
+      }
+    });
+  });
+
+  // 표준체/유병자 전환 토글 버튼 이벤트 바인딩
   container.querySelectorAll('.btn-ptype').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const parent = btn.closest('.period-item-box');
+      const parent = btn.closest('.period-drawer-content');
       if (!parent) return;
       const ptype = btn.dataset.ptype;
       parent.querySelectorAll('.btn-ptype').forEach(b => {
@@ -7571,52 +7703,70 @@ function renderClausesCompanyList(searchQuery = '') {
       const pid = btn.dataset.pid;
       const ptype = btn.dataset.ptype || 'standard';
       const targetRider = btn.dataset.targetRider;
-      const viewMode = btn.dataset.viewMode; // 'clause' | 'table'
+      const viewMode = btn.dataset.viewMode;
       openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode);
     });
   });
 }
 
 function renderPeriodBoxHTML(co, p) {
-  const hasSimp = !!p.types.simplified;
-  const stdRiders = p.types.standard.riders;
+  const hasSimp = !!(p.types && p.types.simplified);
+  const stdRiders = p.types && p.types.standard ? p.types.standard.riders : null;
   const simpRiders = hasSimp ? p.types.simplified.riders : null;
 
   return `
-  <div class="period-item-box" style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-    <!-- 시기 타이틀 & 개정 포인트 뱃지 -->
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap;">
-      <span style="font-size:14.5px;font-weight:900;color:var(--text);">${esc(p.periodStr)}</span>
-      ${p.hasRevision ? `<span style="font-size:11px;font-weight:850;color:#b45309;background:rgba(245,158,11,0.12);padding:3px 8px;border-radius:6px;border:1px solid rgba(245,158,11,0.3);flex-shrink:0;">⚠️ 개정 포인트</span>` : ''}
+  <div class="period-accordion-box" style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+    <!-- 가입시기 헤더 버튼 (2. 클릭 시 펼쳐짐) -->
+    <div class="btn-toggle-period" data-co-id="${co.id}" data-pid="${p.id}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;flex:1;">
+        <span style="font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">📅 ${esc(p.periodStr)}</span>
+        ${p.hasRevision ? `<span style="font-size:11px;font-weight:850;color:#b45309;background:rgba(245,158,11,0.12);padding:2px 7px;border-radius:5px;border:1px solid rgba(245,158,11,0.25);flex-shrink:0;">⚠️ 개정 포인트</span>` : ''}
+      </div>
+      <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">펼쳐보기 ▾</span>
     </div>
 
-    <!-- 개정 핵심 요약 박스 -->
-    ${p.revSummary ? `
-    <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:9px 12px;margin-bottom:12px;font-size:12px;color:#92400e;line-height:1.48;word-break:keep-all;">
-      <span style="font-weight:850;">💡 개정 핵심 실무:</span> ${esc(p.revSummary)}
-    </div>` : ''}
+    <!-- 가입시기 세부 서랍 (2. 기본 접힘!) -->
+    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:none;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+      
+      <!-- 9. 개정 포인트 및 실무 안내 박스 (줄 깔끔하게 칼정렬) -->
+      ${p.revSummary ? `
+      <div class="rev-summary-card" style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:12px 14px;box-shadow:0 1px 2px rgba(245,158,11,0.06);">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:900;color:#b45309;margin-bottom:6px;">
+          <span>⚡</span>
+          <span>개정 핵심 실무 안내</span>
+          ${p.revBadge ? `<span style="font-size:11px;font-weight:800;color:#92400e;background:rgba(245,158,11,0.15);padding:1px 6px;border-radius:4px;margin-left:auto;">${esc(p.revBadge)}</span>` : ''}
+        </div>
+        <div style="font-size:12px;color:#92400e;line-height:1.55;letter-spacing:-0.01em;word-break:keep-all;">
+          ${esc(p.revSummary)}
+        </div>
+      </div>` : ''}
 
-    <!-- 표준체 / 유병자 선택 토글 -->
-    ${hasSimp ? `
-    <div style="display:flex;gap:6px;margin-bottom:12px;">
-      <button type="button" class="btn-ptype active" data-ptype="standard" style="padding:6px 12px;font-size:12px;font-weight:850;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);cursor:pointer;transition:all .15s ease;">
-        🛡️ 일반 (표준체)
-      </button>
-      <button type="button" class="btn-ptype" data-ptype="simplified" style="padding:6px 12px;font-size:12px;font-weight:850;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .15s ease;">
-        🩺 간편 (유병자)
-      </button>
-    </div>` : ''}
+      <!-- 12. 표준체 / 유병자(간편) 분기 (미판매 시 해당없음 명시) -->
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <button type="button" class="btn-ptype active" data-ptype="standard" style="padding:6px 12px;font-size:12px;font-weight:850;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);cursor:pointer;transition:all .15s ease;">
+          🛡️ 일반 (표준체)
+        </button>
+        ${hasSimp ? `
+        <button type="button" class="btn-ptype" data-ptype="simplified" style="padding:6px 12px;font-size:12px;font-weight:850;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .15s ease;">
+          🩺 간편 (유병자)
+        </button>` : `
+        <span style="font-size:11.5px;font-weight:700;color:var(--text-3);background:var(--surface);padding:5px 9px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;gap:4px;">
+          <span>🩺</span> <span>간편 미판매 (해당없음)</span>
+        </span>`}
+      </div>
 
-    <!-- 표준체 담보 리스트 -->
-    <div class="riders-std" style="display:flex;flex-direction:column;gap:8px;">
-      ${renderRiderCardsHTML(co.id, p.id, 'standard', stdRiders)}
+      <!-- 표준체 담보 리스트 -->
+      <div class="riders-std" style="display:flex;flex-direction:column;gap:8px;">
+        ${renderRiderCardsHTML(co.id, p.id, 'standard', stdRiders)}
+      </div>
+
+      <!-- 유병자 담보 리스트 -->
+      ${hasSimp ? `
+      <div class="riders-simp" style="display:none;flex-direction:column;gap:8px;">
+        ${renderRiderCardsHTML(co.id, p.id, 'simplified', simpRiders)}
+      </div>` : ''}
+
     </div>
-
-    <!-- 유병자 담보 리스트 -->
-    ${hasSimp ? `
-    <div class="riders-simp" style="display:none;flex-direction:column;gap:8px;">
-      ${renderRiderCardsHTML(co.id, p.id, 'simplified', simpRiders)}
-    </div>` : ''}
   </div>`;
 }
 
@@ -7624,47 +7774,69 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
   if (!riders) return '';
 
   return `
-    <!-- 1. 질병수술비 (보통/특별약관) -->
-    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface);">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <div style="min-width:0;flex:1;">
-          <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;">💡 ${esc(riders.basic.title)}</div>
-          <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary)}</div>
-        </div>
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="clause" style="padding:6px 11px;border-radius:7px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;flex-shrink:0;">
-          약관 조항 보기 🔍
+    <!-- 1. 질병수술비 (10. 약관조항보기 + 보상제외조항보기 2칸 정형화) -->
+    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
+      <div style="margin-bottom:6px;">
+        <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;">💡 ${esc(riders.basic.title)}</div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary)}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;">
+          📄 약관조항 보기
+        </button>
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion" style="height:38px;border-radius:8px;border:1.5px solid #dc2626;background:rgba(220,38,38,0.08);color:#dc2626;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;">
+          🚫 보상제외 조항 보기
         </button>
       </div>
     </div>
 
-    <!-- 2. 종수술비 (약관 본문 + 별표 수술분류표 버튼 2개 분리) -->
+    <!-- 2. 종수술비 (약관조항보기 + 별표수술분류표 + 개정 전/후 실제약관 사진보기) -->
     <div class="rider-card" style="border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:11px 12px;background:rgba(49,130,246,0.025);">
       <div style="margin-bottom:6px;">
         <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;">📋 ${esc(riders.tier.title)}</div>
         <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary)}</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-          📄 약관 본문 보기
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+          📄 약관조항 보기
         </button>
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(49,130,246,0.25);">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(49,130,246,0.25);display:flex;align-items:center;justify-content:center;gap:4px;">
           📑 별표 수술분류표 보기
         </button>
       </div>
+      ${riders.tier.hasRevPhotoButtons ? `
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="photo_post" style="height:34px;border-radius:7px;border:1px solid #f59e0b;background:#fffbeb;color:#b45309;font-size:11px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
+          📷 개정 후 약관사진
+        </button>
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="photo_pre" style="height:34px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:11px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
+          📷 개정 전 약관사진
+        </button>
+      </div>` : `
+      <div style="margin-top:6px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="photo" style="width:100%;height:32px;border-radius:7px;border:1px solid rgba(49,130,246,0.3);background:rgba(49,130,246,0.05);color:var(--brand);font-size:11.5px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
+          📷 실제 약관 원문 사진 보기
+        </button>
+      </div>`}
     </div>
 
-    <!-- 3. N대 질병수술비 (약관 본문 + 별표 대상질병분류표 버튼 2개 분리) -->
+    <!-- 3. N대 질병수술비 (약관조항보기 + 별표대상질병분류표 전수 질병코드) -->
     <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
       <div style="margin-bottom:6px;">
         <div style="font-size:13px;font-weight:850;color:#059669;word-break:keep-all;">🏢 ${esc(riders.ndai.title)}</div>
         <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary)}</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-          📄 약관 본문 보기
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+          📄 약관조항 보기
         </button>
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid #059669;background:#059669;color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(5,150,105,0.25);">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid #059669;background:#059669;color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(5,150,105,0.25);display:flex;align-items:center;justify-content:center;gap:4px;">
           📑 별표 대상질병분류표 보기
+        </button>
+      </div>
+      <div style="margin-top:6px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="photo" style="width:100%;height:32px;border-radius:7px;border:1px solid rgba(5,150,105,0.3);background:rgba(5,150,105,0.05);color:#059669;font-size:11.5px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;">
+          📷 N대 질병분류표 원문 사진 보기
         </button>
       </div>
     </div>`;
@@ -7677,19 +7849,21 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
   if (!co) return;
   const period = co.periods.find(p => p.id === pid);
   if (!period) return;
-  const pData = period.types[ptype];
+  const pData = period.types ? period.types[ptype] : null;
   if (!pData) return;
-  const rider = pData.riders[targetRider];
+  const rider = pData.riders ? pData.riders[targetRider] : null;
   if (!rider) return;
 
   const modal = $('#clauseModal');
   const modalBadge = $('#clauseModalBadge');
   const modalTitle = $('#clauseModalTitle');
   const modalAlert = $('#clauseModalAlert');
-  const modalContent = $('#clauseModalContent');
   const innerSearch = $('#clauseInnerSearch');
+  const searchWrap = $('#clauseModalSearchWrap');
+  const btnPhoto = $('#btnModalTabPhoto');
+  const btnText = $('#btnModalTabText');
 
-  if (!modal || !modalTitle || !modalContent) return;
+  if (!modal || !modalTitle) return;
 
   if (innerSearch) innerSearch.value = '';
 
@@ -7697,12 +7871,16 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
   let subModeStr = '약관 조항';
   if (viewMode === 'table') {
     subModeStr = targetRider === 'tier' ? '별표 수술분류표' : '별표 대상질병분류표';
+  } else if (viewMode === 'basic_exclusion') {
+    subModeStr = '보상제외 조항 (면책사유)';
+  } else if (viewMode.startsWith('photo')) {
+    subModeStr = '실제 약관 원문 사진';
   } else {
     subModeStr = '약관 조항 본문';
   }
 
   if (modalBadge) {
-    modalBadge.textContent = `🏢 [${co.name}] ${period.periodStr} · ${typeName}`;
+    modalBadge.textContent = `🏢 [${co.name} (${co.shortName})] ${period.periodStr} · ${typeName}`;
   }
   modalTitle.textContent = `${rider.title} [${subModeStr}]`;
 
@@ -7714,7 +7892,43 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
     modalAlert.style.display = 'none';
   }
 
-  currentClauseModalData = { co, period, pData, rider, targetRider, viewMode };
+  // 모달 탭 설정: photo 모드로 호출 시 사진 탭, 아니면 텍스트 탭
+  const initialModalTab = viewMode.startsWith('photo') ? 'photo' : 'text';
+
+  currentClauseModalData = {
+    co,
+    period,
+    pData,
+    rider,
+    targetRider,
+    viewMode,
+    activeModalTab: initialModalTab,
+    selectedPhotoRev: viewMode === 'photo_pre' ? 'pre' : 'post'
+  };
+
+  if (btnPhoto && btnText) {
+    if (initialModalTab === 'photo') {
+      btnPhoto.classList.add('active');
+      btnPhoto.style.border = '1.5px solid var(--brand)';
+      btnPhoto.style.background = 'rgba(49,130,246,0.1)';
+      btnPhoto.style.color = 'var(--brand)';
+      btnText.classList.remove('active');
+      btnText.style.border = '1px solid var(--border)';
+      btnText.style.background = 'var(--surface)';
+      btnText.style.color = 'var(--text-2)';
+      if (searchWrap) searchWrap.style.display = 'none';
+    } else {
+      btnText.classList.add('active');
+      btnText.style.border = '1.5px solid var(--brand)';
+      btnText.style.background = 'rgba(49,130,246,0.1)';
+      btnText.style.color = 'var(--brand)';
+      btnPhoto.classList.remove('active');
+      btnPhoto.style.border = '1px solid var(--border)';
+      btnPhoto.style.background = 'var(--surface)';
+      btnPhoto.style.color = 'var(--text-2)';
+      if (searchWrap) searchWrap.style.display = 'flex';
+    }
+  }
 
   renderClauseModalContent('', currentClauseModalData);
 
@@ -7727,10 +7941,84 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   const box = $('#clauseModalContent');
   if (!box || !data) return;
 
-  const { rider, targetRider, viewMode } = data;
+  const { co, period, rider, targetRider, viewMode, activeModalTab, selectedPhotoRev } = data;
   const normQ = (filterQ || '').trim().toLowerCase();
 
-  // 1. 별표 테이블 뷰
+  // 1. 사진 모드 (4. 실제약관도 사진으로 직접 볼 수 있게 해줘 & 8. 개정전/개정후 구분)
+  if (activeModalTab === 'photo') {
+    let imgSrc = rider.imgSrc || 'assets/clause_imgs/meritz_tier_rev_post.png';
+    const revPhotos = rider.revPhotos;
+
+    if (revPhotos && revPhotos.length > 0) {
+      if (selectedPhotoRev === 'pre') {
+        const preObj = revPhotos.find(p => !p.isPost) || revPhotos[0];
+        imgSrc = preObj.src;
+      } else {
+        const postObj = revPhotos.find(p => p.isPost) || revPhotos[0];
+        imgSrc = postObj.src;
+      }
+    } else if (targetRider === 'basic') {
+      if (viewMode === 'basic_exclusion' && rider.exclusion && rider.exclusion.imgSrc) {
+        imgSrc = rider.exclusion.imgSrc;
+      } else if (rider.inclusion && rider.inclusion.imgSrc) {
+        imgSrc = rider.inclusion.imgSrc;
+      }
+    }
+
+    box.innerHTML = `
+      ${revPhotos && revPhotos.length > 1 ? `
+      <!-- 개정 전 / 후 약관 사진 선택 바 -->
+      <div style="display:flex;gap:8px;margin-bottom:12px;justify-content:center;flex-wrap:wrap;">
+        <button type="button" class="btn-sub-rev-photo ${selectedPhotoRev !== 'pre' ? 'active' : ''}" data-rev="post" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:850;cursor:pointer;border:${selectedPhotoRev !== 'pre' ? '1.5px solid var(--brand)' : '1px solid var(--border)'};background:${selectedPhotoRev !== 'pre' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${selectedPhotoRev !== 'pre' ? 'var(--brand)' : 'var(--text-2)'};">
+          📷 개정 후 약관 사진 (여유증 1종, 담석 2종)
+        </button>
+        <button type="button" class="btn-sub-rev-photo ${selectedPhotoRev === 'pre' ? 'active' : ''}" data-rev="pre" style="padding:7px 14px;border-radius:8px;font-size:12px;font-weight:850;cursor:pointer;border:${selectedPhotoRev === 'pre' ? '1.5px solid var(--brand)' : '1px solid var(--border)'};background:${selectedPhotoRev === 'pre' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${selectedPhotoRev === 'pre' ? 'var(--brand)' : 'var(--text-2)'};">
+          📷 개정 전 약관 사진 (표준 3종 지급)
+        </button>
+      </div>` : ''}
+
+      <div class="clause-photo-frame" style="text-align:center;">
+        <div style="font-size:12px;color:var(--text-3);margin-bottom:10px;font-weight:700;">
+          🔍 터치/클릭하시면 동시수술처럼 약관 원문 고해상도 확대 모달로 전환됩니다.
+        </div>
+        <img src="${imgSrc}" id="clauseModalPhotoImg" alt="약관 원문 사진" style="max-width:100%;height:auto;border-radius:10px;border:1.5px solid var(--border);box-shadow:var(--shadow-1);cursor:zoom-in;">
+      </div>
+    `;
+
+    // 서브 개정 전/후 사진 토글 이벤트
+    box.querySelectorAll('.btn-sub-rev-photo').forEach(btn => {
+      btn.addEventListener('click', () => {
+        data.selectedPhotoRev = btn.dataset.rev;
+        renderClauseModalContent('', data);
+      });
+    });
+
+    // 사진 클릭 시 rulesModal(동시수술 확대 라이트박스)로 풀스크린 뷰
+    const photoEl = box.querySelector('#clauseModalPhotoImg');
+    if (photoEl) {
+      photoEl.addEventListener('click', () => {
+        const rulesModal = $('#rulesModal');
+        const rulesImg = $('#rulesModalImg');
+        const rulesTitle = $('#rulesModalTitle');
+        const rulesQuote = $('#rulesModalQuote');
+        if (rulesModal && rulesImg) {
+          rulesImg.src = imgSrc;
+          if (rulesTitle) rulesTitle.textContent = `📋 [${co.name} (${co.shortName})] ${period.periodStr} · 약관 원문 고해상도 전체 보기`;
+          if (rulesQuote) {
+            rulesQuote.style.display = period.revSummary ? 'block' : 'none';
+            rulesQuote.innerHTML = `<strong>⚠️ 개정 포인트 및 실무 안내:</strong><br>${esc(period.revSummary || '')}`;
+          }
+          rulesModal.classList.add('show');
+          rulesModal.setAttribute('aria-hidden', 'false');
+        }
+      });
+    }
+
+    return;
+  }
+
+  // 2. 텍스트 / 표 모드
+  // 2-1. 별표 테이블 뷰
   if (viewMode === 'table') {
     const tableData = rider.tableBody;
     if (!tableData) {
@@ -7767,8 +8055,45 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     return;
   }
 
-  // 2. 약관 조항 뷰
-  const clauseObj = (targetRider === 'basic') ? rider : rider.clauseBody;
+  // 2-2. 질병수술비 보상제외 조항 뷰 (Item 10)
+  if (viewMode === 'basic_exclusion') {
+    const excl = rider.exclusion;
+    if (!excl) {
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);">보상제외 약관 데이터가 없습니다.</div>';
+      return;
+    }
+
+    let clauses = excl.clauses || [];
+    if (normQ) {
+      clauses = clauses.filter(c => c.title.toLowerCase().includes(normQ) || c.text.toLowerCase().includes(normQ));
+    }
+
+    box.innerHTML = `
+      <div style="background:rgba(220,38,38,0.06);border:1.5px solid rgba(220,38,38,0.25);border-radius:12px;padding:14px 16px;margin-bottom:14px;">
+        <div style="font-size:12px;font-weight:900;color:#dc2626;margin-bottom:6px;">🚫 질병수술비 보상하지 않는 손해 (보상제외 / 면책조항 전문)</div>
+        <pre style="white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:var(--text);line-height:1.6;margin:0;word-break:keep-all;">${esc(excl.quote)}</pre>
+      </div>
+
+      <div style="font-size:13px;font-weight:850;color:var(--text);margin-bottom:8px;">📌 면책사유별 핵심 실무 해설:</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${clauses.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-3);">검색어와 일치하는 조항이 없습니다.</div>' : clauses.map(c => `
+          <div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;">
+            <div style="font-size:12.5px;font-weight:900;color:#dc2626;margin-bottom:4px;">${esc(c.title)}</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${esc(c.text)}</div>
+          </div>
+        `).join('')}
+      </div>`;
+    return;
+  }
+
+  // 2-3. 기본 약관 조항 뷰 (basic_clause 또는 clause)
+  let clauseObj = null;
+  if (targetRider === 'basic') {
+    clauseObj = rider.inclusion || rider;
+  } else {
+    clauseObj = rider.clauseBody;
+  }
+
   if (!clauseObj) {
     box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);">약관 본문 데이터가 없습니다.</div>';
     return;
@@ -7806,7 +8131,7 @@ function generateClauseCopyText(data) {
   if (!data) return '';
   const { co, period, pData, rider, targetRider, viewMode } = data;
   const lines = [];
-  lines.push(`[${co.name}] ${period.periodStr} · ${pData.name}`);
+  lines.push(`[${co.name} (${co.shortName})] ${period.periodStr} · ${pData.name}`);
   lines.push(`■ 담보명: ${rider.title}`);
   if (period.revSummary) {
     lines.push(`※ 개정 포인트: ${period.revSummary}`);
@@ -7821,8 +8146,14 @@ function generateClauseCopyText(data) {
         lines.push(`• ${r.join(' | ')}`);
       });
     }
+  } else if (viewMode === 'basic_exclusion') {
+    const excl = rider.exclusion;
+    if (excl) {
+      lines.push('[보상제외 면책조항 전문]');
+      lines.push(excl.quote);
+    }
   } else {
-    const clauseObj = (targetRider === 'basic') ? rider : rider.clauseBody;
+    const clauseObj = targetRider === 'basic' ? (rider.inclusion || rider) : rider.clauseBody;
     if (clauseObj) {
       lines.push('[약관 원문]');
       lines.push(clauseObj.quote);
