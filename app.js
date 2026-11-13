@@ -16,37 +16,53 @@ function bindNdaiDirectJumpEvents(container) {
   container.querySelectorAll('.btn-ndai-direct-jump').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const q = btn.getAttribute('data-search');
+      const q = btn.getAttribute('data-search') || '';
       const cid = btn.getAttribute('data-cid');
       const pid = btn.getAttribute('data-pid');
-      const inp = document.querySelector('#q-clause');
+      
+      const inp = document.querySelector('#clauseCompanySearchInput') || document.querySelector('#q-clause');
       if (inp) {
         inp.value = q;
       }
+      state.clauseSearchQuery = q;
+
       if (typeof window.renderClausesCompanyList === 'function') {
-        window.renderClausesCompanyList(q);
+        window.renderClausesCompanyList();
       }
+      
       if (cid) {
         setTimeout(() => {
-          const freshContainer = document.querySelector('#clausesCompanyList');
+          const freshContainer = document.querySelector('#clauseCompanyListContainer') || document.querySelector('#clausesCompanyList');
           if (!freshContainer) return;
-          const coCard = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`)?.closest('.clause-co-card');
-          if (coCard) {
-            const body = coCard.querySelector('.clause-periods-body');
-            const arrow = coCard.querySelector('.btn-co-toggle-arrow');
-            if (body) body.style.display = 'block';
-            if (arrow) { arrow.textContent = '접기 ▴'; arrow.style.background = 'rgba(49,130,246,0.18)'; }
-            if (pid) {
-              const pDrawer = coCard.querySelector(`.btn-toggle-period[data-pid="${pid}"]`)?.closest('.clause-period-drawer');
-              if (pDrawer) {
-                const pBody = pDrawer.querySelector('.clause-period-body');
-                const pArrow = pDrawer.querySelector('.toggle-period-arrow');
-                if (pBody) pBody.style.display = 'block';
-                if (pArrow) pArrow.textContent = '접기 ▴';
+          const coBtn = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`);
+          const coDrawer = freshContainer.querySelector(`#co-periods-${cid}`);
+          if (coDrawer) {
+            coDrawer.style.display = 'flex';
+            if (coBtn) {
+              const arrow = coBtn.querySelector('.btn-co-toggle-arrow');
+              if (arrow) arrow.textContent = '접기 ▴';
+            }
+          }
+          if (pid) {
+            const pBtn = freshContainer.querySelector(`.btn-toggle-period[data-co-id="${cid}"][data-pid="${pid}"]`);
+            const pDrawer = freshContainer.querySelector(`#period-drawer-${cid}-${pid}`);
+            if (pDrawer) {
+              pDrawer.style.display = 'flex';
+              if (pBtn) {
+                const pArrow = pBtn.querySelector('.period-arrow-badge');
+                if (pArrow) {
+                  pArrow.textContent = '접기 ▴';
+                  pArrow.style.background = 'var(--brand)';
+                  pArrow.style.color = '#fff';
+                }
               }
             }
           }
-        }, 80);
+          const targetCard = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`) || freshContainer.firstElementChild;
+          if (targetCard) {
+            targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 60);
       }
     });
   });
@@ -8108,17 +8124,17 @@ function renderClausesCompanyList(searchQuery = '') {
   if (isNdaiUnsoldPure) {
     let closestNdaiStr = '85대 질병수술비';
     let recommendations = [
-      { coName: 'DB손해보험', cid: 'db', pid: 'db_2020_07', ndai: '85대', period: '2020년 7월 ~ 2024년 3월', label: '85대 질병수술비', jump: 'DB 85대' },
+      { coName: 'DB손해보험', cid: 'dbinsure', pid: 'db_2020_07', ndai: '85대', period: '2020년 7월 ~ 2024년 3월', label: '85대 질병수술비', jump: 'DB 85대' },
       { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2020_04', ndai: '82대', period: '2020년 4월 ~ 2024년 11월', label: '82대 질병수술비', jump: '멜츠 82대' },
       { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 이전', label: '71대 질병수술비', jump: '현대 71대' },
-      { coName: '삼성화재', cid: 'samsung', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' }
+      { coName: '삼성화재', cid: 'samsungfire', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' }
     ];
 
     if (exactNdaiNum <= 65) {
       closestNdaiStr = '64대 질병수술비';
       recommendations = [
         { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2020_03_prior', ndai: '64대', period: '2020년 3월 이전', label: '64대 질병수술비', jump: '멜츠 64대' },
-        { coName: '삼성화재', cid: 'samsung', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' },
+        { coName: '삼성화재', cid: 'samsungfire', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' },
         { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 이전', label: '71대 질병수술비', jump: '현대 71대' }
       ];
     } else if (exactNdaiNum >= 125) {
