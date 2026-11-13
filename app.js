@@ -16,17 +16,21 @@ function bindNdaiDirectJumpEvents(container) {
   container.querySelectorAll('.btn-ndai-direct-jump').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const q = btn.dataset.search;
-      const cid = btn.dataset.cid;
-      const pid = btn.dataset.pid;
-      const inp = $('#q-clause');
+      const q = btn.getAttribute('data-search');
+      const cid = btn.getAttribute('data-cid');
+      const pid = btn.getAttribute('data-pid');
+      const inp = document.querySelector('#q-clause');
       if (inp) {
         inp.value = q;
       }
-      renderClausesCompanyList(q);
+      if (typeof window.renderClausesCompanyList === 'function') {
+        window.renderClausesCompanyList(q);
+      }
       if (cid) {
         setTimeout(() => {
-          const coCard = container.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`)?.closest('.clause-co-card');
+          const freshContainer = document.querySelector('#clausesCompanyList');
+          if (!freshContainer) return;
+          const coCard = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`)?.closest('.clause-co-card');
           if (coCard) {
             const body = coCard.querySelector('.clause-periods-body');
             const arrow = coCard.querySelector('.btn-co-toggle-arrow');
@@ -42,7 +46,7 @@ function bindNdaiDirectJumpEvents(container) {
               }
             }
           }
-        }, 60);
+        }, 80);
       }
     });
   });
