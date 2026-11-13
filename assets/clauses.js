@@ -32,11 +32,15 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_table": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_table_p1535.png",
-          "assets/clause_imgs/meritz_std_tier_table_p1536.png",
-          "assets/clause_imgs/meritz_std_tier_table_p1537.png"
+          "assets/clause_imgs/meritz_star23_tier_p1.png",
+          "assets/clause_imgs/meritz_star23_tier_p2.png",
+          "assets/clause_imgs/meritz_star23_tier_p3.png",
+          "assets/clause_imgs/meritz_star23_tier_p4.png",
+          "assets/clause_imgs/meritz_star23_tier_p5.png",
+          "assets/clause_imgs/meritz_star23_tier_p6.png",
+          "assets/clause_imgs/meritz_star23_tier_p7.png"
         ],
-        "pageStr": "공시실 별표7 제1535쪽 ~ 제1537쪽 (질병 1~7종/1~5종 수술분류표 보장대상 수술코드 전문)"
+        "pageStr": "공시실 공식 【별표23】 1~5종 질병 및 재해 수술분류표 전문 (1종~5종 전체 7페이지 수록)"
       },
       "ndai_inc": {
         "pages": [
@@ -660,8 +664,8 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/meritz_tier_rev_post.png',
                   hasRevPhotoButtons: true,
                   revPhotos: [
-                    { label: '📷 2024.12 개정 후 약관 사진 (여유증 1종, 담석 2종)', src: 'assets/clause_imgs/meritz_tier_rev_post.png', isPost: true },
-                    { label: '📷 2024.12 개정 전 약관 사진 (표준 3종 지급)', src: 'assets/clause_imgs/meritz_tier_rev_pre.png', isPost: false }
+                    { label: '📷 1-5종수술 개정 후 약관 (별표23 1~5종 분류표 7페이지 전문)', src: 'assets/clause_imgs/meritz_star23_tier_p1.png', isPost: true },
+                    { label: '📷 1-5종수술 개정 전 약관 (별표23 1~5종 분류표 7페이지 전문)', src: 'assets/clause_imgs/meritz_star23_tier_p1.png', isPost: false }
                   ]
                 },
                 ndai: {

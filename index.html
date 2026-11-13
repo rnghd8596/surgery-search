@@ -1101,10 +1101,16 @@ window.onerror = function(msg, url, line, col, err) {
         <span id="rulesModalMetaProduct" style="font-size:12px;color:var(--text);font-weight:800;"></span>
         <span id="rulesModalMetaPage" style="font-size:11px;color:var(--text-3);font-weight:700;"></span>
       </div>
+      <div id="rulesModalSubToolbar" style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);box-sizing:border-box;">
+        <span style="font-size:11.5px;color:var(--text-3);font-weight:700;">💡 사진 터치 시 2배 확대</span>
+        <button type="button" id="btnRulesGlobalZoomToggle" onclick="window.toggleAllRulesPagesZoom()" style="height:32px;padding:0 12px;border-radius:7px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);font-size:12px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+          🔍 전체 2배 확대
+        </button>
+      </div>
     </div>
     <div id="rulesModalQuote" style="display:none;padding:12px 18px;background:rgba(217,119,6,0.08);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:800;color:var(--text);line-height:1.55;word-break:keep-all;"></div>
     <!-- 모달 본문 영역 (100% 무한 연속 세로 스크롤 & 모바일 가로 슬라이드 개방) -->
-    <div class="rules-modal-body" id="rulesModalBody" style="overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:78vh;padding:14px;text-align:center;background:#090d16;">
+    <div class="rules-modal-body" id="rulesModalBody" style="overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;max-height:calc(100dvh - 135px);padding:12px 8px;text-align:center;background:var(--surface-2);">
       <div id="rulesModalPagesStack" style="display:flex;flex-direction:column;gap:18px;align-items:center;width:100%;"></div>
     </div>
     <div class="rules-modal-foot" style="padding:10px 14px;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:center;position:sticky;bottom:0;z-index:20;">
@@ -1123,7 +1129,7 @@ window.onerror = function(msg, url, line, col, err) {
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="assets/curated.js?v=20261113_1300"></script>
 <script src="assets/disputes.js?v=20261113_1300"></script>
-<script src="assets/clauses.js?v=20261113_1505"></script>
-<script src="app.js?v=20261113_1505"></script>
+<script src="assets/clauses.js?v=20261113_1510"></script>
+<script src="app.js?v=20261113_1510"></script>
 </body>
 </html>

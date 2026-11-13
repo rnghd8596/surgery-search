@@ -7377,6 +7377,69 @@ function bindRulesTab() {
   // 모바일은 기본 연속 세로 스크롤, PC는 단일 페이지 넘김 (#32200 #32201)
   let rulesViewMode = 'continuous';
 
+  // 개별 사진 터치(클릭) 시 2배 확대 / 축소 토글 엔진 (#34791 #34792 #34807)
+  window.toggleRulesPageZoom = function(imgEl) {
+    if (!imgEl) return;
+    const isZoomed = imgEl.classList.toggle('zoomed');
+    const parentBox = imgEl.parentElement;
+    if (isZoomed) {
+      imgEl.style.width = '190%';
+      imgEl.style.maxWidth = 'none';
+      imgEl.style.cursor = 'zoom-out';
+      if (parentBox) {
+        parentBox.style.overflowX = 'auto';
+        parentBox.style.webkitOverflowScrolling = 'touch';
+      }
+    } else {
+      imgEl.style.width = '100%';
+      imgEl.style.maxWidth = '100%';
+      imgEl.style.cursor = 'zoom-in';
+      if (parentBox) {
+        parentBox.style.overflowX = 'hidden';
+        parentBox.scrollLeft = 0;
+      }
+    }
+    const allImgs = document.querySelectorAll('.rules-page-img');
+    const anyZoomed = Array.from(allImgs).some(img => img.classList.contains('zoomed'));
+    const globalBtn = document.getElementById('btnRulesGlobalZoomToggle');
+    if (globalBtn) {
+      globalBtn.textContent = anyZoomed ? '📱 화면 크기에 맞춤' : '🔍 전체 2배 확대';
+    }
+  };
+
+  // 모달 상단 전체 2배 확대 / 화면 맞춤 일괄 토글 엔진 (#34791 #34792 #34807)
+  window.toggleAllRulesPagesZoom = function() {
+    const allImgs = document.querySelectorAll('.rules-page-img');
+    if (!allImgs.length) return;
+    const anyZoomed = Array.from(allImgs).some(img => img.classList.contains('zoomed'));
+    allImgs.forEach(img => {
+      const parentBox = img.parentElement;
+      if (anyZoomed) {
+        img.classList.remove('zoomed');
+        img.style.width = '100%';
+        img.style.maxWidth = '100%';
+        img.style.cursor = 'zoom-in';
+        if (parentBox) {
+          parentBox.style.overflowX = 'hidden';
+          parentBox.scrollLeft = 0;
+        }
+      } else {
+        img.classList.add('zoomed');
+        img.style.width = '190%';
+        img.style.maxWidth = 'none';
+        img.style.cursor = 'zoom-out';
+        if (parentBox) {
+          parentBox.style.overflowX = 'auto';
+          parentBox.style.webkitOverflowScrolling = 'touch';
+        }
+      }
+    });
+    const globalBtn = document.getElementById('btnRulesGlobalZoomToggle');
+    if (globalBtn) {
+      globalBtn.textContent = anyZoomed ? '🔍 전체 2배 확대' : '📱 화면 크기에 맞춤';
+    }
+  };
+
   const renderRulesModalPages = () => {
     const stack = $('#rulesModalPagesStack');
     const singleImg = $('#rulesModalImg');
@@ -7392,22 +7455,27 @@ function bindRulesTab() {
       stack.style.flexDirection = 'column';
       stack.style.gap = '20px';
       stack.style.width = '100%';
+      stack.style.alignItems = 'center';
       stack.innerHTML = rulesModalPages.map((p, idx) => {
         let pageDesc = `📄 제 ${idx + 1} 쪽 / 총 ${rulesModalPages.length} 쪽`;
-        if (p.includes('ndai_31')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표44】 특정 31대 질병분류표`;
+        if (p.includes('star23_tier')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표23】 1~5종 수술분류표 (${idx + 1}/${rulesModalPages.length}쪽)`;
+        else if (p.includes('ndai_31')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표44】 특정 31대 질병분류표`;
         else if (p.includes('ndai_64_p720')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표45】 다빈도 64대 질병분류표 (1/2쪽)`;
         else if (p.includes('ndai_64_p721')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표45】 다빈도 64대 질병분류표 (2/2쪽: 12대 양성종양 등)`;
         else if (p.includes('ndai_32')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표46】 32대 질병분류표`;
         else if (p.includes('ndai_5')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표47】 5대 질병분류표`;
-        else if (p.includes('tier_table')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표50】 수술분류표 보장대상 수술코드 전문 (${idx + 1}/${rulesModalPages.length}쪽)`;
+        else if (p.includes('tier_table')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표】 1~5종 수술분류표 (${idx + 1}/${rulesModalPages.length}쪽)`;
 
         return `
-        <div class="rules-page-item" id="rulesPageItem_${idx}" style="width:100%;text-align:center;">
-          <div style="display:inline-block;margin-bottom:10px;padding:5px 16px;border-radius:7px;background:rgba(49,130,246,0.18);color:#93c5fd;font-size:12.5px;font-weight:900;border:1px solid rgba(49,130,246,0.35);">
+        <div class="rules-page-item" id="rulesPageItem_${idx}" style="width:100%;max-width:860px;margin:0 auto;text-align:center;">
+          <div style="display:inline-block;margin-bottom:8px;padding:4px 14px;border-radius:8px;background:var(--surface);color:var(--text);font-size:12px;font-weight:850;border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,0.03);">
             ${pageDesc}
           </div>
-          <div class="rules-page-img-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;">
-            <img src="${p}" alt="약관 ${idx + 1}쪽" class="rules-page-img" style="width:100%;min-width:680px;height:auto;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.45);display:block;margin:0 auto;">
+          <div class="rules-page-img-box" style="position:relative;width:100%;border-radius:10px;overflow:hidden;background:#ffffff;box-shadow:0 3px 14px rgba(0,0,0,0.1);border:1px solid var(--border);box-sizing:border-box;">
+            <img src="${p}" alt="약관 ${idx + 1}쪽" class="rules-page-img" onclick="window.toggleRulesPageZoom(this)" style="width:100%;max-width:100%;height:auto;display:block;margin:0 auto;cursor:zoom-in;transition:width 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
+          </div>
+          <div style="font-size:11.5px;color:var(--text-3);margin-top:5px;font-weight:600;">
+            🔍 터치하면 2배로 확대 / 축소됩니다
           </div>
         </div>
         `;
@@ -9429,23 +9497,23 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </div>
       </div>
 
-      <!-- 동시수술 4대 약관과 100% 동일한 통일감 버튼 -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
-        <button type="button" class="btn-co-clause btn-tier-rev-photo" data-rev="post" style="height:44px;min-height:44px;border:1.5px solid rgba(217,119,6,0.4);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
+      <!-- 1~5종 개정 후 / 개정 전 약관보기 버튼 (모바일 글씨 잘림 0% 와이드 칼정렬 #34701 #34711) -->
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+        <button type="button" class="btn-co-clause btn-tier-rev-photo" data-rev="post" style="width:100%;height:44px;min-height:44px;border:1.5px solid rgba(217,119,6,0.4);border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
             <span>📋</span>
-            <span>1-5종수술 <strong style="color:#d97706;font-weight:900;">개정 후</strong></span>
+            <span>1-5종수술 <strong style="color:#d97706;font-weight:900;">개정 후</strong> 약관</span>
           </span>
-          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:#d97706;background:rgba(217,119,6,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
+          <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:#d97706;background:rgba(217,119,6,0.12);padding:4px 10px;border-radius:6px;white-space:nowrap;">
             약관보기 🔍
           </span>
         </button>
-        <button type="button" class="btn-co-clause btn-tier-rev-photo" data-rev="pre" style="height:44px;min-height:44px;border:1.5px solid rgba(37,99,235,0.35);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
+        <button type="button" class="btn-co-clause btn-tier-rev-photo" data-rev="pre" style="width:100%;height:44px;min-height:44px;border:1.5px solid rgba(37,99,235,0.35);border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
             <span>📋</span>
-            <span>1-5종수술 <strong style="color:#2563eb;font-weight:900;">개정 전</strong></span>
+            <span>1-5종수술 <strong style="color:#2563eb;font-weight:900;">개정 전</strong> 약관</span>
           </span>
-          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
+          <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.12);padding:4px 10px;border-radius:6px;white-space:nowrap;">
             약관보기 🔍
           </span>
         </button>
@@ -9827,35 +9895,39 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   box.innerHTML = `
     <!-- 2대 탭 전환 버튼: [보상하는 사항] vs [보상제외 사항] (#28437 #28442 #33904) -->
     <div style="margin-bottom:12px;">
+      <!-- 2대 탭 (박스 높이 44px, 반경 10px 칼정렬 #34648) -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
-        <button type="button" id="tabClauseInclusion" style="height:44px;border-radius:10px;border:${curTab === 'inclusion' ? '2.5px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
+        <button type="button" id="tabClauseInclusion" style="height:44px;min-height:44px;box-sizing:border-box;border-radius:10px;border:${curTab === 'inclusion' ? '2px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
           <span style="white-space:nowrap;">📄 보상하는 사항</span>
         </button>
-        <button type="button" id="tabClauseExclusion" style="height:44px;border-radius:10px;border:${curTab === 'exclusion' ? '2.5px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
+        <button type="button" id="tabClauseExclusion" style="height:44px;min-height:44px;box-sizing:border-box;border-radius:10px;border:${curTab === 'exclusion' ? '2px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
           <span style="white-space:nowrap;">🚫 보상제외 사항</span>
         </button>
       </div>
 
-      <!-- 원터치 실물 약관보기 2분할 버튼 (동시수술 4대 약관 카드와 100% 동일한 버튼 디자인·규격 통일! #34343 #34445) -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
-        <button type="button" class="btn-co-clause" id="btnScanInclusion" style="height:44px;min-height:44px;border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
-            <span>📄</span>
-            <span>보상하는사항</span>
-          </span>
-          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
-            약관보기 🔍
-          </span>
-        </button>
-        <button type="button" class="btn-co-clause" id="btnScanExclusion" style="height:44px;min-height:44px;border:1.5px solid rgba(220,38,38,0.35);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
-            <span>🚫</span>
-            <span>보상제외사항</span>
-          </span>
-          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
-            약관보기 🔍
-          </span>
-        </button>
+      <!-- 원터치 실물 약관보기 버튼 (현재 선택된 탭에 맞춰 단독 와이드 카드로 100% 깔끔 직결 #34648) -->
+      <div style="margin-bottom:12px;">
+        ${curTab === 'inclusion' ? `
+          <button type="button" class="btn-co-clause" id="btnScanInclusion" style="width:100%;height:44px;min-height:44px;border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
+              <span>📄</span>
+              <span><strong>보상하는 사항</strong> 공식 약관</span>
+            </span>
+            <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.12);padding:4px 10px;border-radius:6px;white-space:nowrap;">
+              약관보기 🔍
+            </span>
+          </button>
+        ` : `
+          <button type="button" class="btn-co-clause" id="btnScanExclusion" style="width:100%;height:44px;min-height:44px;border:1.5px solid rgba(220,38,38,0.35);border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
+              <span>🚫</span>
+              <span><strong>보상제외 사항</strong> 공식 약관</span>
+            </span>
+            <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.12);padding:4px 10px;border-radius:6px;white-space:nowrap;">
+              약관보기 🔍
+            </span>
+          </button>
+        `}
       </div>
     </div>
 

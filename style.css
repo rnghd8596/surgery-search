@@ -2389,14 +2389,13 @@ html[data-theme="dark"] .badge-warn {
   transform: scale(1.08);
 }
 .rules-modal-body {
-  overflow: auto;
-  padding: 18px;
-  text-align: center;
-  background: #f1f5f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 320px;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 14px 10px !important;
+  text-align: center !important;
+  background: var(--surface-2, #f8fafc) !important;
+  min-height: 280px;
+  -webkit-overflow-scrolling: touch !important;
 }
 html[data-theme="dark"] .rules-modal-body {
   background: #090d16;
@@ -2757,7 +2756,7 @@ html[data-theme="dark"] .rules-modal-body {
   max-height: 80vh !important;
   overflow-y: auto !important;
   padding: 10px !important;
-  background: #0f172a !important;
+  background: var(--surface-2, #f8fafc) !important;
   text-align: center !important;
 }
 .rules-modal-body img {
@@ -2796,7 +2795,7 @@ html[data-theme="dark"] .rules-modal-body {
   max-height: 80vh !important;
   overflow-y: auto !important;
   padding: 10px !important;
-  background: #0f172a !important;
+  background: var(--surface-2, #f8fafc) !important;
   text-align: center !important;
 }
 .rules-modal-body img {
