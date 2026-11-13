@@ -1,4 +1,83 @@
 
+window.openNdaiGroupModal = function(co, grpName, period, data) {
+  const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+  const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
+
+  let pages = null;
+  let pageDesc = '';
+  const grp = String(grpName || '');
+
+  // 1. 메리츠화재
+  if (co.id.includes('meritz')) {
+    if (grp.includes('5대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_5_p734.png'];
+      pageDesc = '공시실 별표47 제734쪽 【별표47】 5대질병 분류표';
+    } else if (grp.includes('31대') || grp.includes('10대') || grp.includes('중대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_31_p714.png', 'assets/clause_imgs/meritz_std_ndai_31_p715.png'];
+      pageDesc = '공시실 별표44 제714쪽~제715쪽 【별표44】 특정31대질병 분류표';
+    } else if (grp.includes('64대') || grp.includes('다빈도')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_64_p720.png', 'assets/clause_imgs/meritz_std_ndai_64_p721.png'];
+      pageDesc = '공시실 별표45 제720쪽~제721쪽 【별표45】 다빈도64대질병 분류표';
+    } else if (grp.includes('32대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_32_p728.png'];
+      pageDesc = '공시실 별표46 제728쪽 【별표46】 32대질병 분류표';
+    }
+  }
+  // 2. 삼성화재
+  else if (co.id.includes('samsung')) {
+    if (grp.includes('5대')) {
+      pages = ['assets/clause_imgs/samsung_std_ndai_5_p1415.png'];
+      pageDesc = '공시실 별표20-5 제1415쪽 【별표20-5】 5대주요기관질병 분류표Ⅱ';
+    } else if (grp.includes('22대')) {
+      pages = ['assets/clause_imgs/samsung_std_ndai_22_p1416.png', 'assets/clause_imgs/samsung_std_ndai_22_p1417.png'];
+      pageDesc = '공시실 별표20-6 제1416쪽~제1417쪽 【별표20-6】 22대주요질병 분류표';
+    } else if (grp.includes('3대')) {
+      pages = ['assets/clause_imgs/samsung_std_ndai_3_p1418.png'];
+      pageDesc = '공시실 별표20-7 제1418쪽 【별표20-7】 3대질병 분류표';
+    } else if (grp.includes('19대')) {
+      pages = ['assets/clause_imgs/samsung_std_ndai_19_p1419.png'];
+      pageDesc = '공시실 별표20-8 제1419쪽 【별표20-8】 19대생활질병 분류표';
+    } else if (grp.includes('62대')) {
+      pages = ['assets/clause_imgs/samsung_std_ndai_62_p1420.png', 'assets/clause_imgs/samsung_std_ndai_62_p1421.png'];
+      pageDesc = '공시실 별표20-9 제1420쪽~제1421쪽 【별표20-9】 62대생활질병 분류표';
+    }
+  }
+  // 3. 현대해상
+  else if (co.id.includes('hyundai')) {
+    pages = ['assets/clause_imgs/hyundai_std_ndai_table_p535.png', 'assets/clause_imgs/hyundai_std_ndai_table_p536.png'];
+    pageDesc = '공시실 별표22 제535쪽~제536쪽 120대 대상질병분류표 전문';
+  }
+  // 4. DB손해보험
+  else if (co.id.includes('db')) {
+    pages = ['assets/clause_imgs/db_std_ndai_table_p1216.png', 'assets/clause_imgs/db_std_ndai_table_p1217.png'];
+    pageDesc = '공시실 별표 제1216쪽~제1217쪽 116대/85대 대상질병분류표 전문';
+  }
+  // 5. KB손해보험
+  else if (co.id.includes('kb')) {
+    pages = ['assets/clause_imgs/kb_std_ndai_table_p627.png', 'assets/clause_imgs/kb_std_ndai_table_p628.png'];
+    pageDesc = '공시실 별표 제627쪽~제628쪽 112대 대상질병분류표 전문';
+  }
+  // 6. 한화손해보험
+  else if (co.id.includes('hanwha')) {
+    pages = ['assets/clause_imgs/hanwha_std_ndai_table_p1376.png'];
+    pageDesc = '공시실 별표 제1376쪽 124대 대상질병분류표 전문';
+  }
+
+  // Fallback: v.ndai_table
+  if (!pages && v && v.ndai_table && v.ndai_table.pages) {
+    pages = v.ndai_table.pages;
+    pageDesc = v.ndai_table.pageStr || '';
+  }
+
+  if (pages && pages.length > 0) {
+    const meta = { product: (v && v.product) || co.name, type: (v && v.type) || '공식 약관', page: pageDesc };
+    window.openRulesModal(pages[0], `🏢 [${co.name}] ${grpName} 공식 분류표 원문`, period ? period.revSummary : '', pages, meta);
+  } else {
+    alert(`🏢 [${co.name}] ${grpName} 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+  }
+};
+
+
 function generateClauseSuggestions(rawQ) {
   const normQ = (rawQ || '').trim().toLowerCase();
   return [
@@ -7313,16 +7392,26 @@ function bindRulesTab() {
       stack.style.flexDirection = 'column';
       stack.style.gap = '20px';
       stack.style.width = '100%';
-      stack.innerHTML = rulesModalPages.map((p, idx) => `
+      stack.innerHTML = rulesModalPages.map((p, idx) => {
+        let pageDesc = `📄 제 ${idx + 1} 쪽 / 총 ${rulesModalPages.length} 쪽`;
+        if (p.includes('ndai_31')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표44】 특정 31대 질병분류표`;
+        else if (p.includes('ndai_64_p720')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표45】 다빈도 64대 질병분류표 (1/2쪽)`;
+        else if (p.includes('ndai_64_p721')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표45】 다빈도 64대 질병분류표 (2/2쪽: 12대 양성종양 등)`;
+        else if (p.includes('ndai_32')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표46】 32대 질병분류표`;
+        else if (p.includes('ndai_5')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표47】 5대 질병분류표`;
+        else if (p.includes('tier_table')) pageDesc = `📄 제 ${idx + 1} 쪽: 【별표50】 수술분류표 보장대상 수술코드 전문 (${idx + 1}/${rulesModalPages.length}쪽)`;
+
+        return `
         <div class="rules-page-item" id="rulesPageItem_${idx}" style="width:100%;text-align:center;">
-          <div style="display:inline-block;margin-bottom:10px;padding:4px 14px;border-radius:7px;background:rgba(49,130,246,0.18);color:#93c5fd;font-size:12px;font-weight:900;border:1px solid rgba(49,130,246,0.35);">
-            📄 제 ${idx + 1} 쪽 / 총 ${rulesModalPages.length} 쪽
+          <div style="display:inline-block;margin-bottom:10px;padding:5px 16px;border-radius:7px;background:rgba(49,130,246,0.18);color:#93c5fd;font-size:12.5px;font-weight:900;border:1px solid rgba(49,130,246,0.35);">
+            ${pageDesc}
           </div>
           <div class="rules-page-img-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;">
             <img src="${p}" alt="약관 ${idx + 1}쪽" class="rules-page-img" style="width:100%;min-width:680px;height:auto;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.45);display:block;margin:0 auto;">
           </div>
         </div>
-      `).join('');
+        `;
+      }).join('');
     }
     if (paging) paging.style.display = 'none';
   };
@@ -7348,7 +7437,8 @@ function bindRulesTab() {
 
   const openModal = (src, title, quote, pages = null, meta = null) => {
     if (!modal) return;
-    if (!src && (!pages || !pages.length)) {
+    const validPages = (pages && Array.isArray(pages) ? pages : [src]).filter(p => typeof p === 'string' && p.trim().length > 0 && p !== 'undefined');
+    if (!validPages.length) {
       alert("🏢 [약관 원문 안내]\n\n해당 보험사 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.");
       return;
     }
@@ -7362,11 +7452,7 @@ function bindRulesTab() {
       modalImg.style.cursor = 'zoom-in';
     }
 
-    if (pages && Array.isArray(pages) && pages.length > 0) {
-      rulesModalPages = pages;
-    } else {
-      rulesModalPages = [src];
-    }
+    rulesModalPages = validPages;
     rulesModalCurIndex = 0;
 
     const ctrl = $('#rulesModalControls');
@@ -9149,13 +9235,14 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       return;
     }
 
-    // 2) Idle 상태: 전체 질병군 아코디언 드릴다운 리스트
+    // 2) Idle 상태: 전체 질병군 아코디언 드릴다운 리스트 (112대 질병군 우선 상단 전개, 빠른판정 칩은 하단 배치 #34084)
     const rows = tableData.rows || [];
-    box.innerHTML = photoBtnHTML + chipsHTML + `
+    const cleanTableTitle = (selectedNdai ? `별표 [${selectedNdai} 질병분류표 및 보장 질병코드 전문]` : tableData.title).replace(/\d+대\/\d+대/, m => selectedNdai || m.split('/')[0]);
+    box.innerHTML = photoBtnHTML + `
       <div style="margin-bottom:12px;padding:2px 0;">
         <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
           <span>🏢</span>
-          <span>${esc(tableData.title)}</span>
+          <span>${esc(cleanTableTitle)}</span>
           <span style="font-size:11.5px;color:#059669;font-weight:850;background:rgba(5,150,105,0.08);padding:2px 7px;border-radius:5px;border:1px solid rgba(5,150,105,0.2);">(총 ${rows.length}개 군)</span>
         </div>
       </div>
@@ -9182,7 +9269,13 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                   포함: ${esc(summaryNames)}
                 </div>
               </div>
-              <span class="ndai-arrow-badge" style="font-size:11px;font-weight:850;color:#059669;background:var(--surface-2);padding:3px 8px;border-radius:5px;border:1px solid var(--border);min-width:64px;text-align:center;box-sizing:border-box;flex-shrink:0;">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
+              <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                <button type="button" class="btn-group-clause-scan" data-grp="${esc(grpName)}" style="height:32px;padding:0 9px;border-radius:6px;border:1.5px solid rgba(5,150,105,0.4);background:rgba(5,150,105,0.08);color:#059669;font-size:11.5px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;box-sizing:border-box;">
+                  <span>📑</span>
+                  <span>약관보기 🔍</span>
+                </button>
+                <span class="ndai-arrow-badge" style="font-size:11px;font-weight:850;color:#059669;background:var(--surface-2);padding:4px 8px;border-radius:5px;border:1px solid var(--border);min-width:64px;text-align:center;box-sizing:border-box;display:inline-block;">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
+              </div>
             </div>
 
             <div class="ndai-group-body" style="display:${isAutoOpen ? 'block' : 'none'};padding:10px 12px;background:var(--surface-2);border-top:1px dashed var(--line);">
@@ -9207,9 +9300,22 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           </div>`;
         }).join('')}
       </div>
+      <!-- N대 대표질환 원터치 빠른 판정 칩 (하단 배치 #34084) -->
+      <div style="margin-top:16px;">
+        ${chipsHTML}
+      </div>
     `;
 
     bindClauseChipEvents(box);
+
+    // 군별 1:1 약관보기 버튼 바인딩 (#34099)
+    box.querySelectorAll('.btn-group-clause-scan').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const grp = btn.getAttribute('data-grp');
+        window.openNdaiGroupModal(co, grp, period, data);
+      });
+    });
 
     const btnPhoto = box.querySelector('#btnOpenRulesNdai');
     if (btnPhoto) {
@@ -9834,16 +9940,32 @@ function bindPhotoButtons(box, rider, co, period) {
 
   if (btnPost) {
     btnPost.addEventListener('click', () => {
-      const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
-      const src = postObj ? postObj.src : rider.imgSrc;
-      window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 후 약관 사진]`, period.revSummary);
+      const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+      const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
+      if (v && v.tier_table && v.tier_table.pages) {
+        const meta = { product: v.product, type: v.type, page: v.tier_table.pageStr };
+        window.openRulesModal(v.tier_table.pages[0], `📋 [${co.name}] 1~5종 수술분류표 공식 원문`, period.revSummary, v.tier_table.pages, meta);
+      } else {
+        const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
+        const src = postObj ? postObj.src : rider.imgSrc;
+        if (src) window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 후 약관 사진]`, period.revSummary);
+        else alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+      }
     });
   }
   if (btnPre) {
     btnPre.addEventListener('click', () => {
-      const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
-      const src = preObj ? preObj.src : rider.imgSrc;
-      window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary);
+      const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+      const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
+      if (v && v.tier_table && v.tier_table.pages) {
+        const meta = { product: v.product, type: v.type, page: v.tier_table.pageStr };
+        window.openRulesModal(v.tier_table.pages[0], `📋 [${co.name}] 1~5종 수술분류표 공식 원문`, period.revSummary, v.tier_table.pages, meta);
+      } else {
+        const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
+        const src = preObj ? preObj.src : rider.imgSrc;
+        if (src) window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary);
+        else alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+      }
     });
   }
   if (btnSingle) {

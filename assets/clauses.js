@@ -19,10 +19,9 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_inc_p198.png",
-          "assets/clause_imgs/meritz_std_tier_inc_p199.png"
+          "assets/clause_imgs/meritz_std_tier_inc_p198.png"
         ],
-        "pageStr": "공시실 원문 제198쪽 ~ 제199쪽 (30. 수술비(1~7종) 제1조 지급사유 및 1~7종 가입금액표)"
+        "pageStr": "공시실 원문 제198쪽 (30. 수술비(1~7종) 제1조 지급사유 및 1~7종 가입금액표)"
       },
       "tier_exc": {
         "pages": [
