@@ -8117,11 +8117,11 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           </span>
           <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 즉시 KCD 매칭</span>
         </div>
-        <div class="clause-quick-chips" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+        <div class="clause-quick-chips" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
           ${ndaiQuickChips.map(c => `
-            <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="height:38px;padding:0 6px;border-radius:8px;font-size:11.5px;font-weight:850;cursor:pointer;border:1px solid ${normQ === norm(c.q) ? '#059669' : 'var(--border)'};background:${normQ === norm(c.q) ? '#059669' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;justify-content:space-between;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,0.02);min-width:0;">
-              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left;">${esc(c.name)}</span>
-              <span style="font-size:9.5px;font-weight:900;opacity:0.9;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'var(--surface-2)'};padding:1px 4px;border-radius:4px;color:${normQ === norm(c.q) ? '#fff' : '#059669'};flex-shrink:0;">${esc(c.code)}</span>
+            <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="height:42px;padding:0 10px;border-radius:9px;font-size:12.5px;font-weight:850;cursor:pointer;border:1.5px solid ${normQ === norm(c.q) ? '#059669' : 'var(--border)'};background:${normQ === norm(c.q) ? '#059669' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;justify-content:space-between;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.02);min-width:0;">
+              <span style="font-size:12.5px;font-weight:900;white-space:nowrap;text-align:left;flex:1;min-width:0;">${esc(c.name)}</span>
+              <span style="font-size:11px;font-weight:900;padding:2px 6px;border-radius:5px;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'rgba(5,150,105,0.08)'};color:${normQ === norm(c.q) ? '#fff' : '#059669'};flex-shrink:0;border:${normQ === norm(c.q) ? 'none' : '1px solid rgba(5,150,105,0.2)'};">${esc(c.code)}</span>
             </button>
           `).join('')}
         </div>
@@ -8384,9 +8384,14 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     } else {
       photoHeaderHTML = `
         <div style="margin-bottom:12px;">
-          <button type="button" class="btn-tier-single-photo" style="width:100%;height:42px;border-radius:10px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12.5px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(49,130,246,0.12);">
-            <span>📷 실제 약관 수술분류표 원문 사진 보기</span>
-            <span style="font-size:11px;font-weight:700;opacity:0.85;">(동시수술 고해상도 뷰어 🔍)</span>
+          <button type="button" class="btn-tier-single-photo btn-co-clause" style="width:100%;height:46px;padding:0 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+            <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+              <span>📋</span>
+              <span>${esc(co.name)} 1-5종 수술분류표 원문</span>
+            </span>
+            <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;padding:3px 7px;border-radius:6px;">
+              약관 보기 🔍
+            </span>
           </button>
         </div>
       `;
@@ -8416,11 +8421,11 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           </span>
           <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 즉시 판정</span>
         </div>
-        <div class="clause-quick-chips" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+        <div class="clause-quick-chips" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
           ${quickChips.map(c => `
-            <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="height:38px;padding:0 6px;border-radius:8px;font-size:11.5px;font-weight:850;cursor:pointer;border:1px solid ${normQ === norm(c.q) ? 'var(--brand)' : 'var(--border)'};background:${normQ === norm(c.q) ? 'var(--brand)' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;justify-content:space-between;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,0.02);min-width:0;">
-              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:left;">${esc(c.name)}</span>
-              <span style="font-size:9.5px;font-weight:900;opacity:0.9;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'var(--surface-2)'};padding:1px 4px;border-radius:4px;color:${normQ === norm(c.q) ? '#fff' : 'var(--brand)'};flex-shrink:0;">${esc(c.badge)}</span>
+            <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="height:42px;padding:0 10px;border-radius:9px;font-size:12.5px;font-weight:850;cursor:pointer;border:1.5px solid ${normQ === norm(c.q) ? 'var(--brand)' : 'var(--border)'};background:${normQ === norm(c.q) ? 'var(--brand)' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;justify-content:space-between;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.02);min-width:0;">
+              <span style="font-size:12.5px;font-weight:900;white-space:nowrap;text-align:left;flex:1;min-width:0;">${esc(c.name)}</span>
+              <span style="font-size:11px;font-weight:900;padding:2px 6px;border-radius:5px;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'rgba(49,130,246,0.08)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--brand)'};flex-shrink:0;border:${normQ === norm(c.q) ? 'none' : '1px solid rgba(49,130,246,0.2)'};">${esc(c.badge)}</span>
             </button>
           `).join('')}
         </div>
