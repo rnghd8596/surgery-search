@@ -5289,18 +5289,22 @@ function renderNdaiDetailsHTML(g, cosList, nTier) {
             </div>
             <div style="display:flex;flex-direction:column;gap:5px;">
               ${items.map(it => `
-                <div class="ndai-item-block" style="margin-bottom:2px;">
-                  <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || c)}" data-sub="${esc(it.subClean)}" style="min-height:42px;padding:7px 10px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div class="ndai-item-block" style="margin-bottom:4px;">
+                  <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || c)}" data-sub="${esc(it.subClean)}" style="min-height:42px;padding:6px 12px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;">
                     <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-                      <span style="color:#059669;font-weight:900;font-size:11px;">•</span>
+                      <span style="color:#059669;font-weight:900;font-size:12px;flex-shrink:0;">•</span>
                       <span style="font-size:12px;color:var(--text);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(it.tierText)}</span>
                     </div>
-                    <div class="nir-sub-pill" data-sub-text="${esc(it.subClean)}" style="font-size:11.5px;font-weight:850;color:#047857;background:rgba(16,185,129,0.1);border:1.5px solid rgba(16,185,129,0.35);padding:4px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0;">
-                      <span class="nir-sub-title">[${esc(it.subClean)}]</span>
-                      <span class="nir-arrow">▾</span>
+                    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                      <span style="font-size:11.5px;font-weight:900;color:#047857;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);padding:3px 8px;border-radius:6px;white-space:nowrap;">
+                        [${esc(it.subClean)}]
+                      </span>
+                      <span class="nir-arrow" style="font-size:11px;font-weight:850;color:#047857;background:var(--surface);padding:3px 8px;border-radius:6px;border:1px solid var(--border);min-width:96px;text-align:center;box-sizing:border-box;display:inline-block;">
+                        질병코드 보기 ▾
+                      </span>
                     </div>
                   </div>
-                  <div class="ndai-codes-drawer" style="display:none;"></div>
+                  <div class="ndai-codes-drawer" style="display:none;margin-top:4px;"></div>
                 </div>
               `).join('')}
             </div>
@@ -5364,16 +5368,20 @@ function renderNdaiDetailsHTML(g, cosList, nTier) {
               </div>
               <div class="co-group-drawer" style="display:none;padding:10px 12px;background:var(--surface-2);border-top:1px dashed var(--line);flex-direction:column;gap:6px;">
                 ${group.items.map(it => `
-                  <div class="ndai-item-block" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;">
-                    <!-- 1. 특약명 풀네임 (말줄임 없이 온전한 노출) -->
-                    <div style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:flex-start;gap:6px;word-break:keep-all;line-height:1.4;">
-                      <span style="color:#059669;font-weight:900;font-size:12px;flex-shrink:0;margin-top:1px;">•</span>
-                      <span>${esc(it.tierText)}</span>
-                    </div>
-                    <!-- 2. 세부 분류 및 질병코드 보기 버튼 -->
-                    <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || group.co)}" data-sub="${esc(it.subClean)}" style="min-height:36px;padding:6px 10px;background:rgba(16,185,129,0.06);border-radius:6px;border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;">
-                      <span style="font-size:11.5px;font-weight:900;color:#047857;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">[${esc(it.subClean)}]</span>
-                      <span class="nir-arrow" style="font-size:11px;font-weight:800;color:#047857;background:var(--surface);padding:2px 7px;border-radius:4px;border:1px solid rgba(16,185,129,0.25);flex-shrink:0;">질병코드 보기 ▾</span>
+                  <div class="ndai-item-block" style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;gap:6px;">
+                    <div class="ndai-item-row btn-expand-ndai-codes" data-ri="${it.ri}" data-si="${it.si}" data-co="${esc(it.co || group.co)}" data-sub="${esc(it.subClean)}" style="min-height:38px;padding:0;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;">
+                      <div style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;word-break:keep-all;min-width:0;flex:1;">
+                        <span style="color:#059669;font-weight:900;font-size:12px;flex-shrink:0;">•</span>
+                        <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(it.tierText)}</span>
+                      </div>
+                      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+                        <span style="font-size:11.5px;font-weight:900;color:#047857;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);padding:3px 8px;border-radius:6px;white-space:nowrap;">
+                          [${esc(it.subClean)}]
+                        </span>
+                        <span class="nir-arrow" style="font-size:11px;font-weight:850;color:#047857;background:var(--surface);padding:3px 8px;border-radius:6px;border:1px solid var(--border);min-width:96px;text-align:center;box-sizing:border-box;display:inline-block;">
+                          질병코드 보기 ▾
+                        </span>
+                      </div>
                     </div>
                     <div class="ndai-codes-drawer" style="display:none;margin-top:4px;"></div>
                   </div>
@@ -7288,7 +7296,7 @@ function bindRulesTab() {
   let rulesModalCurIndex = 0;
   let isRulesZoomed = false;
   // 모바일은 기본 연속 세로 스크롤, PC는 단일 페이지 넘김 (#32200 #32201)
-  let rulesViewMode = (window.innerWidth <= 768) ? 'continuous' : 'continuous';
+  let rulesViewMode = 'continuous';
 
   const renderRulesModalPages = () => {
     const stack = $('#rulesModalPagesStack');
@@ -7311,32 +7319,24 @@ function bindRulesTab() {
       return;
     }
 
-    if (rulesViewMode === 'continuous') {
-      if (singleImg) singleImg.style.display = 'none';
-      if (stack) {
-        stack.style.display = 'flex';
-        stack.innerHTML = rulesModalPages.map((p, idx) => `
-          <div class="rules-page-item" id="rulesPageItem_${idx}" style="width:100%;max-width:100%;text-align:center;">
-            <div style="display:inline-block;margin-bottom:8px;padding:3px 12px;border-radius:6px;background:rgba(49,130,246,0.18);color:#93c5fd;font-size:11.5px;font-weight:900;border:1px solid rgba(49,130,246,0.35);">
-              📄 제 ${idx + 1} 쪽 / 총 ${rulesModalPages.length} 쪽
-            </div>
-            <img src="${p}" alt="약관 ${idx + 1}쪽" class="rules-page-img" style="width:${isRulesZoomed ? '180%' : '100%'};max-width:${isRulesZoomed ? 'none' : '100%'};height:auto;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,0.4);image-rendering:-webkit-optimize-contrast;display:block;margin:0 auto;cursor:${isRulesZoomed ? 'zoom-out' : 'zoom-in'};">
+    if (singleImg) singleImg.style.display = 'none';
+    if (stack) {
+      stack.style.display = 'flex';
+      stack.style.flexDirection = 'column';
+      stack.style.gap = '20px';
+      stack.style.width = '100%';
+      stack.innerHTML = rulesModalPages.map((p, idx) => `
+        <div class="rules-page-item" id="rulesPageItem_${idx}" style="width:100%;text-align:center;">
+          <div style="display:inline-block;margin-bottom:10px;padding:4px 14px;border-radius:7px;background:rgba(49,130,246,0.18);color:#93c5fd;font-size:12px;font-weight:900;border:1px solid rgba(49,130,246,0.35);">
+            📄 제 ${idx + 1} 쪽 / 총 ${rulesModalPages.length} 쪽
           </div>
-        `).join('');
-
-        stack.querySelectorAll('.rules-page-img').forEach(img => {
-          img.addEventListener('click', toggleRulesZoom);
-        });
-      }
-      if (paging) paging.style.display = 'flex';
-    } else {
-      if (stack) stack.style.display = 'none';
-      if (singleImg) {
-        singleImg.style.display = 'block';
-        singleImg.src = rulesModalPages[rulesModalCurIndex] || '';
-      }
-      if (paging) paging.style.display = 'flex';
+          <div class="rules-page-img-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;">
+            <img src="${p}" alt="약관 ${idx + 1}쪽" class="rules-page-img" style="width:100%;min-width:680px;height:auto;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,0.45);display:block;margin:0 auto;">
+          </div>
+        </div>
+      `).join('');
     }
+    if (paging) paging.style.display = 'none';
   };
 
   const updateRulesModalPage = () => {
@@ -9023,7 +9023,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           ${ndaiQuickChips.map(c => `
             <button type="button" class="btn-clause-chip ${normQ === norm(c.q) ? 'on' : ''}" data-q="${esc(c.q)}" style="height:42px;padding:0 10px;border-radius:9px;font-size:12.5px;font-weight:850;cursor:pointer;border:1.5px solid ${normQ === norm(c.q) ? '#059669' : 'var(--border)'};background:${normQ === norm(c.q) ? '#059669' : 'var(--surface)'};color:${normQ === norm(c.q) ? '#fff' : 'var(--text)'};display:flex;align-items:center;justify-content:space-between;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.02);min-width:0;">
               <span style="font-size:12.5px;font-weight:900;white-space:nowrap;text-align:left;flex:1;min-width:0;">${esc(c.name)}</span>
-              <span style="font-size:11px;font-weight:900;padding:2px 6px;border-radius:5px;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'rgba(5,150,105,0.08)'};color:${normQ === norm(c.q) ? '#fff' : '#059669'};flex-shrink:0;border:${normQ === norm(c.q) ? 'none' : '1px solid rgba(5,150,105,0.2)'};">${esc(c.code)}</span>
+              <span style="font-size:11px;font-weight:900;padding:2px 0;width:72px;min-width:72px;max-width:72px;text-align:center;box-sizing:border-box;border-radius:5px;background:${normQ === norm(c.q) ? 'rgba(255,255,255,0.25)' : 'rgba(5,150,105,0.08)'};color:${normQ === norm(c.q) ? '#fff' : '#059669'};flex-shrink:0;border:${normQ === norm(c.q) ? 'none' : '1px solid rgba(5,150,105,0.2)'};display:inline-block;">${esc(c.code)}</span>
             </button>
           `).join('')}
         </div>
@@ -9194,18 +9194,18 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                   포함: ${esc(summaryNames)}
                 </div>
               </div>
-              <span class="ndai-arrow-badge" style="font-size:11px;font-weight:850;color:#059669;background:var(--surface-2);padding:3px 7px;border-radius:5px;border:1px solid var(--border);flex-shrink:0;">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
+              <span class="ndai-arrow-badge" style="font-size:11px;font-weight:850;color:#059669;background:var(--surface-2);padding:3px 8px;border-radius:5px;border:1px solid var(--border);min-width:64px;text-align:center;box-sizing:border-box;flex-shrink:0;">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
             </div>
 
             <div class="ndai-group-body" style="display:${isAutoOpen ? 'block' : 'none'};padding:10px 12px;background:var(--surface-2);border-top:1px dashed var(--line);">
               <div style="font-size:11px;font-weight:850;color:#059669;margin-bottom:6px;">📋 수록 질병코드 (KCD 전수 분류표):</div>
               <div style="display:flex;flex-direction:column;gap:5px;">
                 ${detailedList.length ? detailedList.map(item => `
-                  <div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:var(--surface);border-radius:7px;border:1px solid var(--border);">
-                    <span style="font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.08);padding:2px 6px;border-radius:4px;border:1px solid rgba(37,99,235,0.2);white-space:nowrap;margin-top:1px;">${esc(item.code)}</span>
+                  <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);min-height:48px;">
+                    <span class="kcd-badge-fixed" style="font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.08);padding:3px 0;border-radius:5px;border:1px solid rgba(37,99,235,0.2);white-space:nowrap;width:84px;min-width:84px;max-width:84px;text-align:center;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex-shrink:0;">${esc(item.code)}</span>
                     <div style="min-width:0;flex:1;">
-                      <div style="font-size:12px;font-weight:850;color:var(--text);word-break:keep-all;">${esc(item.name)}</div>
-                      <div style="font-size:11px;color:#334155;margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(item.desc)}</div>
+                      <div style="font-size:12.5px;font-weight:850;color:var(--text);word-break:keep-all;">${esc(item.name)}</div>
+                      ${item.desc ? `<div style="font-size:11px;color:#334155;margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(item.desc)}</div>` : ''}
                     </div>
                   </div>
                 `).join('') : `

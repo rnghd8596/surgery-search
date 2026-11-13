@@ -1415,9 +1415,14 @@ html[data-theme="dark"] .btn-toggle-basic-surg {
   font-weight: 850;
   color: #059669;
   background: rgba(16, 185, 129, 0.12);
-  padding: 1px 5px;
+  padding: 2px 0;
   border-radius: 5px;
-  flex: 0 0 auto;
+  width: 58px;
+  min-width: 58px;
+  max-width: 58px;
+  text-align: center;
+  box-sizing: border-box;
+  flex: 0 0 58px;
 }
 .ncd-name {
   font-weight: 750;
