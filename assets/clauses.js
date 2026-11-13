@@ -19,29 +19,33 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_inc_p198.png"
+          "assets/clause_imgs/meritz_std_tier_inc_p1460.png",
+          "assets/clause_imgs/meritz_std_tier_inc_p1461.png"
         ],
-        "pageStr": "공시실 원문 제198쪽 (30. 수술비(1~7종) 제1조 지급사유 및 1~7종 가입금액표)"
+        "pageStr": "공시실 원문 제1460쪽 ~ 제1461쪽 (31. 질병수술비(1~7종) 제3조 지급사유 및 제4조 수술의 정의)"
       },
       "tier_exc": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_exc_p203.png"
+          "assets/clause_imgs/meritz_std_tier_exc_p1465.png"
         ],
-        "pageStr": "공시실 원문 제203쪽 (제4조 보험금을 지급하지 않는 사유 · 면책기준)"
+        "pageStr": "공시실 원문 제1465쪽 (제5조 보험금을 지급하지 않는 사유)"
       },
       "tier_table": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_table_p738.png",
-          "assets/clause_imgs/meritz_std_tier_table_p739.png"
+          "assets/clause_imgs/meritz_std_tier_table_p1535.png",
+          "assets/clause_imgs/meritz_std_tier_table_p1536.png",
+          "assets/clause_imgs/meritz_std_tier_table_p1537.png"
         ],
-        "pageStr": "공시실 별표50 제738쪽 ~ 제739쪽 (1~7종 수술분류표 보장대상 수술코드 전문)"
+        "pageStr": "공시실 별표7 제1535쪽 ~ 제1537쪽 (질병 1~7종/1~5종 수술분류표 보장대상 수술코드 전문)"
       },
       "ndai_inc": {
         "pages": [
           "assets/clause_imgs/meritz_std_ndai_inc_p332.png",
-          "assets/clause_imgs/meritz_std_ndai_inc_p333.png"
+          "assets/clause_imgs/meritz_std_ndai_inc_p334.png",
+          "assets/clause_imgs/meritz_std_ndai_inc_p335.png",
+          "assets/clause_imgs/meritz_std_ndai_inc_p336.png"
         ],
-        "pageStr": "공시실 원문 제332쪽 ~ 제333쪽 (41. 131대질병수술비 제1조 보장범위 · 제2조 지급사유 · 제3조 관혈 100% / 비관혈 50%)"
+        "pageStr": "공시실 원문 제332쪽 ~ 제336쪽 (41. 131대질병수술비 제1조 보장범위 · 제2조 지급사유 · 제3조 수술정의 · 제4조 질병정의 전문)"
       },
       "ndai_exc": {
         "pages": [
@@ -676,15 +680,16 @@ window.POLICY_CLAUSES_DATA = {
                     ]
                   },
                   tableBody: {
-                    title: '별표 [112대/120대 N대 질병분류표 및 보장 질병코드 전문]',
+                    title: '별표 [112대 질병분류표 및 보장 질병코드 전문] (총 7개 군)',
                     headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 질병코드 (전수)', '보장 한도 (관혈/비관혈)'],
                     rows: [
-                      ['특정 5대질병', '뇌혈관질환, 심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47, J84, J96', '관혈 100% / 비관혈 50%'],
-                      ['중대 10대질병', '만성신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 위십이지장궤양', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, H42, K25~K28, A15~A19', '관혈 100% / 비관혈 50%'],
-                      ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 전립선비대, 편도염, 중이염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, N40, J35, H65~H75', '정액 지급 (연간 1회 한)'],
-                      ['부인과 10대질병', '자궁근종, 자궁내막증, 난소낭종, 골반염, 여성생식기 폴립', 'D25~D28, N80~N85, N70~N77, N83, N84', '정액 지급'],
-                      ['생활 40대질병', '비염, 부비동염, 하지정맥류, 관절염, 안면신경마비, 척추디스크', 'J30~J34, I83, M15~M19, M48, M50~M51, G51', '정액 지급'],
-                      ['백내장/안질환', '노년백내장, 기타 백내장 (다초점 인공수정체 삽입)', 'H25~H28 (단, 단순 시력교정 목적 비급여 렌즈 주의)', '정액 지급 (좌/우 분리)']
+                      ['특정 5대질병 (5)', '뇌혈관질환, 심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47, J84, J96', '관혈 100% / 비관혈 50%'],
+                      ['중대 10대질병 (10)', '만성신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 위십이지장궤양', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, H42, K25~K28, A15~A19', '관혈 100% / 비관혈 50%'],
+                      ['다발성 16대질병 (16)', '부정맥, 심부전, 동맥폐색, 수두증, 안면마비, 뇌경색후유증, 폐부종, 식도질환 등', 'I47~I49, I50, I74, G91, G51, I69, J81, K22, N18', '관혈 100% / 비관혈 50%'],
+                      ['다빈도 30대질병 (30)', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 전립선비대, 편도염, 중이염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, N40, J35, H65~H75', '정액 지급 (연간 1회 한)'],
+                      ['부인과 10대질병 (10)', '자궁근종, 자궁내막증, 난소낭종, 골반염, 여성생식기 폴립', 'D25~D28, N80~N85, N70~N77, N83, N84', '정액 지급'],
+                      ['생활 40대질병 (40)', '비염, 부비동염, 하지정맥류, 관절염, 안면신경마비, 척추디스크', 'J30~J34, I83, M15~M19, M48, M50~M51, G51', '정액 지급'],
+                      ['백내장/안질환 (1)', '노년백내장, 기타 백내장 (다초점 인공수정체 삽입)', 'H25~H28 (단, 단순 시력교정 목적 비급여 렌즈 주의)', '정액 지급 (좌/우 분리)']
                     ]
                   },
                   imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'

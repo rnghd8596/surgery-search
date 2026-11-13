@@ -7787,6 +7787,16 @@ const NDAI_DETAILED_ITEMS = {
     { code: 'K25~K28', name: '위·십이지장궤양', desc: '위궤양, 십이지장궤양, 소화성 궤양 출혈 및 천공' },
     { code: 'A15~A19', name: '결핵', desc: '호흡기 결핵, 림프절 결핵, 기타 기관의 결핵' }
   ],
+  '다발성 16대질병': [
+    { code: 'I47~I49', name: '부정맥 (빈맥·세동·조기탈분극)', desc: '발작성 빈맥, 심방세동 및 조동, 기타 심장부정맥' },
+    { code: 'I50', name: '심부전', desc: '울혈성 심부전, 좌심실부전, 상세불명의 심부전' },
+    { code: 'I74', name: '동맥색전증 및 혈전증', desc: '복부 대동맥 색전증, 사지 동맥 색전증' },
+    { code: 'G91', name: '수두증 (뇌수종)', desc: '교통성 수두증, 폐쇄성 수두증' },
+    { code: 'I69', name: '뇌혈관질환의 후유증', desc: '지주막하출혈 후유증, 뇌경색증 후유증' },
+    { code: 'J81', name: '폐부종', desc: '급성 폐부종, 만성 폐부종' },
+    { code: 'K22', name: '식도질환', desc: '위식도역류병, 식도궤양, 식도폐쇄' },
+    { code: 'N18', name: '만성 콩팥(신장)병', desc: '만성 신장병 1~5기, 말기 신장병' }
+  ],
   '다빈도 30대질병': [
     { code: 'K80~K83', name: '담석증 및 담낭질환', desc: '담낭결석, 담관결석, 급성·만성 담낭염' },
     { code: 'K35~K37', name: '충수염 (맹장염)', desc: '급성 충수염, 복막염 동반 충수염' },
@@ -9071,19 +9081,8 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     const displayNdai = selectedNdai || (rider.title ? (rider.title.match(/\d+대/)?.[0] || rider.title) : 'N대');
     const cleanRiderTitle = displayNdai ? `${displayNdai} 질병수술비` : rider.title.replace(/\d+대\/\d+대/, m => m.split('/')[0]);
 
-    const photoBtnHTML = `
-      <div style="margin-bottom:12px;">
-        <button type="button" class="btn-co-clause" id="btnOpenRulesNdai" style="width:100%;height:46px;padding:0 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
-            <span>🏢</span>
-            <span>${esc(co.name)} ${esc(cleanRiderTitle)} 질병분류표 원문</span>
-          </span>
-          <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;padding:3px 7px;border-radius:6px;">
-            약관 보기 🔍
-          </span>
-        </button>
-      </div>
-    `;
+    // 상단 원문 약관보기는 하단 군별 1:1 직결이 있으므로 사용자 지침(#34450)에 따라 전면 삭제하여 화면 슬림화
+    const photoBtnHTML = '';
 
     const chipsHTML = `
       <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:12px;">
@@ -9270,11 +9269,12 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                <button type="button" class="btn-group-clause-scan" data-grp="${esc(grpName)}" style="height:32px;padding:0 9px;border-radius:6px;border:1.5px solid rgba(5,150,105,0.4);background:rgba(5,150,105,0.08);color:#059669;font-size:11.5px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;box-sizing:border-box;">
-                  <span>📑</span>
-                  <span>약관보기 🔍</span>
+                <button type="button" class="btn-group-clause-scan btn-co-clause" data-grp="${esc(grpName)}" style="height:32px;min-height:32px;width:88px;min-width:88px;max-width:88px;border-radius:7px;border:1.5px solid rgba(5,150,105,0.4);background:rgba(5,150,105,0.08);color:#059669;font-size:11.5px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;box-sizing:border-box;padding:0;">
+                  <span>📑 약관보기 🔍</span>
                 </button>
-                <span class="ndai-arrow-badge" style="font-size:11px;font-weight:850;color:#059669;background:var(--surface-2);padding:4px 8px;border-radius:5px;border:1px solid var(--border);min-width:64px;text-align:center;box-sizing:border-box;display:inline-block;">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
+                <button type="button" class="ndai-arrow-badge" style="height:32px;min-height:32px;width:88px;min-width:88px;max-width:88px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface-2);color:#059669;font-size:11.5px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;box-sizing:border-box;padding:0;">
+                  <span>${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
+                </button>
               </div>
             </div>
 
@@ -9390,40 +9390,67 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       year: evalYear
     };
 
-    // 실제약관 사진 상단 버튼 (#27519 지침 2: 종수술비 개정후/개정전 사진은 수술분류표 들어가서 클릭)
-    const revPhotos = rider.revPhotos;
-    let photoHeaderHTML = '';
-    if (revPhotos && revPhotos.length > 1) {
-      photoHeaderHTML = `
-        <div style="margin-bottom:12px;">
-          <div style="font-size:11.5px;font-weight:900;color:#334155;margin-bottom:6px;display:flex;align-items:center;gap:4px;">
-            <span>📷 실제 약관 원문 사진 열람 (동시수술 고해상도 뷰어):</span>
+    // 1~5종 개정 전 vs 개정 후 핵심 차이점 비교 카드 및 동시수술 통일감 버튼 (#34377 #34389 #34390 #34445)
+    let photoHeaderHTML = `
+      <!-- 개정 전후 핵심 비교 카드 -->
+      <div style="background:var(--surface-2);border:1.5px solid #fde68a;border-radius:11px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(217,119,6,0.05);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:12.5px;font-weight:900;color:#b45309;display:flex;align-items:center;gap:5px;">
+            <span>⚡</span>
+            <span>[1~5종 수술분류표] 개정 전 vs 개정 후 핵심 차이점 비교</span>
+          </span>
+          <span style="font-size:11px;font-weight:850;padding:2px 6px;border-radius:5px;background:#fef3c7;color:#b45309;">실무 필수 대조</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:12px;">
+          <div style="background:var(--surface);border:1.5px solid rgba(217,119,6,0.3);border-radius:8px;padding:8px 10px;">
+            <div style="font-weight:900;color:#d97706;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
+              <span>⚠️</span>
+              <span>개정 후 (2024.12~현재 / 최신)</span>
+            </div>
+            <div style="color:var(--text-2);line-height:1.5;">
+              • <strong>대장용종</strong>: 1종 하향 분류<br>
+              • <strong>담석증(복강경)</strong>: 2종 하향<br>
+              • <strong>여유증(유방비대)</strong>: 1종 하향<br>
+              • <strong>체외충격파(ESWL)</strong>: 1종 / 연1회한
+            </div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
-            <button type="button" class="btn-tier-rev-photo" data-rev="post" style="height:42px;border-radius:9px;border:1.5px solid #f59e0b;background:#fffbeb;color:#b45309;font-size:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 1px 3px rgba(245,158,11,0.12);">
-              <span>📷 개정 후 약관 사진</span>
-            </button>
-            <button type="button" class="btn-tier-rev-photo" data-rev="pre" style="height:42px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-              <span>📷 개정 전 약관 사진</span>
-            </button>
+          <div style="background:var(--surface);border:1.5px solid rgba(37,99,235,0.3);border-radius:8px;padding:8px 10px;">
+            <div style="font-weight:900;color:#2563eb;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
+              <span>💎</span>
+              <span>개정 전 (2024.11 이전 / 구계약)</span>
+            </div>
+            <div style="color:var(--text-2);line-height:1.5;">
+              • <strong>대장용종</strong>: 표준 2종 지급<br>
+              • <strong>담석증(복강경)</strong>: 표준 3종 지급<br>
+              • <strong>여유증(유방절단)</strong>: 표준 3종 지급<br>
+              • <strong>체외충격파</strong>: 구 2종 지급 (약관별)
+            </div>
           </div>
         </div>
-      `;
-    } else {
-      photoHeaderHTML = `
-        <div style="margin-bottom:12px;">
-          <button type="button" class="btn-tier-single-photo btn-co-clause" style="width:100%;height:46px;padding:0 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-            <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
-              <span>📋</span>
-              <span>${esc(co.name)} 1-5종 수술분류표 원문</span>
-            </span>
-            <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;padding:3px 7px;border-radius:6px;">
-              약관 보기 🔍
-            </span>
-          </button>
-        </div>
-      `;
-    }
+      </div>
+
+      <!-- 동시수술 4대 약관과 100% 동일한 통일감 버튼 -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+        <button type="button" class="btn-co-clause btn-tier-rev-photo" data-rev="post" style="height:44px;min-height:44px;border:1.5px solid rgba(217,119,6,0.4);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
+            <span>📋</span>
+            <span>1-5종수술 <strong style="color:#d97706;font-weight:900;">개정 후</strong></span>
+          </span>
+          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:#d97706;background:rgba(217,119,6,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
+            약관보기 🔍
+          </span>
+        </button>
+        <button type="button" class="btn-co-clause btn-tier-rev-photo" data-rev="pre" style="height:44px;min-height:44px;border:1.5px solid rgba(37,99,235,0.35);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
+            <span>📋</span>
+            <span>1-5종수술 <strong style="color:#2563eb;font-weight:900;">개정 전</strong></span>
+          </span>
+          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
+            약관보기 🔍
+          </span>
+        </button>
+      </div>
+    `;
 
     // 다빈도 및 신의료기술 12대 대표 태그 (카티스템/연골 포함 & 3열 대칭 그리드 칼정렬 #27519 지침 4)
     const quickChips = [
@@ -9809,24 +9836,24 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </button>
       </div>
 
-      <!-- 원터치 실물 약관보기 2분할 버튼 (탭 상관없이 원하는 원문 즉시 열람! #33904) -->
+      <!-- 원터치 실물 약관보기 2분할 버튼 (동시수술 4대 약관 카드와 100% 동일한 버튼 디자인·규격 통일! #34343 #34445) -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
-        <button type="button" class="btn-co-clause" id="btnScanInclusion" style="height:42px;padding:0 12px;border:1.5px solid rgba(49,130,246,0.4);border-radius:9px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:12px;font-weight:900;color:var(--brand);display:flex;align-items:center;gap:4px;">
+        <button type="button" class="btn-co-clause" id="btnScanInclusion" style="height:44px;min-height:44px;border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
             <span>📄</span>
-            <span>지급규정 약관보기</span>
+            <span>보상하는사항</span>
           </span>
-          <span class="btn-co-badge" style="font-size:11px;font-weight:900;color:var(--brand);background:rgba(49,130,246,0.12);padding:2px 6px;border-radius:5px;">
-            🔍
+          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
+            약관보기 🔍
           </span>
         </button>
-        <button type="button" class="btn-co-clause" id="btnScanExclusion" style="height:42px;padding:0 12px;border:1.5px solid rgba(220,38,38,0.4);border-radius:9px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-          <span class="btn-co-name" style="font-size:12px;font-weight:900;color:#dc2626;display:flex;align-items:center;gap:4px;">
+        <button type="button" class="btn-co-clause" id="btnScanExclusion" style="height:44px;min-height:44px;border:1.5px solid rgba(220,38,38,0.35);border-radius:10px;background:var(--surface);padding:0 12px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:12.5px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:5px;">
             <span>🚫</span>
-            <span>면책조항 약관보기</span>
+            <span>보상제외사항</span>
           </span>
-          <span class="btn-co-badge" style="font-size:11px;font-weight:900;color:#dc2626;background:rgba(220,38,38,0.12);padding:2px 6px;border-radius:5px;">
-            🔍
+          <span class="btn-co-badge" style="font-size:11px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.12);padding:3px 7px;border-radius:6px;white-space:nowrap;">
+            약관보기 🔍
           </span>
         </button>
       </div>
