@@ -9692,27 +9692,38 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   `;
 
   box.innerHTML = `
-    <!-- 2대 탭 전환 버튼: [보상하는 사항] vs [보상제외 사항] (#28437 #28442) -->
+    <!-- 2대 탭 전환 버튼: [보상하는 사항] vs [보상제외 사항] (#28437 #28442 #33904) -->
     <div style="margin-bottom:12px;">
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
-        <button type="button" id="tabClauseInclusion" style="height:46px;border-radius:10px;border:${curTab === 'inclusion' ? '2.5px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
+        <button type="button" id="tabClauseInclusion" style="height:44px;border-radius:10px;border:${curTab === 'inclusion' ? '2.5px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
           <span style="white-space:nowrap;">📄 보상하는 사항</span>
         </button>
-        <button type="button" id="tabClauseExclusion" style="height:46px;border-radius:10px;border:${curTab === 'exclusion' ? '2.5px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
+        <button type="button" id="tabClauseExclusion" style="height:44px;border-radius:10px;border:${curTab === 'exclusion' ? '2.5px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
           <span style="white-space:nowrap;">🚫 보상제외 사항</span>
         </button>
       </div>
 
-      <!-- 선택된 탭의 실제약관 원문 고해상도 사진 보기 버튼 (#28455) -->
-      <button type="button" class="btn-co-clause" id="btnActiveClausePhoto" style="width:100%;height:46px;padding:0 14px;border:1.5px solid ${curTab === 'exclusion' ? '#fca5a5' : 'var(--border)'};border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-        <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
-          <span>${curTab === 'exclusion' ? '🚫' : '📋'}</span>
-          <span>${esc(co.name)} [${curTab === 'exclusion' ? '보상하지 않는 사항' : '보상하는 사항'}] 약관 원문</span>
-        </span>
-        <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;color:${curTab === 'exclusion' ? '#dc2626' : '#d97706'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.12)'};padding:3px 7px;border-radius:6px;">
-          약관 보기 🔍
-        </span>
-      </button>
+      <!-- 원터치 실물 약관보기 2분할 버튼 (탭 상관없이 원하는 원문 즉시 열람! #33904) -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+        <button type="button" class="btn-co-clause" id="btnScanInclusion" style="height:42px;padding:0 12px;border:1.5px solid rgba(49,130,246,0.4);border-radius:9px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:12px;font-weight:900;color:var(--brand);display:flex;align-items:center;gap:4px;">
+            <span>📄</span>
+            <span>지급규정 약관보기</span>
+          </span>
+          <span class="btn-co-badge" style="font-size:11px;font-weight:900;color:var(--brand);background:rgba(49,130,246,0.12);padding:2px 6px;border-radius:5px;">
+            🔍
+          </span>
+        </button>
+        <button type="button" class="btn-co-clause" id="btnScanExclusion" style="height:42px;padding:0 12px;border:1.5px solid rgba(220,38,38,0.4);border-radius:9px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          <span class="btn-co-name" style="font-size:12px;font-weight:900;color:#dc2626;display:flex;align-items:center;gap:4px;">
+            <span>🚫</span>
+            <span>면책조항 약관보기</span>
+          </span>
+          <span class="btn-co-badge" style="font-size:11px;font-weight:900;color:#dc2626;background:rgba(220,38,38,0.12);padding:2px 6px;border-radius:5px;">
+            🔍
+          </span>
+        </button>
+      </div>
     </div>
 
     <!-- 상단 실무 보상 분기점 카드 (#32220 #32253) -->
@@ -9739,10 +9750,11 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     </div>
   `;
 
-  // 탭 전환 이벤트 바인딩
+  // 탭 전환 이벤트 바인딩 (#28437 #33904)
   const btnTabInc = box.querySelector('#tabClauseInclusion');
   const btnTabExc = box.querySelector('#tabClauseExclusion');
-  const btnPhoto = box.querySelector('#btnActiveClausePhoto');
+  const btnScanInc = box.querySelector('#btnScanInclusion');
+  const btnScanExc = box.querySelector('#btnScanExclusion');
 
   if (btnTabInc) {
     btnTabInc.addEventListener('click', () => {
@@ -9756,60 +9768,62 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       renderClauseModalContent(filterQ, data);
     });
   }
-  if (btnPhoto) {
-    btnPhoto.addEventListener('click', () => {
-      const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
-      if (!coEntry) {
-        alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
-        return;
-      }
 
-      const isSimp = (data.pData && data.pData.name && data.pData.name.includes('간편')) || (data.ptype === 'simplified');
-      const v = (isSimp && coEntry.simplified) ? coEntry.simplified : (coEntry.standard || coEntry.simplified || coEntry);
+  const handleScanClick = (scanType) => {
+    const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+    if (!coEntry) {
+      alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
+      return;
+    }
 
-      let targetScan = null;
-      let modalTitle = '';
+    const isSimp = (data.pData && data.pData.name && data.pData.name.includes('간편')) || (data.ptype === 'simplified');
+    const v = (isSimp && coEntry.simplified) ? coEntry.simplified : (coEntry.standard || coEntry.simplified || coEntry);
 
-      if (riderKey === 'tier') {
-        if (curTab === 'exclusion') {
-          targetScan = v.tier_exc || v.basic_exc;
-          modalTitle = `🚫 [${co.name}] 1~5종 수술특약 보상제외 약관`;
-        } else {
-          targetScan = v.tier_inc || v.tier_table || v.basic_inc;
-          modalTitle = `📋 [${co.name}] 1~5종 수술특약 보상기준 약관`;
-        }
-      } else if (riderKey === 'ndai' || riderKey === 'adult') {
-        const cleanNdaiName = (data.selectedNdai || riderTitle || 'N대').replace(/\d+대\/\d+대/, m => m.split('/')[0]);
-        if (curTab === 'exclusion') {
-          targetScan = v.ndai_exc || v.basic_exc;
-          modalTitle = `🚫 [${co.name}] ${cleanNdaiName} 보상제외 약관`;
-        } else {
-          targetScan = v.ndai_inc || v.basic_inc;
-          modalTitle = `🏢 [${co.name}] ${cleanNdaiName} 보상기준 약관`;
-        }
+    let targetScan = null;
+    let modalTitle = '';
+
+    if (riderKey === 'tier') {
+      if (scanType === 'exclusion') {
+        targetScan = v.tier_exc || v.basic_exc;
+        modalTitle = `🚫 [${co.name}] 1~5종 수술특약 보상제외 약관`;
       } else {
-        if (curTab === 'exclusion') {
-          targetScan = v.basic_exc;
-          modalTitle = `🚫 [${co.name}] 질병수술비 보상제외 약관`;
-        } else {
-          targetScan = v.basic_inc;
-          modalTitle = `💡 [${co.name}] 질병수술비 보상기준 약관`;
-        }
+        targetScan = v.tier_inc || v.tier_table || v.basic_inc;
+        modalTitle = `📋 [${co.name}] 1~5종 수술특약 보상기준 약관`;
       }
-
-      if (targetScan && targetScan.pages && targetScan.pages.length > 0) {
-        const meta = { product: v.product, type: v.type, page: targetScan.pageStr };
-        window.openRulesModal(targetScan.pages[0], modalTitle, '', targetScan.pages, meta);
-      } else if (v.basic_p1) {
-        const pages = [v.basic_p1];
-        if (v.basic_p2) pages.push(v.basic_p2);
-        const meta = { product: v.product, type: v.type, page: v.basic_page };
-        window.openRulesModal(v.basic_p1, modalTitle, '', pages, meta);
+    } else if (riderKey === 'ndai' || riderKey === 'adult') {
+      const cleanNdaiName = (data.selectedNdai || riderTitle || 'N대').replace(/\d+대\/\d+대/, m => m.split('/')[0]);
+      if (scanType === 'exclusion') {
+        targetScan = v.ndai_exc || v.basic_exc;
+        modalTitle = `🚫 [${co.name}] ${cleanNdaiName} 보상제외 약관`;
       } else {
-        alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+        targetScan = v.ndai_inc || v.basic_inc;
+        modalTitle = `🏢 [${co.name}] ${cleanNdaiName} 보상기준 약관`;
       }
-    });
-  }
+    } else {
+      if (scanType === 'exclusion') {
+        targetScan = v.basic_exc;
+        modalTitle = `🚫 [${co.name}] 질병수술비 보상제외 약관`;
+      } else {
+        targetScan = v.basic_inc;
+        modalTitle = `💡 [${co.name}] 질병수술비 보상기준 약관`;
+      }
+    }
+
+    if (targetScan && targetScan.pages && targetScan.pages.length > 0) {
+      const meta = { product: v.product, type: v.type, page: targetScan.pageStr };
+      window.openRulesModal(targetScan.pages[0], modalTitle, '', targetScan.pages, meta);
+    } else if (v.basic_p1) {
+      const pages = [v.basic_p1];
+      if (v.basic_p2) pages.push(v.basic_p2);
+      const meta = { product: v.product, type: v.type, page: v.basic_page };
+      window.openRulesModal(v.basic_p1, modalTitle, '', pages, meta);
+    } else {
+      alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+    }
+  };
+
+  if (btnScanInc) btnScanInc.addEventListener('click', () => handleScanClick('inclusion'));
+  if (btnScanExc) btnScanExc.addEventListener('click', () => handleScanClick('exclusion'));
 }
 
 function bindPhotoButtons(box, rider, co, period) {
