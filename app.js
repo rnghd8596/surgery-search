@@ -11,59 +11,66 @@ function generateClauseSuggestions(rawQ) {
   ];
 }
 
+window.handleNdaiDirectJump = function(btn, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const q = btn.getAttribute('data-search') || '';
+  const cid = btn.getAttribute('data-cid');
+  const pid = btn.getAttribute('data-pid');
+  
+  const inp = document.querySelector('#clauseCompanySearchInput');
+  if (inp) {
+    inp.value = q;
+  }
+  state.clauseSearchQuery = q;
+
+  if (typeof renderClausesCompanyList === 'function') {
+    renderClausesCompanyList(q);
+  }
+  
+  if (cid) {
+    setTimeout(() => {
+      const freshContainer = document.querySelector('#clausesCompanyList');
+      if (!freshContainer) return;
+      const coBtn = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`);
+      const coDrawer = freshContainer.querySelector(`#co-periods-${cid}`);
+      if (coDrawer) {
+        coDrawer.style.display = 'flex';
+        if (coBtn) {
+          const arrow = coBtn.querySelector('.btn-co-toggle-arrow');
+          if (arrow) arrow.textContent = '접기 ▴';
+        }
+      }
+      if (pid) {
+        const pBtn = freshContainer.querySelector(`.btn-toggle-period[data-co-id="${cid}"][data-pid="${pid}"]`);
+        const pDrawer = freshContainer.querySelector(`#period-drawer-${cid}-${pid}`);
+        if (pDrawer) {
+          pDrawer.style.display = 'flex';
+          if (pBtn) {
+            const pArrow = pBtn.querySelector('.period-arrow-badge');
+            if (pArrow) {
+              pArrow.textContent = '접기 ▴';
+              pArrow.style.background = 'var(--brand)';
+              pArrow.style.color = '#fff';
+            }
+          }
+        }
+      }
+      const targetCard = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`) || freshContainer.firstElementChild;
+      if (targetCard) {
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 80);
+  }
+};
+
 function bindNdaiDirectJumpEvents(container) {
   if (!container) return;
   container.querySelectorAll('.btn-ndai-direct-jump').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const q = btn.getAttribute('data-search') || '';
-      const cid = btn.getAttribute('data-cid');
-      const pid = btn.getAttribute('data-pid');
-      
-      const inp = document.querySelector('#clauseCompanySearchInput');
-      if (inp) {
-        inp.value = q;
-      }
-      state.clauseSearchQuery = q;
-
-      if (typeof window.renderClausesCompanyList === 'function') {
-        window.renderClausesCompanyList(q);
-      }
-      
-      if (cid) {
-        setTimeout(() => {
-          const freshContainer = document.querySelector('#clausesCompanyList');
-          if (!freshContainer) return;
-          const coBtn = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`);
-          const coDrawer = freshContainer.querySelector(`#co-periods-${cid}`);
-          if (coDrawer) {
-            coDrawer.style.display = 'flex';
-            if (coBtn) {
-              const arrow = coBtn.querySelector('.btn-co-toggle-arrow');
-              if (arrow) arrow.textContent = '접기 ▴';
-            }
-          }
-          if (pid) {
-            const pBtn = freshContainer.querySelector(`.btn-toggle-period[data-co-id="${cid}"][data-pid="${pid}"]`);
-            const pDrawer = freshContainer.querySelector(`#period-drawer-${cid}-${pid}`);
-            if (pDrawer) {
-              pDrawer.style.display = 'flex';
-              if (pBtn) {
-                const pArrow = pBtn.querySelector('.period-arrow-badge');
-                if (pArrow) {
-                  pArrow.textContent = '접기 ▴';
-                  pArrow.style.background = 'var(--brand)';
-                  pArrow.style.color = '#fff';
-                }
-              }
-            }
-          }
-          const targetCard = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`) || freshContainer.firstElementChild;
-          if (targetCard) {
-            targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }, 80);
-      }
+      window.handleNdaiDirectJump(btn, e);
     });
   });
 }
@@ -8170,7 +8177,7 @@ function renderClausesCompanyList(searchQuery) {
 
           <div style="display:flex;flex-direction:column;gap:8px;" id="ndaiDirectJumpWrap">
             ${recommendations.map(r => `
-              <button type="button" class="btn-ndai-direct-jump" data-search="${esc(r.jump)}" data-cid="${r.cid}" data-pid="${r.pid}" data-ndai="${r.ndai}" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.06);display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;transition:all .15s ease;">
+              <button type="button" class="btn-ndai-direct-jump" onclick="window.handleNdaiDirectJump(this, event)" data-search="${esc(r.jump)}" data-cid="${r.cid}" data-pid="${r.pid}" data-ndai="${r.ndai}" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.06);display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;transition:all .15s ease;">
                 <div>
                   <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
                     <span style="color:var(--brand);">🏢</span>
