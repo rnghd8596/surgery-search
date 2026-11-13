@@ -1138,7 +1138,7 @@ window.POLICY_CLAUSES_DATA = {
       id: 'kbinsure',
       name: 'KB손해보험',
       shortName: '케손',
-      aliases: ['케손', '케이비', 'KB손보', 'KB손해보험', 'kb'],
+      aliases: ['케손', '캐손', '케이비', '캐이비', 'KB손보', 'KB손해보험', 'kb', 'k손'],
       logo: '케',
       color: '#f59e0b',
       desc: 'KB 5.10.10 플러스종합보험 · 슬기로운 간편',
