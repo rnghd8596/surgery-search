@@ -20,19 +20,19 @@ function bindNdaiDirectJumpEvents(container) {
       const cid = btn.getAttribute('data-cid');
       const pid = btn.getAttribute('data-pid');
       
-      const inp = document.querySelector('#clauseCompanySearchInput') || document.querySelector('#q-clause');
+      const inp = document.querySelector('#clauseCompanySearchInput');
       if (inp) {
         inp.value = q;
       }
       state.clauseSearchQuery = q;
 
       if (typeof window.renderClausesCompanyList === 'function') {
-        window.renderClausesCompanyList();
+        window.renderClausesCompanyList(q);
       }
       
       if (cid) {
         setTimeout(() => {
-          const freshContainer = document.querySelector('#clauseCompanyListContainer') || document.querySelector('#clausesCompanyList');
+          const freshContainer = document.querySelector('#clausesCompanyList');
           if (!freshContainer) return;
           const coBtn = freshContainer.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`);
           const coDrawer = freshContainer.querySelector(`#co-periods-${cid}`);
@@ -62,7 +62,7 @@ function bindNdaiDirectJumpEvents(container) {
           if (targetCard) {
             targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
-        }, 60);
+        }, 80);
       }
     });
   });
@@ -7862,11 +7862,12 @@ function extractSearchedYear(rawQ) {
   return null;
 }
 
-function renderClausesCompanyList(searchQuery = '') {
+function renderClausesCompanyList(searchQuery) {
   const container = $('#clausesCompanyList');
   if (!container) return;
 
-  const rawQ = (searchQuery || '').trim();
+  const inputEl = document.getElementById('clauseCompanySearchInput');
+  const rawQ = (searchQuery !== undefined ? searchQuery : (inputEl ? inputEl.value : (state.clauseSearchQuery || ''))).trim();
   const normQ = norm(rawQ);
 
   const btnAll = $('#btnCatAll');
