@@ -1,7 +1,146 @@
 
+window.DYNAMIC_NDAI_TABLES = {
+  meritz: {
+    '112대': {
+      title: '별표 [112대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['특정 5대질병 (5)', '3대기관(심장·뇌혈관·간), 만성하부호흡기질환, 폐렴', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18', '최대 1,000만원'],
+        ['중대 10대질병 (10)', '급성췌장염, 버거씨병, 간질환, 폐색전증, 당뇨병합병증, 파킨슨 등', 'K85, I73.1, K70~K76, I26, E10~E14, G20, G35, G40', '최대 500만원'],
+        ['다발성 16대질병 (16)', '부정맥, 심부전, 동맥색전증, 수두증, 안면신경장애, 식도질환, 신부전 등', 'I47~I49, I50, I74, G91, G51, I69, J81, K22, N18', '최대 300만원'],
+        ['다빈도 30대질병 (30)', '위십이지장궤양, 녹내장, 갑상선질환, 담석증, 담낭염, 손목터널, 추간판 등', 'K25~K28, H40, E00~E07, K80, K81~K83, G56, M50~M51', '최대 100만원'],
+        ['부인과 10대질병 (10)', '자궁근종, 자궁폴립, 난소양성종양, 자궁내막증, 여성골반염, 골반장기탈출 등', 'D25, D26, D27, D28, N80, N81, N83, N84, N85', '최대 100만원'],
+        ['생활 40대질병 (40)', '관절염, 관절증, 탈장, 축농증, 편도염, 전립선비대증, 과민대장, 유방선종 등', 'M05~M14, M15~M19, K40~K46, J32, J35, N40, K58, D24', '최대 50만원'],
+        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원']
+      ]
+    },
+    '131대': {
+      title: '별표 [131대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['심장질환 (1)', '허혈성 심장질환 (협심증, 급성심근경색증 등)', 'I20~I25', '최대 1,000만원'],
+        ['뇌혈관질환 (1)', '뇌내출혈, 지주막하출혈, 뇌경색증, 뇌동맥류 등', 'I60~I69', '최대 1,000만원'],
+        ['특정 31대질병 (31)', '간질환, 췌장질환, 만성하부호흡기, 폐렴, 결핵, 당뇨병, 파킨슨, 신부전 등', 'K70~K76, K85, J40~J47, J12~J18, A15~A19, E10~E14, G20, N18', '최대 500만원'],
+        ['다빈도 64대질병 (64)', '관절염, 녹내장, 담석증, 담낭염, 사타구니탈장, 축농증, 편도염 등', 'M05~M14, H40, K80, K81~K83, K40~K46, J32, J35', '최대 100만원'],
+        ['특정 다빈도 29대질병 (29)', '손목터널증후군, 안면신경장애, 대상포진관련, 추간판장애, 중이염 등', 'G56.0, G51, B02, M50~M51, H65~H67', '최대 50만원'],
+        ['후각 특정질환 (1)', '혈관운동성 및 알레르기 비염, 만성비염, 비인두염', 'J30~J34', '최대 30만원'],
+        ['관절염·생식기 질환 (2)', '염증성 다발관절병증, 여성 골반내 기관 염증성 질환', 'M05~M14, N70~N77', '최대 30만원'],
+        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원'],
+        ['백내장 (1)', '노년 백내장, 기타 백내장, 수정체 장애', 'H25~H28', '최대 30만원']
+      ]
+    },
+    '120대': {
+      title: '별표 [120대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['특정 5대질병 (5)', '3대기관(심장·뇌혈관·간), 만성하부호흡기질환, 폐렴', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18', '최대 1,000만원'],
+        ['중대 10대질병 (10)', '급성췌장염, 버거씨병, 간질환, 폐색전증, 당뇨병합병증, 파킨슨 등', 'K85, I73.1, K70~K76, I26, E10~E14, G20, G35, G40', '최대 500만원'],
+        ['다발성 16대질병 (16)', '부정맥, 심부전, 동맥색전증, 수두증, 안면신경장애, 식도질환, 신부전 등', 'I47~I49, I50, I74, G91, G51, I69, J81, K22, N18', '최대 300만원'],
+        ['다빈도 30대질병 (30)', '위십이지장궤양, 녹내장, 갑상선질환, 담석증, 담낭염, 손목터널, 추간판 등', 'K25~K28, H40, E00~E07, K80, K81~K83, G56, M50~M51', '최대 100만원'],
+        ['부인과 10대질병 (10)', '자궁근종, 자궁폴립, 난소양성종양, 자궁내막증, 여성골반염, 골반장기탈출 등', 'D25, D26, D27, D28, N80, N81, N83, N84, N85', '최대 100만원'],
+        ['생활 48대질병 (48)', '관절염, 관절증, 탈장, 축농증, 편도염, 전립선비대증, 유방선종, 안과질환 등', 'M05~M14, M15~M19, K40~K46, J32, J35, N40, K58, D24, H15~H22', '최대 50만원'],
+        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원']
+      ]
+    }
+  },
+  hyundai: {
+    '120대': {
+      title: '별표 [120대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['26대질병Ⅱ (26)', '3대기관(심장·뇌혈관·간), 만성하부호흡기, 폐렴, 신부전, 특정질환 등', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18, N18', '최대 1,000만원'],
+        ['58대질병Ⅱ (58)', '당뇨병, 갑상선질환, 녹내장, 위십이지장궤양, 손목터널, 파킨슨, 뇌염 등', 'E10~E14, E00~E07, H40, K25~K28, G56.0, G20, G04', '최대 500만원'],
+        ['24대질병 (24)', '특정 호흡기질환, 결핵, 담낭담도질환, 신부전, 식도질환 등', 'J80~J84, A15~A19, K81~K83, N17~N19, K20~K22', '최대 100만원'],
+        ['다발성 10대질병 (10)', '유방선종, 자궁근종, 중이염, 탈장, 편도염, 축농증, 관절증 등', 'D24, D25, H65~H67, K40~K46, J35, J32, M15~M19', '최대 50만원'],
+        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원'],
+        ['갑상선관련질병 (1)', '갑상선의 기타 장애 및 처치후 갑상선기능저하증', 'E00~E07', '최대 30만원']
+      ]
+    },
+    '124대': {
+      title: '별표 [124대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['26대질병Ⅱ (26)', '3대기관(심장·뇌혈관·간), 만성하부호흡기, 폐렴, 신부전 등', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18, N18', '최대 1,000만원'],
+        ['58대질병Ⅱ (58)', '당뇨병, 갑상선질환, 녹내장, 위십이지장궤양, 손목터널, 파킨슨 등', 'E10~E14, E00~E07, H40, K25~K28, G56.0, G20', '최대 500만원'],
+        ['24대질병 (24)', '특정 호흡기질환, 결핵, 담낭담도질환, 식도질환 등', 'J80~J84, A15~A19, K81~K83, K20~K22', '최대 100만원'],
+        ['다발성 10대질병 (10)', '유방선종, 자궁근종, 중이염, 탈장, 편도염, 축농증 등', 'D24, D25, H65~H67, K40~K46, J35, J32', '최대 50만원'],
+        ['특정 3대질병 (3)', '급성심근경색증, 뇌출혈, 뇌경색증', 'I21~I23, I60~I62, I63', '최대 1,000만원'],
+        ['특정 2대질병 (2)', '중증폐렴, 만성신부전', 'J12~J18, N18', '최대 500만원'],
+        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원']
+      ]
+    },
+    '119대': {
+      title: '별표 [119대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['22대질병 (22)', '3대기관질환, 만성호흡기, 폐렴, 신부전 등', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18, N18', '최대 1,000만원'],
+        ['58대질병 (58)', '당뇨병, 갑상선질환, 녹내장, 위십이지장궤양, 손목터널 등', 'E10~E14, E00~E07, H40, K25~K28, G56.0', '최대 500만원'],
+        ['24대질병 (24)', '호흡기질환, 결핵, 담석증, 담낭염, 식도질환 등', 'J80~J84, A15~A19, K80, K81~K83, K20~K22', '최대 100만원'],
+        ['다발성 10대질병 (10)', '유방선종, 자궁근종, 중이염, 탈장, 편도염, 축농증 등', 'D24, D25, H65~H67, K40~K46, J35, J32', '최대 50만원'],
+        ['특정 4대질병 (4)', '중증폐렴, 간경변증, 만성신부전, 급성췌장염', 'J12~J18, K74, N18, K85', '최대 300만원'],
+        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원']
+      ]
+    }
+  },
+  kbinsure: {
+    '112대': {
+      title: '별표 [112대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['15대질병수술 (15)', '폐렴, 심장질환, 뇌혈관질환, 기관지폐 특정질환, 급성췌장염, 버거병 등', 'A48.1, J12~J18, I20~I25, I60~I69, J43~J47, K85, I73.1', '최대 2,000만원'],
+        ['24대질병수술 (24)', '결핵, 안면신경, 폐부종, 당뇨병, 녹내장, 파킨슨, 패혈증, 뇌염, 뇌전증 등', 'A15~A19, G50~G52, J81, E10~E14, H40, G20, G04, G40', '최대 200만원'],
+        ['22대질병수술 (22)', '갑상선질환, 부갑상선, 간암, 폐암, 난소암, 특정장질환, 췌장질환, 척추병증 등', 'E00~E07, E20, C22, C34, C56, K55~K57, K86, M45~M48', '최대 100만원'],
+        ['49대질병수술 (49)', '관절염, 관절증, 황반변성, 중이염, 담낭담도, 담석증, 탈장, 축농증, 편도염, 전립선, 자궁근종 등', 'M00~M14, M15~M19, H35.3, H65~H67, K80~K83, K40~K46, J32, J35, N40, D25', '최대 50만원'],
+        ['백내장 수술 (1)', '노년 백내장, 기타 백내장, 수정체의 기타 장애', 'H25, H26, H27', '최대 30만원'],
+        ['치핵 수술 (1)', '치핵 및 항문주위 정맥혈전증', 'K64', '최대 30만원']
+      ]
+    },
+    '116대': {
+      title: '별표 [116대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['15대질병수술 (15)', '폐렴, 심장질환, 뇌혈관질환, 기관지폐 특정질환, 급성췌장염 등', 'A48.1, J12~J18, I20~I25, I60~I69, J43~J47, K85', '최대 2,000만원'],
+        ['23대질병수술 (23)', '결핵, 안면신경, 폐부종, 당뇨병, 녹내장, 파킨슨, 뇌염, 뇌전증 등', 'A15~A19, G50~G52, J81, E10~E14, H40, G20, G04, G40', '최대 200만원'],
+        ['24대질병수술 (24)', '갑상선질환, 부갑상선, 간암, 폐암, 난소암, 장질환, 췌장질환, 척추병증 등', 'E00~E07, E20, C22, C34, C56, K55~K57, K86, M45~M48', '최대 100만원'],
+        ['52대질병수술 (52)', '관절염, 관절증, 황반변성, 중이염, 담석증, 탈장, 축농증, 편도염, 전립선, 자궁근종, 안과질환 등', 'M00~M14, M15~M19, H35.3, H65~H67, K80, K40~K46, J32, J35, N40, D25', '최대 50만원'],
+        ['백내장 수술 (1)', '노년 백내장, 기타 백내장, 수정체 장애', 'H25, H26, H27', '최대 30만원'],
+        ['치핵 수술 (1)', '치핵 및 항문주위 정맥혈전증', 'K64', '최대 30만원']
+      ]
+    }
+  },
+  samsungfire: {
+    '111대': {
+      title: '별표 [111대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['5대주요기관 질병 (5)', '뇌혈관질환, 허혈성심장질환, 간질환, 만성하부호흡기질환, 신부전', 'I60~I69, I20~I25, K70~K76, J40~J47, N18', '최대 1,000만원'],
+        ['22대주요 질병 (22)', '당뇨병, 고혈압, 동맥경화증, 폐렴, 결핵, 위십이지장궤양, 중이염, 녹내장 등', 'E10~E14, I10~I15, I70, J12~J18, A15~A19, K25~K28, H65~H67, H40', '최대 300만원'],
+        ['3대특정 질병 (3)', '급성심근경색증, 뇌출혈, 뇌경색증', 'I21~I23, I60~I62, I63', '최대 500만원'],
+        ['19대생활 질병 (19)', '관절염, 백내장, 담석증, 담낭염, 사타구니탈장, 편도염, 축농증 등', 'M05~M14, H25~H28, K80, K81~K83, K40, J35, J32', '최대 100만원'],
+        ['62대생활 질병 (62)', '치핵, 자궁근종, 유방선종, 손목터널, 안면신경, 소화기계 양성신생물 등', 'K64, D25, D24, G56.0, G51, D12, D13', '최대 50만원']
+      ]
+    },
+    '116대': {
+      title: '별표 [116대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['5대주요기관 질병 (5)', '뇌혈관질환, 허혈성심장질환, 간질환, 만성하부호흡기질환, 신부전', 'I60~I69, I20~I25, K70~K76, J40~J47, N18', '최대 1,000만원'],
+        ['22대주요 질병 (22)', '당뇨병, 고혈압, 동맥경화증, 폐렴, 결핵, 위십이지장궤양, 중이염, 녹내장 등', 'E10~E14, I10~I15, I70, J12~J18, A15~A19, K25~K28, H65~H67, H40', '최대 300만원'],
+        ['3대특정 질병 (3)', '급성심근경색증, 뇌출혈, 뇌경색증', 'I21~I23, I60~I62, I63', '최대 500만원'],
+        ['19대생활 질병 (19)', '관절염, 백내장, 담석증, 담낭염, 사타구니탈장, 편도염, 축농증 등', 'M05~M14, H25~H28, K80, K81~K83, K40, J35, J32', '최대 100만원'],
+        ['67대생활 질병 (67)', '치핵, 자궁근종, 유방선종, 손목터널, 안면신경, 양성종양, 특정질환 등', 'K64, D25, D24, G56.0, G51, D12, D13', '최대 50만원']
+      ]
+    }
+  },
+  dbinsure: {
+    '120대': {
+      title: '별표 [120대 질병분류표 및 보장 질병코드 전문]',
+      rows: [
+        ['6대질병 (6)', '심장질환, 뇌혈관질환, 간질환, 고혈압, 당뇨병, 만성호흡기질환', 'I20~I25, I60~I69, K70~K76, I10~I15, E10~E14, J40~J47', '최대 1,000만원'],
+        ['9대질병 (9)', '위십이지장궤양, 신부전, 결핵, 패혈증, 파킨슨, 뇌염, 중증폐렴 등', 'K25~K28, N18, A15~A19, A40~A41, G20, G04, J12~J18', '최대 500만원'],
+        ['20대질병 (20)', '갑상선질환, 녹내장, 동맥색전증, 췌장질환, 폐색전증, 척추병증 등', 'E00~E07, H40, I74, K85~K86, I26, M45~M48', '최대 200만원'],
+        ['22대질병 (22)', '손목터널, 안면신경, 담석증, 담낭염, 특정호흡기, 식도질환, 난소질환 등', 'G56.0, G51, K80, K81~K83, J80~J84, K20~K22, N83', '최대 100만원'],
+        ['63대질병 (63)', '관절염, 관절증, 탈장, 축농증, 편도염, 백내장, 치핵, 자궁근종, 유방선종 등', 'M05~M14, M15~M19, K40~K46, J32, J35, H25~H28, K64, D25, D24', '최대 50만원']
+      ]
+    }
+  }
+};
+
 window.openNdaiGroupModal = function(co, grpName, period, data) {
-  const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
-  const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
+  const coKey = (co && co.id) ? (co.id.replace('fire', '').replace('life', '')) : '';
+  const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[coKey]);
+  const isSimp = (data && data.pData && data.pData.name && data.pData.name.includes('간편')) || (data && data.ptype === 'simplified');
+  const v = (isSimp && coEntry && coEntry.simplified) ? coEntry.simplified : ((coEntry && coEntry.standard) || (coEntry && coEntry.simplified) || coEntry);
 
   let pages = null;
   let pageDesc = '';
@@ -18,9 +157,12 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
     } else if (grp.includes('64대') || grp.includes('다빈도')) {
       pages = ['assets/clause_imgs/meritz_std_ndai_64_p720.png', 'assets/clause_imgs/meritz_std_ndai_64_p721.png'];
       pageDesc = '공시실 별표45 제720쪽~제721쪽 【별표45】 다빈도64대질병 분류표';
-    } else if (grp.includes('32대')) {
+    } else if (grp.includes('32대') || grp.includes('다발성') || grp.includes('16대')) {
       pages = ['assets/clause_imgs/meritz_std_ndai_32_p728.png'];
       pageDesc = '공시실 별표46 제728쪽 【별표46】 32대질병 분류표';
+    } else if (grp.includes('심장') || grp.includes('뇌혈관') || grp.includes('29대') || grp.includes('후각') || grp.includes('치핵') || grp.includes('백내장')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_inc_p334.png', 'assets/clause_imgs/meritz_std_ndai_inc_p335.png', 'assets/clause_imgs/meritz_std_ndai_inc_p336.png'];
+      pageDesc = '공시실 원문 제334쪽~제336쪽 131대 질병 정의 및 분류표 전문';
     }
   }
   // 2. 삼성화재
@@ -37,30 +179,41 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
     } else if (grp.includes('19대')) {
       pages = ['assets/clause_imgs/samsung_std_ndai_19_p1419.png'];
       pageDesc = '공시실 별표20-8 제1419쪽 【별표20-8】 19대생활질병 분류표';
-    } else if (grp.includes('62대')) {
+    } else if (grp.includes('62대') || grp.includes('67대')) {
       pages = ['assets/clause_imgs/samsung_std_ndai_62_p1420.png', 'assets/clause_imgs/samsung_std_ndai_62_p1421.png'];
       pageDesc = '공시실 별표20-9 제1420쪽~제1421쪽 【별표20-9】 62대생활질병 분류표';
     }
   }
   // 3. 현대해상
   else if (co.id.includes('hyundai')) {
-    pages = ['assets/clause_imgs/hyundai_std_ndai_table_p535.png', 'assets/clause_imgs/hyundai_std_ndai_table_p536.png'];
-    pageDesc = '공시실 별표22 제535쪽~제536쪽 120대 대상질병분류표 전문';
+    pages = [
+      'assets/clause_imgs/hyundai_std_perf_ndai_table_p1094.png',
+      'assets/clause_imgs/hyundai_std_perf_ndai_table_p1095.png',
+      'assets/clause_imgs/hyundai_std_perf_ndai_table_p1096.png',
+      'assets/clause_imgs/hyundai_std_perf_ndai_table_p1097.png'
+    ];
+    pageDesc = '공시실 별표 제1094쪽~제1097쪽 120대 대상질병분류표 전문';
   }
   // 4. DB손해보험
   else if (co.id.includes('db')) {
-    pages = ['assets/clause_imgs/db_std_ndai_table_p1216.png', 'assets/clause_imgs/db_std_ndai_table_p1217.png'];
-    pageDesc = '공시실 별표 제1216쪽~제1217쪽 116대/85대 대상질병분류표 전문';
+    pages = [
+      'assets/clause_imgs/db_std_ndai_table_p1216.png',
+      'assets/clause_imgs/db_std_ndai_table_p1217.png'
+    ];
+    pageDesc = '공시실 별표 제1216쪽~제1217쪽 【별표45】 120대/116대 대상질병분류표 전문';
   }
   // 5. KB손해보험
   else if (co.id.includes('kb')) {
-    pages = ['assets/clause_imgs/kb_std_ndai_table_p627.png', 'assets/clause_imgs/kb_std_ndai_table_p628.png'];
-    pageDesc = '공시실 별표 제627쪽~제628쪽 112대 대상질병분류표 전문';
+    pages = [
+      'assets/clause_imgs/kb_std_51010_ndai_table_p1173.png',
+      'assets/clause_imgs/kb_std_51010_ndai_table_p1174.png'
+    ];
+    pageDesc = '공시실 별표17 제1173쪽~제1174쪽 【별표17】 116대/112대 질병 분류표 전문';
   }
   // 6. 한화손해보험
   else if (co.id.includes('hanwha')) {
     pages = ['assets/clause_imgs/hanwha_std_ndai_table_p1376.png'];
-    pageDesc = '공시실 별표 제1376쪽 124대 대상질병분류표 전문';
+    pageDesc = '공시실 별표 제1376쪽 【별표】 124대 대상질병분류표 전문';
   }
 
   // Fallback: v.ndai_table
@@ -76,7 +229,6 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
     alert(`🏢 [${co.name}] ${grpName} 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
   }
 };
-
 
 function generateClauseSuggestions(rawQ) {
   const normQ = (rawQ || '').trim().toLowerCase();
@@ -7838,6 +7990,284 @@ let currentClauseModalData = null;
 
 // N대 질병군별 상세 KCD 질병코드 매핑 사전
 const NDAI_DETAILED_ITEMS = {
+  // KB손해보험 112대/116대 세부 질환군
+  '15대질병수술': [
+    { code: 'A48.1', name: '재향군인병 (레지오넬라증)', desc: '레지오넬라균에 의한 급성 호흡기 감염증' },
+    { code: 'J12~J18', name: '폐렴', desc: '바이러스폐렴, 세균성폐렴, 기타 감염성폐렴, 상세불명 폐렴' },
+    { code: 'J43~J47', name: '기관지 및 폐의 특정질환', desc: '폐기종, 만성 폐쇄성 폐질환(COPD), 기관지확장증' },
+    { code: 'K85', name: '급성 췌장염', desc: '급성 췌장염 및 췌장 괴사' },
+    { code: 'I73.1', name: '버거씨병 (폐색성 혈전혈관염)', desc: '사지 말초동맥 및 정맥의 만성 혈전성 폐색' },
+    { code: 'I20~I25', name: '심장질환', desc: '협심증, 급성 심근경색증, 허혈성 심장질환' },
+    { code: 'I60~I69', name: '뇌혈관질환', desc: '뇌출혈, 뇌경색증, 뇌동맥류' }
+  ],
+  '24대질병수술': [
+    { code: 'A15~A19', name: '결핵', desc: '호흡기 결핵, 신경계 결핵, 림프절 결핵 및 결핵 후유증' },
+    { code: 'G50~G52', name: '안면신경장애 및 삼차신경통', desc: '삼차신경 장애, 안면신경 장애, 기타 뇌신경 장애' },
+    { code: 'J81', name: '폐부종', desc: '급성 폐부종 및 만성 폐부종' },
+    { code: 'E10~E14', name: '당뇨병 질환', desc: '1형/2형 당뇨병, 당뇨병성 신경병증/망막병증/신장병증' },
+    { code: 'H40, H42', name: '녹내장', desc: '원발 녹내장, 기타 녹내장' },
+    { code: 'G20, G21', name: '파킨슨병', desc: '파킨슨병 및 이차성 파킨슨증' },
+    { code: 'A40, A41', name: '패혈증', desc: '연쇄알균패혈증 및 기타 중증 패혈증' },
+    { code: 'G04~G09', name: '뇌 및 척수의 염증성 질환', desc: '뇌염, 척수염, 뇌수막염, 두개내 농양' },
+    { code: 'G40, G41', name: '뇌전증 (간질)', desc: '뇌전증 및 뇌전증지속상태' },
+    { code: 'G91', name: '수두증 (뇌수종)', desc: '교통성 수두증, 폐쇄성 수두증' },
+    { code: 'N00~N08', name: '사구체질환', desc: '급성·만성 신염증후군, 신증후군' },
+    { code: 'N10~N16', name: '신세뇨관-간질질환', desc: '급성·만성 세뇨관간질신장염, 폐색성 요로병증' }
+  ],
+  '22대질병수술': [
+    { code: 'E00~E07', name: '갑상선질환', desc: '갑상선기능항진증/저하증, 갑상선염, 갑상선종' },
+    { code: 'E20, E21', name: '부갑상선질환', desc: '부갑상선기능저하증 및 항진증' },
+    { code: 'C22', name: '간암', desc: '간 및 간내 담관의 악성 신생물' },
+    { code: 'C34', name: '기관지 및 폐암', desc: '기관지 및 폐의 악성 신생물' },
+    { code: 'C56', name: '난소암', desc: '난소의 악성 신생물' },
+    { code: 'K55~K57', name: '특정 장질환', desc: '장의 혈관장애, 마비성 장폐색증, 장의 게실병' },
+    { code: 'K86, K87', name: '췌장질환', desc: '만성 췌장염, 췌장의 낭포' },
+    { code: 'M45~M48', name: '척추병증', desc: '강직척추염, 척추증, 기타 염증성 척추병증' },
+    { code: 'M50, M51', name: '추간판장애 (디스크)', desc: '경추간판장애, 요추간판장애' }
+  ],
+  '49대질병수술': [
+    { code: 'M00~M14', name: '관절염 및 다발관절병증', desc: '감염성 관절병증, 염증성 다발관절병증, 류마티스 관절염' },
+    { code: 'M15~M19', name: '관절증 (퇴행성 관절염)', desc: '다발관절증, 고관절증, 무릎관절증' },
+    { code: 'H35.3', name: '황반변성', desc: '황반 및 후극부의 변성' },
+    { code: 'H65~H75', name: '중이염 및 유돌의 질환', desc: '비화농성/화농성 중이염, 고막 천공, 진주종' },
+    { code: 'K80~K83', name: '담낭·담도질환 및 담석증', desc: '담낭염, 담도염, 담낭결석, 담관결석' },
+    { code: 'K40~K46', name: '탈장', desc: '사타구니탈장, 대퇴탈장, 배꼽탈장, 복벽탈장' },
+    { code: 'J32', name: '축농증 (만성 부비동염)', desc: '만성 부비동염, 상악동염' },
+    { code: 'J35', name: '편도염 및 아데노이드 질환', desc: '만성 편도염, 편도의 비대, 아데노이드 비대' },
+    { code: 'N40', name: '전립선비대증', desc: '양성 전립선증식증 (유로리프트, TURP)' },
+    { code: 'D25', name: '자궁근종', desc: '점막하 자궁근종, 벽내 자궁근종' },
+    { code: 'D24', name: '유방의 양성종양', desc: '유방의 섬유선종, 관내유두종' },
+    { code: 'C16', name: '위암', desc: '위의 악성 신생물' },
+    { code: 'C73', name: '갑상선암', desc: '갑상선의 악성 신생물' }
+  ],
+  '백내장 수술': [
+    { code: 'H25', name: '노년 백내장', desc: '노년성 백내장 (초음파유화술, 인공수정체 삽입술)' },
+    { code: 'H26', name: '기타 백내장', desc: '선천성 백내장, 외상성 백내장' },
+    { code: 'H27', name: '수정체의 기타 장애', desc: '무수정체증, 수정체 탈구' }
+  ],
+  '치핵 수술': [
+    { code: 'K64', name: '치핵 및 항문주위 정맥혈전증', desc: '내치핵, 외치핵, 혈전성 치핵, 탈항' }
+  ],
+  '23대질병수술': [
+    { code: 'A15~A19', name: '결핵', desc: '호흡기 결핵 및 결핵 후유증' },
+    { code: 'G50~G52', name: '안면신경장애', desc: '삼차신경통, 안면신경마비' },
+    { code: 'E10~E14', name: '당뇨병', desc: '당뇨병 및 만성 합병증' },
+    { code: 'H40', name: '녹내장', desc: '녹내장 수술' }
+  ],
+  '52대질병수술': [
+    { code: 'M00~M14', name: '관절염', desc: '류마티스 및 염증성 관절염' },
+    { code: 'M15~M19', name: '관절증', desc: '무릎관절증, 고관절증' },
+    { code: 'K80', name: '담석증', desc: '담낭담관 결석 복강경 절제술' },
+    { code: 'K40~K46', name: '탈장', desc: '서혜부 탈장 복원술' },
+    { code: 'D25', name: '자궁근종', desc: '자궁근종 절제술' },
+    { code: 'D24', name: '유방선종', desc: '맘모톰 유방 양성종양 절제술' }
+  ],
+
+  // 현대해상 120대/124대/119대 세부 질환군
+  '26대질병Ⅱ': [
+    { code: 'I20~I25', name: '심장질환', desc: '협심증, 급성 심근경색증, 허혈성 심근병증' },
+    { code: 'I60~I69', name: '뇌혈관질환', desc: '뇌출혈, 지주막하출혈, 뇌경색증' },
+    { code: 'K70~K76', name: '간질환', desc: '만성 간염, 간경화증, 간부전' },
+    { code: 'J40~J47', name: '만성하부호흡기질환', desc: '만성 기관지염, 폐기종, COPD' },
+    { code: 'J12~J18', name: '폐렴', desc: '세균성 및 바이러스성 폐렴' },
+    { code: 'N18', name: '만성 신부전증', desc: '만성 콩팥병, 투석 요법 대상' }
+  ],
+  '58대질병Ⅱ': [
+    { code: 'E10~E14', name: '당뇨병', desc: '당뇨병 및 혈관 합병증' },
+    { code: 'E00~E07', name: '갑상선질환', desc: '갑상선기능장애 및 갑상선염' },
+    { code: 'H40', name: '녹내장', desc: '원발 녹내장' },
+    { code: 'K25~K28', name: '위십이지장궤양', desc: '소화성 궤양 질환' },
+    { code: 'G56.0', name: '손목터널증후군', desc: '수근관증후군 신경감압술' },
+    { code: 'G20', name: '파킨슨병', desc: '파킨슨병' },
+    { code: 'G04', name: '뇌염 및 척수염', desc: '중추신경계 염증성 질환' }
+  ],
+  '24대질병': [
+    { code: 'J80~J84', name: '특정 호흡기질환', desc: '폐부종, 간질성 폐질환' },
+    { code: 'A15~A19', name: '결핵', desc: '결핵균 감염 질환' },
+    { code: 'K81~K83', name: '담낭·담도질환', desc: '담낭염 및 담관염' },
+    { code: 'N17~N19', name: '신부전', desc: '신장기능 상실 질환' },
+    { code: 'K20~K22', name: '식도질환', desc: '위식도역류병, 식도협착' }
+  ],
+  '다발성 10대질병': [
+    { code: 'D24', name: '유방의 양성종양', desc: '섬유선종, 양성 유방 질환' },
+    { code: 'D25', name: '자궁의 평활근종', desc: '자궁근종' },
+    { code: 'H65~H67', name: '중이염', desc: '삼출성 및 화농성 중이염' },
+    { code: 'K40~K46', name: '탈장', desc: '복부 및 서혜부 탈장' },
+    { code: 'J35', name: '만성 편도염', desc: '편도 및 아데노이드 질환' },
+    { code: 'J32', name: '축농증', desc: '만성 부비강염' },
+    { code: 'M15~M19', name: '관절증', desc: '퇴행성 무릎·고관절 관절염' }
+  ],
+  '치핵': [
+    { code: 'K64', name: '치핵', desc: '치핵 및 항문주위 정맥혈전증' }
+  ],
+  '갑상선관련질병': [
+    { code: 'E00~E07', name: '갑상선의 장애', desc: '갑상선 질환 및 기능장애' }
+  ],
+  '특정 3대질병': [
+    { code: 'I21~I23', name: '급성 심근경색증', desc: '급성 심근경색' },
+    { code: 'I60~I62', name: '뇌출혈', desc: '지주막하출혈 및 뇌내출혈' },
+    { code: 'I63', name: '뇌경색증', desc: '뇌경색증 (허혈성 뇌졸중)' }
+  ],
+  '특정 2대질병': [
+    { code: 'J12~J18', name: '중증 폐렴', desc: '세균성 및 중증 합병증 동반 폐렴' },
+    { code: 'N18', name: '만성 신부전증', desc: '만성 신장병 말기' }
+  ],
+  '22대질병': [
+    { code: 'I20~I25', name: '심장질환', desc: '허혈심장질환' },
+    { code: 'I60~I69', name: '뇌혈관질환', desc: '뇌혈관질환 전수' },
+    { code: 'K70~K76', name: '간질환', desc: '간경변 및 만성 간부전' }
+  ],
+  '58대질병': [
+    { code: 'E10~E14', name: '당뇨병', desc: '당뇨병' },
+    { code: 'E00~E07', name: '갑상선질환', desc: '갑상선질환' },
+    { code: 'H40', name: '녹내장', desc: '녹내장' }
+  ],
+  '특정 4대질병': [
+    { code: 'J12~J18', name: '중증폐렴', desc: '중증 폐렴' },
+    { code: 'K74', name: '간경변증', desc: '간의 섬유증 및 경화증' },
+    { code: 'N18', name: '만성신부전', desc: '만성 콩팥병' },
+    { code: 'K85', name: '급성췌장염', desc: '급성 췌장염' }
+  ],
+
+  // 삼성화재 111대 세부 질환군
+  '5대주요기관 질병': [
+    { code: 'I60~I69', name: '뇌혈관질환', desc: '뇌출혈, 뇌경색증, 뇌동맥류' },
+    { code: 'I20~I25', name: '허혈성심장질환', desc: '협심증, 급성 심근경색증' },
+    { code: 'K70~K76', name: '간질환', desc: '만성 간염, 간경변증, 간부전' },
+    { code: 'J40~J47', name: '만성하부호흡기질환', desc: '만성 기관지염, 폐기종, COPD' },
+    { code: 'N18', name: '신부전', desc: '만성 신장병, 만성 신부전증' }
+  ],
+  '22대주요 질병': [
+    { code: 'E10~E14', name: '당뇨병', desc: '1형/2형 당뇨병 및 합병증' },
+    { code: 'I10~I15', name: '고혈압성 질환', desc: '본태성 고혈압, 고혈압성 심신장질환' },
+    { code: 'I70', name: '동맥경화증', desc: '죽상경화증 및 말초동맥질환' },
+    { code: 'J12~J18', name: '폐렴', desc: '감염성 폐렴' },
+    { code: 'A15~A19', name: '결핵', desc: '호흡기 및 기타 기관의 결핵' },
+    { code: 'K25~K28', name: '위십이지장궤양', desc: '소화성 궤양 질환' },
+    { code: 'H65~H67', name: '중이염', desc: '비화농성/화농성 중이염' },
+    { code: 'H40', name: '녹내장', desc: '녹내장' }
+  ],
+  '3대특정 질병': [
+    { code: 'I21~I23', name: '급성 심근경색증', desc: '급성 심근경색' },
+    { code: 'I60~I62', name: '뇌출혈', desc: '지주막하출혈, 뇌내출혈' },
+    { code: 'I63', name: '뇌경색증', desc: '뇌경색증' }
+  ],
+  '19대생활 질병': [
+    { code: 'M05~M14', name: '관절염', desc: '류마티스 관절염' },
+    { code: 'H25~H28', name: '백내장', desc: '백내장' },
+    { code: 'K80~K83', name: '담석증 및 담낭염', desc: '담낭결석, 담관염' },
+    { code: 'K40', name: '사타구니탈장', desc: '서혜부 탈장' },
+    { code: 'J35', name: '편도염', desc: '만성 편도염' },
+    { code: 'J32', name: '축농증', desc: '만성 부비동염' }
+  ],
+  '62대생활 질병': [
+    { code: 'K64', name: '치핵', desc: '치핵 및 항문질환' },
+    { code: 'D25', name: '자궁근종', desc: '자궁의 평활근종' },
+    { code: 'D24', name: '유방선종', desc: '유방의 양성 신생물' },
+    { code: 'G56.0', name: '손목터널증후군', desc: '수근관증후군' },
+    { code: 'G51', name: '안면신경장애', desc: '안면신경마비' },
+    { code: 'D12, D13', name: '위·대장 양성종양', desc: '위·대장 양성 신생물 (용종/폴립)' }
+  ],
+
+  // DB손해보험 120대 세부 질환군
+  '6대질병': [
+    { code: 'I20~I25', name: '심장질환', desc: '허혈심장질환' },
+    { code: 'I60~I69', name: '뇌혈관질환', desc: '뇌혈관질환 전수' },
+    { code: 'K70~K76', name: '간질환', desc: '간경변 및 만성 간부전' },
+    { code: 'I10~I15', name: '고혈압', desc: '고혈압성 질환' },
+    { code: 'E10~E14', name: '당뇨병', desc: '당뇨병' },
+    { code: 'J40~J47', name: '만성호흡기질환', desc: 'COPD, 만성기관지염' }
+  ],
+  '9대질병': [
+    { code: 'K25~K28', name: '위십이지장궤양', desc: '소화성 궤양 질환' },
+    { code: 'N18', name: '신부전', desc: '만성 신장병' },
+    { code: 'A15~A19', name: '결핵', desc: '결핵균 감염' },
+    { code: 'A40~A41', name: '패혈증', desc: '중증 패혈증' },
+    { code: 'G20', name: '파킨슨', desc: '파킨슨병' },
+    { code: 'G04', name: '뇌염', desc: '뇌염 및 척수염' },
+    { code: 'J12~J18', name: '중증폐렴', desc: '중증 폐렴' }
+  ],
+  '20대질병': [
+    { code: 'E00~E07', name: '갑상선질환', desc: '갑상선 기능장애' },
+    { code: 'H40', name: '녹내장', desc: '녹내장' },
+    { code: 'I74', name: '동맥색전증', desc: '동맥 색전 및 혈전' },
+    { code: 'K85~K86', name: '췌장질환', desc: '급성 및 만성 췌장염' },
+    { code: 'M45~M48', name: '척추병증', desc: '척추 질환 및 척추증' }
+  ],
+  '22대질병': [
+    { code: 'G56.0', name: '손목터널증후군', desc: '수근관증후군' },
+    { code: 'G51', name: '안면신경장애', desc: '안면신경마비' },
+    { code: 'K80', name: '담석증', desc: '담낭 및 담관 결석' },
+    { code: 'K81~K83', name: '담낭염', desc: '담낭 질환' },
+    { code: 'K20~K22', name: '식도질환', desc: '식도 질환' },
+    { code: 'N83', name: '난소질환', desc: '난소 및 난관의 비염증성 장애' }
+  ],
+  '63대질병': [
+    { code: 'M05~M14', name: '관절염', desc: '염증성 관절염' },
+    { code: 'M15~M19', name: '관절증', desc: '퇴행성 관절염' },
+    { code: 'K40~K46', name: '탈장', desc: '서혜부 및 복벽 탈장' },
+    { code: 'J32', name: '축농증', desc: '만성 부비동염' },
+    { code: 'J35', name: '편도염', desc: '만성 편도염' },
+    { code: 'H25~H28', name: '백내장', desc: '백내장' },
+    { code: 'K64', name: '치핵', desc: '치핵' },
+    { code: 'D25', name: '자궁근종', desc: '자궁근종' },
+    { code: 'D24', name: '유방선종', desc: '유방선종' }
+  ],
+
+  // 메리츠 131대 세부 질환군
+  '심장질환': [
+    { code: 'I20~I25', name: '허혈성 심장질환', desc: '협심증, 급성 심근경색증, 이차성 심근경색증' }
+  ],
+  '뇌혈관질환': [
+    { code: 'I60~I69', name: '뇌혈관질환', desc: '지주막하출혈, 뇌내출혈, 뇌경색증, 뇌동맥류' }
+  ],
+  '특정 31대질병': [
+    { code: 'K70~K76', name: '간질환', desc: '만성 간염, 간경변증, 간부전' },
+    { code: 'K85', name: '췌장질환', desc: '급성 췌장염' },
+    { code: 'J40~J47', name: '만성하부호흡기질환', desc: '만성 기관지염, 폐기종, COPD' },
+    { code: 'J12~J18', name: '폐렴', desc: '세균성 및 바이러스성 폐렴' },
+    { code: 'A15~A19', name: '결핵', desc: '호흡기 결핵 및 결핵 후유증' },
+    { code: 'E10~E14', name: '당뇨병', desc: '당뇨병 및 혈관 합병증' },
+    { code: 'G20', name: '파킨슨병', desc: '파킨슨병' },
+    { code: 'N18', name: '만성 신부전증', desc: '만성 콩팥병' }
+  ],
+  '다빈도 64대질병': [
+    { code: 'M05~M14', name: '관절염', desc: '염증성 다발관절병증' },
+    { code: 'H40', name: '녹내장', desc: '원발 녹내장' },
+    { code: 'K80', name: '담석증', desc: '담낭결석, 담관결석' },
+    { code: 'K81~K83', name: '담낭염 및 담도질환', desc: '급성·만성 담낭염' },
+    { code: 'K40~K46', name: '사타구니탈장 및 복부탈장', desc: '서혜부 탈장' },
+    { code: 'J32', name: '축농증', desc: '만성 부비동염' },
+    { code: 'J35', name: '편도염', desc: '만성 편도염' }
+  ],
+  '특정 다빈도 29대질병': [
+    { code: 'G56.0', name: '손목터널증후군', desc: '수근관증후군' },
+    { code: 'G51', name: '안면신경장애', desc: '안면신경마비' },
+    { code: 'B02', name: '대상포진관련 질환', desc: '대상포진성 신경병증' },
+    { code: 'M50, M51', name: '추간판장애', desc: '경추 및 요추 디스크' },
+    { code: 'H65~H67', name: '중이염', desc: '중이염' }
+  ],
+  '후각 특정질환': [
+    { code: 'J30~J34', name: '비염 및 코폴립', desc: '혈관운동성 및 알레르기 비염, 코폴립' }
+  ],
+  '관절염·생식기 질환': [
+    { code: 'M05~M14', name: '염증성 다발관절병증', desc: '관절염' },
+    { code: 'N70~N77', name: '여성 골반내 기관 염증성 질환', desc: '골반염, 난소염, 자궁염' }
+  ],
+  '백내장': [
+    { code: 'H25~H28', name: '백내장 및 수정체 장애', desc: '노년 백내장, 기타 백내장' }
+  ],
+  '생활 48대질병': [
+    { code: 'M05~M14', name: '관절염', desc: '염증성 다발관절병증' },
+    { code: 'M15~M19', name: '관절증', desc: '퇴행성 관절염' },
+    { code: 'K40~K46', name: '탈장', desc: '서혜부 탈장' },
+    { code: 'J32', name: '축농증', desc: '만성 부비동염' },
+    { code: 'J35', name: '편도염', desc: '만성 편도염' },
+    { code: 'N40', name: '전립선증식증', desc: '양성 전립선비대증' },
+    { code: 'D24', name: '유방선종', desc: '유방 양성종양' },
+    { code: 'H15~H22', name: '안과질환', desc: '각막 및 공막 장애' }
+  ],
+
   '특정 5대질병': [
     { code: 'I60~I69', name: '뇌혈관질환', desc: '지주막하출혈, 뇌내출혈, 뇌경색증, 뇌동맥류, 뇌혈관 기형 등' },
     { code: 'I20~I25', name: '허혈심장질환', desc: '협심증, 급성 심근경색증, 후속 심근경색증 등' },
@@ -9216,7 +9646,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       // 약관 테이블 내 매칭 질병군 필터링
       let matchedRows = (tableData.rows || []).filter(r => {
         const grpName = r[0];
-        const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
+        const detailedList = NDAI_DETAILED_ITEMS[grpName] || NDAI_DETAILED_ITEMS[grpName.replace(/\s*\(\d+\)/, "").trim()] || [];
         if (detailedList.some(item => item.name.toLowerCase().includes(normQ) || item.code.toLowerCase().includes(normQ) || (item.desc && item.desc.toLowerCase().includes(normQ)))) return true;
         return r.some(cell => String(cell).toLowerCase().includes(normQ));
       });
@@ -9235,7 +9665,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                 const summaryNames = r[1];
                 const rawCodes = r[2];
                 const benefit = r[3];
-                const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
+                const detailedList = NDAI_DETAILED_ITEMS[grpName] || NDAI_DETAILED_ITEMS[grpName.replace(/\s*\(\d+\)/, "").trim()] || [];
                 return `
                 <div style="background:var(--surface-2);border:1.5px solid rgba(5,150,105,0.3);border-radius:9px;padding:10px 12px;">
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;">
@@ -9302,9 +9732,15 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       return;
     }
 
-    // 2) Idle 상태: 전체 질병군 아코디언 드릴다운 리스트 (112대 질병군 우선 상단 전개, 빠른판정 칩은 하단 배치 #34084)
-    const rows = tableData.rows || [];
-    const cleanTableTitle = (selectedNdai ? `별표 [${selectedNdai} 질병분류표 및 보장 질병코드 전문]` : tableData.title).replace(/\d+대\/\d+대/, m => selectedNdai || m.split('/')[0]);
+    // 2) Idle 상태: 전체 질병군 아코디언 드릴다운 리스트 (N대별 동적 질병군 테이블 직결 #35064 #35077 #35118)
+    const coKey = (co && co.id) ? co.id.replace('fire', '').replace('life', '') : '';
+    const numMatch = (selectedNdai || rider.title || tableData.title || '').match(/\d+대/);
+    const ndaiNum = numMatch ? numMatch[0] : '';
+    const dynamicEntry = (window.DYNAMIC_NDAI_TABLES && (window.DYNAMIC_NDAI_TABLES[co.id] || window.DYNAMIC_NDAI_TABLES[coKey]));
+    const dynamicTable = (dynamicEntry && (dynamicEntry[selectedNdai] || dynamicEntry[ndaiNum] || Object.values(dynamicEntry)[0])) || tableData;
+
+    const rows = dynamicTable.rows || tableData.rows || [];
+    const cleanTableTitle = dynamicTable.title || (selectedNdai ? `별표 [${selectedNdai} 질병분류표 및 보장 질병코드 전문]` : tableData.title).replace(/\d+대\/\d+대/, m => selectedNdai || m.split('/')[0]);
     box.innerHTML = photoBtnHTML + `
       <div style="margin-bottom:12px;padding:2px 0;">
         <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -9320,7 +9756,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           const summaryNames = r[1];
           const rawCodes = r[2];
           const benefit = r[3];
-          const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
+          const detailedList = NDAI_DETAILED_ITEMS[grpName] || NDAI_DETAILED_ITEMS[grpName.replace(/\s*\(\d+\)/, "").trim()] || [];
           const isAutoOpen = false; // 모달 진입 시 전 질환군 기본 접힘(숨기기) 유지 (#29484)
 
           return `

@@ -2,7 +2,7 @@
 window.VERIFIED_CLAUSE_SCANS = {
   "meritz": {
     "standard": {
-      "product": "무배당 메리츠 The좋은 케어프리보험 M-Basket2210",
+      "product": "무배당 메리츠 The좋은 알파Plus보장보험2210",
       "type": "표준체 (건강체)",
       "basic_inc": {
         "pages": [
@@ -19,16 +19,15 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_inc_p1460.png",
-          "assets/clause_imgs/meritz_std_tier_inc_p1461.png"
+          "assets/clause_imgs/meritz_std_pure_tier_inc_p987.png"
         ],
-        "pageStr": "공시실 원문 제1460쪽 ~ 제1461쪽 (31. 질병수술비(1~7종) 제3조 지급사유 및 제4조 수술의 정의)"
+        "pageStr": "공시실 원문 제987쪽 (3-8. 수술비(1~5종)보장 제1조 지급사유(순수 1종~5종 지급금액표) · 제2조 세부규정)"
       },
       "tier_exc": {
         "pages": [
-          "assets/clause_imgs/meritz_std_tier_exc_p1465.png"
+          "assets/clause_imgs/meritz_std_pure_tier_exc_p988.png"
         ],
-        "pageStr": "공시실 원문 제1465쪽 (제5조 보험금을 지급하지 않는 사유)"
+        "pageStr": "공시실 원문 제988쪽 (제3조 보험금을 지급하지 않는 사유 ①~③ 전수 · 제4조 수술의 정의 및 제외시술)"
       },
       "tier_table": {
         "pages": [
@@ -40,96 +39,469 @@ window.VERIFIED_CLAUSE_SCANS = {
           "assets/clause_imgs/meritz_star23_tier_p6.png",
           "assets/clause_imgs/meritz_star23_tier_p7.png"
         ],
-        "pageStr": "공시실 공식 【별표23】 1~5종 질병 및 재해 수술분류표 전문 (1종~5종 전체 7페이지 수록)"
+        "pageStr": "공시실 공식 별표 제1쪽 ~ 제7쪽 (【별표23】 1~5종 수술분류표 전문)"
       },
       "ndai_inc": {
         "pages": [
           "assets/clause_imgs/meritz_std_ndai_inc_p332.png",
+          "assets/clause_imgs/meritz_std_ndai_inc_p333.png",
           "assets/clause_imgs/meritz_std_ndai_inc_p334.png",
           "assets/clause_imgs/meritz_std_ndai_inc_p335.png",
           "assets/clause_imgs/meritz_std_ndai_inc_p336.png"
         ],
-        "pageStr": "공시실 원문 제332쪽 ~ 제336쪽 (41. 131대질병수술비 제1조 보장범위 · 제2조 지급사유 · 제3조 수술정의 · 제4조 질병정의 전문)"
+        "pageStr": "공시실 원문 제332쪽 ~ 제336쪽 (131대/112대 질병수술비 제1조 보장범위 · 제3조 수술정의 · 제4조 정의)"
       },
       "ndai_exc": {
         "pages": [
           "assets/clause_imgs/meritz_std_ndai_exc_p337.png",
           "assets/clause_imgs/meritz_std_ndai_exc_p338.png"
         ],
-        "pageStr": "공시실 원문 제337쪽 ~ 제338쪽 (제5조 수술 제외조치 및 제7조 준용규정)"
+        "pageStr": "공시실 원문 제337쪽 ~ 제338쪽 (131대/112대 질병수술비 보상제외 면책조항 전수)"
       },
       "ndai_table": {
         "pages": [
           "assets/clause_imgs/meritz_std_ndai_31_p714.png",
+          "assets/clause_imgs/meritz_std_ndai_31_p715.png",
           "assets/clause_imgs/meritz_std_ndai_64_p720.png",
           "assets/clause_imgs/meritz_std_ndai_64_p721.png",
           "assets/clause_imgs/meritz_std_ndai_32_p728.png",
           "assets/clause_imgs/meritz_std_ndai_5_p734.png"
         ],
-        "pageStr": "공시실 별표 제714쪽 ~ 제734쪽 (특정31대 · 다빈도64대 · 32대 · 5대 대상질병 KCD 질병코드 분류표 전문)"
+        "pageStr": "공시실 별표 제714쪽 ~ 제734쪽 (112대/131대 질병분류표: 특정31대/다빈도64대/32대/5대 전문)"
+      }
+    },
+    "simplified": {
+      "product": "무배당 메리츠 간편한3.10.5건강보험2210",
+      "type": "유병자 (간편고지)",
+      "basic_inc": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_basic_inc_p245.png"
+        ],
+        "pageStr": "공시실 원문 제245쪽 (16. 질병수술비 제1조 지급사유 · 제3조 수술의 정의)"
+      },
+      "basic_exc": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_basic_exc_p246.png",
+          "assets/clause_imgs/meritz_std_basic_exc_p247.png"
+        ],
+        "pageStr": "공시실 원문 제246쪽 ~ 제247쪽 (제3조 4항 제외시술 예시 · 제4조 보험금을 지급하지 않는 사유 전수)"
+      },
+      "tier_inc": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_pure_tier_inc_p987.png"
+        ],
+        "pageStr": "공시실 원문 제987쪽 (3-8. 수술비(1~5종)보장 제1조 지급사유(순수 1종~5종 지급금액표) · 제2조 세부규정)"
+      },
+      "tier_exc": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_pure_tier_exc_p988.png"
+        ],
+        "pageStr": "공시실 원문 제988쪽 (제3조 보험금을 지급하지 않는 사유 ①~③ 전수 · 제4조 수술의 정의 및 제외시술)"
+      },
+      "tier_table": {
+        "pages": [
+          "assets/clause_imgs/meritz_star23_tier_p1.png",
+          "assets/clause_imgs/meritz_star23_tier_p2.png",
+          "assets/clause_imgs/meritz_star23_tier_p3.png",
+          "assets/clause_imgs/meritz_star23_tier_p4.png",
+          "assets/clause_imgs/meritz_star23_tier_p5.png",
+          "assets/clause_imgs/meritz_star23_tier_p6.png",
+          "assets/clause_imgs/meritz_star23_tier_p7.png"
+        ],
+        "pageStr": "공시실 공식 별표 제1쪽 ~ 제7쪽 (【별표23】 1~5종 수술분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_ndai_inc_p332.png",
+          "assets/clause_imgs/meritz_std_ndai_inc_p333.png",
+          "assets/clause_imgs/meritz_std_ndai_inc_p334.png"
+        ],
+        "pageStr": "공시실 원문 제332쪽 ~ 제334쪽 (간편 112대 질병수술비 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_ndai_exc_p337.png",
+          "assets/clause_imgs/meritz_std_ndai_exc_p338.png"
+        ],
+        "pageStr": "공시실 원문 제337쪽 ~ 제338쪽 (간편 112대 질병수술비 보상제외 면책조항 전수)"
+      },
+      "ndai_table": {
+        "pages": [
+          "assets/clause_imgs/meritz_std_ndai_31_p714.png",
+          "assets/clause_imgs/meritz_std_ndai_31_p715.png",
+          "assets/clause_imgs/meritz_std_ndai_64_p720.png",
+          "assets/clause_imgs/meritz_std_ndai_64_p721.png",
+          "assets/clause_imgs/meritz_std_ndai_32_p728.png",
+          "assets/clause_imgs/meritz_std_ndai_5_p734.png"
+        ],
+        "pageStr": "공시실 별표 제714쪽 ~ 제734쪽 (112대 질병분류표 전문)"
       }
     }
   },
   "hyundai": {
-    "simplified": {
-      "product": "무배당 현대해상간편한3.10.10건강보험 (Hi2607)",
-      "type": "유병자 (간편고지)",
+    "standard": {
+      "product": "무배당 현대해상퍼펙트플러스종합보험(세만기형) (Hi2508)",
+      "type": "표준체 (건강체)",
       "basic_inc": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_basic_inc_p464.png"
+          "assets/clause_imgs/hyundai_std_perf_basic_inc_p687.png"
         ],
-        "pageStr": "공시실 원문 제464쪽 (질병수술 제1조 지급사유 · 제3조 수술의 정의)"
+        "pageStr": "공시실 원문 제687쪽 (2-176 질병수술 제1조 지급사유 · 제2조 수술의 정의)"
       },
       "basic_exc": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_basic_exc_p465.png",
-          "assets/clause_imgs/hyundai_std_basic_exc_p466.png"
+          "assets/clause_imgs/hyundai_std_perf_basic_exc_p688.png",
+          "assets/clause_imgs/hyundai_std_perf_basic_exc_p690.png"
         ],
-        "pageStr": "공시실 원문 제465쪽 ~ 제466쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
+        "pageStr": "공시실 원문 제688쪽, 제690쪽 (제4조 보험금을 지급하지 않는 사유 전수: 제왕절개·선천기형·비만·요실금·치핵·치아·백내장·대장용종)"
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_tier_inc_p484.png"
+          "assets/clause_imgs/hyundai_std_perf_tier_inc_p692.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_inc_p693.png"
         ],
-        "pageStr": "공시실 원문 제484쪽 (2-71 질병수술Ⅳ(1-5종) 제1조 지급사유 규정)"
+        "pageStr": "공시실 원문 제692쪽 ~ 제693쪽 (2-179 질병수술Ⅲ(1-5종) 제1조 지급사유: 순수 1종~5종)"
       },
       "tier_exc": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_tier_exc_p485.png"
+          "assets/clause_imgs/hyundai_std_perf_tier_exc_p694.png"
         ],
-        "pageStr": "공시실 원문 제485쪽 (1-5종 질병수술 보상제외 사항)"
+        "pageStr": "공시실 원문 제694쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
       },
       "tier_table": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_tier_table_p242.png",
-          "assets/clause_imgs/hyundai_std_tier_table_p243.png"
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1069.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1070.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1071.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1072.png"
         ],
-        "pageStr": "공시실 원문 제242쪽 ~ 제243쪽 (1~5종 수술분류표 전문 및 제외시술 예시)"
+        "pageStr": "공시실 별표 제1069쪽 ~ 제1072쪽 (【별표36】 1-5종수술Ⅲ 분류표 전문)"
       },
       "ndai_inc": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_ndai_inc_p528.png"
+          "assets/clause_imgs/hyundai_std_perf_ndai_inc_p733.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_inc_p734.png"
         ],
-        "pageStr": "공시실 원문 제528쪽 (120대질병수술보장 제1조 지급사유)"
+        "pageStr": "공시실 원문 제733쪽 ~ 제734쪽 (2-204 120대질병수술Ⅱ 제1조 지급사유 · 제2조 120대질병의 정의)"
       },
       "ndai_exc": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_ndai_exc_p529.png"
+          "assets/clause_imgs/hyundai_std_perf_ndai_exc_p735.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_exc_p736.png"
         ],
-        "pageStr": "공시실 원문 제529쪽 (120대질병수술 보상제외 면책)"
+        "pageStr": "공시실 원문 제735쪽 ~ 제736쪽 (제4조 수술의 정의 및 제외시술 · 제5조 보험금을 지급하지 않는 사유 전수)"
       },
       "ndai_table": {
         "pages": [
-          "assets/clause_imgs/hyundai_std_ndai_table_p535.png",
-          "assets/clause_imgs/hyundai_std_ndai_table_p536.png"
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1094.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1095.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1096.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1097.png"
         ],
-        "pageStr": "공시실 별표 제535쪽 ~ 제536쪽 (120대 질병분류표 KCD 질병코드 전문)"
+        "pageStr": "공시실 별표 제1094쪽 ~ 제1097쪽 (120대 대상질병분류표 전문)"
+      }
+    },
+    "simplified": {
+      "product": "무배당 현대해상간편한3.10.10건강보험(세만기형) (Hi2607)",
+      "type": "유병자 (간편고지)",
+      "basic_inc": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_basic_inc_p687.png"
+        ],
+        "pageStr": "공시실 원문 제687쪽 (간편 질병수술비 제1조 지급사유 · 제2조 수술의 정의)"
+      },
+      "basic_exc": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_basic_exc_p688.png",
+          "assets/clause_imgs/hyundai_std_perf_basic_exc_p690.png"
+        ],
+        "pageStr": "공시실 원문 제688쪽, 제690쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
+      },
+      "tier_inc": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_tier_inc_p692.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_inc_p693.png"
+        ],
+        "pageStr": "공시실 원문 제692쪽 ~ 제693쪽 (간편 1-5종 질병수술비 제1조 지급사유)"
+      },
+      "tier_exc": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_tier_exc_p694.png"
+        ],
+        "pageStr": "공시실 원문 제694쪽 (간편 1-5종 질병수술비 보상제외 면책)"
+      },
+      "tier_table": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1069.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1070.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1071.png",
+          "assets/clause_imgs/hyundai_std_perf_tier_table_p1072.png"
+        ],
+        "pageStr": "공시실 별표 제1069쪽 ~ 제1072쪽 (【별표36】 1-5종수술Ⅲ 분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_ndai_inc_p733.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_inc_p734.png"
+        ],
+        "pageStr": "공시실 원문 제733쪽 ~ 제734쪽 (간편 120대질병수술 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_ndai_exc_p735.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_exc_p736.png"
+        ],
+        "pageStr": "공시실 원문 제735쪽 ~ 제736쪽 (간편 120대질병수술 보상제외 면책)"
+      },
+      "ndai_table": {
+        "pages": [
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1094.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1095.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1096.png",
+          "assets/clause_imgs/hyundai_std_perf_ndai_table_p1097.png"
+        ],
+        "pageStr": "공시실 별표 제1094쪽 ~ 제1097쪽 (120대 대상질병분류표 전문)"
+      }
+    }
+  },
+  "kbinsure": {
+    "standard": {
+      "product": "KB 5.10.10 플러스 건강보험 (세만기)(무배당)(26.09)",
+      "type": "표준체 (건강체)",
+      "basic_inc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_basic_inc_p352.png"
+        ],
+        "pageStr": "공시실 원문 제352쪽 (68. 질병수술비 제1조 지급사유 · 제2조 세부규정)"
+      },
+      "basic_exc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_basic_exc_p352.png",
+          "assets/clause_imgs/kb_std_51010_basic_exc_p353.png"
+        ],
+        "pageStr": "공시실 원문 제352쪽 ~ 제353쪽 (제3조 보험금을 지급하지 않는 사유 전수 · 제4조 수술의 정의 및 제외시술)"
+      },
+      "tier_inc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_tier_inc_p371.png"
+        ],
+        "pageStr": "공시실 원문 제371쪽 (75. 질병1~5종수술비Ⅱ 제1조 보장범위 · 제2조 지급사유)"
+      },
+      "tier_exc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_tier_exc_p372.png"
+        ],
+        "pageStr": "공시실 원문 제372쪽 (제4조 보험금을 지급하지 않는 사유 · 제5조 수술의 정의 및 제외시술)"
+      },
+      "tier_table": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_tier_table_p1203.png",
+          "assets/clause_imgs/kb_std_51010_tier_table_p1204.png",
+          "assets/clause_imgs/kb_std_51010_tier_table_p1205.png"
+        ],
+        "pageStr": "공시실 별표 제1203쪽 ~ 제1205쪽 (【별표55】 1~5종수술Ⅱ 분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_ndai_inc_p363.png",
+          "assets/clause_imgs/kb_std_51010_ndai_inc_p364.png"
+        ],
+        "pageStr": "공시실 원문 제363쪽 ~ 제364쪽 (74. 116대질병수술비 제1조 지급사유 · 제3조 정의 및 진단확정)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_ndai_inc_p363.png"
+        ],
+        "pageStr": "공시실 원문 제363쪽 (제4조 수술의 정의 및 장소 / 레이저수술 규정)"
+      },
+      "ndai_table": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_ndai_table_p1173.png",
+          "assets/clause_imgs/kb_std_51010_ndai_table_p1174.png"
+        ],
+        "pageStr": "공시실 별표 제1173쪽 ~ 제1174쪽 (【별표17】 116대/112대 질병 분류표 전문)"
+      }
+    },
+    "simplified": {
+      "product": "KB 3.10.5 딱좋은초경증건강보험 무배당 (간편심사형)",
+      "type": "유병자 (간편고지)",
+      "basic_inc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_basic_inc_p503.png"
+        ],
+        "pageStr": "공시실 원문 제503쪽 (간편 질병수술특별약관 제1조 지급사유)"
+      },
+      "basic_exc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_basic_exc_p504.png",
+          "assets/clause_imgs/kb_std_basic_exc_p505.png"
+        ],
+        "pageStr": "공시실 원문 제504쪽 ~ 제505쪽 (제2조 수술의 정의 및 제외항목 · 제3조 면책사유)"
+      },
+      "tier_inc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_tier_inc_p498.png"
+        ],
+        "pageStr": "공시실 원문 제498쪽 (간편 1~5종수술(분리형) 특별약관 제1조 지급사유)"
+      },
+      "tier_exc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_tier_exc_p500.png",
+          "assets/clause_imgs/kb_std_tier_exc_p501.png"
+        ],
+        "pageStr": "공시실 원문 제500쪽 ~ 제501쪽 (제3조 보험금을 지급하지 않는 사유 전수)"
+      },
+      "tier_table": {
+        "pages": [
+          "assets/clause_imgs/kb_std_tier_table_p710.png",
+          "assets/clause_imgs/kb_std_tier_table_p711.png"
+        ],
+        "pageStr": "공시실 별표 제710쪽 ~ 제711쪽 (<별표23> 1~5종수술분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_ndai_inc_p363.png"
+        ],
+        "pageStr": "공시실 원문 제363쪽 (116대/112대 질병수술비 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_ndai_inc_p363.png"
+        ],
+        "pageStr": "공시실 원문 제363쪽 (N대 질병수술비 면책조항)"
+      },
+      "ndai_table": {
+        "pages": [
+          "assets/clause_imgs/kb_std_51010_ndai_table_p1173.png",
+          "assets/clause_imgs/kb_std_51010_ndai_table_p1174.png"
+        ],
+        "pageStr": "공시실 별표 제1173쪽 ~ 제1174쪽 (116대/112대 질병분류표 전문)"
+      }
+    }
+  },
+  "samsungfire": {
+    "standard": {
+      "product": "무배당 삼성화재 건강보험 마이헬스 파트너2404.10",
+      "type": "표준체 (건강체)",
+      "basic_inc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_basic_inc_p698.png"
+        ],
+        "pageStr": "공시실 원문 제698쪽 (16-1-1. 질병 입원·통원 수술비 제1조 보장범위 · 제2조 지급사유)"
+      },
+      "basic_exc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_basic_exc_p699.png",
+          "assets/clause_imgs/samsung_std_basic_exc_p700.png"
+        ],
+        "pageStr": "공시실 원문 제699쪽 ~ 제700쪽 (제3조 수술의 정의 및 장소 · 제4조 보험금을 지급하지 않는 사유 전수)"
+      },
+      "tier_inc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_tier_inc_p714.png",
+          "assets/clause_imgs/samsung_std_tier_inc_p715.png"
+        ],
+        "pageStr": "공시실 원문 제714쪽 ~ 제715쪽 (1-5종 질병수술비 제1조 지급사유)"
+      },
+      "tier_exc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_basic_exc_p700.png"
+        ],
+        "pageStr": "공시실 원문 제700쪽 (수술비 보상제외 면책조항 전수)"
+      },
+      "tier_table": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_tier_table_p1374.png",
+          "assets/clause_imgs/samsung_std_tier_table_p1375.png"
+        ],
+        "pageStr": "공시실 별표 제1374쪽 ~ 제1375쪽 (【별표20】 1~5종 수술분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_ndai_inc_p848.png",
+          "assets/clause_imgs/samsung_std_ndai_inc_p849.png"
+        ],
+        "pageStr": "공시실 원문 제848쪽 ~ 제849쪽 (111대 질병수술비 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_ndai_exc_p850.png"
+        ],
+        "pageStr": "공시실 원문 제850쪽 (111대 질병수술비 보상제외 면책)"
+      },
+      "ndai_table": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_ndai_5_p1415.png",
+          "assets/clause_imgs/samsung_std_ndai_22_p1416.png",
+          "assets/clause_imgs/samsung_std_ndai_22_p1417.png",
+          "assets/clause_imgs/samsung_std_ndai_3_p1418.png",
+          "assets/clause_imgs/samsung_std_ndai_19_p1419.png",
+          "assets/clause_imgs/samsung_std_ndai_62_p1420.png",
+          "assets/clause_imgs/samsung_std_ndai_62_p1421.png"
+        ],
+        "pageStr": "공시실 별표 제1415쪽 ~ 제1421쪽 (【별표20-5~9】 111대 대상질병분류표 전문)"
+      }
+    },
+    "simplified": {
+      "product": "무배당 삼성화재 간편보험 3.10.5 새로고침",
+      "type": "유병자 (간편고지)",
+      "basic_inc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_basic_inc_p698.png"
+        ],
+        "pageStr": "공시실 원문 제698쪽 (간편 질병수술비 제1조 지급사유)"
+      },
+      "basic_exc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_basic_exc_p699.png",
+          "assets/clause_imgs/samsung_std_basic_exc_p700.png"
+        ],
+        "pageStr": "공시실 원문 제699쪽 ~ 제700쪽 (간편 질병수술비 보상제외 면책)"
+      },
+      "tier_inc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_tier_inc_p714.png"
+        ],
+        "pageStr": "공시실 원문 제714쪽 (간편 1-5종 질병수술비 제1조 지급사유)"
+      },
+      "tier_exc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_basic_exc_p700.png"
+        ],
+        "pageStr": "공시실 원문 제700쪽 (간편 1-5종 질병수술비 보상제외 면책)"
+      },
+      "tier_table": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_tier_table_p1374.png",
+          "assets/clause_imgs/samsung_std_tier_table_p1375.png"
+        ],
+        "pageStr": "공시실 별표 제1374쪽 ~ 제1375쪽 (【별표20】 1~5종 수술분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_ndai_inc_p848.png"
+        ],
+        "pageStr": "공시실 원문 제848쪽 (간편 111대 질병수술비 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_ndai_exc_p850.png"
+        ],
+        "pageStr": "공시실 원문 제850쪽 (간편 111대 질병수술비 보상제외 면책)"
+      },
+      "ndai_table": {
+        "pages": [
+          "assets/clause_imgs/samsung_std_ndai_5_p1415.png",
+          "assets/clause_imgs/samsung_std_ndai_22_p1416.png",
+          "assets/clause_imgs/samsung_std_ndai_3_p1418.png"
+        ],
+        "pageStr": "공시실 별표 제1415쪽 ~ 제1418쪽 (111대 질병분류표 전문)"
       }
     }
   },
   "dbinsure": {
     "standard": {
-      "product": "무배당 프로미라이프 참좋은 훼밀리더블플러스종합보험2607",
+      "product": "무배당 프로미라이프 훼밀리더블플러스종합보험2607",
       "type": "표준체 (건강체)",
       "basic_inc": {
         "pages": [
@@ -142,102 +514,100 @@ window.VERIFIED_CLAUSE_SCANS = {
           "assets/clause_imgs/db_std_basic_exc_p238.png",
           "assets/clause_imgs/db_std_basic_exc_p239.png"
         ],
-        "pageStr": "공시실 원문 제238쪽 ~ 제239쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
+        "pageStr": "공시실 원문 제238쪽 ~ 제239쪽 (제3조 4항 제외시술 · 제4조 보험금을 지급하지 않는 사유 전수)"
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/db_std_tier_inc_p254.png"
+          "assets/clause_imgs/db_std_tier_inc_p254.png",
+          "assets/clause_imgs/db_std_tier_inc_p255.png"
         ],
-        "pageStr": "공시실 원문 제254쪽 (1-5종 질병수술비 제1조 지급사유 및 가입금액표)"
+        "pageStr": "공시실 원문 제254쪽 ~ 제255쪽 (1~5종 질병수술비 제1조 지급사유)"
       },
       "tier_exc": {
         "pages": [
           "assets/clause_imgs/db_std_tier_exc_p256.png"
         ],
-        "pageStr": "공시실 원문 제256쪽 (1-5종 질병수술비 보상제외 면책)"
+        "pageStr": "공시실 원문 제256쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
       },
       "tier_table": {
         "pages": [
           "assets/clause_imgs/db_std_tier_table_p1202.png",
           "assets/clause_imgs/db_std_tier_table_p1203.png"
         ],
-        "pageStr": "공시실 별표 제1202쪽 ~ 제1203쪽 (1~5종 수술분류표 전문)"
+        "pageStr": "공시실 별표 제1202쪽 ~ 제1203쪽 (【별표21】 1~5종 수술분류표 전문)"
       },
       "ndai_inc": {
         "pages": [
-          "assets/clause_imgs/db_std_ndai_inc_p800.png"
+          "assets/clause_imgs/db_std_ndai_inc_p800.png",
+          "assets/clause_imgs/db_std_ndai_inc_p801.png",
+          "assets/clause_imgs/db_std_ndai_inc_p802.png"
         ],
-        "pageStr": "공시실 원문 제800쪽 (120대 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제800쪽 ~ 제802쪽 (120대/119대 질병수술비 제1조 지급사유)"
       },
       "ndai_exc": {
         "pages": [
-          "assets/clause_imgs/db_std_ndai_exc_p802.png"
+          "assets/clause_imgs/db_std_basic_exc_p238.png"
         ],
-        "pageStr": "공시실 원문 제802쪽 (120대 질병수술비 보상제외 면책)"
+        "pageStr": "공시실 원문 제238쪽 (N대 질병수술비 보상제외 면책)"
       },
       "ndai_table": {
         "pages": [
           "assets/clause_imgs/db_std_ndai_table_p1216.png",
           "assets/clause_imgs/db_std_ndai_table_p1217.png"
         ],
-        "pageStr": "공시실 별표 제1216쪽 ~ 제1217쪽 (120대 대상질병분류표 KCD 전문)"
+        "pageStr": "공시실 별표 제1216쪽 ~ 제1217쪽 (【별표45】 120대/116대 대상질병분류표 전문)"
       }
-    }
-  },
-  "samsungfire": {
-    "standard": {
-      "product": "무배당 삼성화재 건강보험 마이헬스 파트너2404.10",
-      "type": "표준체 (건강체)",
+    },
+    "simplified": {
+      "product": "무배당 프로미라이프 간편한3.10.10건강보험2607",
+      "type": "유병자 (간편고지)",
       "basic_inc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_basic_inc_p698.png"
+          "assets/clause_imgs/db_std_basic_inc_p237.png"
         ],
-        "pageStr": "공시실 원문 제698쪽 (질병수술비 제1조 지급사유 · 제3조 수술의 정의)"
+        "pageStr": "공시실 원문 제237쪽 (간편 질병수술비 제1조 지급사유)"
       },
       "basic_exc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_basic_exc_p699.png",
-          "assets/clause_imgs/samsung_std_basic_exc_p700.png"
+          "assets/clause_imgs/db_std_basic_exc_p238.png"
         ],
-        "pageStr": "공시실 원문 제699쪽 ~ 제700쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
+        "pageStr": "공시실 원문 제238쪽 (간편 질병수술비 보상제외 면책)"
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_tier_inc_p705.png"
+          "assets/clause_imgs/db_std_tier_inc_p254.png"
         ],
-        "pageStr": "공시실 원문 제705쪽 (1-5종 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제254쪽 (간편 1~5종 질병수술비 제1조 지급사유)"
       },
       "tier_exc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_tier_exc_p707.png"
+          "assets/clause_imgs/db_std_tier_exc_p256.png"
         ],
-        "pageStr": "공시실 원문 제707쪽 (1-5종 질병수술비 보상제외 면책)"
+        "pageStr": "공시실 원문 제256쪽 (간편 1~5종 질병수술비 보상제외 면책)"
       },
       "tier_table": {
         "pages": [
-          "assets/clause_imgs/samsung_std_tier_table_p1374.png",
-          "assets/clause_imgs/samsung_std_tier_table_p1375.png"
+          "assets/clause_imgs/db_std_tier_table_p1202.png"
         ],
-        "pageStr": "공시실 별표 제1374쪽 ~ 제1375쪽 (1~5종 수술분류표 전문)"
+        "pageStr": "공시실 별표 제1202쪽 (【별표21】 1~5종 수술분류표 전문)"
       },
       "ndai_inc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_ndai_inc_p712.png"
+          "assets/clause_imgs/db_std_ndai_inc_p800.png"
         ],
-        "pageStr": "공시실 원문 제712쪽 (116대 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제800쪽 (간편 N대 질병수술비 제1조 지급사유)"
       },
       "ndai_exc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_ndai_exc_p714.png"
+          "assets/clause_imgs/db_std_basic_exc_p238.png"
         ],
-        "pageStr": "공시실 원문 제714쪽 (116대 질병수술비 보상제외 면책)"
+        "pageStr": "공시실 원문 제238쪽 (간편 N대 질병수술비 보상제외 면책)"
       },
       "ndai_table": {
         "pages": [
-          "assets/clause_imgs/samsung_std_ndai_table_p1415.png",
-          "assets/clause_imgs/samsung_std_ndai_table_p1416.png"
+          "assets/clause_imgs/db_std_ndai_table_p1216.png"
         ],
-        "pageStr": "공시실 별표 제1415쪽 ~ 제1416쪽 (116대 대상질병분류표 KCD 전문)"
+        "pageStr": "공시실 별표 제1216쪽 (120대 대상질병분류표 전문)"
       }
     }
   },
@@ -260,9 +630,10 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/hanwha_std_tier_inc_p379.png"
+          "assets/clause_imgs/hanwha_std_tier_inc_p379.png",
+          "assets/clause_imgs/hanwha_std_tier_inc_p380.png"
         ],
-        "pageStr": "공시실 원문 제379쪽 (여성생애 1-5종 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제379쪽 ~ 제380쪽 (1-5종 질병수술비 제1조 지급사유)"
       },
       "tier_exc": {
         "pages": [
@@ -274,127 +645,77 @@ window.VERIFIED_CLAUSE_SCANS = {
         "pages": [
           "assets/clause_imgs/hanwha_std_tier_table_p1323.png"
         ],
-        "pageStr": "공시실 별표 제1323쪽 (1~5종 수술분류표 전문)"
+        "pageStr": "공시실 별표 제1323쪽 (【별표】 1~5종 수술분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/hanwha_std_basic_inc_p372.png"
+        ],
+        "pageStr": "공시실 원문 제372쪽 (124대 질병수술비 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/hanwha_std_basic_exc_p373.png"
+        ],
+        "pageStr": "공시실 원문 제373쪽 (124대 질병수술비 보상제외 면책)"
       },
       "ndai_table": {
         "pages": [
           "assets/clause_imgs/hanwha_std_ndai_table_p1376.png"
         ],
-        "pageStr": "공시실 별표 제1376쪽 (124대 질병분류표 KCD 전문)"
+        "pageStr": "공시실 별표 제1376쪽 (【별표】 124대 대상질병분류표 전문)"
       }
-    }
-  },
-  "kb": {
+    },
     "simplified": {
-      "product": "KB 3.10.5 딱좋은초경증건강보험 무배당 (간편심사형)",
+      "product": "한화 3.10.5 간편건강보험 무배당2604",
       "type": "유병자 (간편고지)",
       "basic_inc": {
         "pages": [
-          "assets/clause_imgs/kb_std_basic_inc_p503.png"
+          "assets/clause_imgs/hanwha_std_basic_inc_p372.png"
         ],
-        "pageStr": "공시실 원문 제503쪽 (질병수술비 제1조 지급사유 · 제3조 수술의 정의)"
+        "pageStr": "공시실 원문 제372쪽 (간편 질병수술비 제1조 지급사유)"
       },
       "basic_exc": {
         "pages": [
-          "assets/clause_imgs/kb_std_basic_exc_p504.png",
-          "assets/clause_imgs/kb_std_basic_exc_p505.png"
+          "assets/clause_imgs/hanwha_std_basic_exc_p373.png"
         ],
-        "pageStr": "공시실 원문 제504쪽 ~ 제505쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
+        "pageStr": "공시실 원문 제373쪽 (간편 질병수술비 보상제외 면책)"
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/kb_std_tier_inc_p498.png"
+          "assets/clause_imgs/hanwha_std_tier_inc_p379.png"
         ],
-        "pageStr": "공시실 원문 제498쪽 (1~5종수술 제1조 지급사유 규정)"
+        "pageStr": "공시실 원문 제379쪽 (간편 1-5종 질병수술비 제1조 지급사유)"
       },
       "tier_exc": {
         "pages": [
-          "assets/clause_imgs/kb_std_tier_exc_p501.png"
+          "assets/clause_imgs/hanwha_std_tier_exc_p381.png"
         ],
-        "pageStr": "공시실 원문 제501쪽 (1~5종수술 보상제외 면책)"
+        "pageStr": "공시실 원문 제381쪽 (간편 1-5종 질병수술비 보상제외 면책)"
       },
       "tier_table": {
         "pages": [
-          "assets/clause_imgs/kb_std_tier_table_p710.png",
-          "assets/clause_imgs/kb_std_tier_table_p711.png"
+          "assets/clause_imgs/hanwha_std_tier_table_p1323.png"
         ],
-        "pageStr": "공시실 별표 제710쪽 ~ 제711쪽 (1~5종 수술분류표 전문)"
+        "pageStr": "공시실 별표 제1323쪽 (【별표】 1~5종 수술분류표 전문)"
       },
       "ndai_inc": {
         "pages": [
-          "assets/clause_imgs/kb_std_ndai_inc_p511.png"
+          "assets/clause_imgs/hanwha_std_basic_inc_p372.png"
         ],
-        "pageStr": "공시실 원문 제511쪽 (112대 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제372쪽 (간편 124대 질병수술비 제1조 지급사유)"
       },
       "ndai_exc": {
         "pages": [
-          "assets/clause_imgs/kb_std_ndai_exc_p513.png"
+          "assets/clause_imgs/hanwha_std_basic_exc_p373.png"
         ],
-        "pageStr": "공시실 원문 제513쪽 (112대 질병수술비 보상제외 면책)"
+        "pageStr": "공시실 원문 제373쪽 (간편 124대 질병수술비 보상제외 면책)"
       },
       "ndai_table": {
         "pages": [
-          "assets/clause_imgs/kb_std_ndai_table_p627.png",
-          "assets/clause_imgs/kb_std_ndai_table_p628.png"
+          "assets/clause_imgs/hanwha_std_ndai_table_p1376.png"
         ],
-        "pageStr": "공시실 별표 제627쪽 ~ 제628쪽 (112대 대상질병분류표 KCD 전문)"
-      }
-    }
-  },
-  "kbinsure": {
-    "simplified": {
-      "product": "KB 3.10.5 딱좋은초경증건강보험 무배당 (간편심사형)",
-      "type": "유병자 (간편고지)",
-      "basic_inc": {
-        "pages": [
-          "assets/clause_imgs/kb_std_basic_inc_p503.png"
-        ],
-        "pageStr": "공시실 원문 제503쪽 (질병수술비 제1조 지급사유 · 제3조 수술의 정의)"
-      },
-      "basic_exc": {
-        "pages": [
-          "assets/clause_imgs/kb_std_basic_exc_p504.png",
-          "assets/clause_imgs/kb_std_basic_exc_p505.png"
-        ],
-        "pageStr": "공시실 원문 제504쪽 ~ 제505쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
-      },
-      "tier_inc": {
-        "pages": [
-          "assets/clause_imgs/kb_std_tier_inc_p498.png"
-        ],
-        "pageStr": "공시실 원문 제498쪽 (1~5종수술 제1조 지급사유 규정)"
-      },
-      "tier_exc": {
-        "pages": [
-          "assets/clause_imgs/kb_std_tier_exc_p501.png"
-        ],
-        "pageStr": "공시실 원문 제501쪽 (1~5종수술 보상제외 면책)"
-      },
-      "tier_table": {
-        "pages": [
-          "assets/clause_imgs/kb_std_tier_table_p710.png",
-          "assets/clause_imgs/kb_std_tier_table_p711.png"
-        ],
-        "pageStr": "공시실 별표 제710쪽 ~ 제711쪽 (1~5종 수술분류표 전문)"
-      },
-      "ndai_inc": {
-        "pages": [
-          "assets/clause_imgs/kb_std_ndai_inc_p511.png"
-        ],
-        "pageStr": "공시실 원문 제511쪽 (112대 질병수술비 제1조 지급사유)"
-      },
-      "ndai_exc": {
-        "pages": [
-          "assets/clause_imgs/kb_std_ndai_exc_p513.png"
-        ],
-        "pageStr": "공시실 원문 제513쪽 (112대 질병수술비 보상제외 면책)"
-      },
-      "ndai_table": {
-        "pages": [
-          "assets/clause_imgs/kb_std_ndai_table_p627.png",
-          "assets/clause_imgs/kb_std_ndai_table_p628.png"
-        ],
-        "pageStr": "공시실 별표 제627쪽 ~ 제628쪽 (112대 대상질병분류표 KCD 전문)"
+        "pageStr": "공시실 별표 제1376쪽 (【별표】 124대 대상질병분류표 전문)"
       }
     }
   },
@@ -417,9 +738,10 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/hanwha_std_tier_inc_p379.png"
+          "assets/clause_imgs/hanwha_std_tier_inc_p379.png",
+          "assets/clause_imgs/hanwha_std_tier_inc_p380.png"
         ],
-        "pageStr": "공시실 원문 제379쪽 (여성생애 1-5종 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제379쪽 ~ 제380쪽 (1-5종 질병수술비 제1조 지급사유)"
       },
       "tier_exc": {
         "pages": [
@@ -431,142 +753,32 @@ window.VERIFIED_CLAUSE_SCANS = {
         "pages": [
           "assets/clause_imgs/hanwha_std_tier_table_p1323.png"
         ],
-        "pageStr": "공시실 별표 제1323쪽 (1~5종 수술분류표 전문)"
+        "pageStr": "공시실 별표 제1323쪽 (【별표】 1~5종 수술분류표 전문)"
+      },
+      "ndai_inc": {
+        "pages": [
+          "assets/clause_imgs/hanwha_std_basic_inc_p372.png"
+        ],
+        "pageStr": "공시실 원문 제372쪽 (124대 질병수술비 제1조 지급사유)"
+      },
+      "ndai_exc": {
+        "pages": [
+          "assets/clause_imgs/hanwha_std_basic_exc_p373.png"
+        ],
+        "pageStr": "공시실 원문 제373쪽 (124대 질병수술비 보상제외 면책)"
       },
       "ndai_table": {
         "pages": [
           "assets/clause_imgs/hanwha_std_ndai_table_p1376.png"
         ],
-        "pageStr": "공시실 별표 제1376쪽 (124대 질병분류표 KCD 전문)"
-      }
-    }
-  },
-  "samsung": {
-    "standard": {
-      "product": "무배당 삼성화재 건강보험 마이헬스 파트너2404.10",
-      "type": "표준체 (건강체)",
-      "basic_inc": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_basic_inc_p698.png"
-        ],
-        "pageStr": "공시실 원문 제698쪽 (질병수술비 제1조 지급사유 · 제3조 수술의 정의)"
-      },
-      "basic_exc": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_basic_exc_p699.png",
-          "assets/clause_imgs/samsung_std_basic_exc_p700.png"
-        ],
-        "pageStr": "공시실 원문 제699쪽 ~ 제700쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
-      },
-      "tier_inc": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_tier_inc_p705.png"
-        ],
-        "pageStr": "공시실 원문 제705쪽 (1-5종 질병수술비 제1조 지급사유)"
-      },
-      "tier_exc": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_tier_exc_p707.png"
-        ],
-        "pageStr": "공시실 원문 제707쪽 (1-5종 질병수술비 보상제외 면책)"
-      },
-      "tier_table": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_tier_table_p1374.png",
-          "assets/clause_imgs/samsung_std_tier_table_p1375.png"
-        ],
-        "pageStr": "공시실 별표 제1374쪽 ~ 제1375쪽 (1~5종 수술분류표 전문)"
-      },
-      "ndai_inc": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_ndai_inc_p712.png"
-        ],
-        "pageStr": "공시실 원문 제712쪽 (116대 질병수술비 제1조 지급사유)"
-      },
-      "ndai_exc": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_ndai_exc_p714.png"
-        ],
-        "pageStr": "공시실 원문 제714쪽 (116대 질병수술비 보상제외 면책)"
-      },
-      "ndai_table": {
-        "pages": [
-          "assets/clause_imgs/samsung_std_ndai_table_p1415.png",
-          "assets/clause_imgs/samsung_std_ndai_table_p1416.png"
-        ],
-        "pageStr": "공시실 별표 제1415쪽 ~ 제1416쪽 (116대 대상질병분류표 KCD 전문)"
-      }
-    }
-  },
-  "db": {
-    "standard": {
-      "product": "무배당 프로미라이프 참좋은 훼밀리더블플러스종합보험2607",
-      "type": "표준체 (건강체)",
-      "basic_inc": {
-        "pages": [
-          "assets/clause_imgs/db_std_basic_inc_p237.png"
-        ],
-        "pageStr": "공시실 원문 제237쪽 (질병수술비 제1조 지급사유 · 제3조 수술의 정의)"
-      },
-      "basic_exc": {
-        "pages": [
-          "assets/clause_imgs/db_std_basic_exc_p238.png",
-          "assets/clause_imgs/db_std_basic_exc_p239.png"
-        ],
-        "pageStr": "공시실 원문 제238쪽 ~ 제239쪽 (제4조 보험금을 지급하지 않는 사유 전수)"
-      },
-      "tier_inc": {
-        "pages": [
-          "assets/clause_imgs/db_std_tier_inc_p254.png"
-        ],
-        "pageStr": "공시실 원문 제254쪽 (1-5종 질병수술비 제1조 지급사유 및 가입금액표)"
-      },
-      "tier_exc": {
-        "pages": [
-          "assets/clause_imgs/db_std_tier_exc_p256.png"
-        ],
-        "pageStr": "공시실 원문 제256쪽 (1-5종 질병수술비 보상제외 면책)"
-      },
-      "tier_table": {
-        "pages": [
-          "assets/clause_imgs/db_std_tier_table_p1202.png",
-          "assets/clause_imgs/db_std_tier_table_p1203.png"
-        ],
-        "pageStr": "공시실 별표 제1202쪽 ~ 제1203쪽 (1~5종 수술분류표 전문)"
-      },
-      "ndai_inc": {
-        "pages": [
-          "assets/clause_imgs/db_std_ndai_inc_p800.png"
-        ],
-        "pageStr": "공시실 원문 제800쪽 (120대 질병수술비 제1조 지급사유)"
-      },
-      "ndai_exc": {
-        "pages": [
-          "assets/clause_imgs/db_std_ndai_exc_p802.png"
-        ],
-        "pageStr": "공시실 원문 제802쪽 (120대 질병수술비 보상제외 면책)"
-      },
-      "ndai_table": {
-        "pages": [
-          "assets/clause_imgs/db_std_ndai_table_p1216.png",
-          "assets/clause_imgs/db_std_ndai_table_p1217.png"
-        ],
-        "pageStr": "공시실 별표 제1216쪽 ~ 제1217쪽 (120대 대상질병분류표 KCD 전문)"
+        "pageStr": "공시실 별표 제1376쪽 (【별표】 124대 대상질병분류표 전문)"
       }
     }
   }
 };
 
 /* ==========================================================================
-   보험비서 - 회사별·시기별 공식 약관 및 별표 수술분류표 데이터베이스
-   - 손해보험 10개사 & 생명보험 10개사 (약어 20개 매핑 완비)
-   - 가입시기별 개정이슈 포인트 하이라이트 (개정 팩트 중심 엄정 정렬)
-   - 표준체 / 유병자(간편) 분기 (간편 미판매 시 해당없음 명확 안내)
-   - 질병수술비 (약관조항보기 + 보상제외조항보기 2칸 정형 규격)
-   - 종수술비 (약관조항보기 + 별표수술분류표 + 개정 전/후 실제약관 사진 뷰어)
-   - N대질병수술비 (약관조항보기 + 전수 KCD 질병코드 분류표)
-   - 생명보험 성인주요질환/성인병수술특약 질병코드 전수 수록
-   - 현대해상 암수술 4종 하향 개정 핵심 강조
+   보험약관 본문 및 조항 데이터베이스 (20개사)
    ========================================================================== */
 
 window.POLICY_CLAUSES_DATA = {
