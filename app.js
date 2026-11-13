@@ -7746,11 +7746,53 @@ function renderClausesCompanyList(searchQuery = '') {
   const rawQ = (searchQuery || '').trim();
   const normQ = norm(rawQ);
 
+  const btnNonLife = $('#btnClauseNonLife');
+  const btnLife = $('#btnClauseLife');
+
+  // 상단 손보·생보 동시 검색 색상 시각화 (#29473)
+  if (btnNonLife && btnLife) {
+    if (normQ) {
+      // 검색 중: 손보(파랑) + 생보(보라) 둘 다 활성화 상태임을 선명하게 표현!
+      btnNonLife.style.border = '2px solid var(--brand)';
+      btnNonLife.style.background = 'rgba(49,130,246,0.12)';
+      btnNonLife.style.color = 'var(--brand)';
+      btnNonLife.style.fontWeight = '900';
+
+      btnLife.style.border = '2px solid #7c3aed';
+      btnLife.style.background = 'rgba(124,58,237,0.12)';
+      btnLife.style.color = '#7c3aed';
+      btnLife.style.fontWeight = '900';
+    } else {
+      const cat = state.clauseCat || 'nonLife';
+      if (cat === 'nonLife') {
+        btnNonLife.style.border = '2px solid var(--brand)';
+        btnNonLife.style.background = 'rgba(49,130,246,0.1)';
+        btnNonLife.style.color = 'var(--brand)';
+        btnNonLife.style.fontWeight = '900';
+
+        btnLife.style.border = '1px solid var(--border)';
+        btnLife.style.background = 'var(--surface)';
+        btnLife.style.color = '#334155';
+        btnLife.style.fontWeight = '750';
+      } else {
+        btnLife.style.border = '2px solid #7c3aed';
+        btnLife.style.background = 'rgba(124,58,237,0.1)';
+        btnLife.style.color = '#7c3aed';
+        btnLife.style.fontWeight = '900';
+
+        btnNonLife.style.border = '1px solid var(--border)';
+        btnNonLife.style.background = 'var(--surface)';
+        btnNonLife.style.color = '#334155';
+        btnNonLife.style.fontWeight = '750';
+      }
+    }
+  }
+
   const nonLifeList = (window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.nonLife) ? window.POLICY_CLAUSES_DATA.nonLife : [];
   const lifeList = (window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.life) ? window.POLICY_CLAUSES_DATA.life : [];
 
-  nonLifeList.forEach(c => { c._cat = 'nonLife'; c._catLabel = '🏢 손해보험'; });
-  lifeList.forEach(c => { c._cat = 'life'; c._catLabel = '🏛️ 생명보험'; });
+  nonLifeList.forEach(c => { c._cat = 'nonLife'; });
+  lifeList.forEach(c => { c._cat = 'life'; });
 
   const allCompanies = [...nonLifeList, ...lifeList];
   allCompanies.forEach(c => c.periods && c.periods.forEach(p => { p._isYearMatch = false; }));
@@ -7762,31 +7804,38 @@ function renderClausesCompanyList(searchQuery = '') {
     isExclusion: false, 
     isClaimTip: false, 
     isSimplified: false, 
-    autoOpen: false, 
-    searchedYear: null 
+    searchedYear: null,
+    searchedNdai: null
   };
 
   if (normQ) {
     isUnifiedSearch = true;
-    matchContext.autoOpen = true;
 
-    // 가입년도 추출 (예: '21년 멜츠', '18년 현대', '06년 삼생' #29067 #29068)
+    // 가입년도 추출
     const detectedYear = extractSearchedYear(rawQ);
     if (detectedYear) {
       matchContext.searchedYear = detectedYear;
     }
 
+    // N대 10단위 및 특정 N대 추출 (예: '60대', '112대', '116대', '119대', '120대' 등 #29473 #29516)
+    let tensTarget = null;
+    const exactNdaiMatch = rawQ.match(/(\d{2,3})대/);
+    if (exactNdaiMatch) {
+      matchContext.searchedNdai = exactNdaiMatch[0];
+      const nNum = parseInt(exactNdaiMatch[1], 10);
+      if (exactNdaiMatch[1].endsWith('0')) {
+        tensTarget = nNum; // e.g. 60대, 70대, 80대, 110대, 120대
+      }
+    }
+
     // 공백/쉼표 분리
     const rawTokens = rawQ.split(/[\s,]+/).filter(Boolean);
-
-    // 토큰 분류: 년도 토큰, 주제 토큰, 회사/상품 검색 대상 토큰
     const topicKeywords = ['유병자', '간편', '355', '3.5.5', '3105', '질수', '질병수술', '종수', '종수술', '15종', '1-5종', '상수', '상해수술', '엔대', 'n대', '제외', '면책', '부지급', '보상제외', '청구', '팁', '가이드'];
-    
     const companySearchTokens = [];
 
     rawTokens.forEach(t => {
       const nt = norm(t);
-      if (/^(\d{2,4}년?)$/.test(nt)) return; // 년도 토큰
+      if (/^(\d{2,4}년?)$/.test(nt)) return;
 
       if (nt.includes('유병자') || nt.includes('간편') || nt.includes('355') || nt.includes('3.5.5') || nt.includes('3105')) {
         matchContext.isSimplified = true;
@@ -7798,7 +7847,6 @@ function renderClausesCompanyList(searchQuery = '') {
       if (nt.includes('제외') || nt.includes('면책') || nt.includes('부지급') || nt.includes('보상제외')) matchContext.isExclusion = true;
       if (nt.includes('청구') || nt.includes('팁') || nt.includes('가이드')) matchContext.isClaimTip = true;
 
-      // 순수 주제어가 아닌 토큰(회사명, 약칭, 상품명, N대 숫자 등)은 회사 검색 토큰으로 수집
       const isPureTopic = topicKeywords.some(k => norm(k) === nt);
       if (!isPureTopic) {
         companySearchTokens.push(t);
@@ -7807,12 +7855,24 @@ function renderClausesCompanyList(searchQuery = '') {
 
     const hasSpecificCompanyTokens = companySearchTokens.length > 0;
 
-    // 회사별 전수 매칭 & [매칭 포인트] 기록 (#29057)
+    // 수술명/질병명 전수 매칭 (#29685 "과하다 싶을 정도로 수술명, 질병명 어떤 것이든 나오게!")
+    const isMedicalQuery = rawTokens.some(t => {
+      const nt = norm(t);
+      if (window.CURATED && window.CURATED.synonyms) {
+        if (window.CURATED.synonyms.some(s => s.k.includes(nt) || s.q.some(q => norm(q).includes(nt) || nt.includes(norm(q))))) return true;
+      }
+      if (window.CURATED && window.CURATED.procs) {
+        if (Object.keys(window.CURATED.procs).some(k => norm(k).includes(nt) || nt.includes(norm(k)))) return true;
+      }
+      return false;
+    });
+
+    // 회사별 전수 매칭
     list = allCompanies.filter(co => {
-      co._matchReasons = [];
+      let isCoMatched = false;
       let isYearMatchedForCo = false;
 
-      // 1) 가입년도 매칭 판정 (해당 연도가 포함된 시기 확인)
+      // 1) 가입년도 매칭 판정
       if (matchContext.searchedYear) {
         co.periods.forEach(p => {
           const [sy, ey] = parsePeriodYearRange(p.periodStr);
@@ -7823,52 +7883,44 @@ function renderClausesCompanyList(searchQuery = '') {
             p._isYearMatch = false;
           }
         });
-        // 특정 회사명이 검색어에 없을 때만 년도 단독으로 매칭 사유 추가
         if (isYearMatchedForCo && !hasSpecificCompanyTokens) {
-          co._matchReasons.push({ 
-            label: '가입년도', 
-            token: `${matchContext.searchedYear}년`, 
-            target: '가입시기 매칭' 
-          });
+          isCoMatched = true;
         }
       }
 
-      // 2) 회사/상품/약어 검색 토큰 매칭
+      // 2) N대 특정 및 10단위 범위 매칭 (예: '116대' -> 삼성, '60대' -> 64대 메리츠 #29473 #29516)
+      if (matchContext.searchedNdai && co.ndaiKeywords) {
+        if (co.ndaiKeywords.some(k => norm(k).includes(norm(matchContext.searchedNdai)))) {
+          isCoMatched = true;
+        }
+      }
+      if (tensTarget && co.ndaiKeywords) {
+        const foundTens = co.ndaiKeywords.some(k => {
+          const m = k.match(/(\d+)대?/);
+          if (m) {
+            const num = parseInt(m[1], 10);
+            return num >= tensTarget && num < tensTarget + 10;
+          }
+          return false;
+        });
+        if (foundTens) isCoMatched = true;
+      }
+
+      // 3) 회사/상품/약어 검색 토큰 매칭
       companySearchTokens.forEach(origToken => {
         const nt = norm(origToken);
         if (!nt) return;
 
         // 회사명 및 약칭
-        if (norm(co.name).includes(nt) || nt.includes(norm(co.name))) {
-          co._matchReasons.push({ label: '회사명', token: origToken, target: co.name });
-          return;
-        }
-        if (norm(co.shortName).includes(nt) || nt.includes(norm(co.shortName))) {
-          co._matchReasons.push({ label: '회사 약칭', token: origToken, target: co.shortName });
-          return;
-        }
-        if (co.aliases && co.aliases.some(a => norm(a).includes(nt) || nt.includes(norm(a)))) {
-          co._matchReasons.push({ label: '회사 약어', token: origToken, target: co.name });
-          return;
-        }
+        if (norm(co.name).includes(nt) || nt.includes(norm(co.name))) isCoMatched = true;
+        if (norm(co.shortName).includes(nt) || nt.includes(norm(co.shortName))) isCoMatched = true;
+        if (co.aliases && co.aliases.some(a => norm(a).includes(nt) || nt.includes(norm(a)))) isCoMatched = true;
 
         // 대표 상품명 매칭 (#29052 #29057)
-        if (co.products) {
-          const matchedProd = co.products.find(p => norm(p).includes(nt) || nt.includes(norm(p)));
-          if (matchedProd) {
-            co._matchReasons.push({ label: '대표 상품', token: origToken, target: matchedProd });
-            return;
-          }
-        }
+        if (co.products && co.products.some(p => norm(p).includes(nt) || nt.includes(norm(p)))) isCoMatched = true;
 
-        // N대 특약 매칭 (#29006 - 예: '116대')
-        if (co.ndaiKeywords) {
-          const matchedNdai = co.ndaiKeywords.find(k => norm(k).includes(nt) || nt.includes(norm(k)));
-          if (matchedNdai) {
-            co._matchReasons.push({ label: 'N대 특약', token: origToken, target: `${matchedNdai} 질병수술` });
-            return;
-          }
-        }
+        // N대 특약 매칭 (#29006)
+        if (co.ndaiKeywords && co.ndaiKeywords.some(k => norm(k).includes(nt) || nt.includes(norm(k)))) isCoMatched = true;
 
         // 담보 및 수술명 매칭
         const hasRiderMatch = co.periods.some(p => {
@@ -7887,42 +7939,31 @@ function renderClausesCompanyList(searchQuery = '') {
           return stdOk || (simpObj && checkR(simpObj.riders));
         });
 
-        if (hasRiderMatch) {
-          co._matchReasons.push({ label: '담보·수술명', token: origToken, target: '약관 조항' });
-        }
+        if (hasRiderMatch) isCoMatched = true;
       });
 
-      // 회사 검색어가 지정되었는데 회사 매칭이 없다면 제외!
-      if (hasSpecificCompanyTokens) {
-        return co._matchReasons.length > 0;
+      // 수술명/질병명 쿼리인 경우 수술보장을 판매하는 주요 회사 전원 포함 (#29685)
+      if (isMedicalQuery) {
+        return true;
       }
 
-      // 특정 회사 토큰이 없고 주제어나 년도만 있는 경우
+      if (hasSpecificCompanyTokens) {
+        return isCoMatched;
+      }
       if (matchContext.searchedYear && isYearMatchedForCo) {
         return true;
       }
+      if (tensTarget && isCoMatched) {
+        return true;
+      }
       if (matchContext.riderKey || matchContext.isExclusion || matchContext.isSimplified) {
-        return true; // 전체 회사 중 해당 담보/주제 표출
+        return true;
       }
 
-      return co._matchReasons.length > 0;
+      return isCoMatched;
     });
 
-    // 만약 회사 매칭도 되고 년도도 입력되었다면, 헤더에 가입년도 매칭 뱃지 추가 표출
-    if (matchContext.searchedYear) {
-      list.forEach(co => {
-        const hasYearDrawer = co.periods.some(p => p._isYearMatch);
-        if (hasYearDrawer && !co._matchReasons.some(mr => mr.label === '가입년도')) {
-          co._matchReasons.unshift({
-            label: '가입년도',
-            token: `${matchContext.searchedYear}년`,
-            target: '가입시기 매칭'
-          });
-        }
-      });
-    }
-
-    // 백업 검색: 토큰 분리로 안 걸릴 경우 전체 문자열로 검색
+    // 백업 검색
     if (list.length === 0) {
       list = allCompanies.filter(co => {
         if (norm(co.name).includes(normQ) || norm(co.desc).includes(normQ)) return true;
@@ -7935,18 +7976,45 @@ function renderClausesCompanyList(searchQuery = '') {
     list = cat === 'nonLife' ? nonLifeList : lifeList;
   }
 
+  // 0건일 때 IMG_4946 스타일 '혹시 찾으시는 게...' 원터치 추천 칩 표출 (#29473)
   if (list.length === 0) {
+    const suggestions = generateClauseSuggestions(rawQ);
     container.innerHTML = `
-      <div style="padding:45px 20px;text-align:center;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;color:var(--text-3);margin-top:10px;">
-        <div style="font-size:32px;margin-bottom:10px;">🔍</div>
-        <div style="font-size:15px;font-weight:900;color:var(--text);margin-bottom:6px;">"${esc(rawQ)}" 검색 결과가 없습니다</div>
-        <div style="font-size:12.5px;color:var(--text-3);line-height:1.5;">
-          회사명 또는 약어(멜츠, 삼화, 케손, 디손, 삼생, 한생, 미생 등),<br>
-          가입년도(21년, 18년, 06년 등)나 대표 상품명(또또암, 퍼펙트, 굿앤굿 등),<br>
-          N대 질병수술(116대, 119대, 112대 등)로 검색해 보세요.
+      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:24px 18px;margin-top:10px;text-align:left;box-shadow:var(--shadow-1);">
+        <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+          <span style="font-size:28px;line-height:1;">💡</span>
+          <div>
+            <div style="font-size:16px;font-weight:900;color:#0f172a;letter-spacing:-0.2px;">"${esc(rawQ)}" 검색 결과가 없습니다</div>
+            <div style="font-size:13.5px;font-weight:850;color:var(--brand);margin-top:3px;">혹시 아래 N대 질병수술이나 연관 약관을 찾으시나요?</div>
+          </div>
+        </div>
+        <div style="font-size:12.5px;color:#334155;margin-bottom:14px;line-height:1.45;font-weight:700;">
+          오타가 있거나 다른 숫자로 불리는 경우 아래 추천 검색어를 터치하시면 바로 약관이 조회됩니다:
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;" id="clauseSuggestionChips">
+          ${suggestions.map(s => `
+            <button type="button" class="btn-clause-sugg-chip" data-query="${esc(s.q)}" style="height:44px;border:1.5px solid #93c5fd;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:12.5px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 1px 3px rgba(30,64,175,0.08);padding:0 8px;text-align:center;">
+              <span>🎯</span>
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.label)}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div style="margin-top:16px;padding:12px 14px;background:var(--surface-2);border-radius:10px;border:1px solid var(--border);font-size:12px;color:#334155;line-height:1.5;font-weight:700;">
+          📌 <strong>검색 팁:</strong> 회사명(메리츠, 현대), N대 특약(116대, 119대, 112대, 64대), 가입년도(21년 멜츠), 수술명(카티스템, 담석, 용종)으로 검색하시면 가장 정확합니다.
         </div>
       </div>
     `;
+
+    container.querySelectorAll('.btn-clause-sugg-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const q = chip.getAttribute('data-query');
+        const qInput = $('#q-clause');
+        if (qInput) {
+          qInput.value = q;
+          qInput.dispatchEvent(new Event('input'));
+        }
+      });
+    });
     return;
   }
 
@@ -7957,7 +8025,7 @@ function renderClausesCompanyList(searchQuery = '') {
       <div style="background:var(--surface-2);border:1.5px solid var(--brand);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:0 2px 6px rgba(49,130,246,0.1);">
         <div style="display:flex;align-items:center;gap:6px;">
           <span style="font-size:15px;">🔍</span>
-          <span style="font-size:13.5px;font-weight:900;color:var(--brand);">'${esc(rawQ)}' 손보·생보 통합 검색 결과</span>
+          <span style="font-size:14px;font-weight:900;color:var(--brand);">'${esc(rawQ)}' 손보·생보 통합 검색 결과</span>
         </div>
         <span style="font-size:12px;font-weight:850;color:#fff;background:var(--brand);padding:3px 9px;border-radius:6px;">
           총 ${list.length}개 보험사 일치
@@ -7967,55 +8035,28 @@ function renderClausesCompanyList(searchQuery = '') {
   }
 
   html += list.map(co => {
-    const isAutoOpen = !!normQ;
-    const catBadge = co._cat === 'nonLife' 
-      ? '<span style="font-size:11px;font-weight:900;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.25);">🏢 손해보험</span>'
-      : '<span style="font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(124,58,237,0.25);">🏛️ 생명보험</span>';
+    // 검색 시에도 기본 펼치지 않고 숨기기(접힘) 상태 유지 (#29458)
+    const isAutoOpen = false;
 
-    // 매칭 포인트 뱃지 (#29057)
-    let matchBadgesHTML = '';
-    if (co._matchReasons && co._matchReasons.length > 0) {
-      matchBadgesHTML = `
-        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;">
-          ${co._matchReasons.map(mr => `
-            <span style="font-size:11px;font-weight:900;color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;padding:2px 7px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;box-shadow:0 1px 2px rgba(194,65,12,0.06);">
-              <span>🎯</span>
-              <span>${esc(mr.label)}:</span>
-              <strong style="color:#ea580c;">${esc(mr.token)}</strong>
-              <span style="color:#9a3412;font-size:10.5px;">(${esc(mr.target)})</span>
-            </span>
-          `).join('')}
-        </div>
-      `;
-    }
-
+    // 극강의 심플 헤더: TMI 뱃지, 약칭 태그, 손보/생보 라벨, 작은 회색글씨 전면 삭제 (#29547 #29557 #29562 #29574)
     return `
-    <div class="clause-co-card" style="background:var(--surface);border:1.5px solid ${co._matchReasons && co._matchReasons.length ? '#ea580c' : 'var(--border)'};border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);transition:border-color .2s ease;">
-      <!-- 회사 헤더 -->
-      <div class="btn-toggle-co" data-co-id="${co.id}" style="padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:10px;">
-        <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-          <div style="width:36px;height:36px;border-radius:10px;background:${co.color || 'var(--brand)'};color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 5px rgba(0,0,0,0.12);">
+    <div class="clause-co-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);transition:border-color .2s ease;">
+      <!-- 회사 헤더: 로고 + 회사명 + 펼쳐보기 ▾ (초간결 심플) -->
+      <div class="btn-toggle-co" data-co-id="${co.id}" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
+          <div style="width:38px;height:38px;border-radius:10px;background:${co.color || 'var(--brand)'};color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 5px rgba(0,0,0,0.12);">
             ${esc(co.logo || co.name[0])}
           </div>
-          <div style="min-width:0;flex:1;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
-              <span style="font-size:15px;font-weight:900;color:var(--text);letter-spacing:-.01em;white-space:nowrap;">${esc(co.name)}</span>
-              ${catBadge}
-              <span style="font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);padding:1px 6px;border-radius:4px;border:1px solid rgba(49,130,246,0.2);">${esc(co.shortName)}</span>
-              <span style="font-size:11px;font-weight:800;color:var(--text-3);">${co.periods.length}개 시기</span>
-            </div>
-            <div style="font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-              ${esc(co.desc || '')}
-            </div>
-            ${matchBadgesHTML}
+          <div style="font-size:16px;font-weight:900;color:#0f172a;letter-spacing:-0.2px;white-space:nowrap;">
+            ${esc(co.name)}
           </div>
         </div>
-        <button type="button" class="btn-co-toggle-arrow" style="font-size:11.5px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.2);border-radius:7px;padding:4px 9px;cursor:pointer;flex-shrink:0;">
-          ${isAutoOpen ? '접기 ▴' : '펼쳐보기 ▾'}
+        <button type="button" class="btn-co-toggle-arrow" style="font-size:12px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:8px;padding:5px 11px;cursor:pointer;flex-shrink:0;">
+          펼쳐보기 ▾
         </button>
       </div>
 
-      <!-- 시기별 아코디언 서랍 (검색 시 자동 전개) -->
+      <!-- 시기별 아코디언 서랍 (검색 시에도 접힘 상태로 유지 #29458) -->
       <div id="co-periods-${co.id}" class="co-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface-2);flex-direction:column;gap:12px;">
         ${co.periods.map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
       </div>
@@ -8037,6 +8078,30 @@ function renderClausesCompanyList(searchQuery = '') {
         drawer.style.display = isHidden ? 'flex' : 'none';
         if (arrowBtn) arrowBtn.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
       }
+    });
+  });
+
+    // N대 특약 탭 전환 바인딩 (#29516)
+  container.querySelectorAll('.btn-ndai-tab-select').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const parent = btn.closest('.rider-card-ndai');
+      if (!parent) return;
+      const opt = btn.getAttribute('data-ndai-opt');
+      parent.querySelectorAll('.btn-ndai-tab-select').forEach(b => {
+        b.classList.remove('active');
+        b.style.border = '1px solid transparent';
+        b.style.background = 'transparent';
+        b.style.color = '#1e293b';
+      });
+      btn.classList.add('active');
+      btn.style.border = '1.5px solid #059669';
+      btn.style.background = '#059669';
+      btn.style.color = '#fff';
+
+      parent.setAttribute('data-current-ndai', opt);
+      const titleSpan = parent.querySelector('span:first-child');
+      if (titleSpan) titleSpan.textContent = `🏢 ${opt} N대 질병수술비 특약`;
     });
   });
 
@@ -8070,7 +8135,7 @@ function renderClausesCompanyList(searchQuery = '') {
         b.classList.remove('active');
         b.style.border = '1px solid var(--border)';
         b.style.background = 'var(--surface)';
-        b.style.color = 'var(--text-2)';
+        b.style.color = '#334155';
       });
       btn.classList.add('active');
       btn.style.border = '1.5px solid var(--brand)';
@@ -8162,7 +8227,7 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
         <button type="button" class="btn-ptype ${preferSimp ? 'active' : ''}" data-ptype="simplified" style="height:38px;padding:0 8px;font-size:12.5px;font-weight:850;border-radius:8px;border:${preferSimp ? '1.5px solid var(--brand)' : '1px solid var(--border)'};background:${preferSimp ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${preferSimp ? 'var(--brand)' : 'var(--text-2)'};cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
           🩺 간편 (유병자)
         </button>` : `
-        <span style="height:38px;padding:0 8px;font-size:11.5px;font-weight:700;color:var(--text-3);background:var(--surface);border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
+        <span style="height:38px;padding:0 8px;font-size:11.5px;font-weight:700;color:#334155;background:var(--surface);border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
           <span>🩺</span> <span>간편 (약관 업데이트 진행 중)</span>
         </span>`}
       </div>
@@ -8188,7 +8253,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
   let html = '';
   const isMatchBasic = matchContext.riderKey === 'basic' || matchContext.isExclusion || matchContext.isClaimTip;
   const isMatchTier = matchContext.riderKey === 'tier';
-  const isMatchNdai = matchContext.riderKey === 'ndai';
+  const isMatchNdai = matchContext.riderKey === 'ndai' || !!matchContext.searchedNdai;
 
   // 1. 질병수술비
   if (riders.basic) {
@@ -8197,15 +8262,15 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
       <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
         <div>
-          <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;display:flex;align-items:center;gap:5px;">
+          <div style="font-size:13.5px;font-weight:900;color:#0f172a;word-break:keep-all;display:flex;align-items:center;gap:5px;">
             <span>💡 ${esc(riders.basic.title)}</span>
             ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
           </div>
-          <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary || '')}</div>
+          <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.basic.summary || '')}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:${matchContext.isExclusion ? '2px solid #dc2626' : '1px solid var(--border)'};background:${matchContext.isExclusion ? 'rgba(220,38,38,0.09)' : 'var(--surface)'};color:${matchContext.isExclusion ? '#dc2626' : 'var(--text)'};font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:${matchContext.isExclusion ? '2px solid #dc2626' : '1px solid var(--border)'};background:${matchContext.isExclusion ? 'rgba(220,38,38,0.09)' : 'var(--surface)'};color:${matchContext.isExclusion ? '#dc2626' : '#0f172a'};font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
           ${matchContext.isExclusion ? '🚫 보상제외 조항 직결' : '📄 약관조항 보기'}
         </button>
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="claim_tips" style="height:38px;border-radius:8px;border:1.5px solid #d97706;background:rgba(245,158,11,0.09);color:#b45309;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 1px 3px rgba(217,119,6,0.15);">
@@ -8222,15 +8287,15 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
       <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
         <div>
-          <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;display:flex;align-items:center;gap:5px;">
+          <div style="font-size:13.5px;font-weight:900;color:var(--brand);word-break:keep-all;display:flex;align-items:center;gap:5px;">
             <span>📋 ${esc(riders.tier.title)}</span>
             ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
           </div>
-          <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary || '')}</div>
+          <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.tier.summary || '')}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:#0f172a;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
           📄 약관조항 보기
         </button>
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(49,130,246,0.25);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -8240,22 +8305,51 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     </div>`;
   }
 
-  // 3. N대 질병수술비
+  // 3. N대 질병수술비 (112대/120대 섞지 않고 회사별 판매 N대별 분리 선택 탭 #29516)
   if (riders.ndai) {
     const isHigh = isMatchNdai;
+
+    // 타이틀에서 N대 옵션 파싱 (예: "112대/120대" -> ['112대', '120대'])
+    const titleMatch = riders.ndai.title.match(/(\d+대)/g);
+    let nOptions = titleMatch && titleMatch.length > 1 ? Array.from(new Set(titleMatch)) : [];
+
+    // 만약 단일이면 회사별 판매 N대 대조
+    if (nOptions.length === 0) {
+      if (cid.includes('meritz')) nOptions = ['112대', '120대'];
+      else if (cid.includes('hyundai')) nOptions = ['119대', '124대'];
+      else if (cid.includes('samsung')) nOptions = ['116대', '120대'];
+      else if (cid.includes('db')) nOptions = ['119대', '85대'];
+      else if (cid.includes('kb')) nOptions = ['112대', '116대'];
+    }
+
+    const defaultN = (matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai)) 
+      ? matchContext.searchedNdai 
+      : (nOptions[0] || '112대');
+
     html += `
-    <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
+    <div class="rider-card rider-card-ndai" data-current-ndai="${esc(defaultN)}" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
       <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
-        <div>
-          <div style="font-size:13px;font-weight:850;color:#059669;word-break:keep-all;display:flex;align-items:center;gap:5px;">
-            <span>🏢 ${esc(riders.ndai.title)}</span>
+        <div style="flex:1;">
+          <div style="font-size:13.5px;font-weight:900;color:#059669;word-break:keep-all;display:flex;align-items:center;gap:5px;">
+            <span>🏢 ${esc(defaultN)} N대 질병수술비 특약</span>
             ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
           </div>
-          <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary || '')}</div>
+          <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.ndai.summary || '')}</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+
+      <!-- 회사별 판매 N대별 분리 선택 탭 (#29516 섞지 않고 클릭 시 해당 N대 약관 직결) -->
+      ${nOptions.length > 1 ? `
+      <div style="margin:8px 0 6px;padding:4px;background:var(--surface-2);border-radius:8px;border:1px solid var(--border);display:flex;gap:4px;">
+        ${nOptions.map(opt => `
+          <button type="button" class="btn-ndai-tab-select ${opt === defaultN ? 'active' : ''}" data-ndai-opt="${esc(opt)}" style="flex:1;height:32px;border-radius:6px;border:${opt === defaultN ? '1.5px solid #059669' : '1px solid transparent'};background:${opt === defaultN ? '#059669' : 'transparent'};color:${opt === defaultN ? '#fff' : '#1e293b'};font-size:11.5px;font-weight:900;cursor:pointer;transition:all .15s ease;">
+            ${esc(opt)} 특약
+          </button>
+        `).join('')}
+      </div>` : ''}
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;">
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:#0f172a;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
           📄 약관조항 보기
         </button>
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid #059669;background:#059669;color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(5,150,105,0.25);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -8267,7 +8361,6 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
 
   return html;
 }
-
 
 function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
   const cat = state.clauseCat || 'nonLife';
@@ -8533,7 +8626,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   if (viewMode === 'table' && (targetRider === 'ndai' || targetRider === 'adult')) {
     const tableData = rider.tableBody;
     if (!tableData) {
-      box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);">질병분류표 데이터가 없습니다.</div>';
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:#334155;">질병분류표 데이터가 없습니다.</div>';
       return;
     }
 
@@ -8573,7 +8666,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           <span style="font-size:11.5px;font-weight:900;color:#059669;display:flex;align-items:center;gap:4px;">
             🏢 N대 질병 대표 질환 원터치 빠른 판정
           </span>
-          <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 즉시 KCD 매칭</span>
+          <span style="font-size:11px;color:#334155;font-weight:700;">터치 시 즉시 KCD 매칭</span>
         </div>
         <div class="clause-quick-chips" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
           ${ndaiQuickChips.map(c => `
@@ -8657,7 +8750,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                     <span style="font-size:13px;font-weight:900;color:#059669;">🏢 ${esc(grpName)}</span>
                     <span style="font-size:11px;font-weight:850;color:#059669;background:rgba(5,150,105,0.12);padding:1px 6px;border-radius:4px;">${esc(benefit)}</span>
                   </div>
-                  <div style="font-size:11.5px;color:var(--text-3);margin-bottom:6px;">${esc(summaryNames)}</div>
+                  <div style="font-size:11.5px;color:#334155;margin-bottom:6px;">${esc(summaryNames)}</div>
                   ${detailedList.length ? `
                     <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;border-top:1px dashed var(--line);padding-top:6px;">
                       ${detailedList.filter(item => item.name.toLowerCase().includes(normQ) || item.code.toLowerCase().includes(normQ) || (item.desc && item.desc.toLowerCase().includes(normQ))).map(item => `
@@ -8678,7 +8771,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
 
       if (!ndaiCardsHTML && !tableMatchHTML) {
         box.innerHTML = photoBtnHTML + chipsHTML + `
-          <div style="padding:35px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-3);">
+          <div style="padding:35px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:#334155;">
             <div style="font-size:24px;margin-bottom:8px;">🔍</div>
             <div style="font-size:13.5px;font-weight:900;color:var(--text);">'${esc(normQ)}' N대 질병코드 일치 항목이 없습니다</div>
             <div style="font-size:12px;margin-top:4px;line-height:1.4;">상단 다빈도 칩을 터치하거나 질병명(담석증, 뇌혈관 등)으로 검색해 보세요.</div>
@@ -8719,7 +8812,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           const rawCodes = r[2];
           const benefit = r[3];
           const detailedList = NDAI_DETAILED_ITEMS[grpName] || [];
-          const isAutoOpen = gi === 0;
+          const isAutoOpen = false; // 모달 진입 시 전 질환군 기본 접힘(숨기기) 유지 (#29484)
 
           return `
           <div class="ndai-group-card" data-gi="${gi}" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
@@ -8728,9 +8821,9 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                 <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
                   <span style="font-size:13px;font-weight:900;color:#059669;">🏢 ${esc(grpName)}</span>
                   <span style="font-size:11px;font-weight:850;color:#059669;background:rgba(5,150,105,0.1);padding:1px 6px;border-radius:4px;border:1px solid rgba(5,150,105,0.25);">${esc(benefit)}</span>
-                  ${detailedList.length ? `<span style="font-size:10.5px;font-weight:800;color:var(--text-3);background:var(--surface-2);padding:1px 5px;border-radius:4px;border:1px solid var(--border);">${detailedList.length}개 질환군</span>` : ''}
+                  ${detailedList.length ? `<span style="font-size:10.5px;font-weight:800;color:#334155;background:var(--surface-2);padding:1px 5px;border-radius:4px;border:1px solid var(--border);">${detailedList.length}개 질환군</span>` : ''}
                 </div>
-                <div style="font-size:11.5px;color:var(--text-3);line-height:1.35;word-break:keep-all;">
+                <div style="font-size:11.5px;color:#334155;line-height:1.35;word-break:keep-all;">
                   포함: ${esc(summaryNames)}
                 </div>
               </div>
@@ -8745,7 +8838,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                     <span style="font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.08);padding:2px 6px;border-radius:4px;border:1px solid rgba(37,99,235,0.2);white-space:nowrap;margin-top:1px;">${esc(item.code)}</span>
                     <div style="min-width:0;flex:1;">
                       <div style="font-size:12px;font-weight:850;color:var(--text);word-break:keep-all;">${esc(item.name)}</div>
-                      <div style="font-size:11px;color:var(--text-3);margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(item.desc)}</div>
+                      <div style="font-size:11px;color:#334155;margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(item.desc)}</div>
                     </div>
                   </div>
                 `).join('') : `
@@ -8766,8 +8859,10 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     const btnPhoto = box.querySelector('#btnOpenRulesNdai');
     if (btnPhoto) {
       btnPhoto.addEventListener('click', () => {
-        const imgSrc = rider.imgSrc || `assets/clause_imgs/${co.id}_ndai_table.png`;
-        window.openRulesModal(imgSrc, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary);
+        const p1 = `assets/clause_imgs/${co.id}_ndai_p1.png`;
+        const p2 = `assets/clause_imgs/${co.id}_ndai_p2.png`;
+        const pages = [p1, p2];
+        window.openRulesModal(p1, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary, pages);
       });
     }
 
@@ -8808,7 +8903,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   if (viewMode === 'table' && targetRider === 'tier') {
     const tableData = rider.tableBody;
     if (!tableData) {
-      box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-3);">수술분류표 데이터가 없습니다.</div>';
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:#334155;">수술분류표 데이터가 없습니다.</div>';
       return;
     }
 
@@ -8826,7 +8921,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     if (revPhotos && revPhotos.length > 1) {
       photoHeaderHTML = `
         <div style="margin-bottom:12px;">
-          <div style="font-size:11.5px;font-weight:900;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+          <div style="font-size:11.5px;font-weight:900;color:#334155;margin-bottom:6px;display:flex;align-items:center;gap:4px;">
             <span>📷 실제 약관 원문 사진 열람 (동시수술 고해상도 뷰어):</span>
           </div>
           <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
@@ -8877,7 +8972,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           <span style="font-size:11.5px;font-weight:900;color:var(--brand);display:flex;align-items:center;gap:4px;">
             ⚡ 다빈도·신의료기술 원터치 빠른 판정
           </span>
-          <span style="font-size:11px;color:var(--text-3);font-weight:700;">터치 시 즉시 판정</span>
+          <span style="font-size:11px;color:#334155;font-weight:700;">터치 시 즉시 판정</span>
         </div>
         <div class="clause-quick-chips" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
           ${quickChips.map(c => `
@@ -8950,13 +9045,13 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                 <div class="tier-surgery-card" style="padding:10px 12px;background:var(--surface-2);border:1px solid ${isHighlight ? '#fde68a' : 'var(--border)'};border-radius:9px;">
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px;">
                     <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-                      <span style="font-size:11px;font-weight:900;color:var(--text-3);background:var(--surface);padding:2px 6px;border-radius:4px;flex-shrink:0;border:1px solid var(--border);">No.${esc(no)}</span>
+                      <span style="font-size:11px;font-weight:900;color:#334155;background:var(--surface);padding:2px 6px;border-radius:4px;flex-shrink:0;border:1px solid var(--border);">No.${esc(no)}</span>
                       <span style="font-size:13px;font-weight:900;color:var(--text);word-break:keep-all;">${esc(name)}</span>
                     </div>
                     <span style="font-size:12px;font-weight:900;color:#fff;background:${isHighlight ? '#f59e0b' : 'var(--brand)'};padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;">${esc(tier)}</span>
                   </div>
                   ${note ? `
-                    <div style="font-size:11.5px;color:${isHighlight ? '#92400e' : 'var(--text-3)'};margin-top:4px;line-height:1.45;word-break:keep-all;">
+                    <div style="font-size:11.5px;color:${isHighlight ? '#92400e' : '#334155'};margin-top:4px;line-height:1.45;word-break:keep-all;">
                       ${esc(note)}
                     </div>` : ''}
                 </div>`;
@@ -8968,7 +9063,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
 
       if (!cardsHTML && !tableSectionHTML) {
         box.innerHTML = photoHeaderHTML + chipsHTML + `
-          <div style="padding:35px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-3);">
+          <div style="padding:35px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:#334155;">
             <div style="font-size:24px;margin-bottom:8px;">🔍</div>
             <div style="font-size:13.5px;font-weight:900;color:var(--text);">'${esc(normQ)}' 일치 항목이 없습니다</div>
             <div style="font-size:12px;margin-top:4px;line-height:1.4;">상단 다빈도 칩을 터치하거나 질병명(대장용종, 카티스템 등)으로 검색해 보세요.</div>
@@ -8991,7 +9086,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         <div style="font-size:13px;font-weight:900;color:var(--text);">
           📑 ${esc(tableData.title)} <span style="font-size:11.5px;color:var(--brand);font-weight:800;">(총 ${allRows.length}개 조항)</span>
         </div>
-        <span style="font-size:11px;font-weight:800;color:var(--text-3);background:var(--surface-2);padding:2px 7px;border-radius:5px;border:1px solid var(--border);">모바일 카드형 뷰</span>
+        <span style="font-size:11px;font-weight:800;color:#334155;background:var(--surface-2);padding:2px 7px;border-radius:5px;border:1px solid var(--border);">모바일 카드형 뷰</span>
       </div>
 
       <div class="tier-card-list" style="display:flex;flex-direction:column;gap:6px;">
@@ -9005,13 +9100,13 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           <div class="tier-surgery-card" style="padding:10px 12px;background:var(--surface);border:1px solid ${isHighlight ? '#fde68a' : 'var(--border)'};border-radius:9px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px;">
               <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
-                <span style="font-size:11px;font-weight:900;color:var(--text-3);background:var(--surface-2);padding:2px 6px;border-radius:4px;flex-shrink:0;">No.${esc(no)}</span>
+                <span style="font-size:11px;font-weight:900;color:#334155;background:var(--surface-2);padding:2px 6px;border-radius:4px;flex-shrink:0;">No.${esc(no)}</span>
                 <span style="font-size:13px;font-weight:900;color:var(--text);word-break:keep-all;">${esc(name)}</span>
               </div>
               <span style="font-size:12px;font-weight:900;color:#fff;background:${isHighlight ? '#f59e0b' : 'var(--brand)'};padding:2px 8px;border-radius:6px;white-space:nowrap;flex-shrink:0;">${esc(tier)}</span>
             </div>
             ${note ? `
-              <div style="font-size:11.5px;color:${isHighlight ? '#92400e' : 'var(--text-3)'};background:${isHighlight ? '#fffbeb' : 'var(--surface-2)'};padding:5px 8px;border-radius:6px;margin-top:4px;line-height:1.45;word-break:keep-all;border:${isHighlight ? '1px solid rgba(245,158,11,0.2)' : 'none'};">
+              <div style="font-size:11.5px;color:${isHighlight ? '#92400e' : '#334155'};background:${isHighlight ? '#fffbeb' : 'var(--surface-2)'};padding:5px 8px;border-radius:6px;margin-top:4px;line-height:1.45;word-break:keep-all;border:${isHighlight ? '1px solid rgba(245,158,11,0.2)' : 'none'};">
                 ${esc(note)}
               </div>` : ''}
           </div>`;
@@ -9185,7 +9280,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           </div>
         </div>
       `).join('') : `
-        <div style="padding:30px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text-3);">
+        <div style="padding:30px 20px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:#334155;">
           <div style="font-size:24px;margin-bottom:8px;">🔍</div>
           <div style="font-size:13.5px;font-weight:900;color:var(--text);">'${esc(normQ)}' 조항 검색 결과가 없습니다</div>
         </div>
