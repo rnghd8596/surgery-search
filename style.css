@@ -2643,7 +2643,18 @@ html[data-theme="dark"] .rules-modal-body {
 .rules-modal.show, .clause-modal.show {
   display: flex !important;
 }
-.rules-modal-inner, .clause-modal-inner {
+.rules-modal-inner {
+  width: 100% !important;
+  max-width: 1240px !important;
+  height: 100% !important;
+  max-height: calc(100dvh - 16px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: var(--surface) !important;
+}
+.clause-modal-inner {
   width: 100% !important;
   max-width: 860px !important;
   height: 100% !important;

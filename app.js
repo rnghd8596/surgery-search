@@ -7457,36 +7457,58 @@ function bindRulesTab() {
     });
   }
 
-  const zoomBtn = $('#btnRulesZoomToggle');
-  const toggleRulesZoom = () => {
-    isRulesZoomed = !isRulesZoomed;
+  let rulesZoomLevel = 100;
+
+  const applyRulesZoom = () => {
     const stackImgs = $$('#rulesModalPagesStack img');
-    if (isRulesZoomed) {
-      if (modalImg) {
-        modalImg.style.width = '180%';
-        modalImg.style.maxWidth = 'none';
-        modalImg.style.cursor = 'zoom-out';
-      }
-      stackImgs.forEach(img => {
-        img.style.width = '180%';
-        img.style.maxWidth = 'none';
-        img.style.cursor = 'zoom-out';
-      });
-      if (zoomBtn) zoomBtn.textContent = '📱 화면 맞춤';
-    } else {
-      if (modalImg) {
-        modalImg.style.width = '100%';
-        modalImg.style.maxWidth = '100%';
-        modalImg.style.cursor = 'zoom-in';
-      }
-      stackImgs.forEach(img => {
-        img.style.width = '100%';
-        img.style.maxWidth = '100%';
-        img.style.cursor = 'zoom-in';
-      });
-      if (zoomBtn) zoomBtn.textContent = '🔍 원본 100% 확대';
+    const widthStr = `${rulesZoomLevel}%`;
+    const maxWStr = rulesZoomLevel > 100 ? 'none' : '100%';
+    const cursorStr = rulesZoomLevel >= 180 ? 'zoom-out' : 'zoom-in';
+
+    if (modalImg) {
+      modalImg.style.width = widthStr;
+      modalImg.style.maxWidth = maxWStr;
+      modalImg.style.cursor = cursorStr;
     }
+    stackImgs.forEach(img => {
+      img.style.width = widthStr;
+      img.style.maxWidth = maxWStr;
+      img.style.cursor = cursorStr;
+    });
+    const zoomReset = $('#btnRulesZoomReset');
+    if (zoomReset) zoomReset.textContent = `${rulesZoomLevel}%`;
   };
+
+  const toggleRulesZoom = () => {
+    rulesZoomLevel = (rulesZoomLevel === 100) ? 140 : ((rulesZoomLevel === 140) ? 180 : 100);
+    applyRulesZoom();
+  };
+
+  const zoomInBtn = $('#btnRulesZoomIn');
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener('click', () => {
+      rulesZoomLevel = Math.min(220, rulesZoomLevel + 25);
+      applyRulesZoom();
+    });
+  }
+  const zoomOutBtn = $('#btnRulesZoomOut');
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener('click', () => {
+      rulesZoomLevel = Math.max(75, rulesZoomLevel - 25);
+      applyRulesZoom();
+    });
+  }
+  const zoomResetBtn = $('#btnRulesZoomReset');
+  if (zoomResetBtn) {
+    zoomResetBtn.addEventListener('click', () => {
+      rulesZoomLevel = 100;
+      applyRulesZoom();
+    });
+  }
+  const zoomBtn = $('#btnRulesZoomToggle');
+  if (zoomBtn) {
+    zoomBtn.addEventListener('click', toggleRulesZoom);
+  }
   if (zoomBtn) zoomBtn.addEventListener('click', toggleRulesZoom);
   if (modalImg) modalImg.addEventListener('click', toggleRulesZoom);
 
