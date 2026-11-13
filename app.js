@@ -1,7 +1,8 @@
 
 window.getNdaiDiseasesForGroup = function(coName, ndaiStr, grpName) {
-  const riders = state.D && state.D.riders;
-  const groups = state.D && state.D.g;
+  const st = (typeof state !== 'undefined' ? state : (window.__DEBUG && window.__DEBUG.state));
+  const riders = st && st.D && st.D.riders;
+  const groups = st && st.D && st.D.g;
   if (!riders || !groups) return [];
 
   const coShort = (coName || '').replace(/화재|해상|손해보험|생명|보험/g, '').trim();
