@@ -61,22 +61,10 @@ window.getNdaiDiseasesForGroup = function(coName, ndaiStr, grpName) {
 
 window.DYNAMIC_NDAI_TABLES = {
   meritz: {
-    '112대': {
-      title: '별표 [112대 질병분류표 및 보장 질병코드 전문]',
-      rows: [
-        ['특정 5대질병 (5)', '3대기관(심장·뇌혈관·간), 만성하부호흡기질환, 폐렴', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18', '최대 1,000만원'],
-        ['중대 10대질병 (10)', '급성췌장염, 버거씨병, 간질환, 폐색전증, 당뇨병합병증, 파킨슨 등', 'K85, I73.1, K70~K76, I26, E10~E14, G20, G35, G40', '최대 500만원'],
-        ['다발성 16대질병 (16)', '부정맥, 심부전, 동맥색전증, 수두증, 안면신경장애, 식도질환, 신부전 등', 'I47~I49, I50, I74, G91, G51, I69, J81, K22, N18', '최대 300만원'],
-        ['다빈도 30대질병 (30)', '위십이지장궤양, 녹내장, 갑상선질환, 담석증, 담낭염, 손목터널, 추간판 등', 'K25~K28, H40, E00~E07, K80, K81~K83, G56, M50~M51', '최대 100만원'],
-        ['부인과 10대질병 (10)', '자궁근종, 자궁폴립, 난소양성종양, 자궁내막증, 여성골반염, 골반장기탈출 등', 'D25, D26, D27, D28, N80, N81, N83, N84, N85', '최대 100만원'],
-        ['생활 40대질병 (40)', '관절염, 관절증, 탈장, 축농증, 편도염, 전립선비대증, 과민대장, 유방선종 등', 'M05~M14, M15~M19, K40~K46, J32, J35, N40, K58, D24', '최대 50만원'],
-        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원']
-      ]
-    },
     '131대': {
       title: '별표 [131대 질병분류표 및 보장 질병코드 전문]',
       rows: [
-        ['심장질환 (1)', '허혈성 심장질환 (협심증, 급성심근경색증 등)', 'I20~I25', '최대 1,000만원'],
+        ['심장질환 (1)', '급성심근경색증, 허혈성심장질환, 만성류마티스심장질환, 폐성심장병 등', 'I00~I02, I05~I09, I20~I25, I26~I28, I30~I52', '최대 1,000만원'],
         ['뇌혈관질환 (1)', '뇌내출혈, 지주막하출혈, 뇌경색증, 뇌동맥류 등', 'I60~I69', '최대 1,000만원'],
         ['특정 31대질병 (31)', '간질환, 췌장질환, 만성하부호흡기, 폐렴, 결핵, 당뇨병, 파킨슨, 신부전 등', 'K70~K76, K85, J40~J47, J12~J18, A15~A19, E10~E14, G20, N18', '최대 500만원'],
         ['다빈도 64대질병 (64)', '관절염, 녹내장, 담석증, 담낭염, 사타구니탈장, 축농증, 편도염 등', 'M05~M14, H40, K80, K81~K83, K40~K46, J32, J35', '최대 100만원'],
@@ -87,16 +75,13 @@ window.DYNAMIC_NDAI_TABLES = {
         ['백내장 (1)', '노년 백내장, 기타 백내장, 수정체 장애', 'H25~H28', '최대 30만원']
       ]
     },
-    '120대': {
-      title: '별표 [120대 질병분류표 및 보장 질병코드 전문]',
+    '32대': {
+      title: '별표 [32대 질병분류표 및 보장 질병코드 전문]',
       rows: [
-        ['특정 5대질병 (5)', '3대기관(심장·뇌혈관·간), 만성하부호흡기질환, 폐렴', 'I20~I25, I60~I69, K70~K76, J40~J47, J12~J18', '최대 1,000만원'],
-        ['중대 10대질병 (10)', '급성췌장염, 버거씨병, 간질환, 폐색전증, 당뇨병합병증, 파킨슨 등', 'K85, I73.1, K70~K76, I26, E10~E14, G20, G35, G40', '최대 500만원'],
-        ['다발성 16대질병 (16)', '부정맥, 심부전, 동맥색전증, 수두증, 안면신경장애, 식도질환, 신부전 등', 'I47~I49, I50, I74, G91, G51, I69, J81, K22, N18', '최대 300만원'],
-        ['다빈도 30대질병 (30)', '위십이지장궤양, 녹내장, 갑상선질환, 담석증, 담낭염, 손목터널, 추간판 등', 'K25~K28, H40, E00~E07, K80, K81~K83, G56, M50~M51', '최대 100만원'],
-        ['부인과 10대질병 (10)', '자궁근종, 자궁폴립, 난소양성종양, 자궁내막증, 여성골반염, 골반장기탈출 등', 'D25, D26, D27, D28, N80, N81, N83, N84, N85', '최대 100만원'],
-        ['생활 48대질병 (48)', '관절염, 관절증, 탈장, 축농증, 편도염, 전립선비대증, 유방선종, 안과질환 등', 'M05~M14, M15~M19, K40~K46, J32, J35, N40, K58, D24, H15~H22', '최대 50만원'],
-        ['치핵 (1)', '치핵 및 항문주위정맥혈전증', 'K64', '최대 30만원']
+        ['5대질병 (5)', '당뇨병, 심장질환, 고혈압, 뇌혈관질환, 간질환', 'E10~E14, I20~I25, I10~I15, I60~I69, K70~K77', '최대 500만원'],
+        ['9대질병 (9)', '위·십이지장궤양, 신부전, 결핵, 패혈증, 녹내장, 급성췌장염 등', 'K25~K27, N17~N19, A15~A19, A40~A41, H40, K85', '최대 300만원'],
+        ['4대질병 (4)', '담석증, 사타구니탈장, 편도염, 축농증', 'K80, K40, J35, J32', '최대 100만원'],
+        ['14대질병 (14)', '관절염, 관절증, 갑상선질환, 백내장, 치핵, 유방선종 등', 'M05~M14, M15~M19, E00~E07, H25~H28, K64, D24', '최대 50만원']
       ]
     }
   },
@@ -209,57 +194,86 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
   // 1. 메리츠화재
   if (co.id.includes('meritz')) {
     if (grp.includes('심장')) {
-      pages = ['assets/clause_imgs/meritz_star23_heart_p664.png'];
+      pages = ['assets/clause_imgs/meritz_std_ndai_heart_p664.png'];
       pageDesc = '공시실 원문 제664쪽 【별표23】 심장질환 분류표 전문 (I00~I02, I05~I09, I20~I25, I26~I28, I30~I52 전수)';
     } else if (grp.includes('뇌혈관')) {
-      pages = ['assets/clause_imgs/meritz_star41_brain_p706.png'];
+      pages = ['assets/clause_imgs/meritz_std_ndai_brain_p706.png'];
       pageDesc = '공시실 원문 제706쪽 【별표41】 뇌혈관질환 분류표 전문 (I60~I69 전수 10대 질환)';
-    } else if (grp.includes('관절염') || grp.includes('생식기')) {
-      pages = ['assets/clause_imgs/meritz_star24_joint_p665.png'];
-      pageDesc = '공시실 원문 제665쪽 【별표24】 관절염ㆍ생식기질환 분류표 전문 (M00~M20, N70~N98 등)';
-    } else if (grp.includes('후각')) {
-      pages = ['assets/clause_imgs/meritz_star48_olfactory_p728.png'];
-      pageDesc = '공시실 원문 제728쪽 【별표48】 후각특정질환 분류표 (J30~J34 등)';
-    } else if (grp.includes('치핵')) {
-      pages = ['assets/clause_imgs/meritz_star43_hemorrhoid_p732.png'];
-      pageDesc = '공시실 원문 제732쪽 【별표43】 치핵 분류표 (K64)';
-    } else if (grp.includes('백내장')) {
-      pages = ['assets/clause_imgs/meritz_star42_cataract_p733.png'];
-      pageDesc = '공시실 원문 제733쪽 【별표42】 백내장 분류표 (H25, H26, H28)';
-    } else if (grp.includes('5대')) {
-      pages = ['assets/clause_imgs/meritz_std_ndai_5_p734.png'];
-      pageDesc = '공시실 별표47 제734쪽 【별표47】 특정5대질환 분류표';
-    } else if (grp.includes('31대') || grp.includes('10대') || grp.includes('중대') || grp.includes('다발성') || grp.includes('16대')) {
+    } else if (grp.includes('31대')) {
       pages = ['assets/clause_imgs/meritz_std_ndai_31_p714.png', 'assets/clause_imgs/meritz_std_ndai_31_p715.png'];
-      pageDesc = '공시실 별표44 제714쪽~제715쪽 【별표44】 특정31대질병 분류표';
-    } else if (grp.includes('64대') || grp.includes('생활') || grp.includes('부인과') || grp.includes('30대') || grp.includes('40대')) {
+      pageDesc = '공시실 별표44 제714쪽~제715쪽 【별표44】 특정31대질병 분류표 전문 (31개 질환 전수)';
+    } else if (grp.includes('64대')) {
       pages = ['assets/clause_imgs/meritz_std_ndai_64_p720.png', 'assets/clause_imgs/meritz_std_ndai_64_p721.png'];
-      pageDesc = '공시실 별표45 제720쪽~제721쪽 【별표45】 다빈도64대질병 분류표';
+      pageDesc = '공시실 별표45 제720쪽~제721쪽 【별표45】 다빈도64대질병 분류표 전문 (64개 질환 전수)';
+    } else if (grp.includes('29대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_29_p780.png', 'assets/clause_imgs/meritz_std_ndai_29_p781.png'];
+      pageDesc = '공시실 별표65 제780쪽~제781쪽 【별표65】 특정다빈도29대질병 분류표 전문 (29개 질환 전수)';
+    } else if (grp.includes('후각')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_smell_p779.png'];
+      pageDesc = '공시실 별표64 제779쪽 【별표64】 후각특정질환 분류표 전문';
+    } else if (grp.includes('관절염') || grp.includes('생식기')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_joint_p665.png'];
+      pageDesc = '공시실 별표24 제665쪽 【별표24】 관절염ㆍ생식기질환 분류표 전문';
+    } else if (grp.includes('치핵')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_hemorrhoid_p667.png'];
+      pageDesc = '공시실 별표25 제667쪽 【별표25】 치핵 분류표 전문';
+    } else if (grp.includes('백내장')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_cataract_p705.png'];
+      pageDesc = '공시실 별표40 제705쪽 【별표40】 백내장 분류표 전문';
+    } else if (grp.includes('32대')) {
+      pages = [
+        'assets/clause_imgs/meritz_std_ndai_32_table_p728.png',
+        'assets/clause_imgs/meritz_std_ndai_32_table_p729.png',
+        'assets/clause_imgs/meritz_std_ndai_32_table_p730.png'
+      ];
+      pageDesc = '공시실 별표46 제728쪽~제730쪽 【별표46】 32대질병 분류표 전문';
     } else {
-      pages = ['assets/clause_imgs/meritz_std_ndai_p332.png', 'assets/clause_imgs/meritz_std_ndai_p334.png', 'assets/clause_imgs/meritz_std_ndai_p335.png'];
-      pageDesc = '공시실 원문 제332쪽~제335쪽 (131대/112대 대상질병 정의 전문)';
+      pages = [
+        'assets/clause_imgs/meritz_std_ndai_inc_p332.png',
+        'assets/clause_imgs/meritz_std_ndai_inc_p333.png',
+        'assets/clause_imgs/meritz_std_ndai_inc_p334.png',
+        'assets/clause_imgs/meritz_std_ndai_inc_p335.png',
+        'assets/clause_imgs/meritz_std_ndai_inc_p336.png'
+      ];
+      pageDesc = '공시실 원문 제332쪽~제336쪽 (131대 질병수술비 제1조 지급사유 · 제4조 정의 전문)';
     }
   }
   // 2. 현대해상
   else if (co.id.includes('hyundai')) {
     if (grp.includes('26대')) {
-      pages = ['assets/clause_imgs/hyundai_std_ndai_26_p1053.png'];
-      pageDesc = '공시실 원문 제1053쪽 【별표13】 26대질병Ⅱ 분류표 전문';
+      pages = [
+        'assets/clause_imgs/hyundai_std_ndai_26_p1053.png',
+        'assets/clause_imgs/hyundai_std_ndai_26_p1054.png'
+      ];
+      pageDesc = '공시실 원문 제1053쪽~제1054쪽 【별표13】 26대질병Ⅱ 분류표 전문 (총 2페이지, 26개 질병 전수)';
     } else if (grp.includes('58대')) {
-      pages = ['assets/clause_imgs/hyundai_std_ndai_58_p1093.png', 'assets/clause_imgs/hyundai_std_ndai_58_p1094.png', 'assets/clause_imgs/hyundai_std_ndai_58_p1095.png'];
-      pageDesc = '공시실 원문 제1093쪽~제1095쪽 【별표56】 58대질병Ⅱ 분류표 전문 (총 3페이지)';
+      pages = [
+        'assets/clause_imgs/hyundai_std_ndai_58_p1093.png',
+        'assets/clause_imgs/hyundai_std_ndai_58_p1094.png',
+        'assets/clause_imgs/hyundai_std_ndai_58_p1095.png',
+        'assets/clause_imgs/hyundai_std_ndai_58_p1096.png',
+        'assets/clause_imgs/hyundai_std_ndai_58_p1097.png'
+      ];
+      pageDesc = '공시실 원문 제1093쪽~제1097쪽 【별표56】 58대질병Ⅱ 분류표 전문 (총 5페이지, 58개 질병 전수)';
     } else if (grp.includes('24대')) {
-      pages = ['assets/clause_imgs/hyundai_std_ndai_24_p1089.png'];
-      pageDesc = '공시실 원문 제1089쪽 【별표54】 24대질병 분류표 전문';
+      pages = [
+        'assets/clause_imgs/hyundai_std_ndai_24_p1089.png',
+        'assets/clause_imgs/hyundai_std_ndai_24_p1090.png',
+        'assets/clause_imgs/hyundai_std_ndai_24_p1091.png'
+      ];
+      pageDesc = '공시실 원문 제1089쪽~제1091쪽 【별표54】 24대질병 분류표 전문 (총 3페이지, 24개 질병 전수)';
     } else if (grp.includes('10대') || grp.includes('다발성')) {
       pages = ['assets/clause_imgs/hyundai_std_ndai_10_p1092.png'];
-      pageDesc = '공시실 원문 제1092쪽 【별표55】 다발성10대질병 분류표 전문';
+      pageDesc = '공시실 원문 제1092쪽 【별표55】 다발성10대질병 분류표 전문 (10개 질병 전수)';
     } else if (grp.includes('3대')) {
       pages = ['assets/clause_imgs/hyundai_std_ndai_3_p1100.png'];
-      pageDesc = '공시실 원문 제1100쪽 【별표58】 3대질병 분류표 전문';
+      pageDesc = '공시실 원문 제1100쪽 【별표58】 3대질병 분류표 전문 (3개 질병 전수)';
     } else {
-      pages = ['assets/clause_imgs/hyundai_std_ndai_inc_p733.png', 'assets/clause_imgs/hyundai_std_ndai_inc_p734.png'];
-      pageDesc = '공시실 원문 제733쪽~제734쪽 (120대질병수술Ⅱ 제1조 지급사유 · 제2조 질병정의)';
+      pages = [
+        'assets/clause_imgs/hyundai_std_perf_ndai_inc_p733.png',
+        'assets/clause_imgs/hyundai_std_perf_ndai_inc_p734.png'
+      ];
+      pageDesc = '공시실 원문 제733쪽~제734쪽 (2-204 120대질병수술Ⅱ 제1조 지급사유 · 제2조 120대질병의 정의)';
     }
   }
   // 3. 삼성화재
@@ -10563,7 +10577,17 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       }
     } else if (riderKey === 'ndai' || riderKey === 'adult') {
       const cleanNdaiName = (data.selectedNdai || riderTitle || 'N대').replace(/\d+대\/\d+대/, m => m.split('/')[0]);
-      if (scanType === 'exclusion') {
+      if (co.id.includes('meritz') && cleanNdaiName.includes('32대')) {
+        targetScan = {
+          pages: [
+            'assets/clause_imgs/meritz_std_ndai_32_inc_p339.png',
+            'assets/clause_imgs/meritz_std_ndai_32_inc_p340.png',
+            'assets/clause_imgs/meritz_std_ndai_32_inc_p341.png'
+          ],
+          pageStr: '공시실 원문 제339쪽~제341쪽 (42. 갱신형 32대질병관혈수술비(연간1회한)보장 특별약관 전문)'
+        };
+        modalTitle = `🏢 [${co.name}] 32대 질병관혈수술비 보상기준 약관`;
+      } else if (scanType === 'exclusion') {
         targetScan = v.ndai_exc || v.basic_exc;
         modalTitle = `🚫 [${co.name}] ${cleanNdaiName} 보상제외 약관`;
       } else {
@@ -10719,9 +10743,9 @@ window.__DEBUG = { state, search, runQuickSearch };
 })();
 const COMPANY_NDAI_PERIOD_MAP = {
   meritz: {
-    'meritz_2024_12': ['131대', '112대', '120대'],
-    'meritz_2020_04': ['112대', '82대', '80대'],
-    'meritz_2020_03_prior': ['64대', '62대', '30대', '18대', '7대']
+    'meritz_2024_12': ['131대', '32대'],
+    'meritz_2020_04': ['131대', '32대'],
+    'meritz_2020_03_prior': ['64대', '32대', '7대']
   },
   hyundai: {
     'hyundai_2026_01': ['120대'],
