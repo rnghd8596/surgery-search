@@ -7848,7 +7848,7 @@ function renderClausesCompanyList(searchQuery = '') {
       if (nt.includes('청구') || nt.includes('팁') || nt.includes('가이드')) matchContext.isClaimTip = true;
 
       const isPureTopic = topicKeywords.some(k => norm(k) === nt);
-      if (!isPureTopic) {
+      if (!isPureTopic && (nt.length >= 2 || /^\d+$/.test(nt))) {
         companySearchTokens.push(t);
       }
     });
@@ -7858,11 +7858,12 @@ function renderClausesCompanyList(searchQuery = '') {
     // 수술명/질병명 전수 매칭 (#29685 "과하다 싶을 정도로 수술명, 질병명 어떤 것이든 나오게!")
     const isMedicalQuery = rawTokens.some(t => {
       const nt = norm(t);
+      if (nt.length < 2) return false;
       if (window.CURATED && window.CURATED.synonyms) {
-        if (window.CURATED.synonyms.some(s => s.k.includes(nt) || s.q.some(q => norm(q).includes(nt) || nt.includes(norm(q))))) return true;
+        if (window.CURATED.synonyms.some(s => s.k.includes(nt) || s.q.some(q => norm(q) === nt || (norm(q).includes(nt) && nt.length >= 2)))) return true;
       }
       if (window.CURATED && window.CURATED.procs) {
-        if (Object.keys(window.CURATED.procs).some(k => norm(k).includes(nt) || nt.includes(norm(k)))) return true;
+        if (Object.keys(window.CURATED.procs).some(k => norm(k) === nt || (norm(k).includes(nt) && nt.length >= 2))) return true;
       }
       return false;
     });
