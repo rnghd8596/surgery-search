@@ -7916,7 +7916,7 @@ function renderClausesCompanyList(searchQuery = '') {
               if (!r) return false;
               if (norm(r.title).includes(nt)) return true;
               if (r.summary && norm(r.summary).includes(nt)) return true;
-              if (r.tableBody && r.tableBody.rows && r.tableBody.rows.some(row => row.some(cell => norm(cell).includes(nt)))) return true;
+              if (r.tableBody && Array.isArray(r.tableBody.rows) && r.tableBody.rows.some(row => Array.isArray(row) ? row.some(cell => norm(cell).includes(nt)) : (typeof row === 'string' && norm(row).includes(nt)))) return true;
               return false;
             });
           };
