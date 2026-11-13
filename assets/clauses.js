@@ -645,7 +645,7 @@ window.POLICY_CLAUSES_DATA = {
                     title: '질병수술비 보상제외 조항',
                     quote: '흡인, 천자, 신경차단, 미용성형, 피임불임 제외.',
                     clauses: [{ title: '면책사유', text: '단순 처치 면책.' }],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -691,7 +691,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대', '담석증, 충수염, 탈장, 치핵, 비뇨기결석', 'K80~K83, K35~K37, K40~K46, K64, N20~N23', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
                 }
               }
             ,
@@ -709,7 +709,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -723,7 +723,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -752,9 +752,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/hyundai_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/hyundai_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -779,7 +779,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
                 }
               }
             }
@@ -791,7 +791,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '간편 질병수술비 특약',
                   summary: '유병자 전용 질병수술비.',
                   inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/hyundai_p464.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외.' }], imgSrc: 'assets/clause_imgs/hyundai_basic_exclusion.png' }
                 },
                 tier: {
                   title: '간편 1~5종 수술특약',
@@ -817,7 +817,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', '질병코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·췌·폐', 'I60~I69, I20~I25 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
                 }
               }
             }
@@ -837,7 +837,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비 (보통약관)',
                   summary: '질병 수술 시 회당 정액 지급.',
                   inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/hyundai_p464.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/hyundai_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약',
@@ -863,7 +863,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', '질병코드', '보장'],
                     rows: [['주요 질병', '뇌혈관·심장질환', 'I60~I69, I20~I25', '최고 한도']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
                 }
               }
             ,
@@ -881,7 +881,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -895,7 +895,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -924,9 +924,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/hyundai_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/hyundai_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -951,7 +951,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
                 }
               }
             }
@@ -983,7 +983,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비 (보통약관)',
                   summary: '질병 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
                   inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/kb_p503.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자·신경차단 제외.', clauses: [{ title: '면책사유', text: '단순 처치 제외.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자·신경차단 제외.', clauses: [{ title: '면책사유', text: '단순 처치 제외.' }], imgSrc: 'assets/clause_imgs/kbinsure_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약 (1-5종 수술분류표)',
@@ -1013,7 +1013,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대', '담석증, 충수염, 탈장, 치핵, 결석', 'K80, K35, K40, K64, N20 등', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
                 }
               }
             ,
@@ -1031,7 +1031,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1045,7 +1045,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/kbinsure_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1074,9 +1074,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/kbinsure_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/kbinsure_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1101,7 +1101,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
                 }
               }
             }
@@ -1133,7 +1133,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비 (보통약관)',
                   summary: '질병 치료 목적 수술 시 회당 정액 지급.',
                   inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/db_tier_p.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/dbinsure_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약 (개정 수술분류표)',
@@ -1163,7 +1163,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대', '담석, 충수염, 탈장, 치핵, 결석', 'K80, K35, K40, K64 등', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
                 }
               }
             ,
@@ -1181,7 +1181,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1195,7 +1195,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/dbinsure_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1224,9 +1224,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/dbinsure_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/dbinsure_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1251,7 +1251,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
                 }
               }
             }
@@ -1283,7 +1283,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비 (보통약관)',
                   summary: '질병 수술 시 회당 정액 지급.',
                   inclusion: { title: '약관 본문', quote: '질병 수술 회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/samsung_tier_p.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/samsungfire_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약',
@@ -1313,7 +1313,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 질병', '담석, 치핵, 탈장, 충수염', 'K80, K64, K40, K35 등', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
                 }
               }
             ,
@@ -1331,7 +1331,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1345,7 +1345,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/samsungfire_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1374,9 +1374,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/samsungfire_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/samsungfire_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1401,7 +1401,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
                 }
               }
             }
@@ -1432,8 +1432,8 @@ window.POLICY_CLAUSES_DATA = {
                 basic: {
                   title: '질병수술비',
                   summary: '질병 수술 회당 정액 지급.',
-                  inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/lotte_basic_inclusion.png' },
+                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/lotte_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약',
@@ -1448,7 +1448,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '암수술', '5종', '5종 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_rev_pre.png'
+                  imgSrc: 'assets/clause_imgs/lotte_tier_p1.png'
                 },
                 ndai: {
                   title: '112대 질병수술비',
@@ -1459,7 +1459,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', 'KCD 코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·폐·신장', 'I60~I69 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/lotte_ndai_table.png'
                 }
               }
             ,
@@ -1477,7 +1477,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/lotte_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1491,7 +1491,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/lotte_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1520,9 +1520,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/lotte_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/lotte_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1547,7 +1547,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/lotte_ndai_table.png'
                 }
               }
             }
@@ -1579,7 +1579,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비',
                   summary: '질병 수술 회당 지급.',
                   inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/heungkuk_p1081.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 제외.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 제외.' }], imgSrc: 'assets/clause_imgs/heungkukfire_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약',
@@ -1606,7 +1606,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', 'KCD 코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·폐·신장', 'I60~I69 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/heungkukfire_ndai_table.png'
                 }
               }
             ,
@@ -1624,7 +1624,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/heungkukfire_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1638,7 +1638,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/heungkukfire_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1667,9 +1667,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/heungkukfire_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/heungkukfire_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1694,7 +1694,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/heungkukfire_ndai_table.png'
                 }
               }
             }
@@ -1726,7 +1726,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비',
                   summary: '질병 수술 회당 정액 지급.',
                   inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/hanwha_tier_p.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/hanwhafire_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약 (개정 수술분류표)',
@@ -1753,7 +1753,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', 'KCD 코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·폐·신장', 'I60~I69 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hanwhafire_ndai_table.png'
                 }
               }
             ,
@@ -1771,7 +1771,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/hanwhafire_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1785,7 +1785,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/hanwhafire_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1814,9 +1814,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/hanwhafire_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/hanwhafire_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1841,7 +1841,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hanwhafire_ndai_table.png'
                 }
               }
             }
@@ -1872,8 +1872,8 @@ window.POLICY_CLAUSES_DATA = {
                 basic: {
                   title: '질병수술비',
                   summary: '질병 수술 회당 정액 지급.',
-                  inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/hanafire_basic_inclusion.png' },
+                  exclusion: { title: '면책조항', quote: '흡인·천자 제외.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/hanafire_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약',
@@ -1888,7 +1888,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '암수술', '5종', '5종 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_rev_pre.png'
+                  imgSrc: 'assets/clause_imgs/hanafire_tier_p1.png'
                 },
                 ndai: {
                   title: '112대 질병수술비',
@@ -1899,7 +1899,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', 'KCD 코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·폐·신장', 'I60~I69 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hanafire_ndai_table.png'
                 }
               }
             ,
@@ -1917,7 +1917,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/hanafire_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -1931,7 +1931,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/hanafire_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -1960,9 +1960,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/hanafire_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/hanafire_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -1987,7 +1987,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/hanafire_ndai_table.png'
                 }
               }
             }
@@ -2019,7 +2019,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비',
                   summary: '질병 수술 회당 정액 지급.',
                   inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/nh_p386.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/nhfire_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약 (개정 수술분류표)',
@@ -2045,7 +2045,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', 'KCD 코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·폐·신장', 'I60~I69 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/nhfire_ndai_table.png'
                 }
               }
             ,
@@ -2063,7 +2063,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/nhfire_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -2077,7 +2077,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/nhfire_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -2106,9 +2106,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/nhfire_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/nhfire_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -2133,7 +2133,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/nhfire_ndai_table.png'
                 }
               }
             }
@@ -2154,7 +2154,7 @@ window.POLICY_CLAUSES_DATA = {
                   title: '질병수술비',
                   summary: '질병 수술 회당 지급.',
                   inclusion: { title: '약관 본문', quote: '회당 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }], imgSrc: 'assets/clause_imgs/nh_p386.png' },
-                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png' }
+                  exclusion: { title: '면책조항', quote: '흡인·천자 면책.', clauses: [{ title: '면책사유', text: '단순 처치 면책.' }], imgSrc: 'assets/clause_imgs/nhfire_basic_exclusion.png' }
                 },
                 tier: {
                   title: '1~5종 수술특약 (개정 전)',
@@ -2180,7 +2180,7 @@ window.POLICY_CLAUSES_DATA = {
                     headers: ['질병군', '대상 질병', 'KCD 코드', '보장'],
                     rows: [['5대 질병', '뇌·심·간·폐·신장', 'I60~I69 등', '지급']]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/nhfire_ndai_table.png'
                 }
               }
             ,
@@ -2198,7 +2198,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '제1조(지급사유)', text: '간편 가입자 질병 치료 직접 목적 수술 시 매회 정액 지급.' },
                       { title: '제2조(수술의 정의)', text: '절제, 절단 등의 외과적 조작(신의료기술 포함, 단순 흡인·천자 제외).' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_inclusion.png'
+                    imgSrc: 'assets/clause_imgs/nhfire_basic_inclusion.png'
                   },
                   exclusion: {
                     title: '간편 질병수술비 보상제외 조항 (면책사유)',
@@ -2212,7 +2212,7 @@ window.POLICY_CLAUSES_DATA = {
                       { title: '흡인·천자·신경차단 제외', text: '단순 주사치료 및 통증 차단술 면책.' },
                       { title: '미용·피임·치과 제외', text: '외모 개선 목적 및 치과 보철 처치 면책.' }
                     ],
-                    imgSrc: 'assets/clause_imgs/meritz_basic_exclusion.png'
+                    imgSrc: 'assets/clause_imgs/nhfire_basic_exclusion.png'
                   }
                 },
                 tier: {
@@ -2241,9 +2241,9 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/nhfire_tier_p1.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
+                    'assets/clause_imgs/nhfire_tier_p1.png',
                     'assets/clause_imgs/meritz_tier_p2.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
@@ -2268,7 +2268,7 @@ window.POLICY_CLAUSES_DATA = {
                       ['다빈도 30대질병', '담석증, 충수염, 탈장, 치핵, 비뇨기결석, 편도염', 'K80~K83, K35~K37, K40~K46, K64, N20~N23, J35', '정액 지급']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_ndai_table.png'
+                  imgSrc: 'assets/clause_imgs/nhfire_ndai_table.png'
                 }
               }
             }
@@ -2323,7 +2323,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -2342,7 +2342,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -2461,7 +2461,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -2519,7 +2519,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_ndai_table.png'
                               }
                           }
                       },
@@ -2546,7 +2546,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -2565,7 +2565,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -2684,7 +2684,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -2742,7 +2742,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_ndai_table.png'
                               }
                           }
                       }
@@ -2778,7 +2778,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -2797,7 +2797,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -2892,7 +2892,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -2950,7 +2950,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_ndai_table.png'
                               }
                           }
                       },
@@ -2969,7 +2969,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "해당 가입시기에는 일반(표준체) 계약만 판매되었습니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "면책 안내",
@@ -2980,7 +2980,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "표준체 약관을 참고하십시오."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/samsunglife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -3001,7 +3001,7 @@ window.POLICY_CLAUSES_DATA = {
                                       "headers": ["번호", "수술명", "해당 종수", "비고"],
                                       "rows": [["-", "간편심사 미판매", "해당없음", "일반(표준체) 약관 참조"]]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 성인병 수술특약 (미판매 / 해당없음)",
@@ -3020,7 +3020,7 @@ window.POLICY_CLAUSES_DATA = {
                                       "title": "간편 미판매 안내",
                                       "groups": []
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/samsunglife_ndai_table.png'
                               }
                           }
                       }
@@ -3070,7 +3070,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/hanwhalife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -3089,7 +3089,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/hanwhalife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -3208,7 +3208,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/hanwhalife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -3266,7 +3266,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/hanwhalife_ndai_table.png'
                               }
                           }
                       },
@@ -3293,7 +3293,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/hanwhalife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -3312,7 +3312,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/hanwhalife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -3431,7 +3431,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/hanwhalife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -3489,7 +3489,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/hanwhalife_ndai_table.png'
                               }
                           }
                       }
@@ -3539,7 +3539,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/kyobolife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -3558,7 +3558,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/kyobolife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -3677,7 +3677,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/kyobolife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -3735,7 +3735,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/kyobolife_ndai_table.png'
                               }
                           }
                       },
@@ -3762,7 +3762,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/kyobolife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -3781,7 +3781,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/kyobolife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -3900,7 +3900,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/kyobolife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -3958,7 +3958,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/kyobolife_ndai_table.png'
                               }
                           }
                       }
@@ -4009,7 +4009,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/shinhanlife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -4028,7 +4028,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/shinhanlife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -4147,7 +4147,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/shinhanlife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -4205,7 +4205,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/shinhanlife_ndai_table.png'
                               }
                           }
                       },
@@ -4232,7 +4232,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/shinhanlife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -4251,7 +4251,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/shinhanlife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -4370,7 +4370,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/shinhanlife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -4428,7 +4428,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/shinhanlife_ndai_table.png'
                               }
                           }
                       }
@@ -4479,7 +4479,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/kblife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -4498,7 +4498,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/kblife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -4617,7 +4617,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/kblife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -4675,7 +4675,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/kblife_ndai_table.png'
                               }
                           }
                       },
@@ -4702,7 +4702,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/kblife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -4721,7 +4721,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/kblife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -4840,7 +4840,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/kblife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -4898,7 +4898,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/kblife_ndai_table.png'
                               }
                           }
                       }
@@ -4948,7 +4948,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/dongyang_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -4967,7 +4967,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/dongyang_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -5086,7 +5086,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/dongyang_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -5144,7 +5144,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/dongyang_ndai_table.png'
                               }
                           }
                       },
@@ -5171,7 +5171,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/dongyang_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -5190,7 +5190,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/dongyang_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -5309,7 +5309,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/dongyang_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -5367,7 +5367,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/dongyang_ndai_table.png'
                               }
                           }
                       }
@@ -5417,7 +5417,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -5436,7 +5436,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/heungkuklife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -5555,7 +5555,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -5613,7 +5613,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/heungkuklife_ndai_table.png'
                               }
                           }
                       },
@@ -5640,7 +5640,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -5659,7 +5659,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/heungkuklife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -5778,7 +5778,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -5836,7 +5836,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/heungkuklife_ndai_table.png'
                               }
                           }
                       }
@@ -5887,7 +5887,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/abllife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -5906,7 +5906,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/abllife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -6025,7 +6025,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/abllife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -6083,7 +6083,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/abllife_ndai_table.png'
                               }
                           }
                       },
@@ -6110,7 +6110,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/abllife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -6129,7 +6129,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/abllife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -6248,7 +6248,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/abllife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -6306,7 +6306,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/abllife_ndai_table.png'
                               }
                           }
                       }
@@ -6357,7 +6357,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/linalife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -6376,7 +6376,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/linalife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -6495,7 +6495,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/linalife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -6553,7 +6553,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/linalife_ndai_table.png'
                               }
                           }
                       },
@@ -6580,7 +6580,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/linalife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -6599,7 +6599,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/linalife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -6718,7 +6718,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/linalife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -6776,7 +6776,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/linalife_ndai_table.png'
                               }
                           }
                       }
@@ -6827,7 +6827,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/nhlife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -6846,7 +6846,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/nhlife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -6965,7 +6965,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/nhlife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -7023,7 +7023,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/nhlife_ndai_table.png'
                               }
                           }
                       },
@@ -7050,7 +7050,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                      "imgSrc": 'assets/clause_imgs/nhlife_tier_p1.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -7069,7 +7069,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "치과 질환(치조골/보철처치), 한방 침·뜸 시술 및 정상 자연분만은 질병수술비에서 면책됩니다."
                                           }
                                       ],
-                                      "imgSrc": "assets/clause_imgs/meritz_basic_exclusion.png"
+                                      "imgSrc": 'assets/clause_imgs/nhlife_basic_exclusion.png'
                                   }
                               },
                               "tier": {
@@ -7188,7 +7188,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/samsung_life_golden.png"
+                                  "imgSrc": 'assets/clause_imgs/nhlife_tier_p1.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
@@ -7246,7 +7246,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": "assets/clause_imgs/kyobo_life_clause.png"
+                                  "imgSrc": 'assets/clause_imgs/nhlife_ndai_table.png'
                               }
                           }
                       }
