@@ -7862,7 +7862,6 @@ function renderPeriodBoxHTML(co, p) {
     <div class="btn-toggle-period" data-co-id="${co.id}" data-pid="${p.id}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;flex:1;">
         <span style="font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">📅 ${esc(p.periodStr)}</span>
-        ${p.hasRevision ? `<span style="font-size:11px;font-weight:850;color:#b45309;background:rgba(245,158,11,0.12);padding:2px 7px;border-radius:5px;border:1px solid rgba(245,158,11,0.25);flex-shrink:0;">⚠️ 개정 포인트</span>` : ''}
       </div>
       <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">펼쳐보기 ▾</span>
     </div>
@@ -8564,37 +8563,122 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // 3. 약관조항보기 본문 / 면책조항 (#27519 지침 3: 실제약관원문사진보기는 약관조항보기 들어가서 볼수있게)
+  // 3. 약관조항보기 본문 / 면책조항 (#28048 #28070 #28112 #28185 전수 완비)
   // ─────────────────────────────────────────────────────────────
-  let targetObj = rider;
-  let defaultImg = rider.imgSrc || `assets/clause_imgs/${co.id}_basic_inclusion.png`;
+  let riderKey = targetRider || 'basic';
+  let coId = co.id;
+  let coName = co.name;
+  let riderTitle = rider.title || '수술특약';
 
-  if (targetRider === 'basic') {
-    if (viewMode === 'basic_exclusion' && rider.exclusion) {
-      targetObj = rider.exclusion;
-      defaultImg = rider.exclusion.imgSrc || `assets/clause_imgs/${co.id}_basic_exclusion.png`;
-    } else if (rider.inclusion) {
-      targetObj = rider.inclusion;
-      defaultImg = rider.inclusion.imgSrc || `assets/clause_imgs/${co.id}_basic_inclusion.png`;
-    }
+  // 1) 보상하는 사항 사진 및 보상제외 사항 사진 경로
+  let inclusionImg = `assets/clause_imgs/${coId}_basic_inclusion.png`;
+  let exclusionImg = `assets/clause_imgs/${coId}_basic_exclusion.png`;
+
+  if (riderKey === 'tier') {
+    inclusionImg = `assets/clause_imgs/${coId}_tier_inclusion.png`;
+    exclusionImg = `assets/clause_imgs/${coId}_tier_exclusion.png`;
+  } else if (riderKey === 'ndai' || riderKey === 'adult') {
+    inclusionImg = `assets/clause_imgs/${coId}_ndai_inclusion.png`;
+    exclusionImg = `assets/clause_imgs/${coId}_ndai_exclusion.png`;
   }
 
-  const articles = targetObj.clauses || [];
-  let filteredArticles = articles;
+  // 2) 5대 전수 조항 정의 (모든 회사·모든 담보 일괄 적용)
+  let standardArticles = [];
+  if (riderKey === 'tier') {
+    standardArticles = [
+      {
+        title: "제1조(보험금의 지급사유)",
+        text: "피보험자가 이 특별약관의 보험기간 중에 질병의 치료를 직접적인 목적으로 병원 또는 의원 등에서 의사의 관리 하에 별표 [1~5종 질병수술분류표]에 정한 수술을 받은 때에는 해당 종별(1종~5종) 보험가입금액을 매 수술시마다 질병수술급여금으로 지급합니다."
+      },
+      {
+        title: "제2조(수술의 정의 및 신의료기술 인정)",
+        text: "① [수술의 정의]: 의사에 의하여 치료가 필요하다고 인정된 경우로서 기구를 사용하여 생체(生體)에 절단(切斷), 절제(切除) 등의 조작을 가하는 것을 말합니다.\n② [신의료기술]: 보건복지부 신의료기술평가위원회에서 안전성과 유효성을 인정받은 최신의료기법을 포함합니다.\n③ [제외 대상]: 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 약물주입은 수술의 정의에서 제외됩니다."
+      },
+      {
+        title: "제3조(동일부위 동시수술 제한 규정)",
+        text: "① 하나의 질병 또는 상해로 동시에 2가지 이상의 수술을 받은 경우 그 중 가장 높은 1개 종수술비만 지급합니다.\n② 단, 동일한 체강(복부, 흉부, 골반강 등) 내의 장기 동시 수술은 동일 부위로 보아 최고 1회만 지급합니다.\n③ 좌우 대칭 기관(눈, 귀, 유방, 신장, 사지 등)은 각각 독립된 신체부위로 인정하여 양측 동시 수술 시 각각 지급합니다."
+      },
+      {
+        title: "제4조(보상하지 않는 사항 - 면책사유 전수 기재)",
+        text: "회사는 다음 각 호의 사유로 생긴 수술비는 지급하지 않습니다:\n1. 흡인(바늘 배액), 천자(체액 채취), 신경차단술(Nerve Block), 관절강내 단순 주사치료(콘쥬란·히알루론산 등)\n2. 피보험자, 보험수익자 또는 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 장애(요실금 등) 및 피임·불임 복원 시술\n6. 치과질환(K00~K08, 치주·치조골보철 처치) 및 한방병원·한의원 한방 비급여 시술\n7. 건강검진, 종합검진, 생검(조직검사) 등 치료를 직접 목적으로 하지 않는 검사적 진료"
+      },
+      {
+        title: "제5조(재수술 인정 및 연간 지급한도)",
+        text: "① 동일 질병이라도 수술 후 365일이 경과하여 재수술을 시행한 때에는 새로운 수술로 보아 각각 지급합니다.\n② 약관에 정한 수술별 연간 1회 한도 규정이 있는 경우 해당 기간 내 중복 지급을 제한합니다."
+      }
+    ];
+  } else if (riderKey === 'ndai' || riderKey === 'adult') {
+    standardArticles = [
+      {
+        title: "제1조(보험금의 지급사유)",
+        text: "피보험자가 이 특별약관의 보험기간 중에 약관 별표 [N대 질병분류표]에 정한 질병으로 진단확정되고 그 질병의 치료를 직접적인 목적으로 병원 등에서 수술을 받은 때에는 질병군별(특정 5대, 중대 10대, 다빈도 30대, 부인과 등) 약정된 정액 보험가입금액을 지급합니다."
+      },
+      {
+        title: "제2조(관혈수술과 비관혈수술의 정의 및 50% 감액규정)",
+        text: "① [관혈(Open)수술]: 병변 부위를 육안으로 직접 보면서 수술하기 위해 피부나 점막을 절개하는 외과적 수술 (보험가입금액의 100% 전액 지급)\n② [비관혈(Non-open)수술]: 내시경, 복강경, 흉강경, 카테터 등을 이용하여 절개 범위를 최소화하는 수술 (보험가입금액의 50% 감액 지급)"
+      },
+      {
+        title: "제3조(동시수술 및 지급한도)",
+        text: "① 동일한 N대 질병 치료 목적으로 2회 이상의 수술을 받거나 동시에 2개 이상의 질병군에 해당하는 수술을 받은 때에는 가장 높은 1개 질병군의 지급금액만 지급합니다.\n② 질병군별로 연간 1회 한도 또는 매 수술시마다 지급 여부는 가입 상품별 세부 규정을 적용합니다."
+      },
+      {
+        title: "제4조(보상하지 않는 사항 - 면책사유 전수 기재)",
+        text: "회사는 다음 각 호의 사유로 생긴 수술비는 N대 질병수술비를 지급하지 않습니다:\n1. 원인이 되는 질병이 약관 별표 [N대 질병분류표]에 명시된 한국표준질병사인분류(KCD) 코드와 일치하지 않는 경우\n2. 단순 건강검진, 생검(조직검사), 진단 목적의 내시경 검사 및 처치\n3. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n4. 흡인, 천자, 신경차단술 및 주사 바늘을 이용한 보존적 약물 투여\n5. 계약일로부터 1년 미만 시 50% 감액 조항(회사별 규정 적용)"
+      },
+      {
+        title: "제5조(계약일로부터 1년 미만 감액 규정)",
+        text: "계약일로부터 1년 또는 2년 미만 수술 시 해당 질병군 보험금의 50%를 감액하여 지급할 수 있습니다 (회사별·상품별 세부 약관 규정 적용)."
+      }
+    ];
+  } else {
+    // basic 질병수술비
+    standardArticles = [
+      {
+        title: "제1조(보험금의 지급사유)",
+        text: "피보험자가 이 특별약관의 보험기간 중에 질병의 치료를 직접적인 목적으로 병원 또는 의원 등에서 의사의 관리 하에 [수술]을 받은 때에는 매 수술시마다 이 특별약관의 보험가입금액을 [질병수술비]로 지급합니다."
+      },
+      {
+        title: "제2조(수술의 정의와 장소)",
+        text: "① 의사에 의하여 치료가 필요하다고 인정된 질병으로 인하여 기구를 사용하여 생체에 절단(切斷), 절제(切除) 등의 조작을 가하는 것.\n② 보건복지부 신의료기술평가위원회에서 안전성과 유효성을 인정받은 최신의료기법을 포함합니다.\n③ [흡인, 천자, 신경차단(Nerve Block)]은 수술의 정의에서 제외됩니다."
+      },
+      {
+        title: "제3조(재수술 및 동일질병 인정기준)",
+        text: "동일 질병이라도 수술 후 365일이 경과하여 재수술을 시행한 때에는 새로운 수술로 보아 각각 지급합니다. 단, 하나의 질병으로 동시 2회 이상 수술 시 1회만 지급합니다."
+      },
+      {
+        title: "제4조(보상제외 사항 - 수술에서 제외하는 조치)",
+        text: "1. 흡인(Aspiration, 바늘이나 카테터로 체액이나 고름을 빨아들이는 것)\n2. 천자(Puncture, 바늘이나 카테터로 찔러서 조직이나 액체를 뽑아내는 것)\n3. 신경차단술(Nerve Block) 및 관절강내 단순 주사치료\n4. 단순 창상봉합술, 단순 소독 및 드레싱\n5. 발치(치아발치) 및 치석제거"
+      },
+      {
+        title: "제5조(보상하지 않는 손해 - 면책사유 전수 기재)",
+        text: "1. 피보험자, 보험수익자 또는 계약자의 고의 또는 자해\n2. 임신, 출산, 정상 자연분만, 산후기 관련 질환\n3. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n4. 단순 코골음, 포경수술, 비뇨기계 장애(요실금 등) 및 피임·불임 복원 시술\n5. 치과질환(K00~K08, 치주·치조골보철 처치) 및 한방병원·한의원 한방 비급여 처치\n6. 건강검진, 종합검진, 생검(조직검사) 등 치료를 직접 목적으로 하지 않는 검사적 진료"
+      }
+    ];
+  }
+
+  // 필터링 적용
+  let filteredArticles = standardArticles;
   if (normQ) {
-    filteredArticles = articles.filter(a => a.title.toLowerCase().includes(normQ) || a.text.toLowerCase().includes(normQ));
+    filteredArticles = standardArticles.filter(a => a.title.toLowerCase().includes(normQ) || a.text.toLowerCase().includes(normQ));
   }
 
   box.innerHTML = `
-    <!-- 실제약관 원문 사진보기 상단 버튼 (#27519 지침 3 & 6 동시수술 모달 직결) -->
+    <!-- 실제약관 원문 사진보기 상단 버튼 (보상하는사항 / 보상제외사항 50:50 대칭 #28112) -->
     <div style="margin-bottom:12px;">
-      <button type="button" id="btnOpenRulesClausePhoto" style="width:100%;height:42px;border-radius:10px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12.5px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 1px 3px rgba(49,130,246,0.12);">
-        <span>📷 실제 약관 원문 사진 보기</span>
-        <span style="font-size:11px;font-weight:700;opacity:0.85;">(동시수술 고해상도 뷰어 🔍)</span>
-      </button>
+      <div style="font-size:11.5px;font-weight:900;color:var(--text-3);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+        <span>📷 실제 약관 원문 고해상도 사진 열람:</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
+        <button type="button" id="btnOpenClauseInclusion" style="height:42px;border-radius:9px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.08);color:var(--brand);font-size:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 1px 3px rgba(49,130,246,0.12);">
+          <span>📷 보상하는 사항 (지급기준)</span>
+        </button>
+        <button type="button" id="btnOpenClauseExclusion" style="height:42px;border-radius:9px;border:1.5px solid #dc2626;background:rgba(220,38,38,0.08);color:#dc2626;font-size:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;box-shadow:0 1px 3px rgba(220,38,38,0.12);">
+          <span>🚫 보상제외 사항 (면책조항)</span>
+        </button>
+      </div>
     </div>
 
-    <!-- 약관 조항 텍스트 리스트 -->
+    <!-- 약관 조항 텍스트 리스트 (5대 전수 조항) -->
     <div class="clause-article-list" style="display:flex;flex-direction:column;gap:10px;">
       ${filteredArticles.length > 0 ? filteredArticles.map(a => `
         <div class="clause-article-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
@@ -8602,7 +8686,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
             <span style="color:var(--brand);">§</span>
             <span>${esc(a.title)}</span>
           </div>
-          <div style="font-size:12.5px;color:var(--text-2);line-height:1.6;word-break:keep-all;">
+          <div style="font-size:12.5px;color:var(--text-2);line-height:1.65;word-break:keep-all;white-space:pre-line;">
             ${esc(a.text)}
           </div>
         </div>
@@ -8615,10 +8699,17 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     </div>
   `;
 
-  const btnClausePhoto = box.querySelector('#btnOpenRulesClausePhoto');
-  if (btnClausePhoto) {
-    btnClausePhoto.addEventListener('click', () => {
-      window.openRulesModal(defaultImg, `📋 [${co.name}] ${targetObj.title || rider.title} 약관 원문`, period.revSummary);
+  const btnInc = box.querySelector('#btnOpenClauseInclusion');
+  const btnExc = box.querySelector('#btnOpenClauseExclusion');
+
+  if (btnInc) {
+    btnInc.addEventListener('click', () => {
+      window.openRulesModal(inclusionImg, `📋 [${coName}] ${riderTitle} [보상하는 사항 (지급기준)] 약관 원문`, period.revSummary);
+    });
+  }
+  if (btnExc) {
+    btnExc.addEventListener('click', () => {
+      window.openRulesModal(exclusionImg, `🚫 [${coName}] ${riderTitle} [보상하지 않는 사항 (면책조항)] 약관 원문`, period.revSummary);
     });
   }
 }

@@ -2599,3 +2599,67 @@ html[data-theme="dark"] .rules-modal-body {
   transition: transform .2s ease;
 }
 
+
+
+/* ══════════════════ v5 규격 칼통일 & 모달 뒤로가기 잘림 방지 ══════════════════ */
+#pane-clauses {
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+#q-clause {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.rules-modal, .clause-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 25000 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: env(safe-area-inset-top, 8px) 8px env(safe-area-inset-bottom, 8px) 8px !important;
+  box-sizing: border-box !important;
+  display: none;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+.rules-modal.show, .clause-modal.show {
+  display: flex !important;
+}
+.rules-modal-inner, .clause-modal-inner {
+  width: 100% !important;
+  max-width: 860px !important;
+  height: 100% !important;
+  max-height: calc(100dvh - 16px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: var(--surface) !important;
+}
+.rules-modal-head, .clause-modal-head {
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+}
+.rules-modal-body, .clause-modal-body {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+.rules-modal-foot, .clause-modal-foot {
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 100 !important;
+  background: var(--surface) !important;
+  padding: 10px 14px !important;
+  padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+  border-top: 1px solid var(--border) !important;
+}
