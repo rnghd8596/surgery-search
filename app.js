@@ -9298,6 +9298,86 @@ function renderClausesCompanyList(searchQuery) {
   });
 }
 
+
+const COMPANY_NDAI_PERIOD_MAP = {
+  meritz: {
+    'meritz_2024_12': ['131대', '32대'],
+    'meritz_2020_04': ['131대', '32대'],
+    'meritz_2020_03_prior': ['64대', '32대', '7대']
+  },
+  hyundai: {
+    'hyundai_2026_01': ['120대'],
+    'hyundai_2018_06': ['124대', '123대'],
+    'hyundai_2018_prior': ['119대', '71대']
+  },
+  dbinsure: {
+    'db_2026_05': ['120대', '119대'],
+    'db_2020_07': ['116대', '106대', '77대'],
+    'db_2020_prior': ['21대', '18대', '16대']
+  },
+  kbinsure: {
+    'kb_2024_01': ['120대', '116대', '112대'],
+    'kb_2020_10': ['112대', '101대'],
+    'kb_2020_prior': ['21대']
+  },
+  samsungfire: {
+    'samsung_2024_01': ['116대', '114대', '111대'],
+    'samsung_2020_04': ['111대', '105대', '68대'],
+    'samsung_2020_prior': ['21대', '15대']
+  },
+  lotte: {
+    'lotte_2021_01': ['142대', '112대']
+  },
+  heungkukfire: {
+    'heungkuk_2025_09': ['신142대', '신70대', '112대']
+  },
+  hanwhafire: {
+    'hanwha_2023_07': ['124대', '116대']
+  },
+  hanafire: {
+    'hana_2023_06': ['136대', '73대']
+  },
+  nhfire: {
+    'nh_2025_01': ['144대', '112대'],
+    'nh_2024_12_prior': ['144대', '112대']
+  },
+  samsunglife: {
+    'samsunglife_2020_01': ['153대', '7대주요', '7대성인'],
+    'samsunglife_2006_04': ['7대성인']
+  },
+  hanwhalife: {
+    'hanwhalife_2020_01': ['104대', '70대', '23대', '13대']
+  },
+  kyobo: {
+    'kyobolife_2020_01': ['36대', '25대']
+  },
+  shinhan: {
+    'shinhanlife_2020_01': ['100대', '30대']
+  },
+  kblife: {
+    'kblife_2020_01': ['7대', '5대']
+  },
+  mirae: {
+    'mirae_2020': ['100대', '20대']
+  },
+  donga: {
+    'dongyang_2020_01': ['30대', '7대']
+  },
+  heungkuklife: {
+    'heungkuklife_2020_01': ['50대', '7대']
+  },
+  abl: {
+    'abllife_2020_01': ['50대', '7대']
+  },
+  lina: {
+    'linalife_2020_01': ['30대', '7대']
+  },
+  nhlife: {
+    'nhlife_2020_01': ['50대', '7대']
+  }
+};
+window.COMPANY_NDAI_PERIOD_MAP = COMPANY_NDAI_PERIOD_MAP;
+
 function renderPeriodBoxHTML(co, p, matchContext = {}) {
   const simpObj = (p.types && p.types.simplified) || (p.types && p.types.standard && p.types.standard.simplified) || p.simplified;
   const stdRiders = p.types && p.types.standard ? p.types.standard.riders : null;
@@ -10842,107 +10922,3 @@ window.renderDisputesList = renderDisputesList;
 window.__DEBUG = { state, search, runQuickSearch };
 
 })();
-const COMPANY_NDAI_PERIOD_MAP = {
-  meritz: {
-    'meritz_2024_12': ['131대', '32대'],
-    'meritz_2020_04': ['131대', '32대'],
-    'meritz_2020_03_prior': ['64대', '32대', '7대']
-  },
-  hyundai: {
-    'hyundai_2026_01': ['120대'],
-    'hyundai_2018_06': ['124대', '123대'],
-    'hyundai_2018_prior': ['119대', '71대']
-  },
-  dbinsure: {
-    'db_2026_05': ['120대', '119대'],
-    'db_2020_07': ['116대', '106대', '77대'],
-    'db_2020_prior': ['21대', '18대', '16대']
-  },
-  kbinsure: {
-    'kb_2024_01': ['120대', '116대', '112대'],
-    'kb_2020_10': ['112대', '101대'],
-    'kb_2020_prior': ['21대']
-  },
-  samsungfire: {
-    'samsung_2024_01': ['116대', '114대', '111대'],
-    'samsung_2020_04': ['111대', '105대', '68대'],
-    'samsung_2020_prior': ['21대', '15대']
-  },
-  hanwhafire: {
-    'hanwha-p0': ['124대', '116대'],
-    'hanwha-p1': ['116대', '7대기관'],
-    'hanwha-p2': ['7대생활']
-  },
-  heungkukfire: {
-    'heungkuk-p0': ['신142대', '신70대'],
-    'heungkuk-p1': ['신70대'],
-    'heungkuk-p2': ['신70대']
-  },
-  nhfire: {
-    'nh-p0': ['144대', '112대'],
-    'nh-p1': ['144대'],
-    'nh-p2': ['144대']
-  },
-  lotte: {
-    'lotte-p0': ['142대', '112대'],
-    'lotte-p1': ['142대'],
-    'lotte-p2': ['142대']
-  },
-  hanafire: {
-    'hana-p0': ['136대'],
-    'hana-p1': ['73대', '15대'],
-    'hana-p2': ['73대']
-  },
-  samsunglife: {
-    'samsunglife-p0': ['153대', '7대주요', '7대성인'],
-    'samsunglife-p1': ['153대', '7대성인'],
-    'samsunglife-p2': ['7대성인']
-  },
-  hanwhalife: {
-    'hanwhalife-p0': ['104대', '70대', '23대', '13대'],
-    'hanwhalife-p1': ['70대', '23대'],
-    'hanwhalife-p2': ['23대', '13대']
-  },
-  kyobo: {
-    'kyobo-p0': ['36대', '25대'],
-    'kyobo-p1': ['36대', '25대'],
-    'kyobo-p2': ['25대']
-  },
-  shinhan: {
-    'shinhan-p0': ['100대', '30대'],
-    'shinhan-p1': ['30대'],
-    'shinhan-p2': ['30대']
-  },
-  kblife: {
-    'kblife-p0': ['7대', '5대'],
-    'kblife-p1': ['7대'],
-    'kblife-p2': ['5대']
-  },
-  mirae: {
-    'mirae-p0': ['88대', '30대'],
-    'mirae-p1': ['30대'],
-    'mirae-p2': ['30대']
-  },
-  dongyang: {
-    'dongyang-p0': ['N대(260대)', '61대'],
-    'dongyang-p1': ['61대'],
-    'dongyang-p2': ['61대']
-  },
-  heungkuklife: {
-    'heungkuklife-p0': ['130대', '40대'],
-    'heungkuklife-p1': ['40대'],
-    'heungkuklife-p2': ['40대']
-  },
-  abllife: {
-    'abllife-p0': ['77대', '30대'],
-    'abllife-p1': ['30대'],
-    'abllife-p2': ['30대']
-  },
-  lina: {
-    'lina-p0': ['7대', '5대'],
-    'lina-p1': ['7대'],
-    'lina-p2': ['5대']
-  }
-};
-
-
