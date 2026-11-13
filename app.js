@@ -7775,31 +7775,43 @@ function renderClausesCompanyList(searchQuery = '') {
       matchContext.searchedYear = detectedYear;
     }
 
-    // 공백/쉼표 분리 (예: '멜츠 퍼펙트', '미생 디손 멜츠' #29025 #29057)
-    const tokens = rawQ.split(/[\s,]+/).filter(Boolean);
-    const normTokens = tokens.map(t => norm(t));
+    // 공백/쉼표 분리
+    const rawTokens = rawQ.split(/[\s,]+/).filter(Boolean);
 
-    // 유병자/간편 감지 (#29041 #29042)
-    if (normTokens.some(t => t.includes('유병자') || t.includes('간편') || t.includes('355') || t.includes('3.5.5') || t.includes('3105'))) {
-      matchContext.isSimplified = true;
-    }
+    // 토큰 분류: 년도 토큰, 주제 토큰, 회사/상품 검색 대상 토큰
+    const topicKeywords = ['유병자', '간편', '355', '3.5.5', '3105', '질수', '질병수술', '종수', '종수술', '15종', '1-5종', '상수', '상해수술', '엔대', 'n대', '제외', '면책', '부지급', '보상제외', '청구', '팁', '가이드'];
+    
+    const companySearchTokens = [];
 
-    // 주제 토큰 분석
-    normTokens.forEach(t => {
-      if (t.includes('질수') || t.includes('질병수술')) matchContext.riderKey = 'basic';
-      if (t.includes('종수') || t.includes('종수술') || t.includes('15종') || t.includes('1-5종')) matchContext.riderKey = 'tier';
-      if (t.includes('상수') || t.includes('상해수술')) matchContext.riderKey = 'injury';
-      if (t.includes('엔대') || t.includes('n대') || /\d+대/.test(t)) matchContext.riderKey = 'ndai';
-      if (t.includes('제외') || t.includes('면책') || t.includes('부지급') || t.includes('보상제외')) matchContext.isExclusion = true;
-      if (t.includes('청구') || t.includes('팁') || t.includes('가이드')) matchContext.isClaimTip = true;
+    rawTokens.forEach(t => {
+      const nt = norm(t);
+      if (/^(\d{2,4}년?)$/.test(nt)) return; // 년도 토큰
+
+      if (nt.includes('유병자') || nt.includes('간편') || nt.includes('355') || nt.includes('3.5.5') || nt.includes('3105')) {
+        matchContext.isSimplified = true;
+      }
+      if (nt.includes('질수') || nt.includes('질병수술')) matchContext.riderKey = 'basic';
+      if (nt.includes('종수') || nt.includes('종수술') || nt.includes('15종') || nt.includes('1-5종')) matchContext.riderKey = 'tier';
+      if (nt.includes('상수') || nt.includes('상해수술')) matchContext.riderKey = 'injury';
+      if (nt.includes('엔대') || nt.includes('n대')) matchContext.riderKey = 'ndai';
+      if (nt.includes('제외') || nt.includes('면책') || nt.includes('부지급') || nt.includes('보상제외')) matchContext.isExclusion = true;
+      if (nt.includes('청구') || nt.includes('팁') || nt.includes('가이드')) matchContext.isClaimTip = true;
+
+      // 순수 주제어가 아닌 토큰(회사명, 약칭, 상품명, N대 숫자 등)은 회사 검색 토큰으로 수집
+      const isPureTopic = topicKeywords.some(k => norm(k) === nt);
+      if (!isPureTopic) {
+        companySearchTokens.push(t);
+      }
     });
+
+    const hasSpecificCompanyTokens = companySearchTokens.length > 0;
 
     // 회사별 전수 매칭 & [매칭 포인트] 기록 (#29057)
     list = allCompanies.filter(co => {
       co._matchReasons = [];
       let isYearMatchedForCo = false;
 
-      // 1) 가입년도 매칭 판정 (검색어에 연도가 있을 때)
+      // 1) 가입년도 매칭 판정 (해당 연도가 포함된 시기 확인)
       if (matchContext.searchedYear) {
         co.periods.forEach(p => {
           const [sy, ey] = parsePeriodYearRange(p.periodStr);
@@ -7810,7 +7822,8 @@ function renderClausesCompanyList(searchQuery = '') {
             p._isYearMatch = false;
           }
         });
-        if (isYearMatchedForCo) {
+        // 특정 회사명이 검색어에 없을 때만 년도 단독으로 매칭 사유 추가
+        if (isYearMatchedForCo && !hasSpecificCompanyTokens) {
           co._matchReasons.push({ 
             label: '가입년도', 
             token: `${matchContext.searchedYear}년`, 
@@ -7819,10 +7832,10 @@ function renderClausesCompanyList(searchQuery = '') {
         }
       }
 
-      // 2) 토큰별 매칭
-      tokens.forEach(origToken => {
+      // 2) 회사/상품/약어 검색 토큰 매칭
+      companySearchTokens.forEach(origToken => {
         const nt = norm(origToken);
-        if (!nt || /^(\d{2,4}년?|유병자|간편|355)$/.test(nt)) return;
+        if (!nt) return;
 
         // 회사명 및 약칭
         if (norm(co.name).includes(nt) || nt.includes(norm(co.name))) {
@@ -7847,7 +7860,7 @@ function renderClausesCompanyList(searchQuery = '') {
           }
         }
 
-        // N대 특약 매칭 (#29006)
+        // N대 특약 매칭 (#29006 - 예: '116대')
         if (co.ndaiKeywords) {
           const matchedNdai = co.ndaiKeywords.find(k => norm(k).includes(nt) || nt.includes(norm(k)));
           if (matchedNdai) {
@@ -7878,8 +7891,35 @@ function renderClausesCompanyList(searchQuery = '') {
         }
       });
 
+      // 회사 검색어가 지정되었는데 회사 매칭이 없다면 제외!
+      if (hasSpecificCompanyTokens) {
+        return co._matchReasons.length > 0;
+      }
+
+      // 특정 회사 토큰이 없고 주제어나 년도만 있는 경우
+      if (matchContext.searchedYear && isYearMatchedForCo) {
+        return true;
+      }
+      if (matchContext.riderKey || matchContext.isExclusion || matchContext.isSimplified) {
+        return true; // 전체 회사 중 해당 담보/주제 표출
+      }
+
       return co._matchReasons.length > 0;
     });
+
+    // 만약 회사 매칭도 되고 년도도 입력되었다면, 헤더에 가입년도 매칭 뱃지 추가 표출
+    if (matchContext.searchedYear) {
+      list.forEach(co => {
+        const hasYearDrawer = co.periods.some(p => p._isYearMatch);
+        if (hasYearDrawer && !co._matchReasons.some(mr => mr.label === '가입년도')) {
+          co._matchReasons.unshift({
+            label: '가입년도',
+            token: `${matchContext.searchedYear}년`,
+            target: '가입시기 매칭'
+          });
+        }
+      });
+    }
 
     // 백업 검색: 토큰 분리로 안 걸릴 경우 전체 문자열로 검색
     if (list.length === 0) {
