@@ -5102,7 +5102,6 @@ window.POLICY_CLAUSES_DATA = {
           ]
       },
       {
-              {
       "id": "miraelife",
       "name": "미래에셋생명",
       "shortName": "미생",
@@ -5274,7 +5273,8 @@ window.POLICY_CLAUSES_DATA = {
         }
       ]
     },
-    "id": "dongyang",
+    {
+      "id": "dongyang",
           "name": "동양생명",
           "shortName": "동양",
           "aliases": [
