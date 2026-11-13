@@ -1483,8 +1483,8 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/hyundai_tier_p464.png'
                 },
                 ndai: {
-                  title: '119대/124대 N대 질병수술비 특약',
-                  summary: '119대 질병 분류표에 따른 정액 차등 지급. 관혈 100% / 비관혈 50%.',
+                  title: '120대 N대 질병수술비 특약',
+                  summary: '120대 질병분류표(26대Ⅱ, 58대Ⅱ, 24대, 다발성10대, 치핵, 갑상선)에 따른 정액 차등 지급. 관혈 100% / 비관혈 50%.',
                   clauseBody: {
                     title: 'N대 질병수술비 약관',
                     quote: 'N대 질병 수술 시 군별 가입금액 지급.',
