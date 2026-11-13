@@ -7302,24 +7302,12 @@ function bindRulesTab() {
     const stack = $('#rulesModalPagesStack');
     const singleImg = $('#rulesModalImg');
     const paging = $('#rulesModalPaging');
-    const viewBtn = $('#btnRulesViewModeToggle');
 
-    if (viewBtn) {
-      viewBtn.textContent = (rulesViewMode === 'continuous') ? '📄 한 쪽씩 보기' : '📜 연속 세로보기';
-      viewBtn.style.background = (rulesViewMode === 'continuous') ? 'rgba(49,130,246,0.18)' : 'var(--surface)';
+    if (singleImg) {
+      singleImg.style.display = 'none';
+      singleImg.removeAttribute('src');
     }
 
-    if (rulesModalPages.length <= 1) {
-      if (stack) stack.style.display = 'none';
-      if (singleImg) {
-        singleImg.style.display = 'block';
-        singleImg.src = rulesModalPages[0] || '';
-      }
-      if (paging) paging.style.display = 'none';
-      return;
-    }
-
-    if (singleImg) singleImg.style.display = 'none';
     if (stack) {
       stack.style.display = 'flex';
       stack.style.flexDirection = 'column';
