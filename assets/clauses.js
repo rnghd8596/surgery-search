@@ -1,3 +1,115 @@
+
+window.VERIFIED_CLAUSE_SCANS = {
+  "meritz": {
+    "product": "무배당 메리츠 The좋은 케어프리보험 M-Basket2210",
+    "type": "표준체 (건강체)",
+    "basic_p1": "assets/clause_imgs/meritz_real_disease_p245.png",
+    "basic_p2": "assets/clause_imgs/meritz_real_disease_p246.png",
+    "basic_page": "공시실 원문 제245쪽 ~ 제246쪽",
+    "tier_p1": "assets/clause_imgs/meritz_tier_p1043.png",
+    "tier_p2": "assets/clause_imgs/meritz_tier_p1044.png",
+    "tier_page": "공시실 별표 제1043쪽 ~ 제1044쪽",
+    "ndai_p1": "assets/clause_imgs/meritz_ndai_p918.png",
+    "ndai_p2": "assets/clause_imgs/meritz_ndai_p919.png",
+    "ndai_page": "공시실 별표 제918쪽 ~ 제919쪽"
+  },
+  "hyundai": {
+    "product": "무배당 현대해상 간편한3.10.10 건강보험 (세만기형 Hi2607)",
+    "type": "유병자 (간편고지 3.10.10)",
+    "basic_p1": "assets/clause_imgs/hyundai_p464.png",
+    "basic_p2": "assets/clause_imgs/hyundai_p464.png",
+    "basic_page": "공시실 원문 제464쪽",
+    "tier_p1": "assets/clause_imgs/hyundai_tier_p242.png",
+    "tier_p2": "assets/clause_imgs/hyundai_tier_p243.png",
+    "tier_page": "공시실 별표 제242쪽 ~ 제243쪽",
+    "ndai_p1": "assets/clause_imgs/hyundai_ndai_p535.png",
+    "ndai_p2": "assets/clause_imgs/hyundai_ndai_p536.png",
+    "ndai_page": "공시실 별표 제535쪽 ~ 제536쪽"
+  },
+  "samsung": {
+    "product": "무배당 삼성화재 건강보험 마이헬스 파트너 (2404.10)",
+    "type": "표준체 (건강체)",
+    "basic_p1": "assets/clause_imgs/samsung_real_disease_p698.png",
+    "basic_p2": "assets/clause_imgs/samsung_real_disease_p699.png",
+    "basic_page": "공시실 원문 제698쪽 ~ 제699쪽",
+    "tier_p1": "assets/clause_imgs/samsungfire_tier_p1374.png",
+    "tier_p2": "assets/clause_imgs/samsungfire_tier_p1375.png",
+    "tier_page": "공시실 별표 제1374쪽 ~ 제1375쪽",
+    "ndai_p1": "assets/clause_imgs/samsungfire_ndai_p1415.png",
+    "ndai_p2": "assets/clause_imgs/samsungfire_ndai_p1416.png",
+    "ndai_page": "공시실 별표 제1415쪽 ~ 제1416쪽"
+  },
+  "hanwha": {
+    "product": "한화 시그니처 여성 건강보험4.0 무배당2604",
+    "type": "표준체 (건강체)",
+    "basic_p1": "assets/clause_imgs/hanwha_real_disease_p372.png",
+    "basic_p2": "assets/clause_imgs/hanwha_real_disease_p373.png",
+    "basic_page": "공시실 원문 제372쪽 ~ 제373쪽",
+    "tier_p1": "assets/clause_imgs/hanwha_tier_p1304.png",
+    "tier_p2": "assets/clause_imgs/hanwha_tier_p1305.png",
+    "tier_page": "공시실 별표 제1323쪽 (1~5종)",
+    "ndai_p1": "assets/clause_imgs/hanwha_ndai_p1357.png",
+    "ndai_p2": "assets/clause_imgs/hanwha_ndai_p1358.png",
+    "ndai_page": "공시실 별표 제1376쪽 (124대질병)"
+  },
+  "kbinsure": {
+    "product": "KB 3.10.5 딱좋은 초경증 건강보험 무배당 (간편심사형)",
+    "type": "유병자 (간편고지 3.10.5)",
+    "basic_p1": "assets/clause_imgs/kb_real_disease_p503.png",
+    "basic_p2": "assets/clause_imgs/kb_real_disease_p504.png",
+    "basic_page": "공시실 원문 제503쪽 ~ 제504쪽",
+    "tier_p1": "assets/clause_imgs/kbinsure_tier_p710.png",
+    "tier_p2": "assets/clause_imgs/kbinsure_tier_p711.png",
+    "tier_page": "공시실 별표 제710쪽 ~ 제711쪽",
+    "ndai_p1": "assets/clause_imgs/kbinsure_ndai_p627.png",
+    "ndai_p2": "assets/clause_imgs/kbinsure_ndai_p628.png",
+    "ndai_page": "공시실 별표 제627쪽 ~ 제628쪽"
+  },
+  "db": {
+    "product": "무배당 프로미라이프 참좋은 훼밀리더블플러스종합보험2607",
+    "type": "표준체 (건강체)",
+    "basic_p1": "assets/clause_imgs/db_real_disease_p237.png",
+    "basic_p2": "assets/clause_imgs/db_real_disease_p238.png",
+    "basic_page": "공시실 원문 제237쪽 ~ 제238쪽",
+    "tier_p1": "assets/clause_imgs/db_tier_p1202.png",
+    "tier_p2": "assets/clause_imgs/db_tier_p1203.png",
+    "tier_page": "공시실 별표 제1202쪽 ~ 제1203쪽",
+    "ndai_p1": "assets/clause_imgs/db_ndai_p1216.png",
+    "ndai_p2": "assets/clause_imgs/db_ndai_p1217.png",
+    "ndai_page": "공시실 별표 제1216쪽 ~ 제1217쪽"
+  },
+  "nhfire": {
+    "product": "(무)NH 5.N.5 굿플러스 건강보험 (1040형)",
+    "type": "표준체/간편",
+    "basic_p1": "assets/clause_imgs/nh_p386.png",
+    "basic_page": "공시실 원문 제386쪽",
+    "tier_p1": "assets/clause_imgs/nhfire_tier_p413.png",
+    "tier_p2": "assets/clause_imgs/nhfire_tier_p414.png",
+    "tier_page": "공시실 별표 제413쪽 ~ 제414쪽",
+    "ndai_p1": "assets/clause_imgs/nhfire_ndai_p394.png",
+    "ndai_p2": "assets/clause_imgs/nhfire_ndai_p395.png",
+    "ndai_page": "공시실 별표 제394쪽 ~ 제395쪽"
+  },
+  "heungkuklife": {
+    "product": "(무)흥국생명 다사랑 3.10.5 간편건강보험 (해약환급금미지급형V2)",
+    "type": "유병자 (간편고지 3.10.5)",
+    "basic_p1": "assets/clause_imgs/heungkuk_p1081.png",
+    "basic_page": "공시실 원문 제1081쪽",
+    "tier_p1": "assets/clause_imgs/heungkuklife_tier_p81.png",
+    "tier_p2": "assets/clause_imgs/heungkuklife_tier_p82.png",
+    "tier_page": "공시실 별표 제81쪽 ~ 제82쪽",
+    "ndai_p1": "assets/clause_imgs/heungkuklife_ndai_p116.png",
+    "ndai_p2": "assets/clause_imgs/heungkuklife_ndai_p117.png",
+    "ndai_page": "공시실 별표 제116쪽 ~ 제117쪽"
+  },
+  "mirae": {
+    "product": "무배당 M-케어 건강보험 (3.10.5 간편고지, 갱신형)",
+    "type": "유병자 (간편고지 3.10.5)",
+    "basic_p1": "assets/clause_imgs/mirae_p710.png",
+    "basic_page": "공시실 원문 제710쪽"
+  }
+};
+
 /* ==========================================================================
    보험비서 - 회사별·시기별 공식 약관 및 별표 수술분류표 데이터베이스
    - 손해보험 10개사 & 생명보험 10개사 (약어 20개 매핑 완비)

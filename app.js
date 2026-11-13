@@ -1,3 +1,53 @@
+
+function generateClauseSuggestions(rawQ) {
+  const normQ = (rawQ || '').trim().toLowerCase();
+  return [
+    { label: '메리츠화재 112대', q: '멜츠 112대' },
+    { label: '삼성화재 116대', q: '삼성 116대' },
+    { label: '현대해상 119대·124대', q: '현대 119대' },
+    { label: 'DB손해보험 85대', q: 'DB 85대' },
+    { label: '메리츠화재 64대', q: '멜츠 64대' },
+    { label: 'KB손해보험 112대', q: 'KB 112대' }
+  ];
+}
+
+function bindNdaiDirectJumpEvents(container) {
+  if (!container) return;
+  container.querySelectorAll('.btn-ndai-direct-jump').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const q = btn.dataset.search;
+      const cid = btn.dataset.cid;
+      const pid = btn.dataset.pid;
+      const inp = $('#q-clause');
+      if (inp) {
+        inp.value = q;
+      }
+      renderClausesCompanyList(q);
+      if (cid) {
+        setTimeout(() => {
+          const coCard = container.querySelector(`.btn-toggle-co[data-co-id="${cid}"]`)?.closest('.clause-co-card');
+          if (coCard) {
+            const body = coCard.querySelector('.clause-periods-body');
+            const arrow = coCard.querySelector('.btn-co-toggle-arrow');
+            if (body) body.style.display = 'block';
+            if (arrow) { arrow.textContent = '접기 ▴'; arrow.style.background = 'rgba(49,130,246,0.18)'; }
+            if (pid) {
+              const pDrawer = coCard.querySelector(`.btn-toggle-period[data-pid="${pid}"]`)?.closest('.clause-period-drawer');
+              if (pDrawer) {
+                const pBody = pDrawer.querySelector('.clause-period-body');
+                const pArrow = pDrawer.querySelector('.toggle-period-arrow');
+                if (pBody) pBody.style.display = 'block';
+                if (pArrow) pArrow.textContent = '접기 ▴';
+              }
+            }
+          }
+        }, 60);
+      }
+    });
+  });
+}
+
 /* ══════════════════════════════════════════════════════════
    보험비서 수술비 사전 — app.js (v20261109a)
    하이브리드 스마트 검색 · 종수술비 & N대 질병수술비 분리 완성형
@@ -7218,8 +7268,13 @@ function bindRulesTab() {
     if (btnNext) btnNext.style.opacity = rulesModalCurIndex === rulesModalPages.length - 1 ? '0.4' : '1';
   };
 
-  const openModal = (src, title, quote, pages = null) => {
-    if (!modal || !modalImg) return;
+  const openModal = (src, title, quote, pages = null, meta = null) => {
+    if (!modal) return;
+    if (!src && (!pages || !pages.length)) {
+      alert("🏢 [약관 원문 안내]\n\n해당 보험사 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.");
+      return;
+    }
+    if (!modalImg) return;
     isRulesZoomed = false;
     modalImg.style.width = '100%';
     modalImg.style.maxWidth = '100%';
@@ -7237,9 +7292,10 @@ function bindRulesTab() {
       if (paging) paging.style.display = 'flex';
       updateRulesModalPage();
     } else {
-      rulesModalPages = [src];
+      const singleSrc = src || (pages && pages[0]);
+      rulesModalPages = [singleSrc];
       rulesModalCurIndex = 0;
-      modalImg.src = src;
+      modalImg.src = singleSrc;
       const ctrl = $('#rulesModalControls');
       const paging = $('#rulesModalPaging');
       if (ctrl) ctrl.style.display = 'flex';
@@ -7250,6 +7306,39 @@ function bindRulesTab() {
     if (modalQuote) {
       modalQuote.style.display = 'none';
     }
+
+    // 메타데이터 바 (공식 상품명, 표준체/유병자 구분, 공시실 쪽수) (#31022 #31049)
+    const metaBar = $('#rulesModalMetaBar');
+    if (meta && (meta.product || meta.type || meta.page)) {
+      if (metaBar) {
+        metaBar.style.display = 'flex';
+        const typeEl = $('#rulesModalMetaType');
+        const prodEl = $('#rulesModalMetaProduct');
+        const pageEl = $('#rulesModalMetaPage');
+        if (typeEl) {
+          typeEl.textContent = meta.type || '표준체 (건강체)';
+          typeEl.style.display = meta.type ? 'inline-block' : 'none';
+          if (meta.type && meta.type.includes('유병자')) {
+            typeEl.style.background = '#fef3c7';
+            typeEl.style.color = '#b45309';
+          } else {
+            typeEl.style.background = '#e0f2fe';
+            typeEl.style.color = '#0284c7';
+          }
+        }
+        if (prodEl) {
+          prodEl.textContent = meta.product || '';
+          prodEl.style.display = meta.product ? 'inline-block' : 'none';
+        }
+        if (pageEl) {
+          pageEl.textContent = meta.page ? `(${meta.page})` : '';
+          pageEl.style.display = meta.page ? 'inline-block' : 'none';
+        }
+      }
+    } else {
+      if (metaBar) metaBar.style.display = 'none';
+    }
+
     modal.classList.add('show');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -7304,7 +7393,7 @@ function bindRulesTab() {
   };
   window.closeRulesModal = closeModal;
 
-  // 회사 약관 원문 버튼 클릭 시 고해상도 모달 열기
+  // 회사 약관 원문 버튼 클릭 시 고해상도 모달 열기 (#31022 #31049 #31091)
   $$('.btn-co-clause').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -7312,8 +7401,21 @@ function bindRulesTab() {
       const co = btn.dataset.co || '보험사';
       const type = btn.dataset.type || '';
       const quote = btn.dataset.quote || '';
+      const isPending = btn.dataset.pending === 'true' || !modalSrc;
+      const product = btn.dataset.product || '';
+      const insType = btn.dataset.insType || '';
+      const page = btn.dataset.page || '';
+      const pagesStr = btn.dataset.pages;
+      const pages = pagesStr ? pagesStr.split(',').filter(Boolean) : (modalSrc ? [modalSrc] : null);
+
+      if (isPending) {
+        alert(`🏢 [${co}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
+        return;
+      }
+
       const title = `🏢 ${co} 동시수술 약관 ${type ? `[${type}]` : ''}`;
-      if (modalSrc) openModal(modalSrc, title, quote);
+      const meta = { product, type: insType, page };
+      openModal(modalSrc, title, quote, pages, meta);
     });
   });
 
@@ -7802,16 +7904,25 @@ function renderClausesCompanyList(searchQuery = '') {
       matchContext.searchedYear = detectedYear;
     }
 
-    // N대 10단위 및 특정 N대 추출 (예: '60대', '112대', '116대', '119대', '120대' 등 #29473 #29516)
+    // N대 10단위 및 특정 N대 추출 (예: '60대', '112대', '116대', '119대', '120대' 등 #29473 #29516 #31162 #31176 #31183)
     let tensTarget = null;
     const exactNdaiMatch = rawQ.match(/(\d{2,3})대/);
-    if (exactNdaiMatch) {
-      matchContext.searchedNdai = exactNdaiMatch[0];
-      const nNum = parseInt(exactNdaiMatch[1], 10);
-      if (exactNdaiMatch[1].endsWith('0')) {
-        tensTarget = nNum; // e.g. 60대, 70대, 80대, 110대, 120대
+    const isNdaiPureQuery = /^(\d{2,3})대$/.test(rawQ.replace(/\s+/g, ''));
+    let exactNdaiNum = exactNdaiMatch ? parseInt(exactNdaiMatch[1], 10) : null;
+    let exactNdaiStr = exactNdaiMatch ? exactNdaiMatch[0] : null;
+
+    let isExactNdaiSale = false;
+    if (exactNdaiStr) {
+      matchContext.searchedNdai = exactNdaiStr;
+      isExactNdaiSale = allCompanies.some(c => c.ndaiKeywords && c.ndaiKeywords.some(k => norm(k) === norm(exactNdaiStr) || norm(k) === exactNdaiMatch[1]));
+      if (exactNdaiMatch[1].endsWith('0') && isExactNdaiSale) {
+        tensTarget = exactNdaiNum;
       }
     }
+
+    // 만약 사용자가 '80대', '60대' 등 N대 키워드를 순수 검색했는데 어떤 회사도 정확히 그 N대를 판매하지 않는 경우:
+    // tensTarget으로 억지 매칭시키지 않고 판매사 없음 선언 + 근접 N대 추천 직결 버튼 UI 표출! (#31162 #31176 #31183)
+    let isNdaiUnsoldPure = isNdaiPureQuery && !isExactNdaiSale;
 
     // 공백/쉼표 분리
     const rawTokens = rawQ.split(/[\s,]+/).filter(Boolean);
@@ -7874,13 +7985,13 @@ function renderClausesCompanyList(searchQuery = '') {
         }
       }
 
-      // 2) N대 특정 및 10단위 범위 매칭 (예: '116대' -> 삼성, '60대' -> 64대 메리츠 #29473 #29516)
-      if (matchContext.searchedNdai && co.ndaiKeywords) {
+      // 2) N대 특정 및 10단위 범위 매칭 (미판매 순수 검색 시에는 강제 매칭 방지 #31162)
+      if (matchContext.searchedNdai && co.ndaiKeywords && !isNdaiUnsoldPure) {
         if (co.ndaiKeywords.some(k => norm(k).includes(norm(matchContext.searchedNdai)))) {
           isCoMatched = true;
         }
       }
-      if (tensTarget && co.ndaiKeywords) {
+      if (tensTarget && co.ndaiKeywords && !isNdaiUnsoldPure) {
         const foundTens = co.ndaiKeywords.some(k => {
           const m = k.match(/(\d+)대?/);
           if (m) {
@@ -7984,6 +8095,83 @@ function renderClausesCompanyList(searchQuery = '') {
       list = lifeList;
       updateClauseCatButtons(false, false, true);
     }
+  }
+
+  // 미판매 N대 특약 (80대 등) 전용 권고 UI (#31162 #31176 #31183)
+  if (isNdaiUnsoldPure) {
+    let closestNdaiStr = '85대 질병수술비';
+    let recommendations = [
+      { coName: 'DB손해보험', cid: 'db', pid: 'db_2020_07', ndai: '85대', period: '2020년 7월 ~ 2024년 3월', label: '85대 질병수술비', jump: 'DB 85대' },
+      { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2020_04', ndai: '82대', period: '2020년 4월 ~ 2024년 11월', label: '82대 질병수술비', jump: '멜츠 82대' },
+      { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 이전', label: '71대 질병수술비', jump: '현대 71대' },
+      { coName: '삼성화재', cid: 'samsung', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' }
+    ];
+
+    if (exactNdaiNum <= 65) {
+      closestNdaiStr = '64대 질병수술비';
+      recommendations = [
+        { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2020_03_prior', ndai: '64대', period: '2020년 3월 이전', label: '64대 질병수술비', jump: '멜츠 64대' },
+        { coName: '삼성화재', cid: 'samsung', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' },
+        { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 이전', label: '71대 질병수술비', jump: '현대 71대' }
+      ];
+    } else if (exactNdaiNum >= 125) {
+      closestNdaiStr = '124대 질병수술비';
+      recommendations = [
+        { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2024_01', ndai: '124대', period: '2024년 1월 ~ 현재', label: '124대 질병수술비', jump: '현대 124대' },
+        { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2024_12', ndai: '131대', period: '2024년 12월 ~ 현재', label: '131대 질병수술비', jump: '멜츠 131대' },
+        { coName: 'NH농협손해', cid: 'nhfire', pid: 'nh_2024_01', ndai: '144대', period: '2024년 1월 ~ 현재', label: '144대 질병수술비', jump: '농협 144대' }
+      ];
+    }
+
+    container.innerHTML = `
+      <div style="background:var(--surface);border:2px solid #ef4444;border-radius:14px;padding:20px 18px;margin-top:10px;text-align:left;box-shadow:0 4px 16px rgba(239,68,68,0.1);">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
+          <span style="font-size:26px;line-height:1;">⚠️</span>
+          <div>
+            <div style="font-size:16px;font-weight:900;color:#dc2626;letter-spacing:-0.2px;">'${esc(exactNdaiStr)}'를 판매하는 보험사는 없습니다</div>
+            <div style="font-size:12.5px;color:var(--text-2);margin-top:4px;line-height:1.5;">
+              전 보험사 공식 약관 전수 조사 결과, <strong>'${esc(exactNdaiStr)}'</strong>라는 정식 명칭의 질병수술비 특약은 판매된 이력이 없습니다.
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;padding-top:16px;border-top:1.5px dashed rgba(239,68,68,0.25);">
+          <div style="font-size:14.5px;font-weight:900;color:var(--brand);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+            <span>💡</span>
+            <span>혹시 찾으시는 게 ${closestNdaiStr}인가요?</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:12px;font-weight:700;">
+            아래 버튼을 터치하시면 해당 보험사의 정확한 가입시기별 약관 서랍이 즉시 펼쳐집니다:
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;" id="ndaiDirectJumpWrap">
+            ${recommendations.map(r => `
+              <button type="button" class="btn-ndai-direct-jump" data-search="${esc(r.jump)}" data-cid="${r.cid}" data-pid="${r.pid}" data-ndai="${r.ndai}" style="width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.06);display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;transition:all .15s ease;">
+                <div>
+                  <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+                    <span style="color:var(--brand);">🏢</span>
+                    <span>${esc(r.coName)}: <strong>${esc(r.label)}</strong></span>
+                  </div>
+                  <div style="font-size:11.5px;color:var(--text-3);margin-top:3px;font-weight:700;">
+                    가입시기: ${esc(r.period)} (약관 원문 직결)
+                  </div>
+                </div>
+                <span style="font-size:12px;font-weight:900;color:#fff;background:var(--brand);padding:6px 11px;border-radius:7px;white-space:nowrap;box-shadow:0 2px 6px rgba(49,130,246,0.25);flex-shrink:0;margin-left:8px;">
+                  바로가기 →
+                </span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div style="margin-top:16px;padding:10px 12px;background:var(--surface-2);border-radius:8px;font-size:11.5px;color:var(--text-3);line-height:1.45;font-weight:700;">
+          📌 <strong>대표 N대 검색:</strong> 메리츠·KB(112대), 현대·DB(119대), 현대(124대), 삼성(116대), DB(85대), 메리츠(64대)
+        </div>
+      </div>
+    `;
+
+    bindNdaiDirectJumpEvents(container);
+    return;
   }
 
   // 0건일 때 IMG_4946 스타일 '혹시 찾으시는 게...' 원터치 추천 칩 표출 (#29473)
@@ -8800,8 +8988,15 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       const btnPhoto = box.querySelector('#btnOpenRulesNdai');
       if (btnPhoto) {
         btnPhoto.addEventListener('click', () => {
-          const imgSrc = rider.imgSrc || `assets/clause_imgs/${co.id}_ndai_table.png`;
-          window.openRulesModal(imgSrc, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary);
+          const v = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+          if (v && v.ndai_p1) {
+            const pages = [v.ndai_p1];
+            if (v.ndai_p2) pages.push(v.ndai_p2);
+            const meta = { product: v.product, type: v.type, page: v.ndai_page };
+            window.openRulesModal(v.ndai_p1, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary, pages, meta);
+          } else {
+            alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
+          }
         });
       }
       return;
@@ -8872,26 +9067,15 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     const btnPhoto = box.querySelector('#btnOpenRulesNdai');
     if (btnPhoto) {
       btnPhoto.addEventListener('click', () => {
-        let p1 = `assets/clause_imgs/${co.id}_ndai_p1.png`;
-        let p2 = `assets/clause_imgs/${co.id}_ndai_p2.png`;
-        if (co.id === 'hyundai') {
-          p1 = 'assets/clause_imgs/hyundai_ndai_p535.png';
-          p2 = 'assets/clause_imgs/hyundai_ndai_p536.png';
-        } else if (co.id === 'meritz') {
-          p1 = 'assets/clause_imgs/meritz_ndai_p918.png';
-          p2 = 'assets/clause_imgs/meritz_ndai_p919.png';
-        } else if (co.id === 'kbinsure') {
-          p1 = 'assets/clause_imgs/kbinsure_ndai_p627.png';
-          p2 = 'assets/clause_imgs/kbinsure_ndai_p628.png';
-        } else if (co.id === 'nhfire') {
-          p1 = 'assets/clause_imgs/nhfire_ndai_p394.png';
-          p2 = 'assets/clause_imgs/nhfire_ndai_p395.png';
-        } else if (co.id === 'heungkuklife') {
-          p1 = 'assets/clause_imgs/heungkuklife_ndai_p116.png';
-          p2 = 'assets/clause_imgs/heungkuklife_ndai_p117.png';
+        const v = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+        if (v && v.ndai_p1) {
+          const pages = [v.ndai_p1];
+          if (v.ndai_p2) pages.push(v.ndai_p2);
+          const meta = { product: v.product, type: v.type, page: v.ndai_page };
+          window.openRulesModal(v.ndai_p1, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary, pages, meta);
+        } else {
+          alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
         }
-        const pages = [p1, p2];
-        window.openRulesModal(p1, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary, pages);
       });
     }
 
@@ -9336,7 +9520,15 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   }
   if (btnPhoto) {
     btnPhoto.addEventListener('click', () => {
-      window.openRulesModal(activeImg, activeImgTitle, '');
+      const v = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+      if (v && v.basic_p1) {
+        const pages = [v.basic_p1];
+        if (v.basic_p2) pages.push(v.basic_p2);
+        const meta = { product: v.product, type: v.type, page: v.basic_page };
+        window.openRulesModal(v.basic_p1, activeImgTitle, '', pages, meta);
+      } else {
+        alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
+      }
     });
   }
 }
@@ -9363,25 +9555,15 @@ function bindPhotoButtons(box, rider, co, period) {
   }
   if (btnSingle) {
     btnSingle.addEventListener('click', () => {
-      let pages = rider.pages && rider.pages.length > 1 ? rider.pages : null;
-      let src = rider.imgSrc || `assets/clause_imgs/${co.id}_tier_p1.png`;
-      if (co.id === 'hyundai') {
-        src = 'assets/clause_imgs/hyundai_tier_p242.png';
-        pages = ['assets/clause_imgs/hyundai_tier_p242.png', 'assets/clause_imgs/hyundai_tier_p243.png'];
-      } else if (co.id === 'meritz') {
-        src = 'assets/clause_imgs/meritz_tier_p1043.png';
-        pages = ['assets/clause_imgs/meritz_tier_p1043.png', 'assets/clause_imgs/meritz_tier_p1044.png'];
-      } else if (co.id === 'kbinsure') {
-        src = 'assets/clause_imgs/kbinsure_tier_p710.png';
-        pages = ['assets/clause_imgs/kbinsure_tier_p710.png', 'assets/clause_imgs/kbinsure_tier_p711.png'];
-      } else if (co.id === 'nhfire') {
-        src = 'assets/clause_imgs/nhfire_tier_p413.png';
-        pages = ['assets/clause_imgs/nhfire_tier_p413.png', 'assets/clause_imgs/nhfire_tier_p414.png'];
-      } else if (co.id === 'heungkuklife') {
-        src = 'assets/clause_imgs/heungkuklife_tier_p81.png';
-        pages = ['assets/clause_imgs/heungkuklife_tier_p81.png', 'assets/clause_imgs/heungkuklife_tier_p82.png'];
+      const v = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+      if (v && v.tier_p1) {
+        const pages = [v.tier_p1];
+        if (v.tier_p2) pages.push(v.tier_p2);
+        const meta = { product: v.product, type: v.type, page: v.tier_page };
+        window.openRulesModal(v.tier_p1, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 원문`, period.revSummary, pages, meta);
+      } else {
+        alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
       }
-      window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 원문`, period.revSummary, pages);
     });
   }
 }
