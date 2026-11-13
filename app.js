@@ -7753,6 +7753,7 @@ function renderClausesCompanyList(searchQuery = '') {
   lifeList.forEach(c => { c._cat = 'life'; c._catLabel = '🏛️ 생명보험'; });
 
   const allCompanies = [...nonLifeList, ...lifeList];
+  allCompanies.forEach(c => c.periods && c.periods.forEach(p => { p._isYearMatch = false; }));
 
   let list = [];
   let isUnifiedSearch = false;
@@ -8114,7 +8115,7 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
   const simpRiders = (simpObj && simpObj.riders) ? simpObj.riders : stdRiders;
 
   // 가입년도 매칭 판정 (#29067 #29068)
-  const isYearMatched = !!p._isYearMatch;
+  const isYearMatched = !!(matchContext.searchedYear && p._isYearMatch);
   const isDrawerOpen = matchContext.searchedYear ? isYearMatched : (matchContext.autoOpen || false);
 
   // 유병자/간편 자동 활성화 (#29041 #29042)
