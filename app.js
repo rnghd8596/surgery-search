@@ -7240,14 +7240,9 @@ function bindRulesTab() {
       if (paging) paging.style.display = 'none';
     }
 
-    if (modalTitle) modalTitle.textContent = title || '📋 약관 원문 고해상도 전체 보기';
+    if (modalTitle) modalTitle.textContent = title || '📋 약관 원문 전체 보기';
     if (modalQuote) {
-      if (quote) {
-        modalQuote.innerHTML = `<strong>💡 핵심 조항 원문:</strong><br>${quote}`;
-        modalQuote.style.display = 'block';
-      } else {
-        modalQuote.style.display = 'none';
-      }
+      modalQuote.style.display = 'none';
     }
     modal.classList.add('show');
     modal.setAttribute('aria-hidden', 'false');
@@ -7589,16 +7584,19 @@ function bindClausesTab() {
     qInput.addEventListener('input', () => {
       const val = qInput.value.trim();
       state.clauseQ = val;
-      if (clearBtn) clearBtn.style.display = val ? 'block' : 'none';
+      if (clearBtn) clearBtn.hidden = !val;
       renderClausesCompanyList(val);
     });
   }
 
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
-      if (qInput) qInput.value = '';
+      if (qInput) {
+        qInput.value = '';
+        qInput.focus();
+      }
       state.clauseQ = '';
-      clearBtn.style.display = 'none';
+      clearBtn.hidden = true;
       renderClausesCompanyList('');
     });
   }
@@ -7852,9 +7850,10 @@ function renderClausesCompanyList(searchQuery = '') {
 }
 
 function renderPeriodBoxHTML(co, p) {
-  const hasSimp = !!(p.types && p.types.simplified);
+  const simpObj = (p.types && p.types.simplified) || (p.types && p.types.standard && p.types.standard.simplified) || p.simplified;
   const stdRiders = p.types && p.types.standard ? p.types.standard.riders : null;
-  const simpRiders = hasSimp ? p.types.simplified.riders : null;
+  const hasSimp = !!(simpObj && simpObj.riders) || !!stdRiders;
+  const simpRiders = (simpObj && simpObj.riders) ? simpObj.riders : stdRiders;
 
   return `
   <div class="period-accordion-box" style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
@@ -7894,8 +7893,8 @@ function renderPeriodBoxHTML(co, p) {
         <button type="button" class="btn-ptype" data-ptype="simplified" style="height:38px;padding:0 8px;font-size:12.5px;font-weight:850;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
           🩺 간편 (유병자)
         </button>` : `
-        <span style="height:38px;padding:0 8px;font-size:11.5px;font-weight:700;color:var(--text-3);background:var(--surface);border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
-          <span>🩺</span> <span>간편 미판매 (해당없음)</span>
+        <span style="height:38px;padding:0 8px;font-size:11.5px;font-weight:700;color:var(--text-3);background:var(--surface);border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
+          <span>🩺</span> <span>간편 (약관 업데이트 진행 중)</span>
         </span>`}
       </div>
 
@@ -7931,8 +7930,8 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
           📄 약관조항 보기
         </button>
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion" style="height:38px;border-radius:8px;border:1.5px solid #dc2626;background:rgba(220,38,38,0.08);color:#dc2626;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;">
-          🚫 보상제외 조항 보기
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="claim_tips" style="height:38px;border-radius:8px;border:1.5px solid #d97706;background:rgba(245,158,11,0.09);color:#b45309;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 1px 3px rgba(217,119,6,0.15);">
+          💡 실무 청구팁
         </button>
       </div>
     </div>`;
@@ -7986,10 +7985,10 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
   if (!co) return;
   const period = co.periods.find(p => p.id === pid);
   if (!period) return;
-  const pData = period.types ? period.types[ptype] : null;
+  const simpObj = (period.types && period.types.simplified) || (period.types && period.types.standard && period.types.standard.simplified) || period.simplified;
+  const pData = (ptype === 'simplified' && simpObj) ? simpObj : (period.types ? period.types.standard || period.types[ptype] : null);
   if (!pData) return;
-  const rider = pData.riders ? pData.riders[targetRider] : null;
-  if (!rider) return;
+  const rider = (pData.riders && pData.riders[targetRider]) ? pData.riders[targetRider] : (period.types?.standard?.riders?.[targetRider] || { title: '질병수술비' });
 
   const modal = $('#clauseModal');
   const modalBadge = $('#clauseModalBadge');
@@ -8008,6 +8007,8 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
     subModeStr = targetRider === 'tier' ? '수술분류표' : '대상질병분류표';
   } else if (viewMode === 'basic_exclusion') {
     subModeStr = '보상제외 조항 (면책사유)';
+  } else if (viewMode === 'claim_tips') {
+    subModeStr = '실무 청구팁';
   } else {
     subModeStr = '약관 조항 본문';
   }
@@ -8068,6 +8069,172 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
 
   const { co, period, rider, targetRider, viewMode } = data;
   const normQ = (filterQ || '').trim().toLowerCase();
+
+  // ─────────────────────────────────────────────────────────────
+  // 0. 실무 청구팁 3대 섹션 모달 (#28834 #28876)
+  // ─────────────────────────────────────────────────────────────
+  if (viewMode === 'claim_tips') {
+    const searchWrap = $('#clauseModalSearchWrap');
+    if (searchWrap) searchWrap.style.display = 'none';
+
+    box.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0 10px;">
+        <!-- 3대 탭 스위처 -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;">
+          <button type="button" class="btn-claim-tip-tab active" data-tip-tab="tech" style="height:42px;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);font-size:12px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;transition:all .15s ease;">
+            🔬 신의료기술
+          </button>
+          <button type="button" class="btn-claim-tip-tab" data-tip-tab="defense" style="height:42px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;transition:all .15s ease;">
+            🛡️ 면책방어
+          </button>
+          <button type="button" class="btn-claim-tip-tab" data-tip-tab="precedent" style="height:42px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:12px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;transition:all .15s ease;">
+            ⚖️ 분쟁·판례
+          </button>
+        </div>
+
+        <!-- 1. 신의료기술 인정기준 섹션 -->
+        <div id="tip-sec-tech" class="tip-section" style="display:flex;flex-direction:column;gap:10px;">
+          <div style="border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.1);padding:2px 7px;border-radius:4px;">복지부 고시 인정</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">1. 체외충격파쇄석술 (ESWL)</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>대상 질환:</strong> 요로결석 (신장·요관·방광결석 N20~N23)<br>
+              • <strong>수술 인정 근거:</strong> 보건복지부 신의료기술 인정 고시(제2000-67호). 체내 결석을 충격파로 파쇄하여 체외 배출시키는 외과적 처치 인정.<br>
+              • <strong>청구 실무 팁:</strong> 질병수술비 정상 지급 대상. 종수술비는 회사별 1종 또는 2종 적용. 연간 1회 한도 여부 약관 대조 필수.
+            </div>
+          </div>
+
+          <div style="border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.1);padding:2px 7px;border-radius:4px;">초음파 집속 열치료</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">2. 자궁근종 하이푸 (HIFU)</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>대상 질환:</strong> 자궁근종(D25), 자궁선근증(N80.0)<br>
+              • <strong>수술 인정 근거:</strong> 복지부 신의료기술 인정. 절개 없는 고강도 집속초음파로 병변을 응고 괴사시키는 최신의료기법.<br>
+              • <strong>청구 실무 팁:</strong> 약관상 '신의료기술 수술 포함' 조항에 의거 질병수술비 및 N대 부인과 질병수술비(비관혈 50%) 동시 청구 가능.
+            </div>
+          </div>
+
+          <div style="border:1.5px solid rgba(49,130,246,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#2563eb;background:rgba(37,99,235,0.1);padding:2px 7px;border-radius:4px;">로봇 원격 절제술</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">3. 다빈치 로봇수술</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>대상 질환:</strong> 전립선암(C61), 갑상선암(C73), 직장·대장암 등<br>
+              • <strong>수술 인정 근거:</strong> 의사의 직접 조작 하에 생체에 절단·절제를 가하는 침습적 수술.<br>
+              • <strong>청구 실무 팁:</strong> 질병수술비 전액 지급 및 1-5종 수술특약상 5종 악성신생물 근치수술 1순위 전액 지급.
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 면책방어 실무가이드 섹션 -->
+        <div id="tip-sec-defense" class="tip-section" style="display:none;flex-direction:column;gap:10px;">
+          <div style="border:1.5px solid rgba(220,38,38,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.1);padding:2px 7px;border-radius:4px;">흡인 vs 절개 방어</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">1. 피지낭종·농양 흡인(면책) 방어</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>핵심 분쟁:</strong> 주사기 바늘로 뽑아내면 약관상 '흡인·천자'로 보상 제외 면책!<br>
+              • <strong>방어 전략:</strong> 메스로 피부를 째고 주머니(낭종)를 완전히 긁어내거나 껍질을 제거한 경우 '절개 및 배액술(Incision & Drainage)' 또는 '적출술(Excision)'에 해당함.<br>
+              • <strong>필수 서류:</strong> 수술확인서 또는 의무기록지상 <code>Incision and Excision (절개 및 적출)</code> 문구 기재 확보 필수.
+            </div>
+          </div>
+
+          <div style="border:1.5px solid rgba(220,38,38,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.1);padding:2px 7px;border-radius:4px;">미용성형 면책 방어</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">2. 여성형유방증 (여유증 N62)</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>핵심 분쟁:</strong> 보험사가 외모 개선 목적의 미용성형 시술이라며 수술비 지급 거절.<br>
+              • <strong>방어 전략:</strong> 초음파 검경상 사이먼(Simon) 등급 IIa 이상, 유선조직 증식 직경 2cm 이상 확인된 경우 질병 치료 목적 확정.<br>
+              • <strong>필수 서류:</strong> 유선절제 수술기록지 및 조직검사 결과지 첨부 시 질병수술비 및 1-5종(2024.12 개정 전 3종, 개정 후 2종) 전액 수령 가능.
+            </div>
+          </div>
+
+          <div style="border:1.5px solid rgba(220,38,38,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.1);padding:2px 7px;border-radius:4px;">정액담보 분쟁 방어</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">3. 백내장 수술비 정액 보장</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>핵심 분쟁:</strong> 실손의료비 부지급 분쟁과 수술비 정액담보를 혼동하여 수술비까지 거절하는 사례 빈발.<br>
+              • <strong>방어 전략:</strong> 실손의료비 입원 인정 여부와 관계없이, 수정체 유화술 및 인공수정체 삽입술은 질병수술비 및 1-5종(1종) 정액보험금 지급 대상임.<br>
+              • <strong>필수 서류:</strong> 세극등현미경 검사 결과지 및 백내장 진단서(H25, H26) 제출.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 분쟁·판례 요약 섹션 -->
+        <div id="tip-sec-precedent" class="tip-section" style="display:none;flex-direction:column;gap:10px;">
+          <div style="border:1.5px solid rgba(217,119,6,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#d97706;background:rgba(217,119,6,0.1);padding:2px 7px;border-radius:4px;">대법원 판례</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">대법원 2011다30147 판결</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>판결 요지:</strong> 약관의 뜻이 명백하지 아니한 경우에는 고객에게 유리하게 해석하여야 하며(작성자 불이익의 원칙), 전통적인 메스 절개뿐만 아니라 현대 의학의 발전에 따른 최신 침습적 시술기법도 약관상 '수술'의 범위에 포함된다고 판시함.<br>
+              • <strong>실무 원용:</strong> 새로운 의료기법이나 내시경 시술에 대해 보험사가 '수술의 정의 미충족'을 주장할 때 근거로 제시.
+            </div>
+          </div>
+
+          <div style="border:1.5px solid rgba(217,119,6,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#d97706;background:rgba(217,119,6,0.1);padding:2px 7px;border-radius:4px;">금감원 분조위</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">체외충격파쇄석술 수술 인정 결정례</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>결정 번호:</strong> 금융분쟁조정위원회 제2021-12호<br>
+              • <strong>결정 요지:</strong> 체외충격파쇄석술은 피부 절개가 수반되지 않으나, 결석을 파쇄하여 제거하는 실질적인 외과적 치료 효과를 가지므로 약관상 질병수술비 지급 대상에 해당함.<br>
+              • <strong>실무 원용:</strong> 요로결석 충격파 쇄석술에 대해 보험사가 단순 비침습 시술이라며 지급을 보류할 때 즉시 인용 가능.
+            </div>
+          </div>
+
+          <div style="border:1.5px solid rgba(217,119,6,0.25);border-radius:10px;padding:12px 14px;background:var(--surface);">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+              <span style="font-size:11px;font-weight:850;color:#d97706;background:rgba(217,119,6,0.1);padding:2px 7px;border-radius:4px;">금감원 분조위</span>
+              <span style="font-size:13.5px;font-weight:900;color:var(--text);">여성형유방증 유선절제 치료 목적 결정례</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.65;word-break:keep-all;">
+              • <strong>결정 요지:</strong> 유선조직 증식이 확인된 진성 여성형유방증의 경우, 남성의 유선 비대로 인한 통증과 기능장애를 치료하기 위한 것이므로 약관상 보상하지 않는 손해인 '미용성형'에 해당하지 아니함.<br>
+              • <strong>실무 원용:</strong> 여유증 수술비 및 실손 부지급 안내장 수령 시 분쟁조정신청 및 재청구 근거로 활용.
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // 팁 탭 스위처 이벤트 바인딩
+    box.querySelectorAll('.btn-claim-tip-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tip-tab');
+        box.querySelectorAll('.btn-claim-tip-tab').forEach(b => {
+          b.classList.remove('active');
+          b.style.border = '1px solid var(--border)';
+          b.style.background = 'var(--surface)';
+          b.style.color = 'var(--text-2)';
+          b.style.fontWeight = '850';
+        });
+        btn.classList.add('active');
+        btn.style.border = '1.5px solid var(--brand)';
+        btn.style.background = 'rgba(49,130,246,0.1)';
+        btn.style.color = 'var(--brand)';
+        btn.style.fontWeight = '900';
+
+        box.querySelectorAll('.tip-section').forEach(sec => sec.style.display = 'none');
+        const activeSec = box.querySelector(`#tip-sec-${targetTab}`);
+        if (activeSec) activeSec.style.display = 'flex';
+      });
+    });
+
+    return;
+  }
+
 
   // ─────────────────────────────────────────────────────────────
   // 1. N대 질병수술비 / 성인주요질환 분류표 (#27027 #27036 #27519)
@@ -8684,9 +8851,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   // 활성 탭에 따른 데이터 분기 (#28437 #28442)
   let activeList = (curTab === 'exclusion') ? exclusionArticles : inclusionArticles;
   let activeImg = (curTab === 'exclusion') ? exclusionImg : inclusionImg;
-  let activeImgTitle = (curTab === 'exclusion')
-    ? `🚫 [${coName}] ${riderTitle} [보상하지 않는 사항 (면책조항)] 공식 약관 원문`
-    : `📋 [${coName}] ${riderTitle} [보상하는 사항 (지급기준)] 공식 약관 원문`;
+  let activeImgTitle = (curTab === 'exclusion') ? `🚫 [${co.shortName || co.name}] ${riderTitle.split(' ')[0]} 보상제외 약관` : `📋 [${co.shortName || co.name}] ${riderTitle.split(' ')[0]} 보상기준 약관`;
 
   if (normQ) {
     activeList = activeList.filter(a => a.title.toLowerCase().includes(normQ) || a.text.toLowerCase().includes(normQ));
@@ -8697,10 +8862,10 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     <div style="margin-bottom:12px;">
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
         <button type="button" id="tabClauseInclusion" style="height:46px;border-radius:10px;border:${curTab === 'inclusion' ? '2.5px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
-          <span>📄 보상하는 사항 (지급기준)</span>
+          <span style="white-space:nowrap;">📄 보상하는 사항</span>
         </button>
         <button type="button" id="tabClauseExclusion" style="height:46px;border-radius:10px;border:${curTab === 'exclusion' ? '2.5px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
-          <span>🚫 보상하지 않는 사항 (면책조항)</span>
+          <span style="white-space:nowrap;">🚫 보상제외 사항</span>
         </button>
       </div>
 
@@ -8756,7 +8921,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   }
   if (btnPhoto) {
     btnPhoto.addEventListener('click', () => {
-      window.openRulesModal(activeImg, activeImgTitle, period.revSummary);
+      window.openRulesModal(activeImg, activeImgTitle, '');
     });
   }
 }

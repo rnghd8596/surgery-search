@@ -999,8 +999,8 @@ window.onerror = function(msg, url, line, col, err) {
       </div>
 
       <!-- 손보 / 생보 선택 세그먼트 버튼 & 검색창 -->
-      <div class="panel" style="margin-bottom:16px;">
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+      <div class="panel" style="margin-bottom:16px;width:100%;box-sizing:border-box;">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;width:100%;box-sizing:border-box;">
           <button type="button" class="btn-clause-cat active" data-cat="nonLife" id="btnCatNonLife" style="height:48px;border-radius:12px;font-size:14.5px;font-weight:900;cursor:pointer;border:2px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);transition:all .15s ease;">
             <span>🏢 손해보험</span>
           </button>
@@ -1009,9 +1009,12 @@ window.onerror = function(msg, url, line, col, err) {
           </button>
         </div>
 
-        <div class="searchbox-wrap" style="position:relative;width:100%;margin:0;padding:0;">
-          <input type="text" id="q-clause" class="searchbox" placeholder="보험사명 또는 수술명 검색" style="width:100% !important;max-width:100% !important;height:50px;font-size:14px;padding-left:16px;padding-right:40px;border-radius:12px;box-sizing:border-box;display:block;">
-          <button type="button" id="clearBtn-clause" class="searchbox-clear" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;font-size:18px;color:var(--text-3);cursor:pointer;">✕</button>
+        <div class="searchbox" style="width:100%;box-sizing:border-box;height:52px;border-radius:12px;">
+          <svg class="s-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
+          <input type="search" id="q-clause" placeholder="보험사명 또는 수술명 검색" autocomplete="off" enterkeyhint="search" spellcheck="false" style="flex:1;min-width:0;height:100%;border:0;background:transparent;outline:none;font-size:14.5px;font-weight:600;color:var(--text);">
+          <button type="button" id="clearBtn-clause" class="clear-btn" hidden aria-label="지우기">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
         </div>
       </div>
 
@@ -1065,8 +1068,6 @@ window.onerror = function(msg, url, line, col, err) {
       <button type="button" id="btnClauseModalFootBack" style="width:100%;height:46px;border-radius:10px;border:none;background:var(--brand);color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(49,130,246,0.3);">← 뒤로가기 (이전 화면으로)</button>
     </div>
   </div>
-  <!-- 어떤 상황에서도 원터치 나가기 가능한 플로팅 닫기 버튼 (#28404) -->
-  <button type="button" id="btnClauseModalFloatingClose" aria-label="닫기" style="position:fixed;right:18px;bottom:80px;z-index:99999;width:52px;height:52px;border-radius:50%;background:#ef4444;color:#fff;border:2.5px solid #fff;box-shadow:0 8px 24px rgba(239,68,68,0.55);font-size:22px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s ease;">✕</button>
 </div>
 
 <!-- 약관 원문 고해상도 확대 모달 (동시수술) -->
@@ -1102,9 +1103,9 @@ window.onerror = function(msg, url, line, col, err) {
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="assets/curated.js?v=20261113_1025"></script>
-<script src="assets/disputes.js?v=20261113_1025"></script>
-<script src="assets/clauses.js?v=20261113_1025"></script>
-<script src="app.js?v=20261113_1025"></script>
+<script src="assets/curated.js?v=20261113_1040"></script>
+<script src="assets/disputes.js?v=20261113_1040"></script>
+<script src="assets/clauses.js?v=20261113_1040"></script>
+<script src="app.js?v=20261113_1040"></script>
 </body>
 </html>

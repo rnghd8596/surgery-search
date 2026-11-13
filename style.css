@@ -2712,3 +2712,81 @@ html[data-theme="dark"] .rules-modal-body {
 #clauseModal, .clause-modal {
   z-index: 25000 !important;
 }
+
+
+/* ══════════════════ v10 PC/모바일 칼정렬 ══════════════════ */
+#pane-clauses {
+  max-width: 860px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+#pane-clauses .panel {
+  max-width: 860px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+#pane-clauses .searchbox {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+#clausesCompanyList {
+  max-width: 860px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.rules-modal-body {
+  flex: 1 1 auto !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  padding: 10px !important;
+  background: #0f172a !important;
+  text-align: center !important;
+}
+.rules-modal-body img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+
+/* ══════════════════ v11 PC/모바일 칼정렬 ══════════════════ */
+#pane-clauses {
+  max-width: 860px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+#pane-clauses .panel {
+  max-width: 860px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+#pane-clauses .searchbox {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+#clausesCompanyList {
+  max-width: 860px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.rules-modal-body {
+  flex: 1 1 auto !important;
+  max-height: 80vh !important;
+  overflow-y: auto !important;
+  padding: 10px !important;
+  background: #0f172a !important;
+  text-align: center !important;
+}
+.rules-modal-body img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
