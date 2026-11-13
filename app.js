@@ -9813,10 +9813,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           }
           const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
           const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
-          const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
-          const ndaiKey = numMatch ? numMatch[0] : '';
           const targetTable = (v && v.ndai_table && (v.ndai_table.pages ? v.ndai_table : (v.ndai_table[ndaiKey] || Object.values(v.ndai_table)[0])));
-          const cleanNdaiName = (selectedNdai ? `${selectedNdai} 질병분류표` : (tableData.title || rider.title || 'N대 질병분류표')).replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
 
           if (targetTable && targetTable.pages && targetTable.pages.length > 0) {
             const meta = { product: v.product, type: v.type, page: targetTable.pageStr };
@@ -9947,10 +9944,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         }
         const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
         const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
-        const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
-        const ndaiKey = numMatch ? numMatch[0] : '';
         const targetTable = (v && v.ndai_table && (v.ndai_table.pages ? v.ndai_table : (v.ndai_table[ndaiKey] || Object.values(v.ndai_table)[0])));
-        const cleanNdaiName = (selectedNdai ? `${selectedNdai} 질병분류표` : (tableData.title || rider.title || 'N대 질병분류표')).replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
 
         if (targetTable && targetTable.pages && targetTable.pages.length > 0) {
           const meta = { product: v.product, type: v.type, page: targetTable.pageStr };
