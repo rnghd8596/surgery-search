@@ -848,7 +848,7 @@ const state = {
   ndaiMode: 'search', // 'search' | 'tree'
   activeTreeRider: null,
   activeTreeSub: null,
-  clauseCat: 'nonLife',
+  clauseCat: 'all',
   clauseQ: ''
 };
 
