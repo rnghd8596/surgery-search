@@ -8061,9 +8061,9 @@ function renderClausesCompanyList(searchQuery = '') {
             ${esc(co.name)}
           </div>
         </div>
-        <button type="button" class="btn-co-toggle-arrow" style="font-size:12px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:8px;padding:5px 11px;cursor:pointer;flex-shrink:0;">
+        <span class="btn-co-toggle-arrow" style="font-size:12px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.25);border-radius:8px;padding:5px 11px;cursor:pointer;flex-shrink:0;user-select:none;">
           펼쳐보기 ▾
-        </button>
+        </span>
       </div>
 
       <!-- 시기별 아코디언 서랍 (검색 시에도 접힘 상태로 유지 #29458) -->
@@ -8374,9 +8374,11 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
 }
 
 function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
-  const cat = state.clauseCat || 'nonLife';
-  const list = window.POLICY_CLAUSES_DATA ? window.POLICY_CLAUSES_DATA[cat] : [];
-  const co = list.find(c => c.id === cid);
+  const allCos = [
+    ...((window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.nonLife) || []),
+    ...((window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.life) || [])
+  ];
+  const co = allCos.find(c => c.id === cid);
   if (!co) return;
   const period = co.periods.find(p => p.id === pid);
   if (!period) return;
@@ -8870,8 +8872,24 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     const btnPhoto = box.querySelector('#btnOpenRulesNdai');
     if (btnPhoto) {
       btnPhoto.addEventListener('click', () => {
-        const p1 = `assets/clause_imgs/${co.id}_ndai_p1.png`;
-        const p2 = `assets/clause_imgs/${co.id}_ndai_p2.png`;
+        let p1 = `assets/clause_imgs/${co.id}_ndai_p1.png`;
+        let p2 = `assets/clause_imgs/${co.id}_ndai_p2.png`;
+        if (co.id === 'hyundai') {
+          p1 = 'assets/clause_imgs/hyundai_ndai_p535.png';
+          p2 = 'assets/clause_imgs/hyundai_ndai_p536.png';
+        } else if (co.id === 'meritz') {
+          p1 = 'assets/clause_imgs/meritz_ndai_p918.png';
+          p2 = 'assets/clause_imgs/meritz_ndai_p919.png';
+        } else if (co.id === 'kbinsure') {
+          p1 = 'assets/clause_imgs/kbinsure_ndai_p627.png';
+          p2 = 'assets/clause_imgs/kbinsure_ndai_p628.png';
+        } else if (co.id === 'nhfire') {
+          p1 = 'assets/clause_imgs/nhfire_ndai_p394.png';
+          p2 = 'assets/clause_imgs/nhfire_ndai_p395.png';
+        } else if (co.id === 'heungkuklife') {
+          p1 = 'assets/clause_imgs/heungkuklife_ndai_p116.png';
+          p2 = 'assets/clause_imgs/heungkuklife_ndai_p117.png';
+        }
         const pages = [p1, p2];
         window.openRulesModal(p1, `🏢 [${co.name}] ${rider.title} 공식 질병분류표 원문`, period.revSummary, pages);
       });
@@ -9345,8 +9363,24 @@ function bindPhotoButtons(box, rider, co, period) {
   }
   if (btnSingle) {
     btnSingle.addEventListener('click', () => {
-      const pages = rider.pages && rider.pages.length > 1 ? rider.pages : null;
-      const src = rider.imgSrc || `assets/clause_imgs/${co.id}_tier_p1.png`;
+      let pages = rider.pages && rider.pages.length > 1 ? rider.pages : null;
+      let src = rider.imgSrc || `assets/clause_imgs/${co.id}_tier_p1.png`;
+      if (co.id === 'hyundai') {
+        src = 'assets/clause_imgs/hyundai_tier_p242.png';
+        pages = ['assets/clause_imgs/hyundai_tier_p242.png', 'assets/clause_imgs/hyundai_tier_p243.png'];
+      } else if (co.id === 'meritz') {
+        src = 'assets/clause_imgs/meritz_tier_p1043.png';
+        pages = ['assets/clause_imgs/meritz_tier_p1043.png', 'assets/clause_imgs/meritz_tier_p1044.png'];
+      } else if (co.id === 'kbinsure') {
+        src = 'assets/clause_imgs/kbinsure_tier_p710.png';
+        pages = ['assets/clause_imgs/kbinsure_tier_p710.png', 'assets/clause_imgs/kbinsure_tier_p711.png'];
+      } else if (co.id === 'nhfire') {
+        src = 'assets/clause_imgs/nhfire_tier_p413.png';
+        pages = ['assets/clause_imgs/nhfire_tier_p413.png', 'assets/clause_imgs/nhfire_tier_p414.png'];
+      } else if (co.id === 'heungkuklife') {
+        src = 'assets/clause_imgs/heungkuklife_tier_p81.png';
+        pages = ['assets/clause_imgs/heungkuklife_tier_p81.png', 'assets/clause_imgs/heungkuklife_tier_p82.png'];
+      }
       window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 원문`, period.revSummary, pages);
     });
   }

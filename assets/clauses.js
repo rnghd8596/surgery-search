@@ -197,10 +197,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/meritz_tier_p1043.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1043.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -435,10 +435,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/meritz_tier_p1043.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1043.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -605,10 +605,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/meritz_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/meritz_tier_p1043.png',
                   pages: [
-                    'assets/clause_imgs/meritz_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1043.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -788,10 +788,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/hyundai_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/hyundai_tier_p242.png',
                   pages: [
-                    'assets/clause_imgs/hyundai_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/hyundai_tier_p242.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -986,10 +986,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/hyundai_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/hyundai_tier_p242.png',
                   pages: [
-                    'assets/clause_imgs/hyundai_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/hyundai_tier_p242.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -1263,10 +1263,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/kbinsure_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/kbinsure_tier_p710.png',
                   pages: [
-                    'assets/clause_imgs/kbinsure_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/kbinsure_tier_p710.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -1654,7 +1654,7 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/dbinsure_tier_p1.png',
                   pages: [
                     'assets/clause_imgs/dbinsure_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -2042,7 +2042,7 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/samsungfire_tier_p1.png',
                   pages: [
                     'assets/clause_imgs/samsungfire_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -2426,7 +2426,7 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/lotte_tier_p1.png',
                   pages: [
                     'assets/clause_imgs/lotte_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -2588,7 +2588,7 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/heungkukfire_tier_p1.png',
                   pages: [
                     'assets/clause_imgs/heungkukfire_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -2750,7 +2750,7 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/hanwhafire_tier_p1.png',
                   pages: [
                     'assets/clause_imgs/hanwhafire_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -2911,7 +2911,7 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/hanafire_tier_p1.png',
                   pages: [
                     'assets/clause_imgs/hanafire_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -3069,10 +3069,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/nhfire_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/nhfire_tier_p413.png',
                   pages: [
-                    'assets/clause_imgs/nhfire_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/nhfire_tier_p413.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -3217,10 +3217,10 @@ window.POLICY_CLAUSES_DATA = {
                       ['80', '악성신생물(암) 근치수술', '5종', '관혈적 악성종양 근치절제 5종']
                     ]
                   },
-                  imgSrc: 'assets/clause_imgs/nhfire_tier_p1.png',
+                  imgSrc: 'assets/clause_imgs/nhfire_tier_p413.png',
                   pages: [
-                    'assets/clause_imgs/nhfire_tier_p1.png',
-                    'assets/clause_imgs/meritz_tier_p2.png',
+                    'assets/clause_imgs/nhfire_tier_p413.png',
+                    'assets/clause_imgs/meritz_tier_p1044.png',
                     'assets/clause_imgs/meritz_tier_p3.png'
                   ]
                 },
@@ -6565,7 +6565,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
+                                      "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p81.png'
                                   },
                                   "exclusion": {
                                       "title": "질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -6703,7 +6703,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
+                                  "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p81.png'
                               },
                               "ndai": {
                                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -6788,7 +6788,7 @@ window.POLICY_CLAUSES_DATA = {
                                               "text": "동일 질병으로 인한 반복 수술은 1회 지급을 원칙으로 하며 365일 경과 시 새로운 수술로 인정."
                                           }
                                       ],
-                                      "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
+                                      "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p81.png'
                                   },
                                   "exclusion": {
                                       "title": "간편 질병수술특약 보상제외 조항 (수술 제외 항목 및 면책사유)",
@@ -6926,7 +6926,7 @@ window.POLICY_CLAUSES_DATA = {
                                           ]
                                       ]
                                   },
-                                  "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p1.png'
+                                  "imgSrc": 'assets/clause_imgs/heungkuklife_tier_p81.png'
                               },
                               "ndai": {
                                   "title": "간편 주요 성인병/성인주요질환 수술특약",
