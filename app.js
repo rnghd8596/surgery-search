@@ -9593,31 +9593,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     activeList = activeList.filter(a => a.title.toLowerCase().includes(normQ) || a.text.toLowerCase().includes(normQ));
   }
 
-  box.innerHTML = `
-    <!-- 2대 탭 전환 버튼: [보상하는 사항] vs [보상제외 사항] (#28437 #28442) -->
-    <div style="margin-bottom:12px;">
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
-        <button type="button" id="tabClauseInclusion" style="height:46px;border-radius:10px;border:${curTab === 'inclusion' ? '2.5px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
-          <span style="white-space:nowrap;">📄 보상하는 사항</span>
-        </button>
-        <button type="button" id="tabClauseExclusion" style="height:46px;border-radius:10px;border:${curTab === 'exclusion' ? '2.5px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
-          <span style="white-space:nowrap;">🚫 보상제외 사항</span>
-        </button>
-      </div>
-
-      <!-- 선택된 탭의 실제약관 원문 고해상도 사진 보기 버튼 (#28455) -->
-      <button type="button" class="btn-co-clause" id="btnActiveClausePhoto" style="width:100%;height:46px;padding:0 14px;border:1.5px solid ${curTab === 'exclusion' ? '#fca5a5' : 'var(--border)'};border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-        <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
-          <span>${curTab === 'exclusion' ? '🚫' : '📋'}</span>
-          <span>${esc(co.name)} [${curTab === 'exclusion' ? '보상하지 않는 사항' : '보상하는 사항'}] 약관 원문</span>
-        </span>
-        <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;color:${curTab === 'exclusion' ? '#dc2626' : '#d97706'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.12)'};padding:3px 7px;border-radius:6px;">
-          약관 보기 🔍
-        </span>
-      </button>
-    </div>
-
-
   // 회사별·상품별 핵심 차별화 요소 하이라이터 (#32220 #32253)
   const formatClauseDiffHTML = (rawText, isExclusionTab) => {
     let t = esc(rawText);
@@ -9696,6 +9671,30 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       </div>
     </div>
   `;
+
+  box.innerHTML = `
+    <!-- 2대 탭 전환 버튼: [보상하는 사항] vs [보상제외 사항] (#28437 #28442) -->
+    <div style="margin-bottom:12px;">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;">
+        <button type="button" id="tabClauseInclusion" style="height:46px;border-radius:10px;border:${curTab === 'inclusion' ? '2.5px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
+          <span style="white-space:nowrap;">📄 보상하는 사항</span>
+        </button>
+        <button type="button" id="tabClauseExclusion" style="height:46px;border-radius:10px;border:${curTab === 'exclusion' ? '2.5px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
+          <span style="white-space:nowrap;">🚫 보상제외 사항</span>
+        </button>
+      </div>
+
+      <!-- 선택된 탭의 실제약관 원문 고해상도 사진 보기 버튼 (#28455) -->
+      <button type="button" class="btn-co-clause" id="btnActiveClausePhoto" style="width:100%;height:46px;padding:0 14px;border:1.5px solid ${curTab === 'exclusion' ? '#fca5a5' : 'var(--border)'};border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+        <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
+          <span>${curTab === 'exclusion' ? '🚫' : '📋'}</span>
+          <span>${esc(co.name)} [${curTab === 'exclusion' ? '보상하지 않는 사항' : '보상하는 사항'}] 약관 원문</span>
+        </span>
+        <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;color:${curTab === 'exclusion' ? '#dc2626' : '#d97706'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'rgba(217,119,6,0.12)'};padding:3px 7px;border-radius:6px;">
+          약관 보기 🔍
+        </span>
+      </button>
+    </div>
 
     <!-- 상단 실무 보상 분기점 카드 (#32220 #32253) -->
     ${diffSummaryHTML}
