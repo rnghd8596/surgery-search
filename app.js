@@ -7549,42 +7549,43 @@ function formatNoticeSummaryHTML(text) {
 }
 
 function bindClausesTab() {
+  const btnAll = $('#btnCatAll');
   const btnNonLife = $('#btnCatNonLife');
   const btnLife = $('#btnCatLife');
   const qInput = $('#q-clause');
   const clearBtn = $('#clearBtn-clause');
 
-  if (btnNonLife && btnLife) {
-    btnNonLife.addEventListener('click', () => {
-      state.clauseCat = 'nonLife';
-      btnNonLife.classList.add('active');
-      btnNonLife.style.border = '2px solid var(--brand)';
-      btnNonLife.style.background = 'rgba(49,130,246,0.1)';
-      btnNonLife.style.color = 'var(--brand)';
+  if (!state.clauseCat) state.clauseCat = 'all';
 
-      btnLife.classList.remove('active');
-      btnLife.style.border = '1.5px solid var(--border)';
-      btnLife.style.background = 'var(--surface)';
-      btnLife.style.color = 'var(--text-2)';
-
-      renderClausesCompanyList(state.clauseQ || '');
-    });
-
-    btnLife.addEventListener('click', () => {
-      state.clauseCat = 'life';
-      btnLife.classList.add('active');
-      btnLife.style.border = '2px solid var(--brand)';
-      btnLife.style.background = 'rgba(49,130,246,0.1)';
-      btnLife.style.color = 'var(--brand)';
-
-      btnNonLife.classList.remove('active');
-      btnNonLife.style.border = '1.5px solid var(--border)';
-      btnNonLife.style.background = 'var(--surface)';
-      btnNonLife.style.color = 'var(--text-2)';
-
+  if (btnAll) {
+    btnAll.addEventListener('click', () => {
+      state.clauseCat = 'all';
       renderClausesCompanyList(state.clauseQ || '');
     });
   }
+  if (btnNonLife) {
+    btnNonLife.addEventListener('click', () => {
+      state.clauseCat = 'nonLife';
+      renderClausesCompanyList(state.clauseQ || '');
+    });
+  }
+  if (btnLife) {
+    btnLife.addEventListener('click', () => {
+      state.clauseCat = 'life';
+      renderClausesCompanyList(state.clauseQ || '');
+    });
+  }
+
+  // 원터치 예시 칩 터치 시 검색 실행 (#30326)
+  $$('.btn-clause-example-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const ex = chip.getAttribute('data-example');
+      if (qInput && ex) {
+        qInput.value = ex;
+        qInput.dispatchEvent(new Event('input'));
+      }
+    });
+  });
 
   if (qInput) {
     qInput.addEventListener('input', () => {
@@ -7746,48 +7747,30 @@ function renderClausesCompanyList(searchQuery = '') {
   const rawQ = (searchQuery || '').trim();
   const normQ = norm(rawQ);
 
+  const btnAll = $('#btnCatAll');
   const btnNonLife = $('#btnCatNonLife');
   const btnLife = $('#btnCatLife');
 
-  // 상단 손보·생보 동시 검색 색상 시각화 (#29473 #30138)
-  if (btnNonLife && btnLife) {
-    if (normQ) {
-      // 손보·생보 통합 전체 검색 중: 손보와 생보 둘 다 활성화(파란색 액티브) 상태로 완벽 일치!
-      btnNonLife.classList.add('active');
-      btnNonLife.style.border = '2px solid var(--brand)';
-      btnNonLife.style.background = 'rgba(49,130,246,0.1)';
-      btnNonLife.style.color = 'var(--brand)';
-      btnNonLife.style.fontWeight = '900';
-
-      btnLife.classList.add('active');
-      btnLife.style.border = '2px solid var(--brand)';
-      btnLife.style.background = 'rgba(49,130,246,0.1)';
-      btnLife.style.color = 'var(--brand)';
-      btnLife.style.fontWeight = '900';
-    } else {
-      const cat = state.clauseCat || 'nonLife';
-      if (cat === 'nonLife') {
-        btnNonLife.style.border = '2px solid var(--brand)';
-        btnNonLife.style.background = 'rgba(49,130,246,0.1)';
-        btnNonLife.style.color = 'var(--brand)';
-        btnNonLife.style.fontWeight = '900';
-
-        btnLife.style.border = '1px solid var(--border)';
-        btnLife.style.background = 'var(--surface)';
-        btnLife.style.color = '#334155';
-        btnLife.style.fontWeight = '750';
+  function updateClauseCatButtons(activeAll, activeNonLife, activeLife) {
+    const setBtn = (btn, isActive) => {
+      if (!btn) return;
+      if (isActive) {
+        btn.classList.add('active');
+        btn.style.border = '2px solid var(--brand)';
+        btn.style.background = 'rgba(49,130,246,0.1)';
+        btn.style.color = 'var(--brand)';
+        btn.style.fontWeight = '900';
       } else {
-        btnLife.style.border = '2px solid #7c3aed';
-        btnLife.style.background = 'rgba(124,58,237,0.1)';
-        btnLife.style.color = '#7c3aed';
-        btnLife.style.fontWeight = '900';
-
-        btnNonLife.style.border = '1px solid var(--border)';
-        btnNonLife.style.background = 'var(--surface)';
-        btnNonLife.style.color = '#334155';
-        btnNonLife.style.fontWeight = '750';
+        btn.classList.remove('active');
+        btn.style.border = '1.5px solid var(--border)';
+        btn.style.background = 'var(--surface)';
+        btn.style.color = 'var(--text-2)';
+        btn.style.fontWeight = '750';
       }
-    }
+    };
+    setBtn(btnAll, activeAll);
+    setBtn(btnNonLife, activeNonLife);
+    setBtn(btnLife, activeLife);
   }
 
   const nonLifeList = (window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.nonLife) ? window.POLICY_CLAUSES_DATA.nonLife : [];
@@ -7974,9 +7957,33 @@ function renderClausesCompanyList(searchQuery = '') {
         return false;
       });
     }
+
+    // 검색 결과 목록 기반 지능형 버튼 불빛 연동 (#30314)
+    // 캐손 -> 손보만 불빛, 미생 -> 생보만 불빛, 캐손 미생 -> 둘 다 불빛!
+    const hasNonLife = list.some(c => c._cat === 'nonLife');
+    const hasLife = list.some(c => c._cat === 'life');
+
+    if (hasNonLife && hasLife) {
+      updateClauseCatButtons(true, true, true);
+    } else if (hasNonLife) {
+      updateClauseCatButtons(false, true, false);
+    } else if (hasLife) {
+      updateClauseCatButtons(false, false, true);
+    } else {
+      updateClauseCatButtons(true, false, false);
+    }
   } else {
-    const cat = state.clauseCat || 'nonLife';
-    list = cat === 'nonLife' ? nonLifeList : lifeList;
+    const cat = state.clauseCat || 'all';
+    if (cat === 'all') {
+      list = allCompanies;
+      updateClauseCatButtons(true, false, false);
+    } else if (cat === 'nonLife') {
+      list = nonLifeList;
+      updateClauseCatButtons(false, true, false);
+    } else {
+      list = lifeList;
+      updateClauseCatButtons(false, false, true);
+    }
   }
 
   // 0건일 때 IMG_4946 스타일 '혹시 찾으시는 게...' 원터치 추천 칩 표출 (#29473)
@@ -9390,29 +9397,29 @@ window.__DEBUG = { state, search, runQuickSearch };
 })();
 const COMPANY_NDAI_PERIOD_MAP = {
   meritz: {
-    'meritz-p0': ['112대', '120대', '131대'],
-    'meritz-p1': ['112대', '82대', '80대'],
-    'meritz-p2': ['64대', '62대', '30대', '18대', '7대']
+    'meritz_2024_12': ['112대', '120대', '131대'],
+    'meritz_2020_04': ['112대', '82대', '80대'],
+    'meritz_2020_03_prior': ['64대', '62대', '30대', '18대', '7대']
   },
   hyundai: {
-    'hyundai-p0': ['124대', '120대', '119대'],
-    'hyundai-p1': ['123대', '120대', '71대'],
-    'hyundai-p2': ['71대', '16대', '특정5대']
+    'hyundai_2024_01': ['124대', '120대', '119대'],
+    'hyundai_2018_06': ['123대', '120대', '71대'],
+    'hyundai_2018_prior': ['71대', '16대', '특정5대']
   },
   dbinsure: {
-    'db-p0': ['120대', '119대'],
-    'db-p1': ['116대', '106대', '77대'],
-    'db-p2': ['21대', '18대', '16대']
+    'db_2026_05': ['120대', '119대'],
+    'db_2020_07': ['116대', '106대', '77대'],
+    'db_2020_prior': ['21대', '18대', '16대']
   },
   kbinsure: {
-    'kb-p0': ['120대', '116대', '112대'],
-    'kb-p1': ['112대', '101대'],
-    'kb-p2': ['21대']
+    'kb_2024_01': ['120대', '116대', '112대'],
+    'kb_2020_10': ['112대', '101대'],
+    'kb_2020_prior': ['21대']
   },
   samsungfire: {
-    'samsung-p0': ['116대', '114대', '111대'],
-    'samsung-p1': ['111대', '105대', '68대'],
-    'samsung-p2': ['21대', '15대']
+    'samsung_2024_01': ['116대', '114대', '111대'],
+    'samsung_2020_04': ['111대', '105대', '68대'],
+    'samsung_2020_prior': ['21대', '15대']
   },
   hanwhafire: {
     'hanwha-p0': ['124대', '116대'],

@@ -243,6 +243,7 @@ window.onerror = function(msg, url, line, col, err) {
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
+        <div style="font-size:11px;color:var(--text-3);font-weight:700;margin-top:4px;margin-bottom:8px;">💡 '멜츠·캐손·디손·미생' 등 회사 약어로도 편하게 검색됩니다.</div>
       </div>
 
       <div id="results-quick" class="results" aria-live="polite"></div>
@@ -265,6 +266,7 @@ window.onerror = function(msg, url, line, col, err) {
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
+        <div style="font-size:11px;color:var(--text-3);font-weight:700;margin-top:4px;margin-bottom:8px;">💡 '멜츠·캐손·디손·미생' 등 회사 약어로도 편하게 검색됩니다.</div>
       </div>
 
       <!-- 1. 가입시기 아코디언 바 (기본 접힘, 클릭 시 세부 년·월 전개) -->
@@ -415,6 +417,7 @@ window.onerror = function(msg, url, line, col, err) {
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
+        <div style="font-size:11px;color:var(--text-3);font-weight:700;margin-top:4px;margin-bottom:8px;">💡 '멜츠·캐손·디손·미생' 등 회사 약어로도 편하게 검색됩니다.</div>
       </div>
 
       <!-- 1. N대 가입시기 아코디언 바 (기본 접힘, 클릭 시 전개) -->
@@ -998,23 +1001,38 @@ window.onerror = function(msg, url, line, col, err) {
         <p class="hero-sub" style="font-weight:700;color:var(--text-2);">손보·생보사별 시기별 약관 원문 및 별표 분류표 즉시 조회</p>
       </div>
 
-      <!-- 손보 / 생보 선택 세그먼트 버튼 & 검색창 -->
+      <!-- 전체 / 손보 / 생보 3분할 세그먼트 버튼 & 검색창 (#30314 #30326) -->
       <div class="panel" style="margin-bottom:16px;width:100%;box-sizing:border-box;">
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;width:100%;box-sizing:border-box;">
-          <button type="button" class="btn-clause-cat active" data-cat="nonLife" id="btnCatNonLife" style="height:48px;border-radius:12px;font-size:14.5px;font-weight:900;cursor:pointer;border:2px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);transition:all .15s ease;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;width:100%;box-sizing:border-box;">
+          <button type="button" class="btn-clause-cat active" data-cat="all" id="btnCatAll" style="height:44px;border-radius:10px;font-size:13.5px;font-weight:900;cursor:pointer;border:2px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);transition:all .15s ease;">
+            <span>🌐 전체</span>
+          </button>
+          <button type="button" class="btn-clause-cat" data-cat="nonLife" id="btnCatNonLife" style="height:44px;border-radius:10px;font-size:13.5px;font-weight:900;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);transition:all .15s ease;">
             <span>🏢 손해보험</span>
           </button>
-          <button type="button" class="btn-clause-cat" data-cat="life" id="btnCatLife" style="height:48px;border-radius:12px;font-size:14.5px;font-weight:900;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);transition:all .15s ease;">
+          <button type="button" class="btn-clause-cat" data-cat="life" id="btnCatLife" style="height:44px;border-radius:10px;font-size:13.5px;font-weight:900;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text-2);transition:all .15s ease;">
             <span>🏛️ 생명보험</span>
           </button>
         </div>
 
         <div class="searchbox" style="width:100%;box-sizing:border-box;height:52px;border-radius:12px;">
           <svg class="s-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input type="search" id="q-clause" placeholder="보험사명 또는 수술명 검색" autocomplete="off" enterkeyhint="search" spellcheck="false" style="flex:1;min-width:0;height:100%;border:0;background:transparent;outline:none;font-size:14.5px;font-weight:600;color:var(--text);">
+          <input type="search" id="q-clause" placeholder="보험사명 · N대(숫자) · 가입연도 검색" autocomplete="off" enterkeyhint="search" spellcheck="false" style="flex:1;min-width:0;height:100%;border:0;background:transparent;outline:none;font-size:14px;font-weight:600;color:var(--text);">
           <button type="button" id="clearBtn-clause" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
+        </div>
+
+        <!-- 예시 칩 및 약어 검색 안내 (#30326 #30336) -->
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+          <span style="font-size:11.5px;font-weight:800;color:var(--text-3);">💡 예시:</span>
+          <button type="button" class="btn-clause-example-chip" data-example="멜츠" style="padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:11.5px;font-weight:800;cursor:pointer;">멜츠</button>
+          <button type="button" class="btn-clause-example-chip" data-example="116대" style="padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:11.5px;font-weight:800;cursor:pointer;">116대</button>
+          <button type="button" class="btn-clause-example-chip" data-example="캐손 미생" style="padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:11.5px;font-weight:800;cursor:pointer;">캐손 미생</button>
+          <button type="button" class="btn-clause-example-chip" data-example="21년 현대" style="padding:4px 9px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:11.5px;font-weight:800;cursor:pointer;">21년 현대</button>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:var(--text-3);font-weight:700;">
+          💡 '멜츠·캐손·디손·미생' 등 회사 약어로도 편하게 검색됩니다.
         </div>
       </div>
 
@@ -1105,7 +1123,7 @@ window.onerror = function(msg, url, line, col, err) {
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="assets/curated.js?v=20261113_1110"></script>
 <script src="assets/disputes.js?v=20261113_1110"></script>
-<script src="assets/clauses.js?v=1794536411_1110"></script>
-<script src="app.js?v=1794537519_1110"></script>
+<script src="assets/clauses.js?v=1794538421_1110"></script>
+<script src="app.js?v=1794538421_1110"></script>
 </body>
 </html>

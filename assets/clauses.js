@@ -1020,6 +1020,118 @@ window.POLICY_CLAUSES_DATA = {
           }
           }
         }
+      ,
+        {
+          id: 'hyundai_2018_prior',
+          periodStr: '2018년 5월 이전 (구 1-5종 황금기)',
+          hasRevision: true,
+          revBadge: '체외충격파 2종, 대장용종 2종, 71대/16대 황금기',
+          revSummary: '2018년 5월 이전 계약은 체외충격파쇄석술이 2종으로 지급되고 대장용종 2종, 71대/16대 질병수술비가 전액 보장되던 황금기 계약입니다.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `현대해상 구 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/hyundai_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '구 1~5종 수술특약 (체외충격파 2종 황금기)',
+                  summary: '체외충격파 2종, 대장용종 2종, 담석 3종, 암수술 5종 100% 전액 보장.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/hyundai_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/hyundai_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '71대/16대/특정5대 질병수술비 특약',
+                  summary: '71대/16대 질병 수술 시 정액 차등 지급.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/hyundai_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/hyundai_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/hyundai_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/hyundai_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '71대/16대/특정5대 질병수술비 특약',
+                  summary: '71대/16대 질병 수술 시 정액 차등 지급.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/hyundai_ndai_table.png'
+                }
+              }
+            }
+          }
+        }
       ]
     },
     {
@@ -1183,6 +1295,229 @@ window.POLICY_CLAUSES_DATA = {
               }
             }
           }
+          }
+        }
+      ,
+        {
+          id: 'kb_2020_10',
+          periodStr: '2020년 10월 ~ 2023년 12월',
+          hasRevision: true,
+          revBadge: '112대/101대 N대 질병수술비 · 체외충격파 1종',
+          revSummary: 'KB 닥터플러스 건강보험 112대·101대 N대 질병수술비 특약 적용기입니다. 체외충격파 1종 하향, 담석증 3종, 대장용종 1종이 정상 보장됩니다.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `KB손해보험 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '1~5종 수술특약 (닥터플러스)',
+                  summary: '체외충격파 1종 하향. 대장용종 1종, 담석 3종, 암수술 5종 유지.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '112대/101대 N대 질병수술비 특약',
+                  summary: '112대/101대 질병 분류표에 따른 정액 차등 지급. 15대 중대질병 및 49대 다빈도 생활질환 보장.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '112대/101대 N대 질병수술비 특약',
+                  summary: '112대/101대 질병 분류표에 따른 정액 차등 지급. 15대 중대질병 및 49대 다빈도 생활질환 보장.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
+                }
+              }
+            }
+          }
+        },
+        {
+          id: 'kb_2020_prior',
+          periodStr: '2020년 9월 이전 (구 1-5종 황금기)',
+          hasRevision: true,
+          revBadge: '대장용종 2종, 담석 3종, 21대 질병수술비 황금기',
+          revSummary: '2020년 9월 이전 계약은 대장용종 절제술이 2종으로 전액 지급되고, 21대 질병수술비 특약이 탑재된 황금기 계약입니다.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `KB손해보험 구 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '구 1~5종 수술특약 (황금기)',
+                  summary: '대장용종 2종, 담석 3종, 암수술 5종 100% 전액 보장 황금기.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '21대 질병수술비 특약',
+                  summary: '21대 주요 성인질환 수술 시 정액 지급.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/kbinsure_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/kbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '21대 질병수술비 특약',
+                  summary: '21대 주요 성인질환 수술 시 정액 지급.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/kbinsure_ndai_table.png'
+                }
+              }
+            }
           }
         }
       ]
@@ -1350,6 +1685,229 @@ window.POLICY_CLAUSES_DATA = {
           }
           }
         }
+      ,
+        {
+          id: 'db_2020_07',
+          periodStr: '2020년 7월 ~ 2024년 3월',
+          hasRevision: true,
+          revBadge: '116대/106대/77대 질병수술비 특약',
+          revSummary: '프로미라이프 참좋은 훼밀리플러스 116대/106대/77대 질병수술비 특약 적용기입니다. 20대 질병, 5대 질병, 60~69대 생활질환 정액 차등 지급.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `DB손해보험 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '1~5종 수술특약 (참좋은훼밀리플러스)',
+                  summary: '체외충격파 1종 하향, 대장용종 1종, 담석 3종, 암수술 5종 유지.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '116대/106대/77대 N대 질병수술비 특약',
+                  summary: '116대/106대/77대 질병 분류표에 따른 정액 차등 지급.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '116대/106대/77대 N대 질병수술비 특약',
+                  summary: '116대/106대/77대 질병 분류표에 따른 정액 차등 지급.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
+                }
+              }
+            }
+          }
+        },
+        {
+          id: 'db_2020_prior',
+          periodStr: '2020년 6월 이전 (구 1-5종 황금기)',
+          hasRevision: true,
+          revBadge: '대장용종 2종, 담석 3종, 18대/21대 질병수술비 황금기',
+          revSummary: '2020년 6월 이전 계약은 대장용종 절제술이 2종으로 지급되고, 18대/21대 질병수술비가 적용되던 황금기 계약입니다.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `DB손해보험 구 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '구 1~5종 수술특약 (황금기)',
+                  summary: '대장용종 2종, 담석 3종, 암수술 5종 100% 전액 보장 황금기.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '18대/21대/16대 질병수술비 특약',
+                  summary: '18대/21대 주요 성인질환 수술 시 정액 지급.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/dbinsure_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/dbinsure_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '18대/21대/16대 질병수술비 특약',
+                  summary: '18대/21대 주요 성인질환 수술 시 정액 지급.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/dbinsure_ndai_table.png'
+                }
+              }
+            }
+          }
+        }
       ]
     },
     {
@@ -1513,6 +2071,229 @@ window.POLICY_CLAUSES_DATA = {
               }
             }
           }
+          }
+        }
+      ,
+        {
+          id: 'samsung_2020_04',
+          periodStr: '2020년 4월 ~ 2023년 12월',
+          hasRevision: true,
+          revBadge: '111대/105대/68대 질병수술비 특약',
+          revSummary: '삼성화재 마이헬스 파트너 111대/105대/68대 질병수술비 특약 적용기입니다. 5대 주요기관 관혈/비관혈 및 주요질병 차등 보장.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `삼성화재 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '1~5종 수술특약 (마이헬스 파트너)',
+                  summary: '체외충격파 1종 하향, 대장용종 1종, 담석 3종, 암수술 5종 유지.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '111대/105대/68대 N대 질병수술비 특약',
+                  summary: '111대/105대/68대 질병 분류표에 따른 정액 차등 지급.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '111대/105대/68대 N대 질병수술비 특약',
+                  summary: '111대/105대/68대 질병 분류표에 따른 정액 차등 지급.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
+                }
+              }
+            }
+          }
+        },
+        {
+          id: 'samsung_2020_prior',
+          periodStr: '2020년 3월 이전 (구 1-5종 황금기)',
+          hasRevision: true,
+          revBadge: '대장용종 2종, 담석 3종, 21대/15대 질병수술비 황금기',
+          revSummary: '2020년 3월 이전 계약은 대장용종 2종 및 21대 생활질병·15대 주요질병 수술비가 탑재된 황금기 계약입니다.',
+          types: {
+            standard: {
+              name: '일반 (표준체 종합보험)',
+              riders: {
+                basic: {
+                  title: '질병수술비 (보통약관/특별약관)',
+                  summary: '질병 치료 직접 목적 수술 시 회당 정액 지급. 단순 천자·흡인 제외.',
+                  inclusion: {
+                    title: '질병수술비 지급기준 및 정의',
+                    quote: `삼성화재 구 보통약관: 질병 치료 직접 목적 수술 시 회당 정액 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '피보험자가 질병의 치료를 직접 목적으로 수술을 받은 경우 매 수술시마다 정액 지급합니다.' },
+                      { title: '제2조(수술의 정의)', text: '기구를 사용하여 생체에 절단, 절제 등의 조작을 가하는 것을 말합니다.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png'
+                  },
+                  exclusion: {
+                    title: '보상제외 조항 (수술 제외 항목 및 면책사유)',
+                    quote: `제4조(보험금을 지급하지 않는 사유)\n1. 흡인(Aspiration), 천자(Puncture), 신경차단술(Nerve Block), 단순 주사치료\n2. 피보험자, 보험수익자, 계약자의 고의 또는 자해로 인한 수술\n3. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n4. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n5. 단순 코골음, 포경수술, 비뇨기계 기능장애 및 피임·불임 복원 시술`,
+                    clauses: [
+                      { title: '1. 처치·시술 면책', text: '흡인·천자·신경차단술·단순 주사치료 등 제외.' },
+                      { title: '2. 고의사고 면책', text: '계약자·피보험자의 고의 및 자해 사고 면책.' },
+                      { title: '3. 임신·출산 면책', text: '정상분만·인공유산 면책 (제왕절개 1종 인정).' },
+                      { title: '4. 미용·성형 면책', text: '미용성형·시력교정·주근깨·사마귀 등 면책.' },
+                      { title: '5. 비뇨·기능장애 면책', text: '단순 포경·피임·불임 복원 시술 등 면책.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png'
+                  }
+                },
+                tier: {
+                  title: '구 1~5종 수술특약 (황금기)',
+                  summary: '대장용종 2종, 담석 3종, 암수술 5종 100% 전액 보장 황금기.',
+                  clauseBody: {
+                    title: '1~5종 수술분류표 적용 조항',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관 별표 수술분류표에 정한 1~5종 수술을 받은 경우 종별 가입금액 지급.\n제2조(지급 기준) 수술 1회당 지급하며, 동일 질병으로 2회 이상 수술 시 1회만 지급합니다.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: '수술분류표에 정한 1~5종 수술 시 가입금액 지급.' },
+                      { title: '제2조(동일질병 1회)', text: '동일 질병으로 동시 또는 연속 수술 시 1회의 해당 종수술비만 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png'
+                  },
+                  tableBody: {
+                    title: '별표 [1~5종 수술분류표 전문]',
+                    headers: ['수술분류 부위', '대상 주요 수술명', '종별 (1~5종)'],
+                    rows: [
+                      { group: '피부, 유방', proc: '피부이식수술(25㎠ 이상)', tier: '3종' },
+                      { group: '근골격계', proc: '척추골, 골반골 관혈수술', tier: '3종' },
+                      { group: '호흡기계', proc: '폐장 이식수술', tier: '5종' },
+                      { group: '순환기계', proc: '개흉 관동맥 우회술, 대동맥류 관혈수술', tier: '5종' },
+                      { group: '소화기계', proc: '간장, 췌장 관혈수술', tier: '4종' },
+                      { group: '악성신생물', proc: '관혈적 악성신생물(암) 근치수술', tier: '5종' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '21대/15대 질병수술비 특약',
+                  summary: '21대 생활질병 및 15대 주요질병 수술 시 정액 지급.',
+                  clauseBody: {
+                    title: 'N대 질병수술비 약관 본문',
+                    quote: `제1조(보험금의 지급사유) 보험기간 중 약관에 정한 N대 질병으로 진단확정되고 그 치료를 직접 목적으로 수술을 받은 경우 정액 차등 지급.`,
+                    clauses: [
+                      { title: '제1조(지급사유)', text: 'N대 질병으로 진단확정 후 수술 시 군별 가입금액 지급.' }
+                    ],
+                    imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
+                  },
+                  tableBody: {
+                    title: '별표 [N대 질병분류표 전문]',
+                    headers: ['질병군 분류', '대상 주요 질병명', '포함 KCD 코드'],
+                    rows: [
+                      { group: '특정 질병군', proc: '심뇌혈관질환, 주요장기질환', tier: 'I20~I25, I60~I69' },
+                      { group: '생활 질환군', proc: '관절염, 백내장, 녹내장, 담석증', tier: 'M15~M19, H25, K80' }
+                    ]
+                  },
+                  imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
+                }
+              }
+            },
+            simplified: {
+              name: '간편 (유병자 건강보험)',
+              riders: {
+                basic: {
+                  title: '간편 질병수술비 (특별약관)',
+                  summary: '유병자 간편심사 가입 질병수술비 회당 지급.',
+                  inclusion: { title: '약관 본문', quote: '질병 수술 시 회당 지급.', clauses: [{ title: '지급사유', text: '회당 지급' }], imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png' },
+                  exclusion: { title: '면책사유', quote: '흡인·천자·신경차단술 면책.', clauses: [{ title: '면책사유', text: '단순 처치 제외' }], imgSrc: 'assets/clause_imgs/samsungfire_basic_inclusion.png' }
+                },
+                tier: {
+                  title: '간편 1~5종 수술특약',
+                  summary: '유병자 간편심사 1~5종 종수술비 지급.',
+                  clauseBody: { title: '약관 본문', quote: '1~5종 수술분류표 종별 가입금액 지급.', clauses: [{ title: '지급사유', text: '종별 지급' }], imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png' },
+                  tableBody: { title: '분류표', headers: ['부위', '수술명', '종별'], rows: [{ group: '전신', proc: '종별 수술', tier: '1~5종' }] },
+                  imgSrc: 'assets/clause_imgs/samsungfire_tier_inclusion.png'
+                },
+                ndai: {
+                  title: '21대/15대 질병수술비 특약',
+                  summary: '21대 생활질병 및 15대 주요질병 수술 시 정액 지급.',
+                  clauseBody: { title: '약관 본문', quote: 'N대 질병수술 시 정액 지급.', clauses: [{ title: '지급사유', text: 'N대 질병 수술 정액 지급' }], imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png' },
+                  tableBody: { title: '분류표', headers: ['군', '질병명', 'KCD'], rows: [{ group: '특정', proc: 'N대 질병', tier: '해당코드' }] },
+                  imgSrc: 'assets/clause_imgs/samsungfire_ndai_table.png'
+                }
+              }
+            }
           }
         }
       ]
