@@ -7746,21 +7746,23 @@ function renderClausesCompanyList(searchQuery = '') {
   const rawQ = (searchQuery || '').trim();
   const normQ = norm(rawQ);
 
-  const btnNonLife = $('#btnClauseNonLife');
-  const btnLife = $('#btnClauseLife');
+  const btnNonLife = $('#btnCatNonLife');
+  const btnLife = $('#btnCatLife');
 
-  // 상단 손보·생보 동시 검색 색상 시각화 (#29473)
+  // 상단 손보·생보 동시 검색 색상 시각화 (#29473 #30138)
   if (btnNonLife && btnLife) {
     if (normQ) {
-      // 검색 중: 손보(파랑) + 생보(보라) 둘 다 활성화 상태임을 선명하게 표현!
+      // 손보·생보 통합 전체 검색 중: 손보와 생보 둘 다 활성화(파란색 액티브) 상태로 완벽 일치!
+      btnNonLife.classList.add('active');
       btnNonLife.style.border = '2px solid var(--brand)';
-      btnNonLife.style.background = 'rgba(49,130,246,0.12)';
+      btnNonLife.style.background = 'rgba(49,130,246,0.1)';
       btnNonLife.style.color = 'var(--brand)';
       btnNonLife.style.fontWeight = '900';
 
-      btnLife.style.border = '2px solid #7c3aed';
-      btnLife.style.background = 'rgba(124,58,237,0.12)';
-      btnLife.style.color = '#7c3aed';
+      btnLife.classList.add('active');
+      btnLife.style.border = '2px solid var(--brand)';
+      btnLife.style.background = 'rgba(49,130,246,0.1)';
+      btnLife.style.color = 'var(--brand)';
       btnLife.style.fontWeight = '900';
     } else {
       const cat = state.clauseCat || 'nonLife';
@@ -8310,17 +8312,18 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
   if (riders.ndai) {
     const isHigh = isMatchNdai;
 
-    // 타이틀에서 N대 옵션 파싱 (예: "112대/120대" -> ['112대', '120대'])
-    const titleMatch = riders.ndai.title.match(/(\d+대)/g);
-    let nOptions = titleMatch && titleMatch.length > 1 ? Array.from(new Set(titleMatch)) : [];
+    // 20개 전 보험사 및 가입시기별 판매 N대 특약 매핑 (#29996 #30017 #30033)
+    let nOptions = (COMPANY_NDAI_PERIOD_MAP[cid] && COMPANY_NDAI_PERIOD_MAP[cid][pid])
+      ? [...COMPANY_NDAI_PERIOD_MAP[cid][pid]]
+      : [];
 
-    // 만약 단일이면 회사별 판매 N대 대조
     if (nOptions.length === 0) {
-      if (cid.includes('meritz')) nOptions = ['112대', '120대'];
-      else if (cid.includes('hyundai')) nOptions = ['119대', '124대'];
-      else if (cid.includes('samsung')) nOptions = ['116대', '120대'];
-      else if (cid.includes('db')) nOptions = ['119대', '85대'];
-      else if (cid.includes('kb')) nOptions = ['112대', '116대'];
+      const titleMatch = riders.ndai.title.match(/(\d+대)/g);
+      if (titleMatch && titleMatch.length > 0) {
+        nOptions = Array.from(new Set(titleMatch));
+      } else {
+        nOptions = ['112대'];
+      }
     }
 
     const defaultN = (matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai)) 
@@ -9385,3 +9388,107 @@ window.renderDisputesList = renderDisputesList;
 window.__DEBUG = { state, search, runQuickSearch };
 
 })();
+const COMPANY_NDAI_PERIOD_MAP = {
+  meritz: {
+    'meritz-p0': ['112대', '120대', '131대'],
+    'meritz-p1': ['112대', '82대', '80대'],
+    'meritz-p2': ['64대', '62대', '30대', '18대', '7대']
+  },
+  hyundai: {
+    'hyundai-p0': ['124대', '120대', '119대'],
+    'hyundai-p1': ['123대', '120대', '71대'],
+    'hyundai-p2': ['71대', '16대', '특정5대']
+  },
+  dbinsure: {
+    'db-p0': ['120대', '119대'],
+    'db-p1': ['116대', '106대', '77대'],
+    'db-p2': ['21대', '18대', '16대']
+  },
+  kbinsure: {
+    'kb-p0': ['120대', '116대', '112대'],
+    'kb-p1': ['112대', '101대'],
+    'kb-p2': ['21대']
+  },
+  samsungfire: {
+    'samsung-p0': ['116대', '114대', '111대'],
+    'samsung-p1': ['111대', '105대', '68대'],
+    'samsung-p2': ['21대', '15대']
+  },
+  hanwhafire: {
+    'hanwha-p0': ['124대', '116대'],
+    'hanwha-p1': ['116대', '7대기관'],
+    'hanwha-p2': ['7대생활']
+  },
+  heungkukfire: {
+    'heungkuk-p0': ['신142대', '신70대'],
+    'heungkuk-p1': ['신70대'],
+    'heungkuk-p2': ['신70대']
+  },
+  nhfire: {
+    'nh-p0': ['144대', '112대'],
+    'nh-p1': ['144대'],
+    'nh-p2': ['144대']
+  },
+  lotte: {
+    'lotte-p0': ['142대', '112대'],
+    'lotte-p1': ['142대'],
+    'lotte-p2': ['142대']
+  },
+  hanafire: {
+    'hana-p0': ['136대'],
+    'hana-p1': ['73대', '15대'],
+    'hana-p2': ['73대']
+  },
+  samsunglife: {
+    'samsunglife-p0': ['153대', '7대주요', '7대성인'],
+    'samsunglife-p1': ['153대', '7대성인'],
+    'samsunglife-p2': ['7대성인']
+  },
+  hanwhalife: {
+    'hanwhalife-p0': ['104대', '70대', '23대', '13대'],
+    'hanwhalife-p1': ['70대', '23대'],
+    'hanwhalife-p2': ['23대', '13대']
+  },
+  kyobo: {
+    'kyobo-p0': ['36대', '25대'],
+    'kyobo-p1': ['36대', '25대'],
+    'kyobo-p2': ['25대']
+  },
+  shinhan: {
+    'shinhan-p0': ['100대', '30대'],
+    'shinhan-p1': ['30대'],
+    'shinhan-p2': ['30대']
+  },
+  kblife: {
+    'kblife-p0': ['7대', '5대'],
+    'kblife-p1': ['7대'],
+    'kblife-p2': ['5대']
+  },
+  mirae: {
+    'mirae-p0': ['88대', '30대'],
+    'mirae-p1': ['30대'],
+    'mirae-p2': ['30대']
+  },
+  dongyang: {
+    'dongyang-p0': ['N대(260대)', '61대'],
+    'dongyang-p1': ['61대'],
+    'dongyang-p2': ['61대']
+  },
+  heungkuklife: {
+    'heungkuklife-p0': ['130대', '40대'],
+    'heungkuklife-p1': ['40대'],
+    'heungkuklife-p2': ['40대']
+  },
+  abllife: {
+    'abllife-p0': ['77대', '30대'],
+    'abllife-p1': ['30대'],
+    'abllife-p2': ['30대']
+  },
+  lina: {
+    'lina-p0': ['7대', '5대'],
+    'lina-p1': ['7대'],
+    'lina-p2': ['5대']
+  }
+};
+
+
