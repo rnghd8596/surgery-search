@@ -100,6 +100,28 @@ window.DYNAMIC_NDAI_TABLES = {
         ['생활 48대질병 (48)', '비염, 부비동염(축농증), 하지정맥류, 관절염, 척추디스크 등', 'J30~J34, I83, M15~M19, M48, M50~M51, G51', '정액 지급'],
         ['치핵 (1)', '내치핵, 외치핵, 혈전성 치핵, 항문열창 및 치루', 'K64', '정액 지급']
       ]
+    },
+    '82대': {
+      title: '별표23~45 [82대 질병분류표 및 보장 질병코드 전문 (7개 세부보장)]',
+      rows: [
+        ['심장질환 (1)', '급성 류마티스열, 만성 류마티스심장질환, 허혈심장질환, 폐순환질환 등 (별표23)', 'I00~I02, I05~I09, I20~I25, I26~I28, I30~I52', '가입금액 100%'],
+        ['뇌혈관질환 (1)', '거미막하출혈, 뇌내출혈, 뇌경색증, 뇌동맥류 등 10대 뇌혈관질환 전수 (별표41)', 'I60~I69', '가입금액 100%'],
+        ['특정 27대질병 (27)', '간질환, 고혈압, 당뇨병, 만성하부호흡기, 위궤양, 결핵, 패혈증, 파킨슨, 뇌전증, 신부전 등 (별표44)', 'B15~B19, K70~K77, I10~I15, E10~E14, J40~J46, K25~K27, A15~A19, N17~N19 등', '정액 차등 지급'],
+        ['다빈도 49대질병 (49)', '11대 양성종양, 내분비, 혈관, 급성상기도, 축농증, 편도염, 유방장애, 담석증, 디스크 등 (별표45)', 'D13~D35, E00~E07, J00~J06, J32, J35, N60~N64, K80, M50~M51 등', '정액 차등 지급'],
+        ['관절염·생식기질환 (2)', '관절염, 여성골반염, 남성생식기질환 등 (별표24)', 'M00~M25, N40~N51, N70~N99', '정액 지급'],
+        ['치핵 (1)', '치핵 및 항문주위정맥 혈전증 (별표25)', 'K64', '정액 지급'],
+        ['백내장 (1)', '노년 백내장, 수정체 장애 (별표40)', 'H25~H27', '정액 지급']
+      ]
+    },
+    '77대': {
+      title: '별표 [77대 질병분류표 전문]',
+      rows: [
+        ['특정 18대질병 (18)', '심장질환, 뇌혈관질환, 간질환, 고혈압, 당뇨병, 만성호흡기, 위궤양, 신부전 등', 'I00~I52, I60~I69, K70~K76, I10~I15, E10~E14, J40~J46, K25~K27, N17~N19', '가입금액 100%'],
+        ['다발성 19대질병 (19)', '담석증, 사타구니탈장, 편도염, 축농증, 급성상기도감염, 인후부위질환 등', 'K80, K40, J35, J32, J00~J06, J36~J39', '정액 지급'],
+        ['생활 38대질병 (38)', '비염, 관절염, 척추디스크, 하지정맥류, 양성종양, 치핵, 백내장 등', 'J30~J31, M05~M14, M50~M51, I83, D12~D35, K64, H25~H27', '정액 지급'],
+        ['치핵 (1)', '내치핵, 외치핵, 항문열창 및 치루', 'K64', '정액 지급'],
+        ['백내장 (1)', '노년 백내장 및 수정체 질환', 'H25~H27', '정액 지급']
+      ]
     }
   },
   hyundai: {
@@ -114,16 +136,24 @@ window.DYNAMIC_NDAI_TABLES = {
         ['갑상선질환 (1)', '갑상선기능항진증, 갑상선염, 갑상선 양성종양', 'E05, E06, D34', '정액 지급']
       ]
     },
-    '124대': {
-      title: '별표 [124대 질병수술분류표 전문]',
+    '123대': {
+      title: '별표 [123대 질병수술분류표 전문]',
       rows: [
-        ['26대질병Ⅱ (26)', '중증근무력증, 사르코이드증, 대동맥류, 폐렴, 신장결석, 유방의 비대 등', 'G70, D86, I71, J12~J18, N20, N62 등', '관혈 100% / 비관혈 50%'],
-        ['58대질병Ⅱ (58)', '담석증, 충수염, 탈장, 치핵, 전립선비대증, 백내장, 녹내장, 당뇨병, 고혈압 등', 'K80~K83, K35, K40, K64, N40, H25, H40, E10~E14, I10~I15', '정액 지급'],
+        ['26대질병 (26)', '중증근무력증, 사르코이드증, 대동맥류, 폐렴, 신장결석, 유방의 비대 등', 'G70, D86, I71, J12~J18, N20, N62 등', '관혈 100% / 비관혈 50%'],
+        ['59대질병 (59)', '담석증, 충수염, 탈장, 치핵, 전립선비대증, 백내장, 녹내장, 당뇨병, 고혈압, 갑상선 등', 'K80~K83, K35, K40, K64, N40, H25, H40, E10~E14, I10~I15, E00~E07', '정액 지급'],
         ['24대질병 (24)', '하지정맥류, 부비동염(축농증), 편도염, 중이염, 수근관증후군, 척추질환 등', 'I83, J32, J35, H65~H75, G56.0, M50~M51', '정액 지급'],
         ['다발성 10대질병 (10)', '부정맥, 심부전, 폐부종, 만성 신장병, 뇌혈관 후유증 등', 'I47~I49, I50, J81, N18, I69', '정액 지급'],
-        ['특정 3대질병 (3)', '간질환, 췌장질환, 만성 폐쇄성 폐질환(COPD)', 'K70~K76, K85~K86, J44', '정액 지급'],
-        ['특정 2대질병 (2)', '골수염, 안면신경마비', 'M86, G51', '정액 지급'],
+        ['다발성 3대질병 (3)', '관절염, 백내장, 생식기질환', 'M00~M25, H25~H27, N40~N95', '정액 지급'],
         ['치핵 (1)', '내치핵, 외치핵, 항문열창 및 치루', 'K64', '정액 지급']
+      ]
+    },
+    '71대': {
+      title: '별표 [71대 질병수술분류표 전문]',
+      rows: [
+        ['22대 특정질병 (22)', '심장질환, 뇌혈관질환, 간질환, 고혈압, 당뇨병, 만성하부호흡기, 결핵 등', 'I00~I52, I60~I69, K70~K76, I10~I15, E10~E14, J40~J46, A15~A19', '가입금액 100%'],
+        ['다발성 13대질병 (13)', '담석증, 충수염, 사타구니탈장, 편도염, 축농증, 중이염 등', 'K80, K35, K40, J35, J32, H65~H75', '정액 지급'],
+        ['35대 생활질환 (35)', '관절염, 척추디스크, 골다공증, 비염, 안면신경마비, 양성종양 등', 'M05~M14, M50~M51, M80~M81, J30~J31, G51, D12~D35', '정액 지급'],
+        ['치핵 (1)', '내치핵, 외치핵, 혈전성 치핵, 항문열창 및 치루', 'K64', '정액 지급']
       ]
     }
   },
@@ -440,7 +470,11 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
     const meta = { product: (v && v.product) || co.name, type: (v && v.type) || '공식 약관', page: pageDesc };
     window.openRulesModal(pages[0], `🏢 [${co.name}] ${grpName} 공식 분류표 원문`, period ? period.revSummary : '', pages, meta);
   } else {
-    alert(`🏢 [${co.name}] ${grpName} 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+    const parentScan = v && (v.ndai_table || v.ndai_inc);
+    if (parentScan && parentScan.pages && parentScan.pages.length > 0) {
+      const meta = { product: (v && v.product) || co.name, type: (v && v.type) || '공식 약관', page: parentScan.pageStr || pageDesc };
+      window.openRulesModal(parentScan.pages[0], `🏢 [${co.name}] ${grpName} (공식 분류표 원문)`, period ? period.revSummary : '', parentScan.pages, meta);
+    }
   }
 };
 
@@ -7909,7 +7943,6 @@ function bindRulesTab() {
     if (!modal) return;
     const validPages = (pages && Array.isArray(pages) ? pages : [src]).filter(p => typeof p === 'string' && p.trim().length > 0 && p !== 'undefined');
     if (!validPages.length) {
-      alert("🏢 [약관 원문 안내]\n\n해당 보험사 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.");
       return;
     }
     isRulesZoomed = false;
@@ -8082,7 +8115,6 @@ function bindRulesTab() {
       const pages = pagesStr ? pagesStr.split(',').filter(Boolean) : (modalSrc ? [modalSrc] : null);
 
       if (isPending) {
-        alert(`🏢 [${co}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
         return;
       }
 
@@ -9354,13 +9386,14 @@ function renderClausesCompanyList(searchQuery) {
 const COMPANY_NDAI_PERIOD_MAP = {
   meritz: {
     'meritz_2024_12': ['131대', '32대'],
-    'meritz_2020_04': ['131대', '32대'],
+    'meritz_2022_04': ['131대', '32대'],
+    'meritz_2020_04': ['82대', '77대', '32대'],
     'meritz_2020_03_prior': ['64대', '32대', '7대']
   },
   hyundai: {
     'hyundai_2026_01': ['120대'],
-    'hyundai_2018_06': ['124대', '123대'],
-    'hyundai_2018_prior': ['119대', '71대']
+    'hyundai_2018_06': ['123대', '71대'],
+    'hyundai_2018_prior': ['71대', '16대', '7대']
   },
   dbinsure: {
     'db_2026_05': ['120대', '119대'],
@@ -9368,9 +9401,9 @@ const COMPANY_NDAI_PERIOD_MAP = {
     'db_2020_prior': ['21대', '18대', '16대']
   },
   kbinsure: {
-    'kb_2024_01': ['120대', '116대', '112대'],
-    'kb_2020_10': ['112대', '101대'],
-    'kb_2020_prior': ['21대']
+    'kb_2024_01': ['116대'],
+    'kb_2020_10': ['112대'],
+    'kb_2020_prior': ['21대', '7대']
   },
   samsungfire: {
     'samsung_2024_01': ['111대', '114대', '116대'],
@@ -9713,6 +9746,99 @@ function bindClauseChipEvents(box) {
   });
 }
 
+
+function getScanPagesForContext(co, period, data, rider, targetRider, scanType, selectedNdai) {
+  if (!co || !period || !rider) return null;
+  const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
+  const cleanNdai = (selectedNdai || (rider && rider.title) || '').replace(/\d+대\/\d+대/, m => m.split('/')[0]);
+
+  // 1. Meritz 32대 관혈수술비
+  if (co.id.includes('meritz') && cleanNdai.includes('32대')) {
+    if (scanType === 'exclusion') {
+      return {
+        pages: ['assets/clause_imgs/meritz_std_ndai_exc_p337.png', 'assets/clause_imgs/meritz_std_ndai_exc_p338.png'],
+        title: `🚫 [${co.name}] 32대 질병관혈수술비 보상제외 약관`,
+        meta: { product: '무배당 메리츠 The좋은 알파Plus보장보험2210', type: '32대 관혈 면책', page: '공시실 원문 제337쪽~제338쪽' }
+      };
+    } else {
+      return {
+        pages: [
+          'assets/clause_imgs/meritz_std_ndai_32_inc_p339.png',
+          'assets/clause_imgs/meritz_std_ndai_32_inc_p340.png',
+          'assets/clause_imgs/meritz_std_ndai_32_inc_p341.png',
+          'assets/clause_imgs/meritz_std_ndai_32_inc_p342.png'
+        ],
+        title: `🏢 [${co.name}] 32대 질병관혈수술비 보상기준 약관`,
+        meta: { product: '무배당 메리츠 The좋은 알파Plus보장보험2210', type: '32대 관혈 조항', page: '공시실 원문 제339쪽~제342쪽' }
+      };
+    }
+  }
+
+  // 2. Direct rider image
+  const pastImg = (scanType === 'exclusion') ? (rider?.exclusion && rider.exclusion.imgSrc) : (rider?.inclusion && rider.inclusion.imgSrc);
+  const targetImg = pastImg || rider?.imgSrc;
+  if (targetImg) {
+    return {
+      pages: [targetImg],
+      title: `🏢 [${co.name}] ${period.periodStr} · ${rider.title || '수술특약'} 약관`,
+      meta: { product: `${co.name} (${period.periodStr})`, type: (data?.pData && data.pData.name) || '해당 가입시기 공식 약관', page: `${period.periodStr} 공시실 공식 약관` }
+    };
+  }
+
+  // 3. Check VERIFIED_CLAUSE_SCANS if matching period
+  const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
+  if (!coEntry) return null;
+
+  const isPeriodWithScans = isLatestPeriod || 
+    (co.id.includes('meritz') && (period?.id === 'meritz_2024_12' || period?.id === 'meritz_2022_04'));
+
+  if (!isPeriodWithScans) return null;
+
+  const isSimp = (data?.pData && data.pData.name && data.pData.name.includes('간편')) || (data?.ptype === 'simplified');
+  const v = (isSimp && coEntry.simplified) ? coEntry.simplified : (coEntry.standard || coEntry.simplified || coEntry);
+  if (!v) return null;
+
+  const rKey = targetRider || data?.targetRider || 'basic';
+  let targetScan = null;
+  let modalTitle = '';
+
+  if (rKey === 'tier') {
+    if (scanType === 'exclusion') {
+      targetScan = v.tier_exc || v.basic_exc;
+      modalTitle = `🚫 [${co.name}] 1~5종 수술특약 보상제외 약관`;
+    } else {
+      targetScan = v.tier_inc || v.tier_table || v.basic_inc;
+      modalTitle = `📋 [${co.name}] 1~5종 수술특약 보상기준 약관`;
+    }
+  } else if (rKey === 'ndai' || rKey === 'adult') {
+    if (scanType === 'exclusion') {
+      targetScan = v.ndai_exc || v.basic_exc;
+      modalTitle = `🚫 [${co.name}] ${cleanNdai} 보상제외 약관`;
+    } else {
+      targetScan = v.ndai_inc || v.basic_inc;
+      modalTitle = `🏢 [${co.name}] ${cleanNdai} 보상기준 약관`;
+    }
+  } else {
+    if (scanType === 'exclusion') {
+      targetScan = v.basic_exc;
+      modalTitle = `🚫 [${co.name}] 질병수술비 보상제외 약관`;
+    } else {
+      targetScan = v.basic_inc;
+      modalTitle = `💡 [${co.name}] 질병수술비 보상기준 약관`;
+    }
+  }
+
+  if (targetScan && targetScan.pages && targetScan.pages.length > 0) {
+    return {
+      pages: targetScan.pages.filter(Boolean),
+      title: modalTitle,
+      meta: { product: v.product, type: v.type, page: targetScan.pageStr }
+    };
+  }
+
+  return null;
+}
+
 function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   const box = $('#clauseModalContent');
   if (!box || !data) return;
@@ -10053,8 +10179,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
             const pastImg = rider.imgSrc;
             if (pastImg) {
               window.openRulesModal(pastImg, `🏢 [${co.name}] ${period.periodStr} · ${cleanNdaiName} 공식 원문`, period.revSummary, [pastImg], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
-            } else {
-              alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 N대 질병분류표 데이터입니다.\n\n해당 가입시기 질환군 및 수록 코드가 화면에 100% 수록되어 있습니다.`);
             }
             return;
           }
@@ -10070,8 +10194,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
             if (v.ndai_p2) pages.push(v.ndai_p2);
             const meta = { product: v.product, type: v.type, page: v.ndai_page };
             window.openRulesModal(v.ndai_p1, `🏢 [${co.name}] ${cleanNdaiName} 공식 원문`, period.revSummary, pages, meta);
-          } else {
-            alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
           }
         });
       }
@@ -10184,8 +10306,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           const pastImg = rider.imgSrc;
           if (pastImg) {
             window.openRulesModal(pastImg, `🏢 [${co.name}] ${period.periodStr} · ${cleanNdaiName} 공식 원문`, period.revSummary, [pastImg], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
-          } else {
-            alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 N대 질병분류표 데이터입니다.\n\n해당 가입시기 질환군 및 수록 코드가 화면에 100% 수록되어 있습니다.`);
           }
           return;
         }
@@ -10201,8 +10321,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           if (v.ndai_p2) pages.push(v.ndai_p2);
           const meta = { product: v.product, type: v.type, page: v.ndai_page };
           window.openRulesModal(v.ndai_p1, `🏢 [${co.name}] ${cleanNdaiName} 공식 원문`, period.revSummary, pages, meta);
-        } else {
-          alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
         }
       });
     }
@@ -10703,29 +10821,31 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </button>
       </div>
 
-      <!-- 원터치 실물 약관보기 버튼 (현재 선택된 탭에 맞춰 단독 와이드 카드로 100% 깔끔 직결 #34648) -->
+      <!-- 원터치 실물 약관보기 버튼 (실물 스캔이 검증된 경우만 버튼 제공, 미수집 시 안내 배너로 처리하여 팝업 결함 100% 척결 #37617 #37683) -->
       <div style="margin-bottom:12px;">
-        ${curTab === 'inclusion' ? `
-          <button type="button" class="btn-co-clause" id="btnScanInclusion" style="width:100%;height:44px;min-height:44px;border:1.5px solid rgba(49,130,246,0.35);border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-            <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
-              <span>📄</span>
-              <span><strong>보상하는 사항</strong> 공식 약관</span>
-            </span>
-            <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.12);padding:4px 10px;border-radius:6px;white-space:nowrap;">
-              약관보기 🔍
-            </span>
-          </button>
-        ` : `
-          <button type="button" class="btn-co-clause" id="btnScanExclusion" style="width:100%;height:44px;min-height:44px;border:1.5px solid rgba(220,38,38,0.35);border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-            <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
-              <span>🚫</span>
-              <span><strong>보상제외 사항</strong> 공식 약관</span>
-            </span>
-            <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:#dc2626;background:rgba(220,38,38,0.12);padding:4px 10px;border-radius:6px;white-space:nowrap;">
-              약관보기 🔍
-            </span>
-          </button>
-        `}
+        ${(() => {
+          const scanObj = getScanPagesForContext(co, period, data, rider, targetRider, curTab, selectedNdai);
+          if (scanObj && scanObj.pages && scanObj.pages.length > 0) {
+            return `
+              <button type="button" class="btn-co-clause" id="btnScanAction" style="width:100%;height:44px;min-height:44px;border:1.5px solid ${curTab === 'exclusion' ? 'rgba(220,38,38,0.35)' : 'rgba(49,130,246,0.35)'};border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+                <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
+                  <span>${curTab === 'exclusion' ? '🚫' : '📄'}</span>
+                  <span><strong>${curTab === 'exclusion' ? '보상제외 사항' : '보상하는 사항'}</strong> 공식 약관</span>
+                </span>
+                <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:${curTab === 'exclusion' ? '#dc2626' : 'var(--brand)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.12)' : 'rgba(49,130,246,0.12)'};padding:4px 10px;border-radius:6px;white-space:nowrap;">
+                  약관보기 🔍
+                </span>
+              </button>
+            `;
+          } else {
+            return `
+              <div style="padding:10px 14px;border-radius:10px;background:rgba(241,245,249,0.85);border:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-2);">
+                <span style="font-size:15px;">📋</span>
+                <span>해당 가입시기는 아래 <strong>조항 본문 및 면책 규정</strong> 전문으로 확인하실 수 있습니다.</span>
+              </div>
+            `;
+          }
+        })()}
       </div>
     </div>
 
@@ -10756,8 +10876,6 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   // 탭 전환 이벤트 바인딩 (#28437 #33904)
   const btnTabInc = box.querySelector('#tabClauseInclusion');
   const btnTabExc = box.querySelector('#tabClauseExclusion');
-  const btnScanInc = box.querySelector('#btnScanInclusion');
-  const btnScanExc = box.querySelector('#btnScanExclusion');
 
   if (btnTabInc) {
     btnTabInc.addEventListener('click', () => {
@@ -10772,86 +10890,15 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     });
   }
 
-  const handleScanClick = (scanType) => {
-    const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
-    const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
-
-    // 과거 가입시기 서랍인 경우: 최신(2026/2024년) 약관을 절대 돌려막지 않고, 해당 시기 본인 약관 이미지 또는 텍스트 조항 직결 (#35923)
-    if (!isLatestPeriod) {
-      const pastImg = (scanType === 'exclusion') ? (rider.exclusion && rider.exclusion.imgSrc) : (rider.inclusion && rider.inclusion.imgSrc);
-      const targetImg = pastImg || rider.imgSrc;
-      if (targetImg) {
-        const pastMeta = { product: `${co.name} (${period.periodStr})`, type: (data.pData && data.pData.name) || '해당 가입시기 표준체', page: `${period.periodStr} 공시실 공식 약관` };
-        window.openRulesModal(targetImg, `🏢 [${co.name}] ${period.periodStr} · ${riderTitle} 약관`, period.revSummary || '', [targetImg], pastMeta);
-      } else {
-        alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 공식 약관 데이터입니다.\n\n해당 가입시기 조항 본문 및 면책 규정이 현재 화면에 100% 수록되어 있으니 바로 조항별로 확인하실 수 있습니다.`);
+  const btnScanAction = box.querySelector('#btnScanAction');
+  if (btnScanAction) {
+    btnScanAction.addEventListener('click', () => {
+      const scanObj = getScanPagesForContext(co, period, data, rider, targetRider, curTab, selectedNdai);
+      if (scanObj && scanObj.pages && scanObj.pages.length > 0) {
+        window.openRulesModal(scanObj.pages[0], scanObj.title, period ? period.revSummary : '', scanObj.pages, scanObj.meta);
       }
-      return;
-    }
-
-    if (!coEntry) {
-      alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.\n\n타사 약관 인용이나 임의 합성 이미지는 일절 제공하지 않으며, 각 보험사 공시실에서 검증된 원본 페이지만 순차적으로 정확하게 반영됩니다.`);
-      return;
-    }
-
-    const isSimp = (data.pData && data.pData.name && data.pData.name.includes('간편')) || (data.ptype === 'simplified');
-    const v = (isSimp && coEntry.simplified) ? coEntry.simplified : (coEntry.standard || coEntry.simplified || coEntry);
-
-    let targetScan = null;
-    let modalTitle = '';
-
-    if (riderKey === 'tier') {
-      if (scanType === 'exclusion') {
-        targetScan = v.tier_exc || v.basic_exc;
-        modalTitle = `🚫 [${co.name}] 1~5종 수술특약 보상제외 약관`;
-      } else {
-        targetScan = v.tier_inc || v.tier_table || v.basic_inc;
-        modalTitle = `📋 [${co.name}] 1~5종 수술특약 보상기준 약관`;
-      }
-    } else if (riderKey === 'ndai' || riderKey === 'adult') {
-      const cleanNdaiName = (data.selectedNdai || riderTitle || 'N대').replace(/\d+대\/\d+대/, m => m.split('/')[0]);
-      if (co.id.includes('meritz') && cleanNdaiName.includes('32대')) {
-        targetScan = {
-          pages: [
-            'assets/clause_imgs/meritz_std_ndai_32_inc_p339.png',
-            'assets/clause_imgs/meritz_std_ndai_32_inc_p340.png',
-            'assets/clause_imgs/meritz_std_ndai_32_inc_p341.png'
-          ],
-          pageStr: '공시실 원문 제339쪽~제341쪽 (42. 갱신형 32대질병관혈수술비(연간1회한)보장 특별약관 전문)'
-        };
-        modalTitle = `🏢 [${co.name}] 32대 질병관혈수술비 보상기준 약관`;
-      } else if (scanType === 'exclusion') {
-        targetScan = v.ndai_exc || v.basic_exc;
-        modalTitle = `🚫 [${co.name}] ${cleanNdaiName} 보상제외 약관`;
-      } else {
-        targetScan = v.ndai_inc || v.basic_inc;
-        modalTitle = `🏢 [${co.name}] ${cleanNdaiName} 보상기준 약관`;
-      }
-    } else {
-      if (scanType === 'exclusion') {
-        targetScan = v.basic_exc;
-        modalTitle = `🚫 [${co.name}] 질병수술비 보상제외 약관`;
-      } else {
-        targetScan = v.basic_inc;
-        modalTitle = `💡 [${co.name}] 질병수술비 보상기준 약관`;
-      }
-    }
-
-    if (targetScan && targetScan.pages && targetScan.pages.length > 0) {
-      const meta = { product: v.product, type: v.type, page: targetScan.pageStr };
-      window.openRulesModal(targetScan.pages[0], modalTitle, '', targetScan.pages, meta);
-    } else if (v.basic_p1) {
-      const pages = [v.basic_p1];
-      if (v.basic_p2) pages.push(v.basic_p2);
-      const meta = { product: v.product, type: v.type, page: v.basic_page };
-      window.openRulesModal(v.basic_p1, modalTitle, '', pages, meta);
-    } else {
-      alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
-    }
-  };
-
-  if (btnScanInc) btnScanInc.addEventListener('click', () => handleScanClick('inclusion'));
-  if (btnScanExc) btnScanExc.addEventListener('click', () => handleScanClick('exclusion'));
+    });
+  }
 }
 
 function bindPhotoButtons(box, rider, co, period) {
@@ -10867,7 +10914,7 @@ function bindPhotoButtons(box, rider, co, period) {
         const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
         const src = postObj ? postObj.src : rider.imgSrc;
         if (src) window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 [개정 후 약관 사진]`, period.revSummary, [src], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
-        else alert(`🏢 [${co.name}] ${period.periodStr} 시기 약관 조항 텍스트를 참조해 주시기 바랍니다.`);
+        
         return;
       }
       const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
@@ -10879,7 +10926,7 @@ function bindPhotoButtons(box, rider, co, period) {
         const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
         const src = postObj ? postObj.src : rider.imgSrc;
         if (src) window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 후 약관 사진]`, period.revSummary);
-        else alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+        
       }
     });
   }
@@ -10890,7 +10937,7 @@ function bindPhotoButtons(box, rider, co, period) {
         const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
         const src = preObj ? preObj.src : rider.imgSrc;
         if (src) window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary, [src], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
-        else alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 1~5종 수술분류표입니다.\n\n해당 시기 조항 및 분류표 텍스트가 화면에 100% 수록되어 있습니다.`);
+        
         return;
       }
       const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
@@ -10902,7 +10949,7 @@ function bindPhotoButtons(box, rider, co, period) {
         const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
         const src = preObj ? preObj.src : rider.imgSrc;
         if (src) window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary);
-        else alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
+        
       }
     });
   }
@@ -10911,7 +10958,7 @@ function bindPhotoButtons(box, rider, co, period) {
       const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
       if (!isLatestPeriod) {
         if (rider.imgSrc) window.openRulesModal(rider.imgSrc, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 원문`, period.revSummary, [rider.imgSrc], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
-        else alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 1~5종 수술분류표입니다.\n\n해당 시기 조항 및 분류표 텍스트가 화면에 100% 수록되어 있습니다.`);
+        
         return;
       }
       const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
@@ -10924,8 +10971,6 @@ function bindPhotoButtons(box, rider, co, period) {
         if (v.tier_p2) pages.push(v.tier_p2);
         const meta = { product: v.product, type: v.type, page: v.tier_page };
         window.openRulesModal(v.tier_p1, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 원문`, period.revSummary, pages, meta);
-      } else {
-        alert(`🏢 [${co.name}] 공시실 공식 실물 약관 원문 수집·검증 진행 중입니다.`);
       }
     });
   }
