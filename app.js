@@ -8799,7 +8799,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
   const box = $('#clauseModalContent');
   if (!box || !data) return;
 
-  const { co, period, rider, targetRider, viewMode } = data;
+  const { co, period, rider, targetRider, viewMode, selectedNdai } = data;
   const normQ = (filterQ || '').trim().toLowerCase();
 
   // ─────────────────────────────────────────────────────────────
