@@ -2643,7 +2643,7 @@ function renderIdleQuick() {
       <!-- 다빈도 질병 바로검색 그리드 -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-size:12px;font-weight:900;color:var(--brand);background:rgba(26,115,232,0.1);padding:4px 10px;border-radius:6px;">🔥 다빈도 질병 · 수술 바로검색</span>
-        <span style="font-size:11px;color:var(--text-3);font-weight:700;">누르면 즉시 결과가 나와요</span>
+        <span style="font-size:11px;color:var(--text-3);font-weight:700;">종수는 표준 참고 · 약관 우선</span>
       </div>
 
       <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:8px;" id="quickFrequentGrid">
@@ -8115,6 +8115,7 @@ function bindRulesTab() {
       const pages = pagesStr ? pagesStr.split(',').filter(Boolean) : (modalSrc ? [modalSrc] : null);
 
       if (isPending) {
+        showToast('이 회사는 공시실 스캔이 없어 원문 이미지를 열 수 없습니다');
         return;
       }
 
@@ -8840,6 +8841,7 @@ function extractSearchedYear(rawQ) {
 }
 
 function renderClausesCompanyList(searchQuery) {
+  if (typeof window.applyClauseAudit === 'function') window.applyClauseAudit();
   const container = $('#clausesCompanyList');
   if (!container) return;
 
@@ -9021,20 +9023,22 @@ function renderClausesCompanyList(searchQuery) {
         if (co.ndaiKeywords && co.ndaiKeywords.some(k => norm(k).includes(nt) || nt.includes(norm(k)))) isCoMatched = true;
 
         // 담보 및 수술명 매칭
-        const hasRiderMatch = co.periods.some(p => {
+          const hasRiderMatch = co.periods.some(p => {
           const checkR = (riders) => {
             if (!riders) return false;
             return Object.values(riders).some(r => {
               if (!r) return false;
               if (norm(r.title).includes(nt)) return true;
               if (r.summary && norm(r.summary).includes(nt)) return true;
+              if (r.verifiedConditions && r.verifiedConditions.some(c => norm(c.text).includes(nt))) return true;
+              if (r.inclusion && r.inclusion.officialTranscript && norm(r.inclusion.officialTranscript).includes(nt)) return true;
+              if (r.exclusion && r.exclusion.officialTranscript && norm(r.exclusion.officialTranscript).includes(nt)) return true;
               if (r.tableBody && Array.isArray(r.tableBody.rows) && r.tableBody.rows.some(row => Array.isArray(row) ? row.some(cell => norm(cell).includes(nt)) : (typeof row === 'string' && norm(row).includes(nt)))) return true;
               return false;
             });
           };
-          const stdOk = p.types && p.types.standard && checkR(p.types.standard.riders);
-          const simpObj = (p.types && p.types.simplified) || (p.types && p.types.standard && p.types.standard.simplified) || p.simplified;
-          return stdOk || (simpObj && checkR(simpObj.riders));
+          if (!p.types) return false;
+          return Object.keys(p.types).some(tk => p.types[tk] && checkR(p.types[tk].riders));
         });
 
         if (hasRiderMatch) isCoMatched = true;
@@ -9506,6 +9510,7 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
         <div style="font-size:12px;color:#78350f;">
           ${formatNoticeSummaryHTML(p.revSummary)}
         </div>
+        <div style="margin-top:6px;font-size:11px;font-weight:800;color:#92400e;">이 개정 요약은 해당 시기 별표 원문과 한 줄씩 대조하지 않았습니다. 종수·금액은 미검증입니다.</div>
       </div>` : ''}
 
       <!-- 표준체 / 유병자(간편) 분기 버튼 (50:50 칼맞춤) -->
@@ -9533,6 +9538,15 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
         ${renderRiderCardsHTML(co.id, p.id, 'simplified', simpRiders, matchContext)}
       </div>` : ''}
 
+      ${Object.keys(p.types || {}).filter(k => k !== 'standard' && k !== 'simplified').map(k => {
+        const extra = p.types[k];
+        if (!extra || !extra.riders) return '';
+        return `<div class="extra-type-block">
+          <div class="extra-type-label">${esc(extra.name || k)} · 같은 시기의 다른 상품군 (요약은 미검증)</div>
+          ${renderRiderCardsHTML(co.id, p.id, k, extra.riders, matchContext)}
+        </div>`;
+      }).join('')}
+
     </div>
   </div>`;
 }
@@ -9552,11 +9566,12 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
       <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
         <div>
-          <div style="font-size:13.5px;font-weight:900;color:#0f172a;word-break:keep-all;display:flex;align-items:center;gap:5px;">
+          <div style="font-size:13.5px;font-weight:900;color:var(--text);word-break:keep-all;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
             <span>💡 ${esc(riders.basic.title)}</span>
+            ${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML((riders.basic.inclusion && riders.basic.inclusion.verification) || 'unverified-summary') : ''}
             ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
           </div>
-          <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.basic.summary || '')}</div>
+          <div style="font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.basic.summary || '')}</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
@@ -9577,11 +9592,13 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
       <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
         <div>
-          <div style="font-size:13.5px;font-weight:900;color:var(--brand);word-break:keep-all;display:flex;align-items:center;gap:5px;">
+          <div style="font-size:13.5px;font-weight:900;color:var(--brand);word-break:keep-all;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
             <span>📋 ${esc(riders.tier.title)}</span>
+            ${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML((riders.tier.clauseBody && riders.tier.clauseBody.verification) || 'unverified-summary') : ''}
             ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
           </div>
-          <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.tier.summary || '')}</div>
+          <div style="font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.tier.summary || '')}</div>
+          ${((riders.tier.tableBody && riders.tier.tableBody.rows) || []).length > 0 && riders.tier.tableBody.rows.length < 20 ? `<div style="font-size:11.5px;color:var(--text-3);margin-top:4px;font-weight:700;">분류표는 ${riders.tier.tableBody.rows.length}행 발췌입니다. 전수 표가 아니면 종수를 이 표만으로 확정하지 마세요.</div>` : ''}
         </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
@@ -9599,30 +9616,23 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
   if (riders.ndai) {
     const isHigh = isMatchNdai;
 
-    // 20개 전 보험사 및 가입시기별 판매 N대 특약 매핑 (#29996 #30017 #30033)
-    let nOptions = (COMPANY_NDAI_PERIOD_MAP[cid] && COMPANY_NDAI_PERIOD_MAP[cid][pid])
-      ? [...COMPANY_NDAI_PERIOD_MAP[cid][pid]]
-      : [];
+    let nOptions = (typeof window.ndaiOptionsForCompany === 'function')
+      ? window.ndaiOptionsForCompany(cid, pid, riders.ndai.title)
+      : ((COMPANY_NDAI_PERIOD_MAP[cid] && COMPANY_NDAI_PERIOD_MAP[cid][pid]) ? [...COMPANY_NDAI_PERIOD_MAP[cid][pid]] : []);
+    const ndaiUnknown = nOptions.length === 0;
+    if (ndaiUnknown) nOptions = ['미확인'];
 
-    if (nOptions.length === 0) {
-      const titleMatch = riders.ndai.title.match(/(\d+대)/g);
-      if (titleMatch && titleMatch.length > 0) {
-        nOptions = Array.from(new Set(titleMatch));
-      } else {
-        nOptions = ['112대'];
-      }
-    }
-
-    const defaultN = (matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai)) 
-      ? matchContext.searchedNdai 
-      : (nOptions[0] || '112대');
+    const defaultN = (matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai))
+      ? matchContext.searchedNdai
+      : nOptions[0];
 
     html += `
     <div class="rider-card rider-card-ndai" data-current-ndai="${esc(defaultN)}" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
       <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
         <div style="flex:1;">
           <div style="font-size:13.5px;font-weight:900;color:#059669;word-break:keep-all;display:flex;align-items:center;gap:5px;">
-            <span>🏢 ${esc(defaultN)} N대 질병수술비 특약</span>
+            <span>🏢 ${ndaiUnknown ? 'N대 질병수술비 (판매 숫자 미확인)' : esc(defaultN) + ' N대 질병수술비 특약'}</span>
+            ${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML((riders.ndai.clauseBody && riders.ndai.clauseBody.verification) || 'unverified-summary') : ''}
             ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
           </div>
           <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.ndai.summary || '')}</div>
@@ -9630,7 +9640,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       </div>
 
       <!-- 회사별 판매 N대별 분리 선택 탭 (#29516 섞지 않고 클릭 시 해당 N대 약관 직결) -->
-      ${nOptions.length > 1 ? `
+      ${!ndaiUnknown && nOptions.length > 1 ? `
       <div style="margin:8px 0 6px;padding:4px;background:var(--surface-2);border-radius:8px;border:1.5px solid var(--border);display:flex;gap:6px;">
         ${nOptions.map(opt => `
           <button type="button" class="btn-ndai-tab-select ${opt === defaultN ? 'active' : ''}" data-ndai-opt="${esc(opt)}" style="flex:1;height:34px;border-radius:6px;border:${opt === defaultN ? '1.5px solid #059669' : '1.5px solid var(--border)'};background:${opt === defaultN ? '#059669' : 'var(--surface)'};color:${opt === defaultN ? '#fff' : '#334155'};font-size:11.5px;font-weight:900;cursor:pointer;box-shadow:${opt === defaultN ? '0 2px 4px rgba(5,150,105,0.2)' : '0 1px 2px rgba(0,0,0,0.02)'};transition:all .15s ease;">
@@ -9650,6 +9660,17 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     </div>`;
   }
 
+  if (!riders.injury) {
+    html += `
+    <div class="rider-card rider-gap">
+      <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span>상해수술비 특별약관</span>
+        ${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML('missing') : ''}
+      </div>
+      <div style="font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.45;font-weight:700;">이 시기 상해수술비 특약의 공시실 원문·지급액·면책을 확인하지 못했습니다. 판매 여부를 추정하지 않습니다.</div>
+    </div>`;
+  }
+
   return html;
 }
 
@@ -9663,7 +9684,7 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode, selected
   const period = co.periods.find(p => p.id === pid);
   if (!period) return;
   const simpObj = (period.types && period.types.simplified) || (period.types && period.types.standard && period.types.standard.simplified) || period.simplified;
-  const pData = (ptype === 'simplified' && simpObj) ? simpObj : (period.types ? period.types.standard || period.types[ptype] : null);
+  const pData = (period.types && period.types[ptype]) || (ptype === 'simplified' ? simpObj : null);
   if (!pData) return;
   const rider = (pData.riders && pData.riders[targetRider]) ? pData.riders[targetRider] : (period.types?.standard?.riders?.[targetRider] || { title: '질병수술비' });
 
@@ -10385,6 +10406,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           </span>
           <span style="font-size:11px;font-weight:850;padding:2px 6px;border-radius:5px;background:#fef3c7;color:#b45309;">실무 필수 대조</span>
         </div>
+        <div style="font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:8px;line-height:1.45;">종수 비교는 손보 1~5종 개정의 실무 메모입니다. 이 회사·이 시기 별표로 확인하지 못했으면 미검증이며, 스캔 분류표가 우선합니다.</div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:12px;">
           <div style="background:var(--surface);border:1.5px solid rgba(217,119,6,0.3);border-radius:8px;padding:8px 10px;">
             <div style="font-weight:900;color:#d97706;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
@@ -10762,7 +10784,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     // 4) 치핵(K64) 및 요실금(N39)
     if (t.includes('치핵') || t.includes('요실금')) {
       if (isLife) {
-        t = t.replace(/(치핵[^\n\r]*|요실금[^\n\r]*)/g, '<mark style="background:#dcfce7;color:#15803d;padding:2px 6px;border-radius:5px;font-weight:900;border:1px solid #86efac;">⚡ [생보 우위] 치핵 1종 / 요실금 2종 지급</mark>');
+        t = t.replace(/(치핵[^\n\r]*|요실금[^\n\r]*)/g, '<mark style="background:#dcfce7;color:#15803d;padding:2px 6px;border-radius:5px;font-weight:900;border:1px solid #86efac;">생보 통념 · 미검증. 치핵·요실금 종수는 해당 별표 확인</mark>');
       } else {
         if (isExclusionTab) {
           t = t.replace(/(비뇨기계 장애\(요실금 등\)[^\n\r]*)/g, '<mark style="background:#fee2e2;color:#991b1b;padding:2px 6px;border-radius:5px;font-weight:900;border:1px solid #fca5a5;">🚫 [질병수술 면책] 요실금(N39) 부지급</mark>');
@@ -10778,14 +10800,30 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     return t;
   };
 
-  // 상단 회사별 실무 보상 분기점 요약 카드 (#32220 #32253)
-  const isLifeCo = co.isLife || co.id.includes('life');
+  const block = curTab === 'exclusion' ? rider.exclusion : (rider.inclusion || rider.clauseBody);
+  const transcript = block && block.officialTranscript;
+  const officialBlock = transcript ? `
+    <div class="official-excerpt">
+      <div class="official-excerpt-head">
+        ${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML('scan-transcript') : ''}
+        <span>스캔에 인쇄된 조항</span>
+      </div>
+      <div class="official-excerpt-src">${esc((block && block.transcriptSource) || '')}</div>
+      ${rider.transcriptNote ? `<div class="official-excerpt-note">${esc(rider.transcriptNote)}</div>` : ''}
+      ${(rider.verifiedConditions || []).map(c => `<div class="cond-row"><b>${esc(c.kind)}</b><span>${esc(c.text)}</span></div>`).join('')}
+      <pre class="official-excerpt-body">${esc(transcript)}</pre>
+    </div>` : (block ? `
+    <div class="unverified-banner">${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML(block.verification || 'unverified-summary') : ''} 아래 조항은 원문 스캔과 대조하지 않은 요약입니다. 지급 판단은 증권 약관이 우선합니다.</div>` : '');
+
+  // 상단 회사별 실무 메모. 회사별 원문으로 확인하지 않은 통념이라 단정하지 않는다.
+  const isLifeCo = co._cat === 'life' || co.isLife || /생명|라이프/.test(co.name || '') || /life/i.test(co.id || '');
   const diffSummaryHTML = `
     <div style="background:rgba(49,130,246,0.05);border:1.5px solid rgba(49,130,246,0.22);border-radius:10px;padding:12px 14px;margin-bottom:12px;">
       <div style="font-size:12.5px;font-weight:900;color:var(--brand);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
         <span>⚡</span>
-        <span>[${esc(co.name)}] 실무 보상 분기점 · 타사 대비 핵심 차이점</span>
+        <span>[${esc(co.name)}] 실무 메모 · 회사별 원문 미대조</span>
       </div>
+      <div style="font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:6px;">아래는 손보·생보를 가르는 통념입니다. 해당 증권 약관과 다를 수 있어 미검증으로 둡니다.</div>
       <div style="display:flex;flex-direction:column;gap:5px;font-size:11.8px;line-height:1.5;color:var(--text);">
         <div style="display:flex;align-items:flex-start;gap:6px;">
           <span style="font-weight:900;color:${isLifeCo ? '#15803d' : '#b91c1c'};white-space:nowrap;">① 제왕절개:</span>
@@ -10849,7 +10887,8 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       </div>
     </div>
 
-    <!-- 상단 실무 보상 분기점 카드 (#32220 #32253) -->
+    ${officialBlock}
+    <!-- 상단 실무 메모. 원문 대조 전 -->
     ${diffSummaryHTML}
 
     <!-- 약관 조항 텍스트 리스트 (선택된 탭에 속한 조항만 출력) -->

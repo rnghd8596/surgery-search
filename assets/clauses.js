@@ -346,10 +346,9 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_exc": {
         "pages": [
-          "assets/clause_imgs/kb_std_tier_exc_p500.png",
           "assets/clause_imgs/kb_std_tier_exc_p501.png"
         ],
-        "pageStr": "공시실 원문 제500쪽 ~ 제501쪽 (제3조 보험금을 지급하지 않는 사유 전수)"
+        "pageStr": "공시실 원문 제501쪽만 파일 있음 (제500쪽 스캔 파일 없음 · 미수록)"
       },
       "tier_table": {
         "pages": [
@@ -398,10 +397,9 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/samsung_std_tier_inc_p714.png",
-          "assets/clause_imgs/samsung_std_tier_inc_p715.png"
+          "assets/clause_imgs/samsung_std_tier_inc_p714.png"
         ],
-        "pageStr": "공시실 원문 제714쪽 ~ 제715쪽 (1-5종 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제714쪽만 파일 있음 (제715쪽 스캔 파일 없음 · 미수록)"
       },
       "tier_exc": {
         "pages": [
@@ -538,11 +536,9 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "ndai_inc": {
         "pages": [
-          "assets/clause_imgs/db_std_ndai_inc_p800.png",
-          "assets/clause_imgs/db_std_ndai_inc_p801.png",
-          "assets/clause_imgs/db_std_ndai_inc_p802.png"
+          "assets/clause_imgs/db_std_ndai_inc_p800.png"
         ],
-        "pageStr": "공시실 원문 제800쪽 ~ 제802쪽 (120대/119대 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제800쪽만 파일 있음 (제801~802쪽 스캔 파일 없음 · 미수록)"
       },
       "ndai_exc": {
         "pages": [
@@ -630,10 +626,9 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/hanwha_std_tier_inc_p379.png",
-          "assets/clause_imgs/hanwha_std_tier_inc_p380.png"
+          "assets/clause_imgs/hanwha_std_tier_inc_p379.png"
         ],
-        "pageStr": "공시실 원문 제379쪽 ~ 제380쪽 (1-5종 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제379쪽만 파일 있음 (제380쪽 스캔 파일 없음 · 미수록)"
       },
       "tier_exc": {
         "pages": [
@@ -738,10 +733,9 @@ window.VERIFIED_CLAUSE_SCANS = {
       },
       "tier_inc": {
         "pages": [
-          "assets/clause_imgs/hanwha_std_tier_inc_p379.png",
-          "assets/clause_imgs/hanwha_std_tier_inc_p380.png"
+          "assets/clause_imgs/hanwha_std_tier_inc_p379.png"
         ],
-        "pageStr": "공시실 원문 제379쪽 ~ 제380쪽 (1-5종 질병수술비 제1조 지급사유)"
+        "pageStr": "공시실 원문 제379쪽만 파일 있음 (제380쪽 스캔 파일 없음 · 미수록)"
       },
       "tier_exc": {
         "pages": [
@@ -1004,7 +998,7 @@ window.POLICY_CLAUSES_DATA = {
               }
             }
           },
-            simplified: {
+            simplified355: {
               name: '간편 (유병자 3.5.5 / 3.10.5)',
               riders: {
                 basic: {
@@ -6855,7 +6849,7 @@ window.POLICY_CLAUSES_DATA = {
                     "clauses": [
                       { "title": "제1조(지급사유)", "text": "질병 치료 목적 수술 시 회당 정액 지급." }
                     ],
-                    "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                    "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                   },
                   "exclusion": {
                     "title": "보상하지 않는 사항 (면책조항 전문)",
@@ -6870,9 +6864,9 @@ window.POLICY_CLAUSES_DATA = {
                     "clauses": [
                       { "title": "면책사유", "text": "흡인·천자·신경차단, 미용성형, 치과·한방, 검진 제외." }
                     ],
-                    "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                    "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                   },
-                  "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                  "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                 },
                 "tier": {
                   "title": "1~5종 수술특약 (수술분류표)",
@@ -6896,7 +6890,7 @@ window.POLICY_CLAUSES_DATA = {
                       ["80", "악성신생물(암) 근치수술", "5종", "관혈적 악성종양 5종 정상 지급"]
                     ]
                   },
-                  "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                  "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                 },
                 "ndai": {
                   "title": "주요 성인병/성인주요질환 수술특약",
@@ -6916,7 +6910,7 @@ window.POLICY_CLAUSES_DATA = {
                       ["다빈도 성인병", "당뇨병, 만성간질환, 백내장, 녹내장", "E10~E14, K70~K76, H25, H40", "정액 지급"]
                     ]
                   },
-                  "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                  "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                 }
               }
             },
@@ -6935,15 +6929,15 @@ window.POLICY_CLAUSES_DATA = {
                     "title": "보상하는 사항 (지급기준)",
                     "quote": "질병 치료 목적 수술 시 회당 정액 지급.",
                     "clauses": [{ "title": "제1조", "text": "정액 지급." }],
-                    "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                    "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                   },
                   "exclusion": {
                     "title": "보상하지 않는 사항 (면책조항)",
                     "quote": "흡인, 천자, 신경차단, 미용성형, 정상분만 면책.",
                     "clauses": [{ "title": "면책사유", "text": "단순 처치 및 검진 제외." }],
-                    "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                    "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                   },
-                  "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                  "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                 },
                 "tier": {
                   "title": "간편 1~5종 수술특약",
@@ -6963,7 +6957,7 @@ window.POLICY_CLAUSES_DATA = {
                       ["80", "암수술", "5종", "5종 지급"]
                     ]
                   },
-                  "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                  "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                 },
                 "ndai": {
                   "title": "간편 주요 성인병 수술특약",
@@ -6978,7 +6972,7 @@ window.POLICY_CLAUSES_DATA = {
                     "headers": ["질병군", "대상 질병", "질병코드", "보장"],
                     "rows": [["주요 질환", "뇌·심·간·당뇨", "I60~I69, I20~I25 등", "정액 지급"]]
                   },
-                  "imgSrc": "assets/clause_imgs/dongyang_tier_p.png"
+                  "imgSrc": "assets/clause_imgs/dongyang_tier_p1.png"
                 }
               }
             }
