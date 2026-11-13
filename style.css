@@ -2614,10 +2614,23 @@ html[data-theme="dark"] .rules-modal-body {
   box-sizing: border-box !important;
 }
 
-.rules-modal, .clause-modal {
+.clause-modal {
   position: fixed !important;
   inset: 0 !important;
   z-index: 25000 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  padding: env(safe-area-inset-top, 8px) 8px env(safe-area-inset-bottom, 8px) 8px !important;
+  box-sizing: border-box !important;
+  display: none;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+}
+.rules-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 35000 !important;
   width: 100vw !important;
   height: 100dvh !important;
   padding: env(safe-area-inset-top, 8px) 8px env(safe-area-inset-bottom, 8px) 8px !important;
@@ -2662,4 +2675,40 @@ html[data-theme="dark"] .rules-modal-body {
   padding: 10px 14px !important;
   padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
   border-top: 1px solid var(--border) !important;
+}
+
+
+/* ══════════════════ v6 모달 레이아웃 엄격 고정 ══════════════════ */
+.clause-modal-inner {
+  height: calc(100dvh - 16px) !important;
+  max-height: calc(100dvh - 16px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+.clause-modal-head {
+  flex-shrink: 0 !important;
+}
+#clauseModalSearchWrap {
+  flex-shrink: 0 !important;
+}
+#clauseModalAlert {
+  flex-shrink: 0 !important;
+}
+.clause-modal-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  max-height: none !important;
+}
+.clause-modal-foot {
+  flex-shrink: 0 !important;
+}
+
+
+/* ══════════════════ v7 rulesModal 최상위 격상 ══════════════════ */
+#rulesModal, .rules-modal {
+  z-index: 99999 !important;
+}
+#clauseModal, .clause-modal {
+  z-index: 25000 !important;
 }

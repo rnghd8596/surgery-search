@@ -35,7 +35,7 @@
 <meta name="twitter:image" content="https://rnghd8596.github.io/surgery-search/og-brand-bright.png?v=20261111_0815">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css?v=20261113_1012">
+<link rel="stylesheet" href="style.css?v=20261113_1020">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233182F6'/%3E%3Ctext x='32' y='43' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3E%ED%99%8D%3C/text%3E%3C/svg%3E">
 <script>
 window.onerror = function(msg, url, line, col, err) {
@@ -1010,7 +1010,7 @@ window.onerror = function(msg, url, line, col, err) {
         </div>
 
         <div class="searchbox-wrap" style="position:relative;width:100%;margin:0;padding:0;">
-          <input type="text" id="q-clause" class="searchbox" placeholder="보험사명, 개정이슈, 수술특약 검색... (예: 메리츠, 여유증, 체외충격파)" style="width:100% !important;max-width:100% !important;height:50px;font-size:14px;padding-left:16px;padding-right:40px;border-radius:12px;box-sizing:border-box;display:block;">
+          <input type="text" id="q-clause" class="searchbox" placeholder="보험사명 또는 수술명 검색" style="width:100% !important;max-width:100% !important;height:50px;font-size:14px;padding-left:16px;padding-right:40px;border-radius:12px;box-sizing:border-box;display:block;">
           <button type="button" id="clearBtn-clause" class="searchbox-clear" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);border:none;background:none;font-size:18px;color:var(--text-3);cursor:pointer;">✕</button>
         </div>
       </div>
@@ -1033,6 +1033,42 @@ window.onerror = function(msg, url, line, col, err) {
 </div>
 
 <!-- ══════════════════ MODALS (BODY ROOT) ══════════════════ -->
+<!-- 보험약관 전용 인터랙티브 뷰어 모달 -->
+<div id="clauseModal" class="clause-modal" aria-hidden="true">
+  <div class="clause-modal-inner">
+    <div class="clause-modal-head" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface);gap:8px;">
+      <div style="min-width:0;flex:1;padding:0 4px;text-align:center;">
+        <div id="clauseModalBadge" style="display:inline-block;font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;margin-bottom:2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">약관 원문 뷰어</div>
+        <div class="clause-modal-title" id="clauseModalTitle" style="font-size:14.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">약관 제목</div>
+      </div>
+      <button type="button" class="rules-modal-close" id="btnClauseModalClose" aria-label="닫기">✕</button>
+    </div>
+
+    <!-- 모달 상단 조항 내 실시간 검색바 & 본문 복사 버튼 -->
+    <div id="clauseModalSearchWrap" style="display:none;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <input type="text" id="clauseInnerSearch" placeholder="조항명 또는 질병코드 검색" style="flex:1;height:38px;border-radius:8px;border:1px solid var(--border);padding:0 12px;font-size:12.5px;background:var(--surface);color:var(--text);min-width:0;">
+      <button type="button" id="btnCopyClauseText" style="height:38px;padding:0 12px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;flex-shrink:0;">
+        <span>📋 본문 복사</span>
+      </button>
+    </div>
+
+    <!-- 모달 알림 박스 (개정 포인트 / 실무 팁) -->
+    <div id="clauseModalAlert" style="display:none;padding:12px 14px;background:rgba(217,119,6,0.08);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:800;color:var(--text);line-height:1.55;word-break:keep-all;"></div>
+
+    <!-- 모달 본문 영역 (모바일 최적화 패딩) -->
+    <div class="clause-modal-body" id="clauseModalBody" style="flex:1 1 auto;overflow-y:auto;padding:14px 12px;">
+      <div id="clauseModalContent"></div>
+    </div>
+
+    <!-- 모달 하단 뒤로가기 바 (엄지로 원터치 닫기) -->
+    <div class="clause-modal-foot" style="padding:10px 14px;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:center;position:sticky;bottom:0;z-index:20;flex-shrink:0;">
+      <button type="button" id="btnClauseModalFootBack" style="width:100%;height:46px;border-radius:10px;border:none;background:var(--brand);color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(49,130,246,0.3);">← 뒤로가기 (이전 화면으로)</button>
+    </div>
+  </div>
+  <!-- 어떤 상황에서도 원터치 나가기 가능한 플로팅 닫기 버튼 (#28404) -->
+  <button type="button" id="btnClauseModalFloatingClose" aria-label="닫기" style="position:fixed;right:18px;bottom:80px;z-index:99999;width:52px;height:52px;border-radius:50%;background:#ef4444;color:#fff;border:2.5px solid #fff;box-shadow:0 8px 24px rgba(239,68,68,0.55);font-size:22px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s ease;">✕</button>
+</div>
+
 <!-- 약관 원문 고해상도 확대 모달 (동시수술) -->
 <div id="rulesModal" class="rules-modal" style="z-index: 25000 !important;" aria-hidden="true">
   <div class="rules-modal-inner">
@@ -1058,40 +1094,6 @@ window.onerror = function(msg, url, line, col, err) {
   </div>
 </div>
 
-<!-- 보험약관 전용 인터랙티브 뷰어 모달 -->
-<div id="clauseModal" class="clause-modal" aria-hidden="true">
-  <div class="clause-modal-inner">
-    <div class="clause-modal-head" style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);background:var(--surface);gap:8px;">
-      <div style="min-width:0;flex:1;padding:0 4px;text-align:center;">
-        <div id="clauseModalBadge" style="display:inline-block;font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;margin-bottom:2px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">약관 원문 뷰어</div>
-        <div class="clause-modal-title" id="clauseModalTitle" style="font-size:14.5px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">약관 제목</div>
-      </div>
-      <button type="button" class="rules-modal-close" id="btnClauseModalClose" aria-label="닫기">✕</button>
-    </div>
-
-    <!-- 모달 상단 조항 내 실시간 검색바 & 본문 복사 버튼 -->
-    <div id="clauseModalSearchWrap" style="display:none;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
-      <input type="text" id="clauseInnerSearch" placeholder="🔍 조항명, 수술명, 질병코드 빠른 검색..." style="flex:1;height:38px;border-radius:8px;border:1px solid var(--border);padding:0 12px;font-size:12.5px;background:var(--surface);color:var(--text);min-width:0;">
-      <button type="button" id="btnCopyClauseText" style="height:38px;padding:0 12px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;flex-shrink:0;">
-        <span>📋 본문 복사</span>
-      </button>
-    </div>
-
-    <!-- 모달 알림 박스 (개정 포인트 / 실무 팁) -->
-    <div id="clauseModalAlert" style="display:none;padding:12px 14px;background:rgba(217,119,6,0.08);border-bottom:1px solid var(--border);font-size:12.5px;font-weight:800;color:var(--text);line-height:1.55;word-break:keep-all;"></div>
-
-    <!-- 모달 본문 영역 (모바일 최적화 패딩) -->
-    <div class="clause-modal-body" id="clauseModalBody" style="max-height:70vh;overflow-y:auto;padding:14px 12px;">
-      <div id="clauseModalContent"></div>
-    </div>
-
-    <!-- 모달 하단 뒤로가기 바 (엄지로 원터치 닫기) -->
-    <div class="clause-modal-foot" style="padding:10px 14px;background:var(--surface);border-top:1px solid var(--border);display:flex;justify-content:center;position:sticky;bottom:0;z-index:20;">
-      <button type="button" id="btnClauseModalFootBack" style="width:100%;height:46px;border-radius:10px;border:none;background:var(--brand);color:#fff;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 3px 10px rgba(49,130,246,0.3);">← 뒤로가기</button>
-    </div>
-  </div>
-</div>
-
 <!-- ══════════════════ SCRIPTS ══════════════════ -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
@@ -1100,9 +1102,9 @@ window.onerror = function(msg, url, line, col, err) {
   }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="assets/curated.js?v=20261113_1012"></script>
-<script src="assets/disputes.js?v=20261113_1012"></script>
-<script src="assets/clauses.js?v=20261113_1012"></script>
-<script src="app.js?v=20261113_1012"></script>
+<script src="assets/curated.js?v=20261113_1020"></script>
+<script src="assets/disputes.js?v=20261113_1020"></script>
+<script src="assets/clauses.js?v=20261113_1020"></script>
+<script src="app.js?v=20261113_1020"></script>
 </body>
 </html>
