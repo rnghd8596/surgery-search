@@ -9798,6 +9798,19 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       const btnPhoto = box.querySelector('#btnOpenRulesNdai');
       if (btnPhoto) {
         btnPhoto.addEventListener('click', () => {
+          const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
+          const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
+          const ndaiKey = numMatch ? numMatch[0] : '';
+          const cleanNdaiName = (selectedNdai ? `${selectedNdai} 질병분류표` : (tableData.title || rider.title || 'N대 질병분류표')).replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
+          if (!isLatestPeriod) {
+            const pastImg = rider.imgSrc;
+            if (pastImg) {
+              window.openRulesModal(pastImg, `🏢 [${co.name}] ${period.periodStr} · ${cleanNdaiName} 공식 원문`, period.revSummary, [pastImg], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
+            } else {
+              alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 N대 질병분류표 데이터입니다.\n\n해당 가입시기 질환군 및 수록 코드가 화면에 100% 수록되어 있습니다.`);
+            }
+            return;
+          }
           const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
           const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
           const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
@@ -9919,6 +9932,19 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     const btnPhoto = box.querySelector('#btnOpenRulesNdai');
     if (btnPhoto) {
       btnPhoto.addEventListener('click', () => {
+        const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
+        const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
+        const ndaiKey = numMatch ? numMatch[0] : '';
+        const cleanNdaiName = (selectedNdai ? `${selectedNdai} 질병분류표` : (tableData.title || rider.title || 'N대 질병분류표')).replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
+        if (!isLatestPeriod) {
+          const pastImg = rider.imgSrc;
+          if (pastImg) {
+            window.openRulesModal(pastImg, `🏢 [${co.name}] ${period.periodStr} · ${cleanNdaiName} 공식 원문`, period.revSummary, [pastImg], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
+          } else {
+            alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 N대 질병분류표 데이터입니다.\n\n해당 가입시기 질환군 및 수록 코드가 화면에 100% 수록되어 있습니다.`);
+          }
+          return;
+        }
         const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
         const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
         const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
@@ -10608,6 +10634,14 @@ function bindPhotoButtons(box, rider, co, period) {
   }
   if (btnPre) {
     btnPre.addEventListener('click', () => {
+      const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
+      if (!isLatestPeriod) {
+        const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
+        const src = preObj ? preObj.src : rider.imgSrc;
+        if (src) window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary, [src], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
+        else alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 1~5종 수술분류표입니다.\n\n해당 시기 조항 및 분류표 텍스트가 화면에 100% 수록되어 있습니다.`);
+        return;
+      }
       const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
       const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
       if (v && v.tier_table && v.tier_table.pages) {
@@ -10623,6 +10657,12 @@ function bindPhotoButtons(box, rider, co, period) {
   }
   if (btnSingle) {
     btnSingle.addEventListener('click', () => {
+      const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
+      if (!isLatestPeriod) {
+        if (rider.imgSrc) window.openRulesModal(rider.imgSrc, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 원문`, period.revSummary, [rider.imgSrc], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
+        else alert(`🏢 [${co.name}] ${period.periodStr} 가입시기 1~5종 수술분류표입니다.\n\n해당 시기 조항 및 분류표 텍스트가 화면에 100% 수록되어 있습니다.`);
+        return;
+      }
       const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
       const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
       if (v && v.tier_table && v.tier_table.pages) {
