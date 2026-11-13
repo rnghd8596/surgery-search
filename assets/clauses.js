@@ -49,14 +49,14 @@ window.VERIFIED_CLAUSE_SCANS = {
           "assets/clause_imgs/meritz_std_ndai_inc_p335.png",
           "assets/clause_imgs/meritz_std_ndai_inc_p336.png"
         ],
-        "pageStr": "공시실 원문 제332쪽 ~ 제336쪽 (131대/112대 질병수술비 제1조 보장범위 · 제3조 수술정의 · 제4조 정의)"
+        "pageStr": "스캔 제332쪽~ (41. 갱신형 131대질병수술비보장 특별약관 제1조 보장의 범위 · 제2조 지급사유). 112대 문구 아님"
       },
       "ndai_exc": {
         "pages": [
           "assets/clause_imgs/meritz_std_ndai_exc_p337.png",
           "assets/clause_imgs/meritz_std_ndai_exc_p338.png"
         ],
-        "pageStr": "공시실 원문 제337쪽 ~ 제338쪽 (131대/112대 질병수술비 보상제외 면책조항 전수)"
+        "pageStr": "스캔 제337쪽 (131대질병수술비 제5조 수술의 정의와 장소). 112대 문구 아님"
       },
       "ndai_table": {
         "pages": [
@@ -116,14 +116,14 @@ window.VERIFIED_CLAUSE_SCANS = {
           "assets/clause_imgs/meritz_std_ndai_inc_p333.png",
           "assets/clause_imgs/meritz_std_ndai_inc_p334.png"
         ],
-        "pageStr": "공시실 원문 제332쪽 ~ 제334쪽 (간편 112대 질병수술비 제1조 지급사유)"
+        "pageStr": "스캔 제332쪽은 41. 갱신형 131대질병수술비보장 특별약관이다. 간편 112대 제1조가 아님. 이 쪽에 상품명 '간편한3.10.5'는 인쇄되어 있지 않음"
       },
       "ndai_exc": {
         "pages": [
           "assets/clause_imgs/meritz_std_ndai_exc_p337.png",
           "assets/clause_imgs/meritz_std_ndai_exc_p338.png"
         ],
-        "pageStr": "공시실 원문 제337쪽 ~ 제338쪽 (간편 112대 질병수술비 보상제외 면책조항 전수)"
+        "pageStr": "스캔 제337쪽은 131대 제5조(수술의 정의와 장소)이다. 간편 112대 면책 전문이 아님"
       },
       "ndai_table": {
         "pages": [
@@ -134,7 +134,7 @@ window.VERIFIED_CLAUSE_SCANS = {
           "assets/clause_imgs/meritz_std_ndai_32_p728.png",
           "assets/clause_imgs/meritz_std_ndai_5_p734.png"
         ],
-        "pageStr": "공시실 별표 제714쪽 ~ 제734쪽 (112대 질병분류표 전문)"
+        "pageStr": "스캔은 특정31대(제714쪽)·다빈도64대(제720쪽)·32대 별표46(제728쪽) 등이며, 112대 분류표 전문이 아님"
       }
     }
   },

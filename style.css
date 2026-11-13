@@ -2673,9 +2673,13 @@ html[data-theme="dark"] .rules-modal-body {
 }
 .rules-modal-head, .clause-modal-head {
   flex-shrink: 0 !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 100 !important;
+  position: static !important;
+  top: auto !important;
+  z-index: 2 !important;
+}
+#clauseModalAlert, #clauseModalSearchWrap {
+  position: static !important;
+  flex-shrink: 0 !important;
 }
 .rules-modal-body, .clause-modal-body {
   flex: 1 !important;
@@ -2714,8 +2718,14 @@ html[data-theme="dark"] .rules-modal-body {
 }
 .clause-modal-body {
   flex: 1 1 auto !important;
+  min-height: 0 !important;
   overflow-y: auto !important;
   max-height: none !important;
+}
+#clauseModalTitle, .clause-modal-title {
+  white-space: normal !important;
+  text-align: left !important;
+  line-height: 1.35 !important;
 }
 .clause-modal-foot {
   flex-shrink: 0 !important;

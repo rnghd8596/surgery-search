@@ -81,12 +81,12 @@ window.DYNAMIC_NDAI_TABLES = {
       ]
     },
     '32대': {
-      title: '별표46 [32대 관혈 질병수술비 분류표]',
+      title: '별표46·제42조 [32대질병관혈수술비] (스캔 제339·728쪽)',
       rows: [
-        ['3대 특정질병 (3)', '뇌혈관질환, 허혈심장질환, 만성 류마티스 심장질환', 'I60~I69, I20~I25, I05~I09', '관혈 수술 시 지급'],
-        ['9대 중대질병 (9)', '만성 신부전, 간질환, 췌장질환, 폐질환, 당뇨병, 고혈압 등', 'N17~N19, K70~K76, K85~K86, J40~J47, E10~E14, I10~I15', '관혈 수술 시 지급'],
-        ['6대 다발질병 (6)', '동맥경화, 갑상선질환, 녹내장, 위십이지장궤양, 결핵 등', 'I70, E00~E07, H40, K25~K28, A15~A19', '관혈 수술 시 지급'],
-        ['14대 생활질병 (14)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 치핵, 백내장 등', 'K80, K35, K40, N20, N40, K64, H25', '관혈 수술 시 지급']
+        ['5대질병 (5)', '심장질환, 뇌혈관질환, 간질환, 신부전, 폐질환 (별표46 제728쪽)', 'I00~I02·I05~I09·I20~I52, I60~I69, B15~B19·K70~K77, N17~N19, J43·J44·J47·J85~J86·J90~J94', '관혈. 1년 미만 50% / 이후 100% (제339쪽)'],
+        ['9대질병 (9)', '만성하부호흡기, 위·십이지장궤양, 결핵, 갑상선, 동맥경화, 대동맥류, 폐렴, 급성췌장염, 췌장 (제729~730쪽)', 'J40~J42·J45~J46, K25~K27, A15~A19, E00~E07, I70, I71, J12~J18, K85, K86~K87', '관혈. 1년 미만 50% / 이후 100% (제339쪽)'],
+        ['14대질병 (14)', '제341쪽 정의: 소화기·중이호흡·비뇨·수막·뇌·갑상선내분비 양성신생물, 사구체, 신세뇨관-간질, 신장요관 기타, 비뇨계통 기타, 특정 장질환, 담낭, 담낭담도, 안면신경. 코드는 제730~731쪽에 있는 것만 적음', 'D13~D15, D30, D32~D35, N00~N08, N10~N16, N25~N29. 나머지 코드는 이어지는 별표 쪽 미수록', '관혈. 1년 미만 50% / 이후 100% (제339쪽)'],
+        ['4대질병 (4)', '제341쪽 제3조⑤: 여성생식기 양성종양, 남성생식기 양성종양, 관절염, 생식기질환. 분류번호 표는 이 저장소에 없음', '코드 미수록', '관혈. 1년 미만 50% / 이후 100% (제339쪽)']
       ]
     },
     '120대': {
@@ -185,11 +185,11 @@ window.DYNAMIC_NDAI_TABLES = {
     '111대': {
       title: '별표 [111대 질병분류표 전문]',
       rows: [
-        ['5대 주요질병 (5)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '관혈 100% / 비관혈 50%'],
-        ['22대 주요질병 (22)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 결핵 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, A15~A19', '관혈 100% / 비관혈 50%'],
-        ['3대 특정질병 (3)', '급성 상기도감염, 폐렴, 버거씨병', 'J00~J06, J12~J18, I73.1', '정액 지급'],
-        ['19대 생활질병 (19)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 치핵, 편도염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, K64, J35', '정액 지급'],
-        ['62대 생활질병 (62)', '비염, 부비동염(축농증), 하지정맥류, 관절염, 척추디스크, 백내장 등', 'J30~J34, I83, M15~M19, M48, M50~M51, H25~H28', '정액 지급']
+        ['5대주요기관질병 (5)', '약관 제4조 인쇄 문구: 뇌질환, 심질환, 간질환, 췌장질환, 폐질환. 코드표는 별표20-5', '코드는 별표20-5. 이 화면의 옛 I60·I20 범위는 그 별표와 대조 전', '1년 미만 50% / 이후 해당 세부보장 (약관 제847쪽대)'],
+        ['22대주요질병 (22)', '별표-개별사항20-6. 질병명 전수는 그 별표', '별표20-6', '1년50% 세부보장'],
+        ['3대주요질병 (3)', '별표-개별사항20-7. 급성상기도·폐렴·버거씨로 단정하지 않음', '별표20-7', '1년50% 세부보장'],
+        ['19대생활질병 (19)', '별표-개별사항20-8', '별표20-8', '1년50% 세부보장'],
+        ['62대생활질병 (62)', '별표-개별사항20-9', '별표20-9', '1년50% 세부보장']
       ]
     },
     '116대': {
@@ -363,23 +363,32 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
     } else if (grp.includes('백내장')) {
       pages = ['assets/clause_imgs/meritz_std_ndai_cataract_p705.png'];
       pageDesc = '공시실 별표40 제705쪽 【별표40】 백내장 분류표 전문';
+    } else if (grp.includes('5대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_32_table_p728.png'];
+      pageDesc = '【별표46】 32대질병 분류표 중 [5대질병]. 스캔 제728쪽';
+    } else if (grp.includes('9대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_32_table_p729.png', 'assets/clause_imgs/meritz_std_ndai_32_table_p730.png'];
+      pageDesc = '【별표46】 [9대질병]. 스캔 제729쪽~제730쪽(9대 끝과 14대 시작이 같은 쪽)';
+    } else if (grp.includes('14대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_32_table_p730.png', 'assets/clause_imgs/meritz_std_ndai_32_table_p731.png'];
+      pageDesc = '【별표46】 [14대질병] 시작. 스캔 제730쪽~제731쪽. 14대 끝 쪽은 미수록';
+    } else if (grp.includes('4대')) {
+      pages = ['assets/clause_imgs/meritz_std_ndai_32_inc_p341.png'];
+      pageDesc = '42. 32대질병관혈수술비 제3조⑤ 4대질병의 정의. 스캔 제341쪽. 분류번호 표는 미수록';
     } else if (grp.includes('32대')) {
       pages = [
-        'assets/clause_imgs/meritz_std_ndai_32_table_p728.png',
-        'assets/clause_imgs/meritz_std_ndai_32_table_p729.png',
-        'assets/clause_imgs/meritz_std_ndai_32_table_p730.png'
+        'assets/clause_imgs/meritz_std_ndai_32_inc_p339.png',
+        'assets/clause_imgs/meritz_std_ndai_32_table_p728.png'
       ];
-      pageDesc = '공시실 별표46 제728쪽~제730쪽 【별표46】 32대질병 분류표 전문';
-    } else {
+      pageDesc = '42. 갱신형 32대질병관혈수술비 제339쪽과 별표46 제728쪽';
+    } else if (grp.includes('131대')) {
       pages = [
         'assets/clause_imgs/meritz_std_ndai_inc_p332.png',
-        'assets/clause_imgs/meritz_std_ndai_inc_p333.png',
-        'assets/clause_imgs/meritz_std_ndai_inc_p334.png',
-        'assets/clause_imgs/meritz_std_ndai_inc_p335.png',
-        'assets/clause_imgs/meritz_std_ndai_inc_p336.png'
+        'assets/clause_imgs/meritz_std_ndai_inc_p333.png'
       ];
-      pageDesc = '공시실 원문 제332쪽~제336쪽 (131대 질병수술비 제1조 지급사유 · 제4조 정의 전문)';
+      pageDesc = '41. 갱신형 131대질병수술비보장 특별약관. 스캔 제332쪽~';
     }
+    // 이름이 안 맞으면 다른 특약 쪽을 열지 않는다.
   }
   // 2. 현대해상
   else if (co.id.includes('hyundai')) {
@@ -468,13 +477,9 @@ window.openNdaiGroupModal = function(co, grpName, period, data) {
 
   if (pages && pages.length > 0) {
     const meta = { product: (v && v.product) || co.name, type: (v && v.type) || '공식 약관', page: pageDesc };
-    window.openRulesModal(pages[0], `🏢 [${co.name}] ${grpName} 공식 분류표 원문`, period ? period.revSummary : '', pages, meta);
-  } else {
-    const parentScan = v && (v.ndai_table || v.ndai_inc);
-    if (parentScan && parentScan.pages && parentScan.pages.length > 0) {
-      const meta = { product: (v && v.product) || co.name, type: (v && v.type) || '공식 약관', page: parentScan.pageStr || pageDesc };
-      window.openRulesModal(parentScan.pages[0], `🏢 [${co.name}] ${grpName} (공식 분류표 원문)`, period ? period.revSummary : '', parentScan.pages, meta);
-    }
+    window.openRulesModal(pages[0], `🏢 [${co.name}] ${grpName} 해당 쪽`, period ? period.revSummary : '', pages, meta);
+  } else if (typeof showToast === 'function') {
+    showToast('이 질병군만의 약관 쪽이 연결되어 있지 않습니다. 다른 특약 쪽으로 대신 열지 않습니다.');
   }
 };
 
@@ -10891,7 +10896,8 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     <!-- 상단 실무 메모. 원문 대조 전 -->
     ${diffSummaryHTML}
 
-    <!-- 약관 조항 텍스트 리스트 (선택된 탭에 속한 조항만 출력) -->
+    <div class="unverified-banner">아래 조항 문장은 모든 회사에 같은 문구로 넣어 둔 안내문입니다. 이 상품 약관에서 옮긴 문장이 아닙니다.</div>
+    <!-- 약관 조항 텍스트 리스트 -->
     <div class="clause-article-list" style="display:flex;flex-direction:column;gap:10px;">
       ${activeList.length > 0 ? activeList.map(a => `
         <div class="clause-article-card" style="background:var(--surface);border:1.5px solid ${curTab === 'exclusion' ? 'rgba(220,38,38,0.25)' : 'var(--border)'};border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
