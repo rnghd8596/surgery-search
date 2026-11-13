@@ -9875,15 +9875,20 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
             <div class="ndai-group-body" style="display:${isAutoOpen ? 'block' : 'none'};padding:10px 12px;background:var(--surface-2);border-top:1px dashed var(--line);">
               <div style="font-size:11px;font-weight:850;color:#059669;margin-bottom:6px;">📋 수록 질병코드 (KCD 전수 분류표):</div>
               <div style="display:flex;flex-direction:column;gap:5px;">
-                ${detailedList.length ? detailedList.map(item => `
-                  <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);min-height:48px;">
-                    <span class="kcd-badge-fixed" style="font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.08);padding:3px 0;border-radius:5px;border:1px solid rgba(37,99,235,0.2);white-space:nowrap;width:84px;min-width:84px;max-width:84px;text-align:center;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex-shrink:0;">${esc(item.code)}</span>
+                ${detailedList.length ? detailedList.map(item => {
+                  const codeStr = item.code || (item.c && item.c[0]) || 'KCD';
+                  const nameStr = item.name || item.n || '';
+                  const subCodeStr = (item.c && item.c.length > 1) ? ('포함 KCD: ' + item.c.join(', ')) : '';
+                  const descStr = item.desc || subCodeStr;
+                  return `
+                  <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);min-height:44px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+                    <span class="kcd-badge-fixed" style="font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.08);padding:3px 0;border-radius:5px;border:1px solid rgba(37,99,235,0.2);white-space:nowrap;width:84px;min-width:84px;max-width:84px;text-align:center;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex-shrink:0;">${esc(codeStr)}</span>
                     <div style="min-width:0;flex:1;">
-                      <div style="font-size:12.5px;font-weight:850;color:var(--text);word-break:keep-all;">${esc(item.name)}</div>
-                      ${item.desc ? `<div style="font-size:11px;color:#334155;margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(item.desc)}</div>` : ''}
+                      <div style="font-size:12.5px;font-weight:850;color:var(--text);word-break:keep-all;">${esc(nameStr)}</div>
+                      ${descStr ? `<div style="font-size:11px;color:#334155;margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(descStr)}</div>` : ''}
                     </div>
-                  </div>
-                `).join('') : `
+                  </div>`;
+                }).join('') : `
                   <div style="padding:6px 8px;font-size:11.5px;background:var(--surface);border-radius:6px;border:1px solid var(--border);color:var(--text);">
                     <div style="font-weight:850;color:#2563eb;margin-bottom:2px;">KCD 코드: ${esc(rawCodes)}</div>
                     <div style="color:var(--text-2);">${esc(summaryNames)}</div>
