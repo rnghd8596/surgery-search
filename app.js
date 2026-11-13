@@ -100,23 +100,29 @@ const COMPARISON_PAIRS = [
   {
     id: 'cartistem_vs_conjuran',
     keys: ['카티스템', '카티라이프', '콘쥬란', '줄기세포', '연골주사', 'cartistem', 'cartilife'],
-    title: '⚡ 유사 명칭 직관 비교: 카티스템 (수술) vs 콘쥬란 (주사)',
+    title: '⚡ 무릎 연골 2대 치료 직관 비교 (카티스템 vs 콘쥬란)',
     items: [
       {
-        name: '카티스템 / 카티라이프 줄기세포 이식술',
-        badge: '✅ 수술비 지급 (3종/2종)',
+        name: '카티스템/카티라이프 줄기세포 이식',
+        badge: '⭕ 수술비 지급 (3종/2종)',
         badgeColor: '#fff',
-        badgeBg: 'var(--brand)',
-        desc: '절개 또는 관절경을 통해 연골 결손부에 미세천공 후 줄기세포 치료제를 이식하는 외과적 수술. **질병수술비 지급 + 종수술비 3종(관혈)/2종(관절경)** 정상 지급.',
-        tag: '수술 인정'
+        badgeBg: '#2563eb',
+        borderColor: '#2563eb',
+        boxBg: 'rgba(37, 99, 235, 0.06)',
+        target: '퇴행성 관절염 연골 결손 (M17, M23)',
+        nature: '절개 또는 관절경하 연골 미세천공 및 줄기세포 이식',
+        payout: '질병수술비 + 종수술 3종(관혈)/2종(관절경)'
       },
       {
-        name: '콘쥬란 / 히알루론산 관절강내 주사',
-        badge: '❌ 수술비 비해당 (주사 처치)',
+        name: '콘쥬란/히알루론산 관절강 주사',
+        badge: '❌ 수술비 비해당',
         badgeColor: '#fff',
-        badgeBg: '#ef4444',
-        desc: '외과적 절개나 관절경 조작 없이 주사 바늘로 관절강 내에 약물을 주입하는 보존적 치료. **수술비 약관상 면책(부지급)** 대상이며, **실손의료비로만 청구 가능**합니다.',
-        tag: '주사 처치 (수술 아님)'
+        badgeBg: '#dc2626',
+        borderColor: '#ef4444',
+        boxBg: 'rgba(239, 68, 68, 0.06)',
+        target: '무릎 관절 연골 마모 및 관절강 염증',
+        nature: '주사 바늘로 약물 주입 (수술 아닌 단순 주사)',
+        payout: '수술비 전사 면책 (실손의료비만 가능)'
       }
     ]
   },
@@ -7708,113 +7714,317 @@ function closeClauseModal() {
 }
 window.closeClauseModal = closeClauseModal;
 
+function parsePeriodYearRange(periodStr) {
+  const years = (periodStr.match(/\d{4}/g) || []).map(Number);
+  if (periodStr.includes('이전')) {
+    return [1990, years[0] || 2020];
+  } else if (periodStr.includes('현재') || years.length === 1) {
+    return [years[0] || 2024, 2099];
+  } else if (years.length >= 2) {
+    return [years[0], years[1]];
+  }
+  return [2000, 2099];
+}
+
+function extractSearchedYear(rawQ) {
+  // 예: '21년', '18년도', '2021년', '2018', '06년'
+  const m1 = rawQ.match(/(\d{2,4})년/);
+  if (m1) {
+    let y = parseInt(m1[1], 10);
+    if (y < 100) y = y <= 35 ? 2000 + y : 1900 + y;
+    return y;
+  }
+  const m2 = rawQ.match(/\b(19\d{2}|20\d{2})\b/);
+  if (m2) return parseInt(m2[1], 10);
+  return null;
+}
+
 function renderClausesCompanyList(searchQuery = '') {
   const container = $('#clausesCompanyList');
   if (!container) return;
 
-  const cat = state.clauseCat || 'nonLife';
-  const dataList = window.POLICY_CLAUSES_DATA ? window.POLICY_CLAUSES_DATA[cat] : [];
-  if (!dataList || dataList.length === 0) {
-    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-3);">탑재된 약관 데이터가 없습니다.</div>';
-    return;
-  }
+  const rawQ = (searchQuery || '').trim();
+  const normQ = norm(rawQ);
 
-  const normQ = (searchQuery || '').trim().toLowerCase();
-  let filtered = dataList;
+  const nonLifeList = (window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.nonLife) ? window.POLICY_CLAUSES_DATA.nonLife : [];
+  const lifeList = (window.POLICY_CLAUSES_DATA && window.POLICY_CLAUSES_DATA.life) ? window.POLICY_CLAUSES_DATA.life : [];
+
+  nonLifeList.forEach(c => { c._cat = 'nonLife'; c._catLabel = '🏢 손해보험'; });
+  lifeList.forEach(c => { c._cat = 'life'; c._catLabel = '🏛️ 생명보험'; });
+
+  const allCompanies = [...nonLifeList, ...lifeList];
+
+  let list = [];
+  let isUnifiedSearch = false;
+  let matchContext = { 
+    riderKey: null, 
+    isExclusion: false, 
+    isClaimTip: false, 
+    isSimplified: false, 
+    autoOpen: false, 
+    searchedYear: null 
+  };
+
   if (normQ) {
-    filtered = dataList.filter(co => {
-      if (co.name.toLowerCase().includes(normQ) || co.shortName.toLowerCase().includes(normQ) || co.desc.toLowerCase().includes(normQ)) return true;
-      if (co.aliases && co.aliases.some(a => a.toLowerCase().includes(normQ))) return true;
-      return co.periods.some(p => {
-        if (p.periodStr.toLowerCase().includes(normQ) || (p.revBadge && p.revBadge.toLowerCase().includes(normQ)) || (p.revSummary && p.revSummary.toLowerCase().includes(normQ))) return true;
+    isUnifiedSearch = true;
+    matchContext.autoOpen = true;
+
+    // 가입년도 추출 (예: '21년 멜츠', '18년 현대', '06년 삼생' #29067 #29068)
+    const detectedYear = extractSearchedYear(rawQ);
+    if (detectedYear) {
+      matchContext.searchedYear = detectedYear;
+    }
+
+    // 공백/쉼표 분리 (예: '멜츠 퍼펙트', '미생 디손 멜츠' #29025 #29057)
+    const tokens = rawQ.split(/[\s,]+/).filter(Boolean);
+    const normTokens = tokens.map(t => norm(t));
+
+    // 유병자/간편 감지 (#29041 #29042)
+    if (normTokens.some(t => t.includes('유병자') || t.includes('간편') || t.includes('355') || t.includes('3.5.5') || t.includes('3105'))) {
+      matchContext.isSimplified = true;
+    }
+
+    // 주제 토큰 분석
+    normTokens.forEach(t => {
+      if (t.includes('질수') || t.includes('질병수술')) matchContext.riderKey = 'basic';
+      if (t.includes('종수') || t.includes('종수술') || t.includes('15종') || t.includes('1-5종')) matchContext.riderKey = 'tier';
+      if (t.includes('상수') || t.includes('상해수술')) matchContext.riderKey = 'injury';
+      if (t.includes('엔대') || t.includes('n대') || /\d+대/.test(t)) matchContext.riderKey = 'ndai';
+      if (t.includes('제외') || t.includes('면책') || t.includes('부지급') || t.includes('보상제외')) matchContext.isExclusion = true;
+      if (t.includes('청구') || t.includes('팁') || t.includes('가이드')) matchContext.isClaimTip = true;
+    });
+
+    // 회사별 전수 매칭 & [매칭 포인트] 기록 (#29057)
+    list = allCompanies.filter(co => {
+      co._matchReasons = [];
+      let isYearMatchedForCo = false;
+
+      // 1) 가입년도 매칭 판정 (검색어에 연도가 있을 때)
+      if (matchContext.searchedYear) {
+        co.periods.forEach(p => {
+          const [sy, ey] = parsePeriodYearRange(p.periodStr);
+          if (matchContext.searchedYear >= sy && matchContext.searchedYear <= ey) {
+            p._isYearMatch = true;
+            isYearMatchedForCo = true;
+          } else {
+            p._isYearMatch = false;
+          }
+        });
+        if (isYearMatchedForCo) {
+          co._matchReasons.push({ 
+            label: '가입년도', 
+            token: `${matchContext.searchedYear}년`, 
+            target: '가입시기 매칭' 
+          });
+        }
+      }
+
+      // 2) 토큰별 매칭
+      tokens.forEach(origToken => {
+        const nt = norm(origToken);
+        if (!nt || /^(\d{2,4}년?|유병자|간편|355)$/.test(nt)) return;
+
+        // 회사명 및 약칭
+        if (norm(co.name).includes(nt) || nt.includes(norm(co.name))) {
+          co._matchReasons.push({ label: '회사명', token: origToken, target: co.name });
+          return;
+        }
+        if (norm(co.shortName).includes(nt) || nt.includes(norm(co.shortName))) {
+          co._matchReasons.push({ label: '회사 약칭', token: origToken, target: co.shortName });
+          return;
+        }
+        if (co.aliases && co.aliases.some(a => norm(a).includes(nt) || nt.includes(norm(a)))) {
+          co._matchReasons.push({ label: '회사 약어', token: origToken, target: co.name });
+          return;
+        }
+
+        // 대표 상품명 매칭 (#29052 #29057)
+        if (co.products) {
+          const matchedProd = co.products.find(p => norm(p).includes(nt) || nt.includes(norm(p)));
+          if (matchedProd) {
+            co._matchReasons.push({ label: '대표 상품', token: origToken, target: matchedProd });
+            return;
+          }
+        }
+
+        // N대 특약 매칭 (#29006)
+        if (co.ndaiKeywords) {
+          const matchedNdai = co.ndaiKeywords.find(k => norm(k).includes(nt) || nt.includes(norm(k)));
+          if (matchedNdai) {
+            co._matchReasons.push({ label: 'N대 특약', token: origToken, target: `${matchedNdai} 질병수술` });
+            return;
+          }
+        }
+
+        // 담보 및 수술명 매칭
+        const hasRiderMatch = co.periods.some(p => {
+          const checkR = (riders) => {
+            if (!riders) return false;
+            return Object.values(riders).some(r => {
+              if (!r) return false;
+              if (norm(r.title).includes(nt)) return true;
+              if (r.summary && norm(r.summary).includes(nt)) return true;
+              if (r.tableBody && r.tableBody.rows && r.tableBody.rows.some(row => row.some(cell => norm(cell).includes(nt)))) return true;
+              return false;
+            });
+          };
+          const stdOk = p.types && p.types.standard && checkR(p.types.standard.riders);
+          const simpObj = (p.types && p.types.simplified) || (p.types && p.types.standard && p.types.standard.simplified) || p.simplified;
+          return stdOk || (simpObj && checkR(simpObj.riders));
+        });
+
+        if (hasRiderMatch) {
+          co._matchReasons.push({ label: '담보·수술명', token: origToken, target: '약관 조항' });
+        }
+      });
+
+      return co._matchReasons.length > 0;
+    });
+
+    // 백업 검색: 토큰 분리로 안 걸릴 경우 전체 문자열로 검색
+    if (list.length === 0) {
+      list = allCompanies.filter(co => {
+        if (norm(co.name).includes(normQ) || norm(co.desc).includes(normQ)) return true;
+        if (co.products && co.products.some(p => norm(p).includes(normQ))) return true;
         return false;
       });
-    });
+    }
+  } else {
+    const cat = state.clauseCat || 'nonLife';
+    list = cat === 'nonLife' ? nonLifeList : lifeList;
   }
 
-  if (filtered.length === 0) {
+  if (list.length === 0) {
     container.innerHTML = `
-      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:30px 20px;text-align:center;">
-        <div style="font-size:24px;margin-bottom:8px;">🔍</div>
-        <div style="font-size:15px;font-weight:900;color:var(--text);">“${esc(searchQuery)}” 검색 결과가 없습니다</div>
-        <div style="font-size:12px;color:var(--text-3);margin-top:4px;">회사명 또는 약어(멜츠, 삼화, 케손, 디손, 교보, 신라 등), 질병코드(K80, N20 등)로 검색해 보세요.</div>
-      </div>`;
+      <div style="padding:45px 20px;text-align:center;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;color:var(--text-3);margin-top:10px;">
+        <div style="font-size:32px;margin-bottom:10px;">🔍</div>
+        <div style="font-size:15px;font-weight:900;color:var(--text);margin-bottom:6px;">"${esc(rawQ)}" 검색 결과가 없습니다</div>
+        <div style="font-size:12.5px;color:var(--text-3);line-height:1.5;">
+          회사명 또는 약어(멜츠, 삼화, 케손, 디손, 삼생, 한생, 미생 등),<br>
+          가입년도(21년, 18년, 06년 등)나 대표 상품명(또또암, 퍼펙트, 굿앤굿 등),<br>
+          N대 질병수술(116대, 119대, 112대 등)로 검색해 보세요.
+        </div>
+      </div>
+    `;
     return;
   }
 
-  // 1. 첫 화면에 펼쳐진 회사 없게: 검색어 없을 땐 무조건 접힘 상태
-  // NH농협손해보험 모바일 글자 줄바꿈 방지(white-space: nowrap) 및 반응형 규격 적용
-  container.innerHTML = filtered.map((co) => {
+  let html = '';
+
+  if (isUnifiedSearch) {
+    html += `
+      <div style="background:var(--surface-2);border:1.5px solid var(--brand);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:0 2px 6px rgba(49,130,246,0.1);">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:15px;">🔍</span>
+          <span style="font-size:13.5px;font-weight:900;color:var(--brand);">'${esc(rawQ)}' 손보·생보 통합 검색 결과</span>
+        </div>
+        <span style="font-size:12px;font-weight:850;color:#fff;background:var(--brand);padding:3px 9px;border-radius:6px;">
+          총 ${list.length}개 보험사 일치
+        </span>
+      </div>
+    `;
+  }
+
+  html += list.map(co => {
     const isAutoOpen = !!normQ;
+    const catBadge = co._cat === 'nonLife' 
+      ? '<span style="font-size:11px;font-weight:900;color:var(--brand);background:rgba(49,130,246,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(49,130,246,0.25);">🏢 손해보험</span>'
+      : '<span style="font-size:11px;font-weight:900;color:#7c3aed;background:rgba(124,58,237,0.1);padding:2px 7px;border-radius:5px;border:1px solid rgba(124,58,237,0.25);">🏛️ 생명보험</span>';
+
+    // 매칭 포인트 뱃지 (#29057)
+    let matchBadgesHTML = '';
+    if (co._matchReasons && co._matchReasons.length > 0) {
+      matchBadgesHTML = `
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;">
+          ${co._matchReasons.map(mr => `
+            <span style="font-size:11px;font-weight:900;color:#c2410c;background:#fff7ed;border:1px solid #fed7aa;padding:2px 7px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;box-shadow:0 1px 2px rgba(194,65,12,0.06);">
+              <span>🎯</span>
+              <span>${esc(mr.label)}:</span>
+              <strong style="color:#ea580c;">${esc(mr.token)}</strong>
+              <span style="color:#9a3412;font-size:10.5px;">(${esc(mr.target)})</span>
+            </span>
+          `).join('')}
+        </div>
+      `;
+    }
+
     return `
-    <div class="card company-clause-card" data-cid="${co.id}" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);">
-      <!-- 회사 헤더 버튼 -->
-      <div class="btn-toggle-company-clause" data-cid="${co.id}" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:10px;">
+    <div class="clause-co-card" style="background:var(--surface);border:1.5px solid ${co._matchReasons && co._matchReasons.length ? '#ea580c' : 'var(--border)'};border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);transition:border-color .2s ease;">
+      <!-- 회사 헤더 -->
+      <div class="btn-toggle-co" data-co-id="${co.id}" style="padding:13px 15px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:10px;">
         <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
-          <span class="co-logo-badge" style="width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:15px;color:#fff;background:${co.color};flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.15);">${co.logo}</span>
+          <div style="width:36px;height:36px;border-radius:10px;background:${co.color || 'var(--brand)'};color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 5px rgba(0,0,0,0.12);">
+            ${esc(co.logo || co.name[0])}
+          </div>
           <div style="min-width:0;flex:1;">
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              <h3 style="margin:0;font-size:15px;font-weight:900;color:var(--text);letter-spacing:-.02em;white-space:nowrap;">${esc(co.name)}</h3>
-              <span class="co-short-badge" style="font-size:11px;font-weight:900;color:var(--brand);background:rgba(49,130,246,0.12);padding:1px 6px;border-radius:5px;border:1px solid rgba(49,130,246,0.25);flex-shrink:0;">${esc(co.shortName)}</span>
-              <span style="font-size:10.5px;font-weight:800;color:var(--text-3);background:var(--surface-2);padding:1px 5px;border-radius:4px;border:1px solid var(--border);white-space:nowrap;">${co.periods.length}개 시기</span>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:2px;">
+              <span style="font-size:15px;font-weight:900;color:var(--text);letter-spacing:-.01em;white-space:nowrap;">${esc(co.name)}</span>
+              ${catBadge}
+              <span style="font-size:11px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);padding:1px 6px;border-radius:4px;border:1px solid rgba(49,130,246,0.2);">${esc(co.shortName)}</span>
+              <span style="font-size:11px;font-weight:800;color:var(--text-3);">${co.periods.length}개 시기</span>
             </div>
-            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(co.desc)}</div>
+            <div style="font-size:11.5px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${esc(co.desc || '')}
+            </div>
+            ${matchBadgesHTML}
           </div>
         </div>
-        <span class="co-arrow-badge" style="font-size:11.5px;font-weight:850;color:var(--brand);background:var(--surface-2);padding:4px 9px;border-radius:7px;border:1px solid var(--border);flex-shrink:0;">${isAutoOpen ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+        <button type="button" class="btn-co-toggle-arrow" style="font-size:11.5px;font-weight:850;color:var(--brand);background:rgba(49,130,246,0.08);border:1px solid rgba(49,130,246,0.2);border-radius:7px;padding:4px 9px;cursor:pointer;flex-shrink:0;">
+          ${isAutoOpen ? '접기 ▴' : '펼쳐보기 ▾'}
+        </button>
       </div>
 
-      <!-- 펼쳐지는 가입시기별 서랍 (2. 펼쳤을 때 가입시기별은 기본 접힘) -->
-      <div id="co-periods-${co.id}" class="company-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};flex-direction:column;gap:10px;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);">
-        ${co.periods.map(p => renderPeriodBoxHTML(co, p)).join('')}
+      <!-- 시기별 아코디언 서랍 (검색 시 자동 전개) -->
+      <div id="co-periods-${co.id}" class="co-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface-2);flex-direction:column;gap:12px;">
+        ${co.periods.map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
       </div>
-    </div>`;
+    </div>
+    `;
   }).join('');
 
-  // 회사 펼침/접힘 토글 이벤트 바인딩
-  container.querySelectorAll('.btn-toggle-company-clause').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const cid = btn.dataset.cid;
-      const drawer = document.getElementById(`co-periods-${cid}`);
-      const arrow = btn.querySelector('.co-arrow-badge');
+  container.innerHTML = html;
+
+  // 이벤트 바인딩
+  container.querySelectorAll('.btn-toggle-co').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const coId = btn.getAttribute('data-co-id');
+      const drawer = container.querySelector(`#co-periods-${coId}`);
+      const arrowBtn = btn.querySelector('.btn-co-toggle-arrow');
       if (drawer) {
-        if (drawer.style.display === 'none') {
-          drawer.style.display = 'flex';
-          if (arrow) arrow.textContent = '접기 ▴';
-        } else {
-          drawer.style.display = 'none';
-          if (arrow) arrow.textContent = '펼쳐보기 ▾';
-        }
+        const isHidden = drawer.style.display === 'none';
+        drawer.style.display = isHidden ? 'flex' : 'none';
+        if (arrowBtn) arrowBtn.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
       }
     });
   });
 
-  // 가입시기별 펼침/접힘 아코디언 토글 이벤트 바인딩
   container.querySelectorAll('.btn-toggle-period').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const coId = btn.dataset.coId;
-      const pid = btn.dataset.pid;
-      const drawer = document.getElementById(`period-drawer-${coId}-${pid}`);
-      const arrow = btn.querySelector('.period-arrow-badge');
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const coId = btn.getAttribute('data-co-id');
+      const pid = btn.getAttribute('data-pid');
+      const drawer = container.querySelector(`#period-drawer-${coId}-${pid}`);
+      const arrowBadge = btn.querySelector('.period-arrow-badge');
       if (drawer) {
-        if (drawer.style.display === 'none') {
-          drawer.style.display = 'flex';
-          if (arrow) arrow.textContent = '접기 ▴';
-        } else {
-          drawer.style.display = 'none';
-          if (arrow) arrow.textContent = '펼쳐보기 ▾';
+        const isHidden = drawer.style.display === 'none';
+        drawer.style.display = isHidden ? 'flex' : 'none';
+        if (arrowBadge) {
+          arrowBadge.textContent = isHidden ? '접기 ▴' : '펼쳐보기 ▾';
+          arrowBadge.style.background = isHidden ? 'var(--brand)' : 'var(--surface-2)';
+          arrowBadge.style.color = isHidden ? '#fff' : 'var(--brand)';
         }
       }
     });
   });
 
-  // 표준체/유병자 전환 토글 버튼 이벤트 바인딩
   container.querySelectorAll('.btn-ptype').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
+      const ptype = btn.getAttribute('data-ptype');
       const parent = btn.closest('.period-drawer-content');
       if (!parent) return;
-      const ptype = btn.dataset.ptype;
+
       parent.querySelectorAll('.btn-ptype').forEach(b => {
         b.classList.remove('active');
         b.style.border = '1px solid var(--border)';
@@ -7829,46 +8039,64 @@ function renderClausesCompanyList(searchQuery = '') {
       const stdBox = parent.querySelector('.riders-std');
       const simpBox = parent.querySelector('.riders-simp');
       if (stdBox && simpBox) {
-        stdBox.style.display = ptype === 'standard' ? 'flex' : 'none';
-        simpBox.style.display = ptype === 'simplified' ? 'flex' : 'none';
+        if (ptype === 'simplified') {
+          stdBox.style.display = 'none';
+          simpBox.style.display = 'flex';
+        } else {
+          stdBox.style.display = 'flex';
+          simpBox.style.display = 'none';
+        }
       }
     });
   });
 
-  // 약관 모달 열기 버튼 이벤트 바인딩
   container.querySelectorAll('.btn-open-clause-modal').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const cid = btn.dataset.cid;
-      const pid = btn.dataset.pid;
-      const ptype = btn.dataset.ptype || 'standard';
-      const targetRider = btn.dataset.targetRider;
-      const viewMode = btn.dataset.viewMode;
-      openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode);
+      const cid = btn.getAttribute('data-cid');
+      const pid = btn.getAttribute('data-pid');
+      const ptype = btn.getAttribute('data-ptype');
+      const riderKey = btn.getAttribute('data-target-rider');
+      let viewMode = btn.getAttribute('data-view-mode');
+      
+      if (matchContext.isExclusion && viewMode === 'basic_clause') {
+        window.activeClauseTab = 'exclusion';
+      }
+      openClauseModalFromIds(cid, pid, ptype, riderKey, viewMode);
     });
   });
 }
 
-function renderPeriodBoxHTML(co, p) {
+function renderPeriodBoxHTML(co, p, matchContext = {}) {
   const simpObj = (p.types && p.types.simplified) || (p.types && p.types.standard && p.types.standard.simplified) || p.simplified;
   const stdRiders = p.types && p.types.standard ? p.types.standard.riders : null;
   const hasSimp = !!(simpObj && simpObj.riders) || !!stdRiders;
   const simpRiders = (simpObj && simpObj.riders) ? simpObj.riders : stdRiders;
 
+  // 가입년도 매칭 판정 (#29067 #29068)
+  const isYearMatched = !!p._isYearMatch;
+  const isDrawerOpen = matchContext.searchedYear ? isYearMatched : (matchContext.autoOpen || false);
+
+  // 유병자/간편 자동 활성화 (#29041 #29042)
+  const preferSimp = hasSimp && (matchContext.isSimplified || false);
+
   return `
-  <div class="period-accordion-box" style="background:var(--surface);border:1.5px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-    <!-- 가입시기 헤더 버튼 (2. 클릭 시 펼쳐짐) -->
+  <div class="period-accordion-box" style="background:var(--surface);border:${isYearMatched ? '2px solid #2563eb' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;box-shadow:${isYearMatched ? '0 4px 14px rgba(37,99,235,0.18)' : '0 1px 3px rgba(0,0,0,0.02)'};">
+    <!-- 가입시기 헤더 버튼 -->
     <div class="btn-toggle-period" data-co-id="${co.id}" data-pid="${p.id}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;flex:1;">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;flex:1;">
         <span style="font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">📅 ${esc(p.periodStr)}</span>
+        ${isYearMatched ? `<span style="font-size:11px;font-weight:900;color:#fff;background:#2563eb;padding:2px 7px;border-radius:5px;">🎯 ${matchContext.searchedYear}년 계약 해당 약관</span>` : ''}
       </div>
-      <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:var(--brand);background:var(--surface-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">펼쳐보기 ▾</span>
+      <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:${isDrawerOpen ? '#fff' : 'var(--brand)'};background:${isDrawerOpen ? 'var(--brand)' : 'var(--surface-2)'};padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">
+        ${isDrawerOpen ? '접기 ▴' : '펼쳐보기 ▾'}
+      </span>
     </div>
 
-    <!-- 가입시기 세부 서랍 (2. 기본 접힘!) -->
-    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:none;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+    <!-- 가입시기 세부 서랍 -->
+    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:${isDrawerOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
       
-      <!-- 9. 개정 핵심 실무 안내 박스 (모바일 줄바꿈 분리 및 칼정렬) -->
+      <!-- 개정 핵심 실무 안내 박스 -->
       ${p.revSummary ? `
       <div class="rev-summary-card" style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;padding:12px 14px;box-shadow:0 1px 3px rgba(245,158,11,0.06);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(245,158,11,0.25);">
@@ -7884,13 +8112,13 @@ function renderPeriodBoxHTML(co, p) {
         </div>
       </div>` : ''}
 
-      <!-- 12. 표준체 / 유병자(간편) 분기 (50:50 칼맞춤 및 미판매 시 해당없음 명시) -->
+      <!-- 표준체 / 유병자(간편) 분기 버튼 (50:50 칼맞춤) -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%;margin-bottom:4px;">
-        <button type="button" class="btn-ptype active" data-ptype="standard" style="height:38px;padding:0 8px;font-size:12.5px;font-weight:850;border-radius:8px;border:1.5px solid var(--brand);background:rgba(49,130,246,0.1);color:var(--brand);cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
+        <button type="button" class="btn-ptype ${!preferSimp ? 'active' : ''}" data-ptype="standard" style="height:38px;padding:0 8px;font-size:12.5px;font-weight:850;border-radius:8px;border:${!preferSimp ? '1.5px solid var(--brand)' : '1px solid var(--border)'};background:${!preferSimp ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${!preferSimp ? 'var(--brand)' : 'var(--text-2)'};cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
           🛡️ 일반 (표준체)
         </button>
         ${hasSimp ? `
-        <button type="button" class="btn-ptype" data-ptype="simplified" style="height:38px;padding:0 8px;font-size:12.5px;font-weight:850;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
+        <button type="button" class="btn-ptype ${preferSimp ? 'active' : ''}" data-ptype="simplified" style="height:38px;padding:0 8px;font-size:12.5px;font-weight:850;border-radius:8px;border:${preferSimp ? '1.5px solid var(--brand)' : '1px solid var(--border)'};background:${preferSimp ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${preferSimp ? 'var(--brand)' : 'var(--text-2)'};cursor:pointer;transition:all .15s ease;display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
           🩺 간편 (유병자)
         </button>` : `
         <span style="height:38px;padding:0 8px;font-size:11.5px;font-weight:700;color:var(--text-3);background:var(--surface);border-radius:8px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;gap:4px;width:100%;">
@@ -7899,36 +8127,45 @@ function renderPeriodBoxHTML(co, p) {
       </div>
 
       <!-- 표준체 담보 리스트 -->
-      <div class="riders-std" style="display:flex;flex-direction:column;gap:8px;">
-        ${renderRiderCardsHTML(co.id, p.id, 'standard', stdRiders)}
+      <div class="riders-std" style="display:${preferSimp ? 'none' : 'flex'};flex-direction:column;gap:8px;">
+        ${renderRiderCardsHTML(co.id, p.id, 'standard', stdRiders, matchContext)}
       </div>
 
       <!-- 유병자 담보 리스트 -->
       ${hasSimp ? `
-      <div class="riders-simp" style="display:none;flex-direction:column;gap:8px;">
-        ${renderRiderCardsHTML(co.id, p.id, 'simplified', simpRiders)}
+      <div class="riders-simp" style="display:${preferSimp ? 'flex' : 'none'};flex-direction:column;gap:8px;">
+        ${renderRiderCardsHTML(co.id, p.id, 'simplified', simpRiders, matchContext)}
       </div>` : ''}
 
     </div>
   </div>`;
 }
 
-function renderRiderCardsHTML(cid, pid, ptype, riders) {
+function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
   if (!riders) return '';
 
   let html = '';
+  const isMatchBasic = matchContext.riderKey === 'basic' || matchContext.isExclusion || matchContext.isClaimTip;
+  const isMatchTier = matchContext.riderKey === 'tier';
+  const isMatchNdai = matchContext.riderKey === 'ndai';
 
-  // 1. 질병수술비 (10. 약관조항보기 + 보상제외조항보기 2칸 정형화)
+  // 1. 질병수술비
   if (riders.basic) {
+    const isHigh = isMatchBasic;
     html += `
-    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
-      <div style="margin-bottom:6px;">
-        <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;">💡 ${esc(riders.basic.title)}</div>
-        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary || '')}</div>
+    <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
+      <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+        <div>
+          <div style="font-size:13px;font-weight:850;color:var(--text);word-break:keep-all;display:flex;align-items:center;gap:5px;">
+            <span>💡 ${esc(riders.basic.title)}</span>
+            ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
+          </div>
+          <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.basic.summary || '')}</div>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
-          📄 약관조항 보기
+        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:${matchContext.isExclusion ? '2px solid #dc2626' : '1px solid var(--border)'};background:${matchContext.isExclusion ? 'rgba(220,38,38,0.09)' : 'var(--surface)'};color:${matchContext.isExclusion ? '#dc2626' : 'var(--text)'};font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+          ${matchContext.isExclusion ? '🚫 보상제외 조항 직결' : '📄 약관조항 보기'}
         </button>
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="claim_tips" style="height:38px;border-radius:8px;border:1.5px solid #d97706;background:rgba(245,158,11,0.09);color:#b45309;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 1px 3px rgba(217,119,6,0.15);">
           💡 실무 청구팁
@@ -7937,13 +8174,19 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
     </div>`;
   }
 
-  // 2. 종수술비 (약관조항보기 + 수술분류표보기 깔끔한 2버튼 #27519)
+  // 2. 종수술비
   if (riders.tier) {
+    const isHigh = isMatchTier;
     html += `
-    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
-      <div style="margin-bottom:6px;">
-        <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;">📋 ${esc(riders.tier.title)}</div>
-        <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary || '')}</div>
+    <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
+      <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+        <div>
+          <div style="font-size:13px;font-weight:900;color:var(--brand);word-break:keep-all;display:flex;align-items:center;gap:5px;">
+            <span>📋 ${esc(riders.tier.title)}</span>
+            ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
+          </div>
+          <div style="font-size:11.5px;color:var(--text-2);margin-top:2px;line-height:1.35;">${esc(riders.tier.summary || '')}</div>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -7956,13 +8199,19 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
     </div>`;
   }
 
-  // 3. N대 질병수술비 (약관조항보기 + 질병분류표보기 깔끔한 2버튼 #27519)
+  // 3. N대 질병수술비
   if (riders.ndai) {
+    const isHigh = isMatchNdai;
     html += `
-    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
-      <div style="margin-bottom:6px;">
-        <div style="font-size:13px;font-weight:850;color:#059669;word-break:keep-all;">🏢 ${esc(riders.ndai.title)}</div>
-        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary || '')}</div>
+    <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
+      <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
+        <div>
+          <div style="font-size:13px;font-weight:850;color:#059669;word-break:keep-all;display:flex;align-items:center;gap:5px;">
+            <span>🏢 ${esc(riders.ndai.title)}</span>
+            ${isHigh ? '<span style="font-size:10.5px;font-weight:900;color:#ea580c;background:rgba(234,88,12,0.12);padding:1px 6px;border-radius:4px;">🎯 검색일치</span>' : ''}
+          </div>
+          <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.35;">${esc(riders.ndai.summary || '')}</div>
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
         <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
@@ -7977,6 +8226,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders) {
 
   return html;
 }
+
 
 function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode) {
   const cat = state.clauseCat || 'nonLife';
