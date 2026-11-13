@@ -7886,6 +7886,9 @@ function renderClausesCompanyList(searchQuery = '') {
 
   let list = [];
   let isUnifiedSearch = false;
+  let isNdaiUnsoldPure = false;
+  let exactNdaiNum = null;
+  let exactNdaiStr = null;
   let matchContext = { 
     riderKey: null, 
     isExclusion: false, 
@@ -7908,8 +7911,8 @@ function renderClausesCompanyList(searchQuery = '') {
     let tensTarget = null;
     const exactNdaiMatch = rawQ.match(/(\d{2,3})대/);
     const isNdaiPureQuery = /^(\d{2,3})대$/.test(rawQ.replace(/\s+/g, ''));
-    let exactNdaiNum = exactNdaiMatch ? parseInt(exactNdaiMatch[1], 10) : null;
-    let exactNdaiStr = exactNdaiMatch ? exactNdaiMatch[0] : null;
+    exactNdaiNum = exactNdaiMatch ? parseInt(exactNdaiMatch[1], 10) : null;
+    exactNdaiStr = exactNdaiMatch ? exactNdaiMatch[0] : null;
 
     let isExactNdaiSale = false;
     if (exactNdaiStr) {
@@ -7922,7 +7925,7 @@ function renderClausesCompanyList(searchQuery = '') {
 
     // 만약 사용자가 '80대', '60대' 등 N대 키워드를 순수 검색했는데 어떤 회사도 정확히 그 N대를 판매하지 않는 경우:
     // tensTarget으로 억지 매칭시키지 않고 판매사 없음 선언 + 근접 N대 추천 직결 버튼 UI 표출! (#31162 #31176 #31183)
-    let isNdaiUnsoldPure = isNdaiPureQuery && !isExactNdaiSale;
+    isNdaiUnsoldPure = isNdaiPureQuery && !isExactNdaiSale;
 
     // 공백/쉼표 분리
     const rawTokens = rawQ.split(/[\s,]+/).filter(Boolean);
