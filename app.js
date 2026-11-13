@@ -13,8 +13,8 @@ function generateClauseSuggestions(rawQ) {
 
 window.handleNdaiDirectJump = function(btn, event) {
   if (event) {
-    event.preventDefault();
-    event.stopPropagation();
+    try { event.preventDefault(); } catch(e){}
+    try { event.stopPropagation(); } catch(e){}
   }
   const q = btn.getAttribute('data-search') || '';
   const cid = btn.getAttribute('data-cid');
@@ -24,10 +24,14 @@ window.handleNdaiDirectJump = function(btn, event) {
   if (inp) {
     inp.value = q;
   }
-  state.clauseSearchQuery = q;
+  if (typeof state !== 'undefined' && state) {
+    state.clauseSearchQuery = q;
+  }
 
   if (typeof renderClausesCompanyList === 'function') {
     renderClausesCompanyList(q);
+  } else if (typeof window.renderClausesCompanyList === 'function') {
+    window.renderClausesCompanyList(q);
   }
   
   if (cid) {
