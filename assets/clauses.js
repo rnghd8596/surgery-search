@@ -21,6 +21,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '메',
       color: '#d97706',
       desc: '올바른 종합보험 · 또또암 · 간편한 3.5.5',
+      ndaiKeywords: ['112대', '120대', '77대', '88대', '64대', '112', '120', '77', '88', '64'],
       products: ['또또암', '또또와암', '알파플러스', '올바른종합', '내MOM같은어린이', '간편한355', '3.5.5', '올바른'],
       periods: [
         {
@@ -648,6 +649,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '현',
       color: '#0284c7',
       desc: '퍼펙트플러스종합보험 · 굿앤굿어린이 · 간편한 3.5.5',
+      ndaiKeywords: ['119대', '124대', '71대', '119', '124', '71'],
       products: ['굿앤굿', '굿앤굿어린이', '퍼펙트플러스', '퍼펙트종합', '퍼펙트', '하이콜', '간편한355', '3.5.5', '뉴하이카'],
       periods: [
         {
@@ -1028,6 +1030,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '케',
       color: '#f59e0b',
       desc: 'KB 5.10.10 플러스종합보험 · 슬기로운 간편',
+      ndaiKeywords: ['112대', '120대', '112', '120'],
       products: ['5.10.10', '51010', '슬기로운간편', 'THE드림', '희망플러스', 'KB플러스', '355간편'],
       periods: [
         {
@@ -1192,6 +1195,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '디',
       color: '#059669',
       desc: '프로미라이프 참좋은훼밀리 · 나에게맞춘간편',
+      ndaiKeywords: ['119대', '85대', '119', '85'],
       products: ['참좋은훼밀리', '훼밀리', '프로미라이프', '나에게맞춘간편', '청춘굿', '아이러브', '참좋은'],
       periods: [
         {
@@ -1356,6 +1360,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '삼',
       color: '#2563eb',
       desc: '마이헬스파트너 · 새로고침 간편',
+      ndaiKeywords: ['116대', '114대', '120대', '116', '114'],
       products: ['마이헬스파트너', '새로고침', '마이헬스', '천만안심', '유병장수', '애니카'],
       periods: [
         {
@@ -1404,8 +1409,8 @@ window.POLICY_CLAUSES_DATA = {
                   imgSrc: 'assets/clause_imgs/samsung_tier_p.png'
                 },
                 ndai: {
-                  title: '114대 N대 질병수술비 특약',
-                  summary: '114대 질병 수술 정액 지급.',
+                  title: '116대/114대 N대 질병수술비 특약',
+                  summary: '116대 질병분류표에 정한 질병 수술 시 정액 지급.',
                   clauseBody: { title: '약관 본문', quote: '군별 가입금액 지급.', clauses: [{ title: '지급사유', text: '정액 지급.' }] },
                   tableBody: {
                     title: '별표 [114대 질병분류표 및 KCD 코드]',
@@ -1520,6 +1525,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '롯',
       color: '#e11d48',
       desc: '더알찬 종합보험 · 간편한 3.5.5',
+      ndaiKeywords: ['112대', '112'],
       products: ['더알찬', '안심건강', '렛원', '도담도담', '간편한355'],
       periods: [
         {
@@ -1680,6 +1686,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '흥',
       color: '#ea580c',
       desc: '흥Good 모두담은 여성건강보험 · 행복한간편',
+      ndaiKeywords: ['112대', '112'],
       products: ['흥Good', '흥굿', '모두담은여성', '행복한파워', '든든한'],
       periods: [
         {
@@ -1841,6 +1848,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '한',
       color: '#f97316',
       desc: '시그니처 여성건강보험 · 355간편',
+      ndaiKeywords: ['112대', '112'],
       products: ['시그니처여성', '시그니처', '세이프투게더', '한아름', '355간편'],
       periods: [
         {
@@ -2002,6 +2010,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '하',
       color: '#0d9488',
       desc: '하나 가득담은 건강보험 · 원큐간편',
+      ndaiKeywords: ['112대', '112'],
       products: ['하나가득담은', '가득담은', '원큐간편', '원큐', '원데이'],
       periods: [
         {
@@ -2162,6 +2171,7 @@ window.POLICY_CLAUSES_DATA = {
       logo: '농',
       color: '#16a34a',
       desc: '헤아림 평생안심 종합보험 · 간편가입',
+      ndaiKeywords: ['108대', '112대', '108', '112'],
       products: ['헤아림', '헤아림평생안심', '평생안심', '다솜플러스', '간편가입'],
       periods: [
         {
