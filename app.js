@@ -8972,12 +8972,15 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       { name: '자궁근종', code: 'D25', q: '자궁근종' }
     ];
 
+    const displayNdai = selectedNdai || (rider.title ? (rider.title.match(/\d+대/)?.[0] || rider.title) : 'N대');
+    const cleanRiderTitle = displayNdai ? `${displayNdai} 질병수술비` : rider.title.replace(/\d+대\/\d+대/, m => m.split('/')[0]);
+
     const photoBtnHTML = `
       <div style="margin-bottom:12px;">
         <button type="button" class="btn-co-clause" id="btnOpenRulesNdai" style="width:100%;height:46px;padding:0 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
           <span class="btn-co-name" style="font-size:13px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;">
             <span>🏢</span>
-            <span>${esc(co.name)} ${esc(rider.title)} 질병분류표 원문</span>
+            <span>${esc(co.name)} ${esc(cleanRiderTitle)} 질병분류표 원문</span>
           </span>
           <span class="btn-co-badge" style="font-size:11.5px;font-weight:900;padding:3px 7px;border-radius:6px;">
             약관 보기 🔍
@@ -9115,11 +9118,14 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         btnPhoto.addEventListener('click', () => {
           const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
           const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
-          const cleanNdaiName = (tableData.title || rider.title || 'N대 질병분류표').replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
+          const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
+          const ndaiKey = numMatch ? numMatch[0] : '';
+          const targetTable = (v && v.ndai_table && (v.ndai_table.pages ? v.ndai_table : (v.ndai_table[ndaiKey] || Object.values(v.ndai_table)[0])));
+          const cleanNdaiName = (selectedNdai ? `${selectedNdai} 질병분류표` : (tableData.title || rider.title || 'N대 질병분류표')).replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
 
-          if (v && v.ndai_table && v.ndai_table.pages) {
-            const meta = { product: v.product, type: v.type, page: v.ndai_table.pageStr };
-            window.openRulesModal(v.ndai_table.pages[0], `🏢 [${co.name}] ${cleanNdaiName} 공식 원문`, period.revSummary, v.ndai_table.pages, meta);
+          if (targetTable && targetTable.pages && targetTable.pages.length > 0) {
+            const meta = { product: v.product, type: v.type, page: targetTable.pageStr };
+            window.openRulesModal(targetTable.pages[0], `🏢 [${co.name}] ${cleanNdaiName} 공식 원문`, period.revSummary, targetTable.pages, meta);
           } else if (v && v.ndai_p1) {
             const pages = [v.ndai_p1];
             if (v.ndai_p2) pages.push(v.ndai_p2);
@@ -9200,11 +9206,14 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       btnPhoto.addEventListener('click', () => {
         const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[co.id.replace('fire', '').replace('life', '')]);
         const v = (coEntry && (coEntry.standard || coEntry.simplified)) || coEntry;
-        const cleanNdaiName = (tableData.title || rider.title || 'N대 질병분류표').replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
+        const numMatch = (selectedNdai || tableData.title || rider.title || '').match(/\d+대/);
+        const ndaiKey = numMatch ? numMatch[0] : '';
+        const targetTable = (v && v.ndai_table && (v.ndai_table.pages ? v.ndai_table : (v.ndai_table[ndaiKey] || Object.values(v.ndai_table)[0])));
+        const cleanNdaiName = (selectedNdai ? `${selectedNdai} 질병분류표` : (tableData.title || rider.title || 'N대 질병분류표')).replace(/\d+대\/\d+대/, m => m.split('/')[0]).replace('별표 [', '').replace(']', '');
 
-        if (v && v.ndai_table && v.ndai_table.pages) {
-          const meta = { product: v.product, type: v.type, page: v.ndai_table.pageStr };
-          window.openRulesModal(v.ndai_table.pages[0], `🏢 [${co.name}] ${cleanNdaiName} 공식 원문`, period.revSummary, v.ndai_table.pages, meta);
+        if (targetTable && targetTable.pages && targetTable.pages.length > 0) {
+          const meta = { product: v.product, type: v.type, page: targetTable.pageStr };
+          window.openRulesModal(targetTable.pages[0], `🏢 [${co.name}] ${cleanNdaiName} 공식 원문`, period.revSummary, targetTable.pages, meta);
         } else if (v && v.ndai_p1) {
           const pages = [v.ndai_p1];
           if (v.ndai_p2) pages.push(v.ndai_p2);
