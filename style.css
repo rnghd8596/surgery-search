@@ -1054,9 +1054,32 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
 .code-table-chip { flex: 0 0 96px; width: 96px; font-size: 12px; font-weight: 800; color: var(--brand); line-height: 1.35; text-align: left; word-break: break-all; }
 .code-table-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; text-align: left; }
 .tier-rev-actions { margin-top: 4px; }
-.tier-rev-shots { display: flex; flex-direction: column; gap: 14px; }
-.tier-rev-cap { font-size: 12px; font-weight: 800; text-align: left; margin: 0 0 4px; color: var(--text); }
-.tier-rev-shot img { width: 100%; height: auto; display: block; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+.tier-rev-cards { display: flex; flex-direction: column; gap: 16px; }
+.tier-rev-card { border: 1.5px solid var(--border); border-radius: 11px; background: #fff; overflow: hidden; }
+.tier-rev-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--rev-chip, 56px) 20px var(--rev-chip, 56px) auto;
+  align-items: center;
+  column-gap: 4px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 0;
+  background: #fff;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.tier-rev-body { display: none; flex-direction: column; gap: 12px; padding: 0 10px 12px; }
+.tier-rev-card.open .tier-rev-body { display: flex; }
+.tier-rev-block { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.tier-rev-tag {
+  display: inline-flex; align-items: center; height: 22px; padding: 0 8px;
+  border-radius: 6px; background: var(--surface-2); color: var(--text-2);
+  font-size: 11px; font-weight: 800;
+}
+.tier-rev-tag.after { background: #d97706; color: #fff; }
+.tier-rev-block img { width: 100%; height: auto; display: block; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
 .key-limit { background: rgba(27,58,75,.08); border: 1.5px solid var(--brand); border-left: 4px solid var(--brand); border-radius: 11px; padding: 10px 12px; text-align: left; }
 .key-limit-kicker { font-size: 11px; font-weight: 800; color: var(--brand); margin-bottom: 2px; }
 .key-limit-title { font-size: 14px; font-weight: 900; color: var(--text); }

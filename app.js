@@ -9350,23 +9350,50 @@ function openTierRevModal(tier) {
   if (searchWrap) searchWrap.style.display = 'none';
   if (alertEl) alertEl.style.display = 'none';
   const rows = revRowsHTML(rev.rows);
-  const shots = (rev.shots || []).map(s => {
-    const before = s.before ? `<div class="tier-rev-shot"><div class="tier-rev-cap">${esc(s.label)} · 개정 전 p.${esc(s.before.page)}</div><img src="${esc(s.before.src)}" alt="${esc(s.label)} 개정 전"></div>` : '';
-    const after = s.after ? `<div class="tier-rev-shot"><div class="tier-rev-cap">${esc(s.label)} · 개정 후 p.${esc(s.after.page)}</div><img src="${esc(s.after.src)}" alt="${esc(s.label)} 개정 후"></div>` : '';
-    return before + after;
+  const chip = revChipPx(rev.rows);
+  const cards = (rev.shots || []).map((s, i) => {
+    const row = (rev.rows || [])[i] || {};
+    const beforeShot = s.before ? `<div class="tier-rev-block"><span class="tier-rev-tag">개정 전 p.${esc(s.before.page)}</span><img src="${esc(s.before.src)}" alt="${esc(s.label)} 개정 전"></div>` : '';
+    const afterShot = s.after ? `<div class="tier-rev-block"><span class="tier-rev-tag after">개정 후 p.${esc(s.after.page)}</span><img src="${esc(s.after.src)}" alt="${esc(s.label)} 개정 후"></div>` : '';
+    return `<div class="tier-rev-card">
+      <button type="button" class="tier-rev-head">
+        <span class="rev-name">${esc(s.label || row.name || '')}</span>
+        <span class="rev-pill">${esc(row.before || '')}</span>
+        <span class="rev-arrow">→</span>
+        <span class="rev-pill after">${esc(row.after || '')}</span>
+        <span class="fold-toggle">펼치기 ▾</span>
+      </button>
+      <div class="tier-rev-body">${beforeShot}${afterShot}</div>
+    </div>`;
   }).join('');
-  box.innerHTML = `<div class="rev-key-box" style="--rev-chip:${revChipPx(rev.rows)}px"><div class="rev-key-title">개정 포인트</div><div class="rev-grid">${rows}</div></div>
+  box.innerHTML = `<div class="rev-key-box" style="--rev-chip:${chip}px"><div class="rev-key-title">개정 포인트</div><div class="rev-grid">${rows}</div></div>
     <div class="cov-actions tier-rev-actions">
       <button type="button" class="cov-btn" id="tierRevBefore">개정 전 약관</button>
       <button type="button" class="cov-btn" id="tierRevAfter">개정 후 약관</button>
     </div>
-    <div class="tier-rev-shots">${shots}</div>`;
+    <div class="tier-rev-cards" style="--rev-chip:${chip}px">${cards}</div>`;
   const before = (rev.beforePages || []).filter(Boolean);
   const after = (rev.afterPages || []).filter(Boolean);
   const b1 = box.querySelector('#tierRevBefore');
   const b2 = box.querySelector('#tierRevAfter');
   if (b1) b1.addEventListener('click', () => openScanPages(before, '1~5종 분류표 개정 전', ''));
   if (b2) b2.addEventListener('click', () => openScanPages(after, '1~5종 분류표 개정 후', ''));
+  box.querySelectorAll('.tier-rev-head').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.tier-rev-card');
+      const wasOpen = card.classList.contains('open');
+      box.querySelectorAll('.tier-rev-card').forEach(c => {
+        c.classList.remove('open');
+        const toggle = c.querySelector('.fold-toggle');
+        if (toggle) { toggle.classList.remove('on'); toggle.textContent = '펼치기 ▾'; }
+      });
+      if (!wasOpen) {
+        card.classList.add('open');
+        const toggle = btn.querySelector('.fold-toggle');
+        if (toggle) { toggle.classList.add('on'); toggle.textContent = '접기 ▴'; }
+      }
+    });
+  });
   modal.classList.add('show');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
