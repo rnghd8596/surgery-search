@@ -274,6 +274,19 @@ window.CLAUSE_BOOK = {
                 }
               }
             }
+          },
+          hyundai_perfect_hi2301: {
+            product: '무배당 퍼펙트플러스종합보험(세만기형) Hi2301. 다이렉트 H건강보험이 아님',
+            sale: '판매 2023-01-01~2023-03-31',
+            source: '현대해상 대리점 공시 약관',
+            riders: {
+              tier: {
+                table: {
+                  caption: '대리점 퍼펙트플러스 Hi2301. 제85항 체외충격파쇄석술 1종. 인쇄 708쪽',
+                  pages: ['assets/clause_pages/hyundai/perfect_hi2301_p708.png']
+                }
+              }
+            }
           }
         }
       }
@@ -364,6 +377,90 @@ window.CLAUSE_BOOK = {
                     '백내장': { caption: '【별표17-5】 백내장 분류표', pages: ['assets/clause_pages/kb/t17-1181.png'] },
                     '6대질병': { caption: '【별표17-6】 6대질병 분류표. 인쇄 1180쪽', pages: ['assets/clause_pages/kb/t17-1182.png'] }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  hanwhafire: {
+    lines: {
+      standard: {
+        periods: {
+          hanwha_2023_07: {
+            product: '한화 더건강한 한아름종합보험 무배당2504',
+            sale: '저장소의 한아름 책 중 가장 앞. 상품코드 2504',
+            source: '한화손보 공시실 약관',
+            riders: {
+              tier: {
+                table: {
+                  caption: '【별표45】 1-5종수술 분류표. 인쇄 751쪽. 제3항 유방절단 3종, 제3-1항 N62 유방절단 1종, 제4항 1종',
+                  pages: ['assets/clause_pages/hanwha/hana2504_t45_p751.png']
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  nhfire: {
+    lines: {
+      standard: {
+        periods: {
+          nh_2025_01: {
+            product: '무배당 NH가성비굿건강보험 2304',
+            sale: '판매 2023-09-01~2023-10-03',
+            source: 'NH농협손해보험 공시실 약관',
+            riders: {
+              tier: {
+                table: {
+                  caption: '제85항 체외충격파쇄석술 1종. 인쇄 642쪽. 남성 N60~N64 피하 유방절단은 제4항',
+                  pages: ['assets/clause_pages/nhfire/gasungbi2304_p642.png']
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  lotte: {
+    lines: {
+      simplified: {
+        periods: {
+          lotte_2021_01: {
+            product: '무배당 let:simple 3N5 간편맞춤 건강보험(세만기형) 2504',
+            sale: '판매 2025-04-01~2025-06-15',
+            source: '롯데손해보험 공시실 약관',
+            riders: {
+              tier: {
+                table: {
+                  caption: '〈별표25〉 1~5종 수술분류표Ⅲ. 인쇄 1151쪽. 제3항 유방절단 3종, 제4항 1종(맘모톰)',
+                  pages: ['assets/clause_pages/lotte/n3_2504_t25_p1151.png']
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  shinhanlife: {
+    lines: {
+      simplified: {
+        periods: {
+          shinhanlife_2020_01: {
+            product: '(간편)신한통합건강보장보험 원(ONE)',
+            sale: '판매 2024-04-01~2024-05-02',
+            source: '신한라이프 공시실 약관',
+            riders: {
+              tier: {
+                table: {
+                  caption: '제87항 체외충격파쇄석술 2종. 인쇄 3026쪽. 체외충격파치료술은 제외',
+                  pages: ['assets/clause_pages/shinhan/one_202404_eswl_p3026.png']
                 }
               }
             }
