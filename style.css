@@ -967,6 +967,7 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
   background: #d97706; color: #fff; border-color: #d97706;
 }
 .ndai-seg-row { display: flex; gap: 8px; margin: 0; }
+.ndai-stack { display: flex; flex-direction: column; gap: var(--stack-gap); }
 .cov-groups { display: flex; flex-direction: column; gap: var(--stack-gap); }
 #clauseModalContent { display: flex; flex-direction: column; gap: var(--stack-gap); }
 .ndai-group-list { display: flex; flex-direction: column; gap: var(--stack-gap); }
@@ -1059,8 +1060,7 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
 .key-limit { background: rgba(27,58,75,.08); border: 1.5px solid var(--brand); border-left: 4px solid var(--brand); border-radius: 11px; padding: 10px 12px; text-align: left; }
 .key-limit-kicker { font-size: 11px; font-weight: 800; color: var(--brand); margin-bottom: 2px; }
 .key-limit-title { font-size: 14px; font-weight: 900; color: var(--text); }
-.key-limit p { margin: 4px 0 8px; font-size: 12px; font-weight: 700; line-height: 1.4; color: var(--text-2); }
-.key-limit-btn { height: 32px; padding: 0 10px; border-radius: 8px; border: 1.5px solid var(--brand); background: #fff; color: var(--brand); font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.key-limit p { margin: 4px 0 0; font-size: 12px; font-weight: 700; line-height: 1.4; color: var(--text-2); }
 .code-pair { display: inline-flex; align-items: center; gap: 4px; margin: 0 6px 4px 0; }
 .chip-name { font-size: 12px; font-weight: 700; color: var(--text); }
 .qvb-badge {

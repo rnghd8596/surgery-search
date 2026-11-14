@@ -9311,8 +9311,8 @@ function paintScanDrawer(drawer) {
         </div>`;
       }).join('')}</div>`;
     }
-    const limitHTML = current.limit ? `<div class="key-limit"><div class="key-limit-kicker">핵심 체크</div><div class="key-limit-title">${esc(current.limit.title)}</div><p>${esc(current.limit.note)}</p><button type="button" class="key-limit-btn" data-act="pages" data-pages="${esc((current.limit.pages || []).join('|'))}" data-title="32대 관혈수술 정의">약관 p.${esc(current.limit.pageLabel)}</button></div>` : '';
-    ndaiHTML = `${segs}${limitHTML}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}`;
+    const limitHTML = current.limit ? `<div class="key-limit"><div class="key-limit-kicker">핵심 체크</div><div class="key-limit-title">${esc(current.limit.title)}</div><p>${esc(current.limit.note)}</p></div>` : '';
+    ndaiHTML = `<div class="ndai-stack">${segs}${limitHTML}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}</div>`;
   }
   const options = (disease.options && disease.options.length) ? disease.options : [];
   const curD = options.find(o => o.id === sel.disease) || options[0];
