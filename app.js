@@ -9003,11 +9003,15 @@ function renderScanCompanyHTML(co) {
         return `
         <div class="period-accordion-box" style="background:var(--surface);border:${open ? '2px solid #2563eb' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;">
           <div class="btn-toggle-period" data-co-id="${esc(co.id)}" data-pid="${esc(p.id)}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
-            <span style="font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;text-align:left;min-width:0;flex:1;">${esc(p.label)}</span>
+            <span style="min-width:0;flex:1;text-align:left;">
+              <span style="display:block;font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">${esc(p.label)}</span>
+              ${p.cardLine ? `<span style="display:block;margin-top:2px;font-size:12px;font-weight:700;color:var(--text-2);line-height:1.35;">${esc(p.cardLine)}</span>` : ''}
+            </span>
             <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:${open ? '#fff' : 'var(--brand)'};background:${open ? 'var(--brand)' : 'var(--surface-2)'};padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;white-space:nowrap;">${open ? '접기 ▴' : '펼쳐보기 ▾'}</span>
           </div>
           <div id="period-drawer-${esc(co.id)}-${esc(p.id)}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:${open ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
             ${p.gapNote ? `<p class="scan-none">${esc(p.gapNote)}</p>` : ''}
+            ${(p.changes && p.changes.length) ? `<div class="scan-changes">${p.changes.map(c => `<div><b>${esc(c.item)}</b> ${c.before ? esc(c.before) + ' → ' : ''}${esc(c.after)}</div>`).join('')}</div>` : ''}
             <div class="scan-types">
               <button type="button" class="scan-type on" data-ptype="standard">일반</button>
               <button type="button" class="scan-type" data-ptype="simplified">간편</button>
