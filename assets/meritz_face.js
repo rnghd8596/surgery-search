@@ -247,9 +247,33 @@
     ex('보험금의 지급사유', '진단확정된 질병의 치료를 직접적인 목적으로 수술하면 보험가입금액을 질병수술비로 지급한다.'),
     ex('같은 질병', '같은 질병의 수술은 365일 이내 한 번. 365일이 지난 뒤의 수술은 다시 지급한다.')
   ];
-  function opt(id, label, pay, payPages, excl, exclPages) {
-    return { id, label, pay, payPages, excl, exclPages };
+  function opt(id, label, pay, payPages, excl, exclPages, keyCheck, codeList) {
+    return { id, label, pay, payPages, excl, exclPages, keyCheck: keyCheck || null, codeList: codeList || null };
   }
+  const baseCodes = [
+    { name: '정신·행동장애', codes: ['F04~F99'] },
+    { name: '습관성 유산·불임', codes: ['N96~N98'] },
+    { name: '임신·출산·산후기', codes: ['O00~O99'] },
+    { name: '선천기형', codes: ['Q00~Q99'] },
+    { name: '비만', codes: ['E66'] },
+    { name: '요실금', codes: ['N39.3', 'N39.4', 'R32'] },
+    { name: '치핵 등', codes: ['K60~K62', 'K64'] },
+    { name: '치과', codes: ['K00~K08'] }
+  ];
+  const cataractCodes = baseCodes.concat([{ name: '백내장', codes: ['H25~H27'] }]);
+  const polypCodes = baseCodes.concat([{ name: '백내장', codes: ['H25~H27'] }, { name: '대장용종', codes: [] }]);
+  const cataractKey = { lead: '이 특약이 보장에서 빼는 질병입니다.', items: [{ name: '백내장', codes: ['H25~H27'] }] };
+  const polypKey = { lead: '이 특약이 보장에서 빼는 질병입니다.', items: [
+    { name: '백내장', codes: ['H25~H27'] },
+    { name: '대장의 용종 또는 대장의 양성신생물의 내시경적 절제', codes: [] }
+  ]};
+  const fiveKey = { lead: '약관이 특정5대질병으로 정한 항목입니다.', items: [
+    { name: '대장의 용종 또는 대장의 양성신생물의 내시경적 절제', codes: [] },
+    { name: '백내장', codes: ['H25', 'H26', 'H27'] },
+    { name: '후각특정질환', codes: ['J30', 'J31', 'J33', 'J34'] },
+    { name: '특정피부질환', codes: ['L72', 'L84'] },
+    { name: '혈관종 및 림프관종', codes: ['D18'] }
+  ]};
   const five = [
     ex('대장 용종·양성신생물의 내시경 절제', '특정5대질병으로 이 수술비는 지급하지 않는다.'),
     ex('백내장', '노년백내장, 기타 백내장, 수정체의 기타 장애.', ['H25', 'H26', 'H27']),
@@ -264,23 +288,23 @@
   const F = window.MERITZ_FACE;
   const n96 = ' 보장개시일부터 2년이 지난 뒤에 생긴 경우는 보상한다.';
   F.meritz_201912.standard.disease.options = [
-    opt('pure', '질병수술비', payPure, pg('A', [350, 351, 352]), pureExcl('제7차', '선천성기형', ''), pg('A', [350, 351, 352])),
-    opt('cataract', '백내장 제외', [ex('지급 범위', '백내장을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('A', [289, 290]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '이 특약의 질병에서 백내장을 뺀다.')]), pg('A', [289, 290]))
+    opt('pure', '질병수술비', payPure, pg('A', [350, 351, 352]), pureExcl('제7차', '선천성기형', ''), pg('A', [350, 351, 352]), null, baseCodes),
+    opt('cataract', '백내장 제외', [ex('지급 범위', '백내장을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('A', [289, 290]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '이 특약의 질병에서 백내장을 뺀다.', ['H25~H27'])]), pg('A', [289, 290]), cataractKey, cataractCodes)
   ];
   F.meritz_202011.standard.disease.options = [
-    opt('pure', '질병수술비', payPure, pg('B', [339, 340, 341]), pureExcl('제7차', '선천성기형', ''), pg('B', [339, 340, 341])),
-    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('B', [282, 283]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '이 특약의 질병에서 대장용종을 뺀다.')]), pg('B', [282, 283]))
+    opt('pure', '질병수술비', payPure, pg('B', [339, 340, 341]), pureExcl('제7차', '선천성기형', ''), pg('B', [339, 340, 341]), null, baseCodes),
+    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('B', [282, 283]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '대장의 용종 또는 대장의 양성신생물의 내시경적 절제입니다.')]), pg('B', [282, 283]), polypKey, polypCodes)
   ];
   F.meritz_202101.standard.disease.options = [
-    opt('pure', '질병수술비', payPure, pg('C', [340, 341, 342]), pureExcl('제8차', '선천기형', ''), pg('C', [340, 341, 342])),
-    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('C', [283, 284, 285]), pureExcl('제8차', '선천기형', '').concat([ex('백내장', ''), ex('대장용종', '이 특약의 질병에서 대장용종을 뺀다.')]), pg('C', [283, 284, 285]))
+    opt('pure', '질병수술비', payPure, pg('C', [340, 341, 342]), pureExcl('제8차', '선천기형', ''), pg('C', [340, 341, 342]), null, baseCodes),
+    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('C', [283, 284, 285]), pureExcl('제8차', '선천기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '대장의 용종 또는 대장의 양성신생물의 내시경적 절제입니다.')]), pg('C', [283, 284, 285]), polypKey, polypCodes)
   ];
   F.meritz_202109.standard.disease.options = [
-    opt('pure', '질병수술비', payPure, pg('H', [363, 364, 365]), pureExcl('제8차', '선천기형', ''), pg('H', [363, 364, 365])),
-    opt('five', '특정5대 제외', [ex('지급 범위', '특정5대질병을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('H', [305, 306, 307, 308]), pureExcl('제8차', '선천기형', '').concat(five), pg('H', [305, 306, 307, 308]))
+    opt('pure', '질병수술비', payPure, pg('H', [363, 364, 365]), pureExcl('제8차', '선천기형', ''), pg('H', [363, 364, 365]), null, baseCodes),
+    opt('five', '특정5대 제외', [ex('지급 범위', '특정5대질병을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('H', [305, 306, 307, 308]), pureExcl('제8차', '선천기형', '').concat(five), pg('H', [305, 306, 307, 308]), fiveKey, baseCodes)
   ];
   F.meritz_202501.standard.disease.options = [
-    opt('pure', '질병수술비', payPure, pg('E', [859, 860]), pureExcl('제8차', '선천기형', n96), pg('E', [859, 860])),
-    opt('five', '특정5대 제외', [ex('지급 범위', '특정5대질병을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('E', [855, 856]), pureExcl('제8차', '선천기형', n96).concat(five), pg('E', [855, 856]))
+    opt('pure', '질병수술비', payPure, pg('E', [859, 860]), pureExcl('제8차', '선천기형', n96), pg('E', [859, 860]), null, baseCodes),
+    opt('five', '특정5대 제외', [ex('지급 범위', '특정5대질병을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('E', [855, 856]), pureExcl('제8차', '선천기형', n96).concat(five), pg('E', [855, 856]), fiveKey, baseCodes)
   ];
 })();
