@@ -882,15 +882,16 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   max-width: none;
 }
 .rev-key-box {
-  background: var(--surface);
-  border: 1.5px solid var(--border);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1.5px solid rgba(217, 119, 6, 0.45);
+  border-left: 4px solid #d97706;
   border-radius: 11px;
   padding: 10px 12px 8px;
   text-align: left;
 }
-.rev-key-title { font-size: 12.5px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+.rev-key-title { font-size: 13px; font-weight: 900; color: #b45309; margin-bottom: 4px; }
 .rev-key-box ul { margin: 0; padding-left: 1.15em; }
-.rev-key-box li { font-size: 13px; font-weight: 700; line-height: 1.45; color: var(--text); }
+.rev-key-box li { font-size: 13px; font-weight: 800; line-height: 1.45; color: var(--text); }
 .period-drawer-content { gap: 12px; }
 .scan-body, .riders-std { display: flex; flex-direction: column; gap: 12px; }
 .cov-block {
