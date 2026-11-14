@@ -2862,7 +2862,14 @@ html[data-theme="dark"] [style*="color:#334155"] { color: var(--text) !important
   .cond-row { grid-template-columns: 1fr; gap: 2px; }
 }
 
-.scan-board { text-align: left; color: var(--text); }
+.scan-board { display: flex; flex-direction: column; gap: 22px; text-align: left; color: var(--text); }
+.scan-fold { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.scan-fold-btn { width: 100%; display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 14px; border: none; background: var(--surface); color: var(--text); font: inherit; font-weight: 800; text-align: left; cursor: pointer; }
+.scan-fold-body { padding: 4px 14px 14px; border-top: 1px solid var(--line); }
+.scan-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); text-align: left; }
+.scan-item span { white-space: nowrap; font-weight: 700; }
+.scan-sec { margin: 12px 0 6px; font-size: 15px; font-weight: 800; text-align: left; color: var(--text); }
+.scan-none { margin: 0 0 4px; font-size: 14px; line-height: 1.45; text-align: left; color: var(--text-2); }
 .scan-periods, .scan-types { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 12px; }
 .scan-period, .scan-type, .scan-open {
   background: none; border: none; border-bottom: 2px solid transparent;
@@ -2880,10 +2887,12 @@ html[data-theme="dark"] [style*="color:#334155"] { color: var(--text) !important
 .scan-wrap { overflow-x: auto; }
 .scan-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .scan-table th, .scan-table td {
-  text-align: left; vertical-align: top; padding: 10px 8px 10px 0;
+  text-align: left; vertical-align: top; padding: 8px 8px 8px 0;
   border-bottom: 1px solid var(--line); font-weight: 600;
+  white-space: nowrap;
 }
 .scan-table th { font-size: 12px; font-weight: 800; color: var(--text-3); }
+.scan-table tr.scan-act td { padding-top: 0; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .scan-table tr.changed .after { font-weight: 900; background: rgba(140,115,75,.16); }
 .scan-open { color: var(--brand); font-weight: 800; white-space: nowrap; }
 .scan-links { list-style: none; margin: 14px 0 0; padding: 0; }
