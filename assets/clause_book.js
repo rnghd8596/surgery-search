@@ -123,8 +123,51 @@ window.CLAUSE_BOOK = {
   },
   meritz: {
     lines: {
+      simplified: {
+        periods: {
+          meritz_2024_12: {
+            product: '무배당 메리츠 통합간편건강보험2501(일반심사형)',
+            sale: '판매 2025-01-01~2025-01-12',
+            source: '메리츠 공시실 약관. 저장소 insurer_pdfs',
+            riders: {
+              tier: {
+                table: {
+                  caption: '【별표38】 1-5종 수술분류표Ⅱ. 인쇄 442쪽. 제3항 유방절단 3종, 유방의 비대(N62)는 1종. 제4항 1종(맘모톰)',
+                  pages: ['assets/clause_pages/meritz/gp2501_t38_p442.png']
+                }
+              }
+            }
+          }
+        }
+      },
       standard: {
         periods: {
+          meritz_2020_04: {
+            product: '무배당 The편한 케어프리보험 M-Basket2007',
+            sale: '판매 2020-07-15~2020-11-03',
+            source: '메리츠 공시실 약관. 저장소 insurer_pdfs',
+            riders: {
+              tier: {
+                table: {
+                  caption: '1-5종 제87항 체외충격파쇄석술 2종. 인쇄 456쪽. 체외충격파치료술은 제외',
+                  pages: ['assets/clause_pages/meritz/mb2007_eswl_p456.png']
+                }
+              }
+            }
+          },
+          meritz_2024_12: {
+            product: '무배당 메리츠 케어프리보험 M-Basket2501',
+            sale: '판매 2025-01-01~2025-01-12',
+            source: '메리츠 공시실 약관. 저장소 insurer_pdfs',
+            riders: {
+              tier: {
+                table: {
+                  caption: '【별표7】 1-5종 수술분류표Ⅱ. 인쇄 591쪽. 제3항 유방절단 3종, 유방의 비대(N62)는 1종. 제4항 1종(맘모톰)',
+                  pages: ['assets/clause_pages/meritz/mb2501_t7_p591.png']
+                }
+              }
+            }
+          },
           meritz_2022_04: {
             product: '스캔에 상품 표지는 없고, 32대 지급예시의 최초계약일이 2022.4.10으로 인쇄됨',
             sale: '2022-04-10 예시가 있는 책자. 2024.12 개정본인지는 미확정',
