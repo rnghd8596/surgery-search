@@ -2870,6 +2870,8 @@ html[data-theme="dark"] [style*="color:#334155"] { color: var(--text) !important
 .scan-item span { white-space: nowrap; font-weight: 700; }
 .scan-sec { margin: 12px 0 6px; font-size: 15px; font-weight: 800; text-align: left; color: var(--text); }
 .scan-none { margin: 0 0 4px; font-size: 14px; line-height: 1.45; text-align: left; color: var(--text-2); }
+.scan-changes { margin: 0 0 8px; text-align: left; font-size: 13px; line-height: 1.45; color: var(--text); }
+.scan-changes div { padding: 2px 0; }
 .scan-periods, .scan-types { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 12px; }
 .scan-period, .scan-type, .scan-open {
   background: none; border: none; border-bottom: 2px solid transparent;

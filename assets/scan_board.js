@@ -12,6 +12,12 @@
         {
           id: 'meritz_201912',
           label: '~ 2020년 11월 3일',
+          cardLine: '최초 기준',
+          changes: [
+            { item: '1~5종 맘모톰 문장', after: '있음' },
+            { item: '체외충격파', after: '2종' },
+            { item: 'N대', after: '32대, 64대' }
+          ],
           types: {
             standard: {
               line: '맘모톰 문장 있음. 82대·131대·N62 없음.',
@@ -55,6 +61,13 @@
         {
           id: 'meritz_202011',
           label: '2020년 11월 4일 ~ 2020년 12월 31일',
+          cardLine: 'N대 질병수술비 64대 → 82대',
+          changes: [
+            { item: '64대', before: '있음', after: '없음' },
+            { item: '82대', before: '없음', after: '있음' },
+            { item: '1~5종 유방절단', before: '3종', after: '3종' },
+            { item: '1~5종 기타 유방', before: '1종', after: '1종' }
+          ],
           types: {
             standard: {
               line: '82대질병수술비 추가. 맘모톰 문장 유지.',
@@ -94,7 +107,12 @@
         {
           id: 'meritz_202101',
           label: '2021년 1월 1일 ~ 2022년 6월 30일',
+          cardLine: '1~5종 분류표 → 1~7종 분류표',
           gapNote: '2022년 4월 1일~6월 30일 약관은 직접 확인하지 못했다.',
+          changes: [
+            { item: '수술분류표', before: '1~5종', after: '1~7종' },
+            { item: '82대', before: '있음', after: '있음' }
+          ],
           types: {
             standard: {
               line: '맘모톰 영문 문장이 빠짐. 82대는 유지. 131대 없음.',
@@ -130,6 +148,11 @@
         {
           id: 'meritz_202207',
           label: '2022년 7월 1일 ~ 2024년 12월 31일',
+          cardLine: 'N대 질병수술비 82대 → 131대',
+          changes: [
+            { item: '82대', before: '있음', after: '없음' },
+            { item: '131대', before: '없음', after: '있음' }
+          ],
           types: {
             standard: {
               line: '131대 추가. 82대 빠짐. N62 없음.',
@@ -169,6 +192,11 @@
         {
           id: 'meritz_202501',
           label: '2025년 1월 1일 ~ 현재',
+          cardLine: 'N62 유방절단 1종으로 변경',
+          changes: [
+            { item: 'N62 수술', before: '1종 문장 없음', after: '1종' },
+            { item: '유방절단', before: '3종', after: '3종' }
+          ],
           types: {
             standard: {
               line: '유방의 비대(N62) 수술은 1종. 유방절단 제3항은 3종.',
