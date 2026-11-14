@@ -159,14 +159,14 @@ window.DYNAMIC_NDAI_TABLES = {
   },
   kbinsure: {
     '116대': {
-      title: '74. 【별표17】 [116대 질병분류표 전문]',
+      title: '【별표17】 116대질병 분류표 (KB 5.10.10 플러스 26.09, 2026-10-01). 분류번호는 별표 원문',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 급성 췌장염, 말초혈관질환, 심장질환, 뇌혈관질환 등', 'A40~A41, J12~J18, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['23대질병수술 (23)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 관절염, 하지정맥류 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, M05~M14, I83', '정액 지급'],
-        ['52대질병수술 (52)', '피지낭종, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증, 비염 등', 'L72, D17, D18, D12~D13, M50~M51, M48, J30~J34', '정액 지급'],
-        ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
-        ['치핵 수술 (1)', '내치핵, 외치핵, 혈전성 치핵, 항문열창 및 치루', 'K64', '정액 지급']
+        ['15대질병 (15)', '폐렴, 심장질환, 고혈압질환, 뇌혈관질환, 간질환, 동맥경화증, 만성하부호흡기질환, 신부전, 뇌·중추신경계 양성종양, 대동맥류, 간·담관·췌장 양성종양, 수막 양성종양, 기관지·폐의 특정질환, 급성췌장염, 버거씨병', '별표17-1', '1년 미만 50% / 1년 이상 100%'],
+        ['23대질병 (23)', '결핵, 안면신경장애, 폐부종, 당뇨병질환, 특정호흡기질환, 폐질환, 위·십이지장궤양, 위공장궤양, 녹내장 외. 나머지 이름은 별표17-2', '별표17-2', '1년 미만 50% / 1년 이상 100%'],
+        ['22대질병 (22)', '갑상선질환, 부갑상선질환, 간암, 기관지 및 폐암, 난소암, 특정 장질환, 췌장질환, 비감염성장염 및 결장염, 비장질환 외. 나머지 이름은 별표17-3', '별표17-3', '1년 미만 50% / 1년 이상 100%'],
+        ['49대질병 (49)', '관절염 및 다발관절병증, 관절증, 관절장애, 누적외상성질환, 황반변성, 눈 및 눈부속기의 특정질환, 유리체의 장애 외. 나머지 이름은 별표17-4', '별표17-4', '1년 미만 50% / 1년 이상 100%'],
+        ['백내장 (1)', '116대 Ⅴ는 백내장 수술보장. 질병명은 별표17-5', '별표17-5', '1년 미만 50% / 1년 이상 100%'],
+        ['6대질병 (6)', '수면무호흡증, 식도정맥류, 요도결석증, 신장 및 요관의 결석, 치핵 및 항문주위 정맥혈전증, 치열 및 치루', '별표17-6', '1년 미만 50% / 1년 이상 100%']
       ]
     },
     '112대': {
@@ -9419,6 +9419,7 @@ const COMPANY_NDAI_PERIOD_MAP = {
     'db_2020_prior': ['21대', '18대', '16대']
   },
   kbinsure: {
+    'kb_2026_10': ['116대'],
     'kb_2024_01': ['116대'],
     'kb_2020_10': ['112대'],
     'kb_2020_prior': ['21대', '7대']
@@ -9674,7 +9675,17 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     </div>`;
   }
 
-  if (!riders.injury) {
+  if (riders.injury) {
+    html += `
+    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
+      <div style="font-size:13.5px;font-weight:900;color:var(--text);word-break:keep-all;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+        <span>🩹 ${esc(riders.injury.title || '상해수술비')}</span>
+        ${window.clauseVerifyBadgeHTML ? window.clauseVerifyBadgeHTML((riders.injury.inclusion && riders.injury.inclusion.verification) || 'unverified-summary') : ''}
+      </div>
+      <div style="font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.injury.summary || '')}</div>
+      <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="margin-top:8px;height:38px;width:100%;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:#0f172a;font-size:12px;font-weight:850;cursor:pointer;">📄 약관조항 보기</button>
+    </div>`;
+  } else {
     html += `
     <div class="rider-card rider-gap">
       <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">

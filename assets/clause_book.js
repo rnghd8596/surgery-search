@@ -85,6 +85,39 @@ window.CLAUSE_BOOK = {
             }
           }
         }
+      },
+      simplified: {
+        periods: {
+          samsung_2026_07: {
+            product: '무배당 삼성화재 간편보험 간편하게 건강하게(1601.1) 10년만기 재가입형 1종(간편심사형) 재가입계약용',
+            sale: '2026-07-01부터 적용',
+            source: 'https://www.samsungfire.com/publication/pdf/ZPY004010_0_20260701_file1.pdf',
+            riders: {
+              basic: {
+                inclusion: {
+                  caption: '2-8·2-9·2-10. 암 최초수술비, 암 수술비(3회한), 유사암 수술비. 인쇄 70~75쪽. 일반 질병수술비·1~5종·114대·116대 특약은 이 약관 목차에 없음',
+                  pages: [
+                    'assets/clause_pages/samsung_gp/can-071.png',
+                    'assets/clause_pages/samsung_gp/can-072.png',
+                    'assets/clause_pages/samsung_gp/can-073.png',
+                    'assets/clause_pages/samsung_gp/can-074.png',
+                    'assets/clause_pages/samsung_gp/can-075.png',
+                    'assets/clause_pages/samsung_gp/can-076.png'
+                  ]
+                }
+              },
+              injury: {
+                inclusion: {
+                  caption: '1-2. [간편심사]상해 수술비 특별약관. 인쇄 49~50쪽',
+                  pages: [
+                    'assets/clause_pages/samsung_gp/inj-050.png',
+                    'assets/clause_pages/samsung_gp/inj-051.png'
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -141,6 +174,99 @@ window.CLAUSE_BOOK = {
                     '9대': { caption: '【별표46】 [9대질병] 제729~730쪽', pages: ['assets/clause_imgs/meritz_std_ndai_32_table_p729.png','assets/clause_imgs/meritz_std_ndai_32_table_p730.png'] },
                     '14대': { caption: '【별표46】 [14대질병] 제730~731쪽', pages: ['assets/clause_imgs/meritz_std_ndai_32_table_p730.png','assets/clause_imgs/meritz_std_ndai_32_table_p731.png'] },
                     '4대': { caption: '제3조⑤ 4대질병 정의. 제341쪽. 분류번호 표는 없음', pages: ['assets/clause_imgs/meritz_std_ndai_32_inc_p341.png'] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  kbinsure: {
+    lines: {
+      standard: {
+        periods: {
+          kb_2026_10: {
+            product: 'KB 5.10.10 플러스 건강보험(세만기)(무배당)(26.09) 보종 25438',
+            sale: '2026-10-01부터 적용',
+            source: 'https://www.kbinsure.co.kr/CG802030003.ec?fileNm=25438_2_1.pdf',
+            riders: {
+              basic: {
+                inclusion: {
+                  caption: '68. 질병수술비(맞춤고지). 인쇄 350쪽~',
+                  pages: [
+                    'assets/clause_pages/kb/dis-0352.png',
+                    'assets/clause_pages/kb/dis-0353.png',
+                    'assets/clause_pages/kb/dis-0354.png',
+                    'assets/clause_pages/kb/dis-0355.png',
+                    'assets/clause_pages/kb/dis-0356.png'
+                  ]
+                },
+                exclusion: {
+                  caption: '같은 68. 질병수술비의 지급하지 않는 질병·목적. 인쇄 350쪽대',
+                  pages: [
+                    'assets/clause_pages/kb/dis-0352.png',
+                    'assets/clause_pages/kb/dis-0353.png',
+                    'assets/clause_pages/kb/dis-0354.png',
+                    'assets/clause_pages/kb/dis-0356.png'
+                  ]
+                }
+              },
+              tier: {
+                inclusion: {
+                  caption: '75. 질병1~5종수술비Ⅱ(매회지급). 인쇄 369쪽~. 분류표는 【별표55-1】',
+                  pages: [
+                    'assets/clause_pages/kb/n116-0371.png',
+                    'assets/clause_pages/kb/tier-0372.png',
+                    'assets/clause_pages/kb/tier-0373.png'
+                  ]
+                },
+                table: {
+                  caption: '【별표55-1】 1~5종수술Ⅲ 분류표. 인쇄 1206쪽~. 첫 쪽 왼쪽은 별표55 Ⅱ의 끝',
+                  pages: [
+                    'assets/clause_pages/kb/t55-1208.png',
+                    'assets/clause_pages/kb/t55-1209.png',
+                    'assets/clause_pages/kb/t55-1210.png',
+                    'assets/clause_pages/kb/t55-1211.png',
+                    'assets/clause_pages/kb/t55-1212.png',
+                    'assets/clause_pages/kb/t55-1213.png'
+                  ]
+                }
+              },
+              injury: {
+                inclusion: {
+                  caption: '13. 상해수술비(맞춤고지). 인쇄 153쪽~. 마지막 쪽 오른쪽에 15. 상급종합병원 상해수술비가 시작됨',
+                  pages: [
+                    'assets/clause_pages/kb/inj-0155.png',
+                    'assets/clause_pages/kb/inj-0156.png',
+                    'assets/clause_pages/kb/inj-0157.png',
+                    'assets/clause_pages/kb/inj-0158.png'
+                  ]
+                }
+              },
+              ndai: {
+                '116대': {
+                  clause: {
+                    caption: '74-1~74-6. 116대질병수술비 Ⅰ~Ⅵ. Ⅰ 15대, Ⅱ 23대, Ⅲ 22대, Ⅳ 49대, Ⅴ 백내장, Ⅵ 6대. 1년 미만 50%',
+                    pages: [
+                      'assets/clause_pages/kb/n116-0363.png',
+                      'assets/clause_pages/kb/n116-0364.png',
+                      'assets/clause_pages/kb/n116-0365.png',
+                      'assets/clause_pages/kb/n116-0366.png',
+                      'assets/clause_pages/kb/n116-0367.png',
+                      'assets/clause_pages/kb/n116-0368.png',
+                      'assets/clause_pages/kb/n116-0369.png',
+                      'assets/clause_pages/kb/n116-0370.png'
+                    ]
+                  },
+                  groups: {
+                    '15대질병': { caption: '【별표17-1】 15대질병 분류표. 인쇄 1171쪽~', pages: ['assets/clause_pages/kb/t17-1173.png','assets/clause_pages/kb/t17-1174.png'] },
+                    '23대질병': { caption: '【별표17-2】 23대질병 분류표', pages: ['assets/clause_pages/kb/t17-1174.png','assets/clause_pages/kb/t17-1175.png','assets/clause_pages/kb/t17-1176.png'] },
+                    '22대질병': { caption: '【별표17-3】 22대질병 분류표', pages: ['assets/clause_pages/kb/t17-1177.png','assets/clause_pages/kb/t17-1178.png'] },
+                    '49대질병': { caption: '【별표17-4】 49대질병 분류표', pages: ['assets/clause_pages/kb/t17-1178.png','assets/clause_pages/kb/t17-1179.png','assets/clause_pages/kb/t17-1180.png','assets/clause_pages/kb/t17-1181.png'] },
+                    '백내장': { caption: '【별표17-5】 백내장 분류표', pages: ['assets/clause_pages/kb/t17-1181.png'] },
+                    '6대질병': { caption: '【별표17-6】 6대질병 분류표. 인쇄 1180쪽', pages: ['assets/clause_pages/kb/t17-1182.png'] }
                   }
                 }
               }
