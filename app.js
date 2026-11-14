@@ -9089,8 +9089,13 @@ function openScanSummary(title, pay, excl, pages) {
 
 function diffBoxHTML(kc) {
   if (!kc || !kc.items || !kc.items.length) return '';
-  const rows = kc.items.map(it => `<div class="code-line"><span class="name">${esc(it.name)}</span><span class="code-chips">${(it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('')}</span></div>`).join('');
-  return `<div class="diff-box">${rows}</div>`;
+  const rows = kc.items.map((it, i) => {
+    const chips = (it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('');
+    const tag = it.tag ? `<span class="five-tag">${esc(it.tag)}</span>` : '';
+    const no = kc.numbered ? `<span class="five-no">${i + 1}</span>` : '';
+    return `<div class="five-row">${no}<span class="name">${esc(it.name)}</span><span class="five-right">${tag}${chips}</span></div>`;
+  }).join('');
+  return `<div class="diff-box${kc.numbered ? ' five' : ''}">${rows}</div>`;
 }
 
 function meritzCardsHTML(list) {

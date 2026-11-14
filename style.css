@@ -968,6 +968,13 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
 }
 .diff-box .code-line { background: #fff; border-color: rgba(225, 29, 72, 0.35); margin-bottom: 4px; }
 .diff-box .code-line:last-child { margin-bottom: 0; }
+.diff-box.five { padding: 4px 10px; }
+.five-row { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 0; border-bottom: 1px solid rgba(225, 29, 72, 0.28); }
+.five-row:last-child { border-bottom: none; }
+.five-no { width: 14px; flex-shrink: 0; font-size: 12px; font-weight: 900; color: #e11d48; }
+.five-row .name { flex: 1; font-size: 13px; font-weight: 800; text-align: left; color: var(--text); }
+.five-right { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; align-items: center; }
+.five-tag { font-size: 11px; font-weight: 800; color: #be123c; background: #fff; border: 1px solid rgba(225, 29, 72, 0.4); border-radius: 6px; padding: 2px 6px; }
 .key-check-title { font-size: 13px; font-weight: 900; color: var(--brand); margin-bottom: 4px; }
 .key-check > p { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; line-height: 1.4; color: var(--text); }
 .key-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 3px 0; font-size: 12.5px; font-weight: 800; }

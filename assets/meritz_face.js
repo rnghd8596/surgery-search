@@ -267,12 +267,12 @@
     { name: '백내장', codes: ['H25~H27'] },
     { name: '대장용종', codes: [] }
   ]};
-  const fiveKey = { items: [
-    { name: '대장용종', codes: [] },
+  const fiveKey = { numbered: true, items: [
+    { name: '대장용종 · 양성신생물', tag: '내시경적 절제', codes: [] },
     { name: '백내장', codes: ['H25', 'H26', 'H27'] },
-    { name: '후각', codes: ['J30', 'J31', 'J33', 'J34'] },
-    { name: '피부', codes: ['L72', 'L84'] },
-    { name: '혈관종', codes: ['D18'] }
+    { name: '후각특정질환', codes: ['J30', 'J31', 'J33', 'J34'] },
+    { name: '특정피부질환', codes: ['L72', 'L84'] },
+    { name: '혈관종·림프관종', codes: ['D18'] }
   ]};
   const five = [
     ex('대장 용종·양성신생물의 내시경 절제', '특정5대질병으로 이 수술비는 지급하지 않는다.'),
