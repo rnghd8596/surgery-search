@@ -9025,20 +9025,17 @@ function buildPeriodPlan(co, year, ndaiNum) {
   const plan = {};
   if (year == null && ndaiNum == null) return plan;
   const exactLabel = (labels) => labels.find(l => ndaiNumOf(l) === ndaiNum) || null;
-  if (year != null) {
+  if (ndaiNum == null) {
     periods.forEach(p => {
       if (p.yearHit) plan[p.id] = { tag: '검색한 시기', ndai: null, ndaiTag: '' };
     });
+    return plan;
   }
-  if (ndaiNum == null) return plan;
   const pool = year != null ? periods.filter(p => p.yearHit) : periods;
   const exactPeriods = pool.filter(p => exactLabel(p.labels));
   if (exactPeriods.length) {
     exactPeriods.forEach(p => {
-      const row = plan[p.id] || { tag: '', ndai: null, ndaiTag: '' };
-      row.ndai = exactLabel(p.labels);
-      row.ndaiTag = '검색한 특약';
-      plan[p.id] = row;
+      plan[p.id] = { tag: '검색한 특약', ndai: exactLabel(p.labels), ndaiTag: '검색한 특약' };
     });
     return plan;
   }
@@ -9058,10 +9055,7 @@ function buildPeriodPlan(co, year, ndaiNum) {
       return n != null && Math.abs(n - ndaiNum) === bestD;
     });
     if (!label) return;
-    const row = plan[p.id] || { tag: '', ndai: null, ndaiTag: '' };
-    row.ndai = label;
-    row.ndaiTag = '비슷한 항목';
-    plan[p.id] = row;
+    plan[p.id] = { tag: '비슷한 항목', ndai: label, ndaiTag: '비슷한 항목' };
   });
   return plan;
 }
@@ -9088,6 +9082,75 @@ function scrollOpenedCard(el) {
   const reserve = stickyCoverBottom() + 8;
   const y = el.getBoundingClientRect().top + window.pageYOffset - reserve;
   window.scrollTo(0, Math.max(0, y));
+}
+
+function resetPeriodBox(box) {
+  if (!box) return;
+  const host = box.classList.contains('period-accordion-box') ? box : box.closest('.period-accordion-box');
+  const drawer = (host && host.querySelector('.period-drawer-content')) || (box.classList.contains('period-drawer-content') ? box : null);
+  const headBtn = host && host.querySelector('.btn-toggle-period');
+  const cid = headBtn && headBtn.getAttribute('data-co-id');
+  const pid = (drawer && drawer.getAttribute('data-pid')) || (headBtn && headBtn.getAttribute('data-pid'));
+  const scanBody = drawer && drawer.querySelector('.scan-body');
+  if (scanBody && cid && pid && state.scanUi && state.scanUi[cid] && state.scanUi[cid][pid]) {
+    const sel = state.scanUi[cid][pid];
+    const face = window.MERITZ_FACE && window.MERITZ_FACE[pid] && window.MERITZ_FACE[pid].standard;
+    const bundles = (face && face.bundles) || [];
+    sel.open = {};
+    sel.groups = false;
+    sel.group = '';
+    sel.disease = '';
+    if (bundles.length) {
+      const keep = sel.ndaiMatch && bundles.some(b => b.name === sel.ndaiMatch);
+      sel.ndai = keep ? sel.ndaiMatch : bundles[0].name;
+    }
+    paintScanDrawer(drawer);
+  } else if (drawer) {
+    drawer.querySelectorAll('.cov-drawer').forEach(d => { d.style.display = 'none'; });
+    drawer.querySelectorAll('.fold-toggle').forEach(b => {
+      if (b.classList.contains('period-arrow-badge')) return;
+      b.textContent = '펼치기 ▾';
+      b.classList.remove('on');
+    });
+    drawer.querySelectorAll('.rider-card-ndai').forEach(card => {
+      const tabs = [...card.querySelectorAll('.btn-ndai-tab-select')];
+      if (!tabs.length) return;
+      const marked = tabs.find(t => t.querySelector('.search-tab-note')) || tabs[0];
+      tabs.forEach(b => {
+        b.classList.remove('active', 'on');
+        b.style.border = '1.5px solid var(--border)';
+        b.style.background = 'var(--surface)';
+        b.style.color = '#334155';
+        b.style.boxShadow = '0 1px 2px rgba(0,0,0,0.02)';
+      });
+      marked.classList.add('active', 'on');
+      marked.style.border = '1.5px solid var(--brand)';
+      marked.style.background = 'var(--brand)';
+      marked.style.color = '#fff';
+      marked.style.boxShadow = 'none';
+      const opt = marked.getAttribute('data-ndai-opt') || '';
+      card.setAttribute('data-current-ndai', opt);
+      card.querySelectorAll('.btn-open-clause-modal[data-target-rider="ndai"]').forEach(mb => mb.setAttribute('data-ndai', opt));
+    });
+  }
+  if (drawer) drawer.style.display = 'none';
+  const badge = host && host.querySelector('.period-arrow-badge');
+  if (badge) {
+    badge.textContent = '펼치기 ▾';
+    badge.classList.remove('on');
+  }
+}
+
+function collapseCompanyCard(card) {
+  if (!card) return;
+  const drawer = card.querySelector('.co-periods-drawer');
+  if (drawer) drawer.style.display = 'none';
+  const arrow = card.querySelector('.btn-co-toggle-arrow');
+  if (arrow) {
+    arrow.textContent = '펼치기 ▾';
+    arrow.classList.remove('on');
+  }
+  card.querySelectorAll('.period-accordion-box').forEach(resetPeriodBox);
 }
 
 function primeScanSearch(matchContext) {
@@ -10058,6 +10121,23 @@ function renderClausesCompanyList(searchQuery) {
   container.innerHTML = html;
   primeScanSearch(matchContext);
   bindScanBoards(container);
+  if (isUnifiedSearch && list.length === 1) {
+    const card = container.querySelector('.clause-co-card');
+    const drawer = card && card.querySelector('.co-periods-drawer');
+    const arrowBtn = card && card.querySelector('.btn-co-toggle-arrow');
+    if (drawer) {
+      drawer.style.display = 'flex';
+      if (arrowBtn) {
+        arrowBtn.textContent = '접기 ▴';
+        arrowBtn.classList.add('on');
+      }
+      const marked = card.querySelector('.period-accordion-box.search-hit');
+      container.style.paddingBottom = Math.max(160, window.innerHeight - stickyCoverBottom()) + 'px';
+      requestAnimationFrame(() => scrollOpenedCard(marked || card));
+    }
+  } else if (container) {
+    container.style.paddingBottom = '';
+  }
 
   // 이벤트 바인딩
   container.querySelectorAll('.btn-toggle-co').forEach(btn => {
@@ -10068,15 +10148,21 @@ function renderClausesCompanyList(searchQuery) {
       const arrowBtn = btn.querySelector('.btn-co-toggle-arrow');
       if (drawer) {
         const isHidden = drawer.style.display === 'none';
-        drawer.style.display = isHidden ? 'flex' : 'none';
-        if (arrowBtn) {
-          arrowBtn.textContent = isHidden ? '접기 ▴' : '펼치기 ▾';
-          arrowBtn.classList.toggle('on', isHidden);
-        }
+        const card = btn.closest('.clause-co-card') || btn;
         if (isHidden) {
-          const card = btn.closest('.clause-co-card') || btn;
-          requestAnimationFrame(() => scrollOpenedCard(card));
+          container.querySelectorAll('.clause-co-card').forEach(other => {
+            if (other !== card) collapseCompanyCard(other);
+          });
+        } else {
+          collapseCompanyCard(card);
+          return;
         }
+        drawer.style.display = 'flex';
+        if (arrowBtn) {
+          arrowBtn.textContent = '접기 ▴';
+          arrowBtn.classList.add('on');
+        }
+        requestAnimationFrame(() => scrollOpenedCard(card));
       }
     });
   });
@@ -10130,28 +10216,22 @@ function renderClausesCompanyList(searchQuery) {
       const arrowBadge = btn.querySelector('.period-arrow-badge');
       if (drawer) {
         const isHidden = drawer.style.display === 'none';
+        const card = btn.closest('.period-accordion-box') || btn;
         if (isHidden) {
-          const scope = btn.closest('.scan-board') || btn.closest('.co-periods-drawer') || container;
-          scope.querySelectorAll('.period-drawer-content').forEach(other => {
-            if (other === drawer) return;
-            other.style.display = 'none';
-            const head = other.previousElementSibling;
-            const badge = head && head.querySelector('.period-arrow-badge');
-            if (badge) {
-              badge.textContent = '펼치기 ▾';
-              badge.classList.remove('on');
-            }
+          const scope = btn.closest('.co-periods-drawer') || container;
+          scope.querySelectorAll('.period-accordion-box').forEach(other => {
+            if (other !== card) resetPeriodBox(other);
           });
+        } else {
+          resetPeriodBox(card);
+          return;
         }
-        drawer.style.display = isHidden ? 'flex' : 'none';
+        drawer.style.display = 'flex';
         if (arrowBadge) {
-          arrowBadge.textContent = isHidden ? '접기 ▴' : '펼치기 ▾';
-          arrowBadge.classList.toggle('on', isHidden);
+          arrowBadge.textContent = '접기 ▴';
+          arrowBadge.classList.add('on');
         }
-        if (isHidden) {
-          const card = btn.closest('.period-accordion-box') || btn;
-          requestAnimationFrame(() => scrollOpenedCard(card));
-        }
+        requestAnimationFrame(() => scrollOpenedCard(card));
       }
     });
   });
@@ -10381,7 +10461,7 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
     </div>
 
     <!-- 가입시기 세부 서랍 -->
-    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:none;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:none;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
       
       ${revisionKeyBoxHTML(p.cardLine, p.revisionBullets)}
 
