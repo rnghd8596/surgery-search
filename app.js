@@ -8968,107 +8968,230 @@ function extractSearchedYear(rawQ) {
   return null;
 }
 
+function periodStartKey(str) {
+  const s = String(str || '');
+  const y = s.match(/(\d{4})\s*년/);
+  const mo = s.match(/(\d{1,2})\s*월/);
+  const d = s.match(/(\d{1,2})\s*일/);
+  let year = y ? +y[1] : 0;
+  let month = mo ? +mo[1] : 1;
+  let day = d ? +d[1] : 1;
+  if (s.includes('이전')) {
+    if (d) day = Math.max(0, day - 1);
+    else if (mo) { month = Math.max(1, month - 1); day = 28; }
+    else { year = Math.max(0, year - 1); month = 12; day = 31; }
+  }
+  return year * 10000 + month * 100 + day;
+}
+
+function periodsNewestFirst(periods) {
+  return (periods || []).map((p, i) => ({ p, i })).sort((a, b) => {
+    const diff = periodStartKey(b.p.periodStr || b.p.label) - periodStartKey(a.p.periodStr || a.p.label);
+    return diff || (a.i - b.i);
+  }).map(x => x.p);
+}
+
 function renderScanCompanyHTML(co) {
   const board = window.SCAN_BOARDS && window.SCAN_BOARDS[co.id];
   if (!board || !board.periods || !board.periods.length) return '';
-  if (!state.scanUi) state.scanUi = {};
-  if (!state.scanUi[co.id]) state.scanUi[co.id] = { pid: board.periods[0].id, ptype: 'standard', q: '' };
-  const sel = state.scanUi[co.id];
+  const periods = periodsNewestFirst(board.periods);
   return `
     <div class="scan-board" data-cid="${esc(co.id)}">
-      <div class="scan-periods">
-        ${board.periods.map(p => `<button type="button" class="scan-period${p.id === sel.pid ? ' on' : ''}" data-pid="${esc(p.id)}">${esc(p.label)}</button>`).join('')}
-      </div>
-      ${board.note ? `<p class="scan-note">${esc(board.note)}</p>` : ''}
-      <div class="scan-types">
-        <button type="button" class="scan-type${sel.ptype === 'standard' ? ' on' : ''}" data-ptype="standard">일반</button>
-        <button type="button" class="scan-type${sel.ptype === 'simplified' ? ' on' : ''}" data-ptype="simplified">간편</button>
-      </div>
-      <input class="scan-q" type="text" value="${esc(sel.q || '')}" placeholder="항목 검색" aria-label="항목 검색">
-      <div class="scan-body"></div>
+      ${periods.map(p => {
+        const clauseP = (co.periods || []).find(x => x.id === p.id);
+        const open = !!(clauseP && clauseP._isYearMatch);
+        return `
+        <div class="period-accordion-box" style="background:var(--surface);border:${open ? '2px solid #2563eb' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;">
+          <div class="btn-toggle-period" data-co-id="${esc(co.id)}" data-pid="${esc(p.id)}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
+            <span style="font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;text-align:left;min-width:0;flex:1;">${esc(p.label)}</span>
+            <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:${open ? '#fff' : 'var(--brand)'};background:${open ? 'var(--brand)' : 'var(--surface-2)'};padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;white-space:nowrap;">${open ? '접기 ▴' : '펼쳐보기 ▾'}</span>
+          </div>
+          <div id="period-drawer-${esc(co.id)}-${esc(p.id)}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:${open ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+            <div class="scan-types">
+              <button type="button" class="scan-type on" data-ptype="standard">일반</button>
+              <button type="button" class="scan-type" data-ptype="simplified">간편</button>
+            </div>
+            <div class="scan-body"></div>
+          </div>
+        </div>`;
+      }).join('')}
     </div>`;
 }
 
-function paintScanBoard(root) {
-  const cid = root.getAttribute('data-cid');
-  const board = window.SCAN_BOARDS[cid];
-  const sel = state.scanUi[cid];
-  const period = board.periods.find(p => p.id === sel.pid) || board.periods[0];
-  const type = (period.types && (period.types[sel.ptype] || period.types.standard)) || { line: '', rows: [], links: [] };
-  const nq = norm(sel.q || '');
-  const hit = (text) => !nq || norm(text || '').includes(nq);
-  const rows = (type.rows || []).filter(r => hit(r.item) || hit(r.before) || hit(r.after) || hit(r.keys) || hit(r.line));
-  const links = (type.links || []).filter(r => hit(r.label) || hit(r.line));
-  const body = root.querySelector('.scan-body');
-  if (!body) return;
-  const rowHTML = rows.map(r => `
-    <tr class="${r.changed ? 'changed' : ''}">
-      <td>${esc(r.item)}${r.changed ? ' 개정' : ''}</td>
-      <td>${esc(r.before || '')}</td>
-      <td class="after">${esc(r.after || '')}</td>
-      <td>${esc(r.date || '')}</td>
-      <td>${r.page ? `<button type="button" class="scan-open" data-page="${esc(r.page)}" data-line="${esc(r.line || '')}" data-item="${esc(r.item)}">약관보기</button>` : ''}</td>
-    </tr>`).join('');
-  const linkHTML = links.map(r => `
-    <li>
-      <span>${esc(r.label)}</span>
-      <button type="button" class="scan-open" data-page="${esc(r.page)}" data-line="${esc(r.line || '')}" data-item="${esc(r.label)}">약관보기</button>
-    </li>`).join('');
-  body.innerHTML = `
-    <div class="scan-wrap">
-      <table class="scan-table">
-        <thead><tr><th>항목</th><th>개정 전</th><th>개정 후</th><th>적용일</th><th></th></tr></thead>
-        <tbody>${rowHTML || '<tr><td colspan="5">해당하는 항목이 없습니다.</td></tr>'}</tbody>
-      </table>
-    </div>
-    ${linkHTML ? `<ul class="scan-links">${linkHTML}</ul>` : ''}`;
-  body.querySelectorAll('.scan-open').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const page = btn.getAttribute('data-page');
-      const line = btn.getAttribute('data-line') || '';
-      const item = btn.getAttribute('data-item') || '약관';
-      if (page && window.openRulesModal) window.openRulesModal(page, item, line, [page], null);
-    });
+function scanDateLabel(d) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(d || ''));
+  if (!m) return d || '';
+  return m[1].slice(2) + '.' + m[2] + '.' + m[3];
+}
+
+function scanRowGroup(item) {
+  const s = String(item || '');
+  if (/맘모톰|N62|유방|체외충격파|1~5종|1-5종/.test(s)) return 'tier';
+  if (/\d+대/.test(s)) return 'ndai';
+  if (/질병수술|보상/.test(s)) return 'disease';
+  return '';
+}
+
+function openScanPages(pages, title, note) {
+  const list = (pages || []).filter(Boolean);
+  if (!list.length || !window.openRulesModal) return;
+  window.openRulesModal(list[0], title || '약관', note || '', list, null);
+  const body = document.getElementById('rulesModalBody');
+  if (body) {
+    body.style.overflowX = 'auto';
+    body.style.overflowY = 'auto';
+  }
+  document.querySelectorAll('#rulesModalPagesStack img').forEach(img => {
+    img.style.width = '1100px';
+    img.style.maxWidth = 'none';
+    img.style.height = 'auto';
   });
-  root._scanHits = rows.concat(links).filter(r => r.page);
+  document.querySelectorAll('#rulesModalPagesStack .rules-page-img-box').forEach(box => {
+    box.style.overflow = 'auto';
+  });
+}
+
+function openScanSummary(title, pay, excl, pages) {
+  const modal = $('#clauseModal');
+  const box = $('#clauseModalContent');
+  const titleEl = $('#clauseModalTitle');
+  const searchWrap = $('#clauseModalSearchWrap');
+  const alertEl = $('#clauseModalAlert');
+  if (!modal || !box) {
+    openScanPages(pages, title, '');
+    return;
+  }
+  if (titleEl) titleEl.textContent = title || '약관';
+  if (searchWrap) searchWrap.style.display = 'none';
+  if (alertEl) alertEl.style.display = 'none';
+  const blocks = [];
+  if (pay) blocks.push(`<h3 class="scan-sec">보상하는 사항</h3><p class="scan-none">${esc(pay)}</p>`);
+  if (excl) blocks.push(`<h3 class="scan-sec">보장 제외 사항</h3><p class="scan-none">${esc(excl)}</p>`);
+  const ready = (pages || []).filter(Boolean);
+  blocks.push(ready.length ? `<p style="margin-top:12px;"><button type="button" class="scan-open" id="scanSummaryOriginal">약관 원문 보기</button></p>` : '');
+  box.innerHTML = blocks.join('');
+  const btn = box.querySelector('#scanSummaryOriginal');
+  if (btn) btn.addEventListener('click', () => openScanPages(ready, title, ''));
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+function scanPagesBtn(label, pages, title) {
+  const ready = (pages || []).filter(Boolean);
+  if (!ready.length) return '';
+  return `<button type="button" class="scan-open" data-act="pages" data-pages="${esc(ready.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
+}
+
+function paintScanDrawer(drawer) {
+  const root = drawer.closest('.scan-board');
+  const cid = root.getAttribute('data-cid');
+  const pid = drawer.getAttribute('data-pid');
+  if (!state.scanUi) state.scanUi = {};
+  if (!state.scanUi[cid]) state.scanUi[cid] = {};
+  if (!state.scanUi[cid][pid]) state.scanUi[cid][pid] = { ptype: 'standard', q: '', open: {}, drill: null };
+  const sel = state.scanUi[cid][pid];
+  const faceRoot = window.MERITZ_FACE && window.MERITZ_FACE[pid];
+  const face = faceRoot && (faceRoot[sel.ptype] || faceRoot.standard);
+  const body = drawer.querySelector('.scan-body');
+  if (!body || !face) {
+    if (body) body.innerHTML = '';
+    return;
+  }
+  const sec = (key, title, inner) => {
+    const on = !!sel.open[key];
+    return `
+      <div class="scan-fold">
+        <button type="button" class="scan-fold-btn" data-fold="${key}">
+          <span>${esc(title)}</span>
+          <span>${on ? '접기' : '펼치기'}</span>
+        </button>
+        <div class="scan-fold-body" style="display:${on ? 'block' : 'none'};">${on ? inner : ''}</div>
+      </div>`;
+  };
+  const disease = face.disease || {};
+  const tier = face.tier || {};
+  const bundles = face.bundles || [];
+  const drill = sel.drill;
+  let ndaiHTML = '';
+  if (!bundles.length) ndaiHTML = '<p class="scan-none">해당 없음</p>';
+  else if (!drill) {
+    ndaiHTML = `<ul class="scan-links">${bundles.map(b => `<li><span>${esc(b.name)}</span><button type="button" class="scan-open" data-act="bundle" data-name="${esc(b.name)}">펼치기</button></li>`).join('')}</ul>`;
+  } else if (!drill.part) {
+    const b = bundles.find(x => x.name === drill.name);
+    const parts = (b && b.parts) || [];
+    ndaiHTML = `<p><button type="button" class="scan-open" data-act="back">뒤로</button></p><p class="scan-sec">${esc(drill.name)}</p><ul class="scan-links">${parts.map(part => `<li><span>${esc(part.name)}</span><button type="button" class="scan-open" data-act="part" data-name="${esc(part.name)}">펼치기</button></li>`).join('')}</ul>`;
+  } else {
+    const b = bundles.find(x => x.name === drill.name);
+    const part = b && (b.parts || []).find(x => x.name === drill.part);
+    const codes = (part && part.codes) || [];
+    ndaiHTML = `<p><button type="button" class="scan-open" data-act="back-part">뒤로</button></p><p class="scan-sec">${esc(drill.part)}</p>${codes.length ? `<ul class="scan-links">${codes.map(c => `<li><span>${esc(c)}</span></li>`).join('')}</ul>` : ''}${scanPagesBtn('약관보기', part && part.pages, drill.part)}`;
+  }
+  const items = (tier.items || []).map(it => `
+    <div class="scan-item">
+      <span>${esc(it.name)}</span>
+      <span>${esc(it.tier || '')}</span>
+      ${scanPagesBtn('약관보기', it.pages, it.name)}
+    </div>`).join('');
+  body.innerHTML = [
+    sec('disease', '질병수술비', `
+      ${disease.line ? `<p class="scan-none">${esc(disease.line)}</p>` : ''}
+      <p>${scanPagesBtn('수술의 정의', disease.define, '수술의 정의')}${scanPagesBtn('보장하지 않는 수술', disease.exclude, '보장하지 않는 수술')}</p>
+    `),
+    sec('tier', '1-5종수술비', `
+      ${tier.line ? `<p class="scan-none">${esc(tier.line)}</p>` : ''}
+      <p>
+        ${(tier.pay || tier.excl) ? `<button type="button" class="scan-open" data-act="summary" data-title="1-5종수술비" data-pay="${esc(tier.pay || '')}" data-excl="${esc(tier.excl || '')}" data-pages="${esc((tier.clause || []).join('|'))}">약관보기</button>` : scanPagesBtn('약관보기', tier.clause, '1-5종수술비')}
+        ${scanPagesBtn('분류표', tier.table, '1-5종 분류표')}
+      </p>
+      ${items}
+    `),
+    sec('ndai', 'N대 질병수술비', ndaiHTML)
+  ].join('');
+}
+
+function paintScanBoard(root) {
+  root.querySelectorAll('.period-drawer-content').forEach(paintScanDrawer);
 }
 
 function bindScanBoards(container) {
   container.querySelectorAll('.scan-board').forEach(root => {
     const cid = root.getAttribute('data-cid');
     paintScanBoard(root);
-    root.querySelectorAll('.scan-period').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    root.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn || !root.contains(btn)) return;
+      const drawer = btn.closest('.period-drawer-content');
+      if (!drawer) return;
+      const pid = drawer.getAttribute('data-pid');
+      if (!state.scanUi[cid][pid]) state.scanUi[cid][pid] = { ptype: 'standard', open: {}, drill: null };
+      const sel = state.scanUi[cid][pid];
+      if (btn.classList.contains('scan-type')) {
         e.stopPropagation();
-        state.scanUi[cid].pid = btn.getAttribute('data-pid');
-        root.querySelectorAll('.scan-period').forEach(b => b.classList.toggle('on', b === btn));
-        paintScanBoard(root);
-      });
-    });
-    root.querySelectorAll('.scan-type').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+        sel.ptype = btn.getAttribute('data-ptype');
+        sel.drill = null;
+        drawer.querySelectorAll('.scan-type').forEach(b => b.classList.toggle('on', b === btn));
+        paintScanDrawer(drawer);
+        return;
+      }
+      if (btn.classList.contains('scan-fold-btn')) {
         e.stopPropagation();
-        state.scanUi[cid].ptype = btn.getAttribute('data-ptype');
-        root.querySelectorAll('.scan-type').forEach(b => b.classList.toggle('on', b === btn));
-        paintScanBoard(root);
-      });
+        const key = btn.getAttribute('data-fold');
+        sel.open[key] = !sel.open[key];
+        paintScanDrawer(drawer);
+        return;
+      }
+      const act = btn.getAttribute('data-act');
+      if (!act) return;
+      e.stopPropagation();
+      if (act === 'bundle') sel.drill = { name: btn.getAttribute('data-name'), part: '' };
+      else if (act === 'part') sel.drill = { name: sel.drill && sel.drill.name, part: btn.getAttribute('data-name') };
+      else if (act === 'back') sel.drill = null;
+      else if (act === 'back-part') sel.drill = { name: sel.drill && sel.drill.name, part: '' };
+      else if (act === 'pages') openScanPages((btn.getAttribute('data-pages') || '').split('|'), btn.getAttribute('data-title'), '');
+      else if (act === 'summary') openScanSummary(btn.getAttribute('data-title'), btn.getAttribute('data-pay'), btn.getAttribute('data-excl'), (btn.getAttribute('data-pages') || '').split('|'));
+      if (act === 'bundle' || act === 'part' || act === 'back' || act === 'back-part') paintScanDrawer(drawer);
     });
-    const input = root.querySelector('.scan-q');
-    if (input) {
-      input.addEventListener('click', (e) => e.stopPropagation());
-      input.addEventListener('input', () => {
-        state.scanUi[cid].q = input.value;
-        paintScanBoard(root);
-      });
-      input.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter') return;
-        const hits = root._scanHits || [];
-        if (hits.length === 1 && window.openRulesModal) {
-          window.openRulesModal(hits[0].page, hits[0].item || hits[0].label, hits[0].line || '', [hits[0].page], null);
-        }
-      });
-    }
   });
 }
 
@@ -9493,7 +9616,7 @@ function renderClausesCompanyList(searchQuery) {
 
       <!-- 시기별 아코디언 서랍 (검색 시에도 접힘 상태로 유지 #29458) -->
       <div id="co-periods-${co.id}" class="co-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface-2);flex-direction:column;gap:12px;">
-        ${(window.SCAN_BOARDS && window.SCAN_BOARDS[co.id]) ? renderScanCompanyHTML(co) : co.periods.map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
+        ${(window.SCAN_BOARDS && window.SCAN_BOARDS[co.id]) ? renderScanCompanyHTML(co) : periodsNewestFirst(co.periods).map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
       </div>
     </div>
     `;

@@ -926,7 +926,7 @@ window.POLICY_CLAUSES_DATA = {
         },
         {
           id: 'meritz_202501',
-          periodStr: '2025년 1월 1일 ~',
+          periodStr: '2025년 1월 1일 ~ 현재',
           hasRevision: true,
           revBadge: '',
           revSummary: '',
