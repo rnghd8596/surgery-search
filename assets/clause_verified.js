@@ -179,7 +179,14 @@ window.ndaiOptionsForCompany = function ndaiOptionsForCompany(cid, pid, title) {
   };
   const key = map[cid] ? cid : (alias[cid] && map[alias[cid]] ? alias[cid] : null);
   if (key && map[key] && Object.prototype.hasOwnProperty.call(map[key], pid)) {
-    return (map[key][pid] || []).slice();
+    const fromMap = (map[key][pid] || []).slice();
+    const titleMatch = String(title || '').match(/(\d+대)/g);
+    if (titleMatch && titleMatch.length) {
+      const allow = new Set(titleMatch);
+      const cut = fromMap.filter(opt => allow.has(opt));
+      if (cut.length) return cut;
+    }
+    return fromMap;
   }
   let options = [];
   if (!options.length) {
@@ -189,15 +196,6 @@ window.ndaiOptionsForCompany = function ndaiOptionsForCompany(cid, pid, title) {
   return options;
 };
 
-window.clauseVerifyBadgeHTML = function clauseVerifyBadgeHTML(status) {
-  if (status === 'scan-transcript') {
-    return '<span class="vbadge ok">스캔 원문 전사</span>';
-  }
-  if (status === 'unverified-shared') {
-    return '<span class="vbadge bad">여러 회사 동일 문구 · 미검증</span>';
-  }
-  if (status === 'missing') {
-    return '<span class="vbadge bad">원문 미확보</span>';
-  }
-  return '<span class="vbadge warn">요약 · 원문 미검증</span>';
+window.clauseVerifyBadgeHTML = function clauseVerifyBadgeHTML() {
+  return '';
 };

@@ -2861,3 +2861,34 @@ html[data-theme="dark"] [style*="color:#334155"] { color: var(--text) !important
   .hero-title { font-size: 22px !important; }
   .cond-row { grid-template-columns: 1fr; gap: 2px; }
 }
+
+.scan-board { text-align: left; color: var(--text); }
+.scan-periods, .scan-types { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 12px; }
+.scan-period, .scan-type, .scan-open {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  padding: 4px 0; margin: 0; cursor: pointer; text-align: left;
+  font: inherit; font-weight: 700; color: var(--text-2);
+}
+.scan-period.on, .scan-type.on { color: var(--text); font-weight: 900; border-bottom-color: var(--text); }
+.scan-note { margin: 0 0 12px; font-size: 13px; line-height: 1.5; color: var(--text-2); text-align: left; }
+.scan-line { margin: 0 0 10px; font-size: 15px; font-weight: 800; line-height: 1.45; text-align: left; }
+.scan-q {
+  width: 100%; height: 40px; margin: 0 0 12px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+  color: var(--text); font: inherit; font-size: 14px; text-align: left;
+}
+.scan-wrap { overflow-x: auto; }
+.scan-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.scan-table th, .scan-table td {
+  text-align: left; vertical-align: top; padding: 10px 8px 10px 0;
+  border-bottom: 1px solid var(--line); font-weight: 600;
+}
+.scan-table th { font-size: 12px; font-weight: 800; color: var(--text-3); }
+.scan-table tr.changed .after { font-weight: 900; background: rgba(140,115,75,.16); }
+.scan-open { color: var(--brand); font-weight: 800; white-space: nowrap; }
+.scan-links { list-style: none; margin: 14px 0 0; padding: 0; }
+.scan-links li {
+  display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+  padding: 8px 0; border-bottom: 1px solid var(--line); text-align: left;
+}
+.scan-links span { font-weight: 700; }

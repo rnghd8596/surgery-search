@@ -123,103 +123,118 @@ window.CLAUSE_BOOK = {
   },
   meritz: {
     lines: {
-      simplified: {
+      standard: {
         periods: {
-          meritz_2024_12: {
-            product: '무배당 메리츠 통합간편건강보험2501(일반심사형)',
-            sale: '판매 2025-01-01~2025-01-12',
-            source: '메리츠 공시실 약관. 저장소 insurer_pdfs',
+          meritz_201912: {
+            product: '케어프리 M-Basket2007',
+            sale: '판매 2019-12-18~2020-11-03',
+            source: '메리츠 공시실 약관',
             riders: {
-              tier: {
-                table: {
-                  caption: '【별표38】 1-5종 수술분류표Ⅱ. 인쇄 442쪽. 제3항 유방절단 3종, 유방의 비대(N62)는 1종. 제4항 1종(맘모톰)',
-                  pages: ['assets/clause_pages/meritz/gp2501_t38_p442.png']
-                }
-              }
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/a_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/a_exc.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/a_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/a_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/a_inj.png'] } },
+              ndai: { '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/a_32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/a_32.png'] } } }
+            }
+          },
+          meritz_202011: {
+            product: '케어프리 M-Basket2011',
+            sale: '판매 2020-11-04~2020-12-31',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/b_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/b_exc.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/b_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/b_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/b_inj.png'] } },
+              ndai: { '82대': { clause: { caption: '82대', pages: ['assets/clause_pages/meritz/b_82.png'] }, table: { caption: '82대', pages: ['assets/clause_pages/meritz/b_82.png'] } }, '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/b_32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/b_32.png'] } } }
+            }
+          },
+          meritz_202101: {
+            product: '케어프리 M-Basket2101',
+            sale: '판매 2021-01-01~2022-03-31',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/c_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/c_exc.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/c_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/c_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/c_inj.png'] } },
+              ndai: { '82대': { clause: { caption: '82대', pages: ['assets/clause_pages/meritz/c_82.png'] }, table: { caption: '82대', pages: ['assets/clause_pages/meritz/c_82.png'] } }, '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/c_32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/c_32.png'] } } }
+            }
+          },
+          meritz_202207: {
+            product: '케어프리 M-Basket2204',
+            sale: '판매 2022-07-01~2024-12-31',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/d_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/d_exc.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/d_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/d_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/d_inj.png'] } },
+              ndai: { '131대': { clause: { caption: '131대', pages: ['assets/clause_pages/meritz/d_131.png'] }, table: { caption: '131대', pages: ['assets/clause_pages/meritz/d_131.png'] } }, '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/d_32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/d_32.png'] } } }
+            }
+          },
+          meritz_202501: {
+            product: '케어프리 M-Basket2501',
+            sale: '판매 2025-01-01~',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/e_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/e_exc.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/e_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/e_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/e_inj.png'] } },
+              ndai: { '131대': { clause: { caption: '131대', pages: ['assets/clause_pages/meritz/e_131.png'] }, table: { caption: '131대', pages: ['assets/clause_pages/meritz/e_131.png'] } } }
             }
           }
         }
       },
-      standard: {
+      simplified: {
         periods: {
-          meritz_2020_04: {
-            product: '무배당 The편한 케어프리보험 M-Basket2007',
-            sale: '판매 2020-07-15~2020-11-03',
-            source: '메리츠 공시실 약관. 저장소 insurer_pdfs',
+          meritz_201912: {
+            product: 'The간편한 2004',
+            sale: '판매 2020-04-01~2020-05-18',
+            source: '메리츠 공시실 약관',
             riders: {
-              tier: {
-                table: {
-                  caption: '1-5종 제87항 체외충격파쇄석술 2종. 인쇄 456쪽. 체외충격파치료술은 제외',
-                  pages: ['assets/clause_pages/meritz/mb2007_eswl_p456.png']
-                }
-              }
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/q_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/q_dis.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/q_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/q_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/q_inj.png'] } },
+              ndai: { '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/q_32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/q_32.png'] } } }
             }
           },
-          meritz_2024_12: {
-            product: '무배당 메리츠 케어프리보험 M-Basket2501',
+          meritz_202011: {
+            product: 'The간편한 2011',
+            sale: '판매 2020-11-04~2020-12-31',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/b_gtier.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/b_gtier.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/b_gtier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/b_gtier.png'] } },
+              ndai: { '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/b_gtier.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/b_gtier.png'] } } }
+            }
+          },
+          meritz_202101: {
+            product: '335오!간편 2101',
+            sale: '판매 2021-02-18~2021-03-31',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/c_g32.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/c_g32.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/c_g32.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/c_g32.png'] } },
+              ndai: { '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/c_g32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/c_g32.png'] } } }
+            }
+          },
+          meritz_202207: {
+            product: '간편355 2210',
+            sale: '판매 2022-10-17~2022-11-08',
+            source: '메리츠 공시실 약관',
+            riders: {
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/p_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/p_dis.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/p_32.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/p_32.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/p_inj.png'] } },
+              ndai: { '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/p_32.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/p_32.png'] } } }
+            }
+          },
+          meritz_202501: {
+            product: '통합간편 2501 일반심사형',
             sale: '판매 2025-01-01~2025-01-12',
-            source: '메리츠 공시실 약관. 저장소 insurer_pdfs',
+            source: '메리츠 공시실 약관',
             riders: {
-              tier: {
-                table: {
-                  caption: '【별표7】 1-5종 수술분류표Ⅱ. 인쇄 591쪽. 제3항 유방절단 3종, 유방의 비대(N62)는 1종. 제4항 1종(맘모톰)',
-                  pages: ['assets/clause_pages/meritz/mb2501_t7_p591.png']
-                }
-              }
-            }
-          },
-          meritz_2022_04: {
-            product: '스캔에 상품 표지는 없고, 32대 지급예시의 최초계약일이 2022.4.10으로 인쇄됨',
-            sale: '2022-04-10 예시가 있는 책자. 2024.12 개정본인지는 미확정',
-            source: '저장소 스캔 assets/clause_imgs/meritz_std_* (공시실 쪽 스캔)',
-            riders: {
-              basic: {
-                inclusion: {
-                  caption: '16. 갱신형 질병수술비보장 특별약관 제245쪽',
-                  pages: ['assets/clause_imgs/meritz_std_basic_inc_p245.png']
-                },
-                exclusion: {
-                  caption: '같은 특약 제246~247쪽',
-                  pages: ['assets/clause_imgs/meritz_std_basic_exc_p246.png','assets/clause_imgs/meritz_std_basic_exc_p247.png']
-                }
-              },
-              tier: {
-                table: {
-                  caption: '〈별표23〉 1~5종 수술분류표. 하단 “현재 661/665”부터. 개정일자는 이 스캔에 없음',
-                  pages: [
-                    'assets/clause_imgs/meritz_star23_tier_p1.png','assets/clause_imgs/meritz_star23_tier_p2.png','assets/clause_imgs/meritz_star23_tier_p3.png',
-                    'assets/clause_imgs/meritz_star23_tier_p4.png','assets/clause_imgs/meritz_star23_tier_p5.png','assets/clause_imgs/meritz_star23_tier_p6.png','assets/clause_imgs/meritz_star23_tier_p7.png'
-                  ]
-                }
-              },
-              ndai: {
-                '131대': {
-                  clause: {
-                    caption: '41. 갱신형 131대질병수술비보장 특별약관 제332쪽~',
-                    pages: ['assets/clause_imgs/meritz_std_ndai_inc_p332.png','assets/clause_imgs/meritz_std_ndai_inc_p333.png','assets/clause_imgs/meritz_std_ndai_inc_p334.png','assets/clause_imgs/meritz_std_ndai_inc_p335.png','assets/clause_imgs/meritz_std_ndai_inc_p336.png']
-                  },
-                  exclusion: {
-                    caption: '131대 제5조 수술의 정의. 제337쪽',
-                    pages: ['assets/clause_imgs/meritz_std_ndai_exc_p337.png','assets/clause_imgs/meritz_std_ndai_exc_p338.png']
-                  },
-                  groups: {
-                    '심장': { caption: '【별표23】 심장질환 분류표. 제664쪽', pages: ['assets/clause_imgs/meritz_std_ndai_heart_p664.png'] },
-                    '31대': { caption: '【별표44】 특정31대질병 분류표. 제714쪽', pages: ['assets/clause_imgs/meritz_std_ndai_31_p714.png'] }
-                  }
-                },
-                '32대': {
-                  clause: {
-                    caption: '42. 갱신형 32대질병관혈수술비 제339~341쪽',
-                    pages: ['assets/clause_imgs/meritz_std_ndai_32_inc_p339.png','assets/clause_imgs/meritz_std_ndai_32_inc_p340.png','assets/clause_imgs/meritz_std_ndai_32_inc_p341.png']
-                  },
-                  groups: {
-                    '5대': { caption: '【별표46】 [5대질병] 제728쪽', pages: ['assets/clause_imgs/meritz_std_ndai_32_table_p728.png'] },
-                    '9대': { caption: '【별표46】 [9대질병] 제729~730쪽', pages: ['assets/clause_imgs/meritz_std_ndai_32_table_p729.png','assets/clause_imgs/meritz_std_ndai_32_table_p730.png'] },
-                    '14대': { caption: '【별표46】 [14대질병] 제730~731쪽', pages: ['assets/clause_imgs/meritz_std_ndai_32_table_p730.png','assets/clause_imgs/meritz_std_ndai_32_table_p731.png'] },
-                    '4대': { caption: '제3조⑤ 4대질병 정의. 제341쪽. 분류번호 표는 없음', pages: ['assets/clause_imgs/meritz_std_ndai_32_inc_p341.png'] }
-                  }
-                }
-              }
+              basic: { inclusion: { caption: '질병수술비', pages: ['assets/clause_pages/meritz/g_dis.png'] }, exclusion: { caption: '질병수술비 제외', pages: ['assets/clause_pages/meritz/g_dis.png'] } },
+              tier: { inclusion: { caption: '1~5종', pages: ['assets/clause_pages/meritz/g_tier.png'] }, table: { caption: '1~5종 분류표', pages: ['assets/clause_pages/meritz/g_tier.png'] } },
+              injury: { inclusion: { caption: '상해수술비', pages: ['assets/clause_pages/meritz/g_inj.png'] } },
+              ndai: { '32대': { clause: { caption: '32대', pages: ['assets/clause_pages/meritz/g_tier.png'] }, table: { caption: '32대', pages: ['assets/clause_pages/meritz/g_tier.png'] } } }
             }
           }
         }
@@ -487,11 +502,19 @@ window.lookupClauseScan = function(co, period, data, riderKey, scanType, selecte
   const riders = node.riders || {};
   let slot = null;
   if (riderKey === 'ndai' || riderKey === 'adult') {
-    const key = (selectedNdai || '').match(/\d+대/);
+    let label = selectedNdai || '';
+    if (!label && riders.ndai) label = Object.keys(riders.ndai)[0] || '';
+    const key = String(label).match(/\d+대/);
     const nd = key ? riders.ndai && riders.ndai[key[0]] : null;
     if (!nd) return { pages: [], title: '', meta: { page: (selectedNdai || 'N대') + ' 원문 쪽 미연결' } };
-    slot = scanType === 'exclusion' ? nd.exclusion : (scanType === 'table' ? null : nd.clause);
-    if (scanType === 'table') return { pages: [], title: '', meta: { page: '분류표는 질병군 버튼으로 엽니다.' } };
+    slot = scanType === 'exclusion' ? (nd.exclusion || nd.clause) : nd.clause;
+    if (scanType === 'table') {
+      const tbl = (nd.table && nd.table.pages && nd.table.pages.length) ? nd.table : nd.clause;
+      if (tbl && tbl.pages && tbl.pages.length) {
+        return { pages: tbl.pages, title: tbl.caption || '', meta: { page: tbl.caption || '' } };
+      }
+      return { pages: [], title: '', meta: { page: '분류표는 질병군 버튼으로 엽니다.' } };
+    }
   } else if (riderKey === 'tier') {
     slot = scanType === 'table' ? riders.tier && riders.tier.table : riders.tier && riders.tier.inclusion;
   } else if (riderKey === 'injury') {
