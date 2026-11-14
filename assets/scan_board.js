@@ -61,8 +61,8 @@
         {
           id: 'meritz_202011',
           label: '2020년 11월 4일 ~ 2020년 12월 31일',
-          cardLine: '질병수술비에서 대장용종 제외',
-          revisionBullets: [{ cover: '질병수술비', name: '대장용종', before: '보장', after: '제외' }],
+          cardLine: '백내장·대장용종 제외형 신설',
+          revisionBullets: [{ cover: '질병수술비', name: '백내장·대장용종 제외형', before: '없음', after: '신설' }],
           changes: [
             { item: '64대', before: '있음', after: '없음' },
             { item: '82대', before: '없음', after: '있음' },
@@ -108,8 +108,8 @@
         {
           id: 'meritz_202101',
           label: '2021년 1월 1일 ~ 2021년 9월 22일',
-          cardLine: '1~5종 수술특약 없음',
-          revisionBullets: [{ cover: '1~5종 수술비', name: '1~5종', before: '있음', after: '없음' }],
+          cardLine: '1~5종 미판매',
+          revisionBullets: [{ cover: '1~5종 수술비', name: '1~5종', before: '판매', after: '미판매' }],
           changes: [
             { item: '수술분류표', before: '1~5종', after: '1~7종' },
             { item: '82대', before: '있음', after: '있음' }
@@ -149,12 +149,8 @@
         {
           id: 'meritz_202109',
           label: '2021년 9월 23일 ~ 2024년 12월 31일',
-          cardLine: '질병수술비 제외에 후각·피부·혈관종 추가',
-          revisionBullets: [
-            { cover: '질병수술비', name: '후각(J30·J31·J33·J34)', before: '보장', after: '제외' },
-            { cover: '질병수술비', name: '피부(L72·L84)', before: '보장', after: '제외' },
-            { cover: '질병수술비', name: '혈관종(D18)', before: '보장', after: '제외' }
-          ],
+          cardLine: '특정5대 제외형 신설',
+          revisionBullets: [{ cover: '질병수술비', name: '특정5대 제외형', before: '없음', after: '신설' }],
           changes: [
             { item: '82대', before: '있음', after: '없음' },
             { item: '131대', before: '없음', after: '있음' }
