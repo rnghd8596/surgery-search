@@ -9091,11 +9091,11 @@ function diffBoxHTML(kc) {
   if (!kc || !kc.items || !kc.items.length) return '';
   const rows = kc.items.map((it, i) => {
     const chips = (it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('');
-    const tag = it.tag ? `<span class="five-tag">${esc(it.tag)}</span>` : '';
     const no = kc.numbered ? `<span class="five-no">${i + 1}</span>` : '';
-    return `<div class="five-row">${no}<span class="name">${esc(it.name)}</span><span class="five-right">${tag}${chips}</span></div>`;
+    return `<div class="code-line">${no}<span class="name">${esc(it.name)}</span><span class="code-chips">${chips}</span></div>`;
   }).join('');
-  return `<div class="diff-box${kc.numbered ? ' five' : ''}">${rows}</div>`;
+  const title = kc.title ? `<div class="diff-box-title">${esc(kc.title)}</div>` : '';
+  return `<div class="diff-box">${title}${rows}</div>`;
 }
 
 function meritzCardsHTML(list) {
@@ -9164,7 +9164,7 @@ function openMeritzClauseModal(pack, mode) {
   }
   if (mode === 'codes') {
     if (titleEl) titleEl.textContent = '제외 질병코드';
-    box.innerHTML = imgBtn(pack.exclPages, (pack.label || '') + ' 제외 질병코드') + diffBoxHTML(pack.keyCheck) + codeLinesHTML(pack.codeList || []);
+    box.innerHTML = imgBtn(pack.exclPages, (pack.label || '') + ' 제외 질병코드') + codeLinesHTML(pack.codeList || []) + diffBoxHTML(pack.keyCheck);
     bindImg();
   } else {
     paint('pay');
@@ -9230,21 +9230,22 @@ function paintScanDrawer(drawer) {
     }).join('')}</div>` : '';
     const clausePages = current.clause || ((current.parts && current.parts[0] && current.parts[0].pages) || []);
     const parts = current.parts || [];
-    const coded = parts.some(p => p.codes && p.codes.length);
-    const tableBtn = coded
+    const tableBtn = parts.length
       ? `<button type="button" class="cov-btn" data-act="groups">분류표</button>`
       : scanCovBtn('분류표', current.table && current.table.length ? current.table : clausePages, current.name + ' 분류표', false);
     let groups = '';
-    if (coded && sel.groups) {
+    if (parts.length && sel.groups) {
       groups = `<div class="cov-groups">${parts.map(part => {
         const on = sel.group === part.name;
         const codes = (part.codes || []).map(c => `<span class="kcd-badge">${esc(c)}</span>`).join('');
+        const pages = (part.pages || []).filter(Boolean);
+        const pageAttrs = pages.length ? `data-act="pages" data-pages="${esc(pages.join('|'))}" data-title="${esc(part.name)}"` : 'disabled';
         return `<div class="cov-group">
           <div class="qvb-row cov-group-row">
-            <span class="qvb-left-label" style="white-space:normal;font-size:12.5px;">${esc(part.name)}</span>
-            <span style="display:flex;gap:6px;flex-shrink:0;">
-              ${scanCovBtn('약관', part.pages, part.name, false)}
-              ${(part.codes || []).length ? `<button type="button" class="fold-toggle${on ? ' on' : ''}" data-act="group" data-name="${esc(part.name)}">${on ? '접기 ▴' : '펼치기 ▾'}</button>` : ''}
+            <span class="qvb-left-label">${esc(part.name)}</span>
+            <span class="pair-actions">
+              <button type="button" class="pair-btn" ${pageAttrs}>약관</button>
+              <button type="button" class="pair-btn${on ? ' on' : ''}" data-act="group" data-name="${esc(part.name)}">${on ? '접기 ▴' : '펼치기 ▾'}</button>
             </span>
           </div>
           ${on && codes ? `<div class="cov-codes">${codes}</div>` : ''}
@@ -9602,7 +9603,7 @@ function renderClausesCompanyList(searchQuery) {
     let recommendations = [
       { coName: 'DB손해보험', cid: 'dbinsure', pid: 'db_2020_07', ndai: '85대', period: '2020년 7월 ~ 2024년 3월', label: '85대 질병수술비', jump: 'DB 85대' },
       { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2020_04', ndai: '82대', period: '2020년 4월 ~ 2024년 11월', label: '82대 질병수술비', jump: '멜츠 82대' },
-      { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 이전', label: '71대 질병수술비', jump: '현대 71대' },
+      { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 31일 이전', label: '71대 질병수술비', jump: '현대 71대' },
       { coName: '삼성화재', cid: 'samsungfire', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' }
     ];
 
@@ -9611,7 +9612,7 @@ function renderClausesCompanyList(searchQuery) {
       recommendations = [
         { coName: '메리츠화재', cid: 'meritz', pid: 'meritz_2020_03_prior', ndai: '64대', period: '2020년 3월 이전', label: '64대 질병수술비', jump: '멜츠 64대' },
         { coName: '삼성화재', cid: 'samsungfire', pid: 'samsung_2020_04', ndai: '68대', period: '2020년 4월 ~ 2023년 12월', label: '68대 질병수술비', jump: '삼성 68대' },
-        { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 이전', label: '71대 질병수술비', jump: '현대 71대' }
+        { coName: '현대해상', cid: 'hyundai', pid: 'hyundai_2018_prior', ndai: '71대', period: '2018년 5월 31일 이전', label: '71대 질병수술비', jump: '현대 71대' }
       ];
     } else if (exactNdaiNum >= 125) {
       closestNdaiStr = '124대 질병수술비';
@@ -10809,9 +10810,9 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                   포함: ${esc(summaryNames)}
                 </div>
               </div>
-              <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                <button type="button" class="btn-group-clause-scan cov-btn" data-grp="${esc(grpName)}">약관보기</button>
-                <button type="button" class="fold-toggle ndai-arrow-badge${isAutoOpen ? ' on' : ''}">
+              <div class="pair-actions">
+                <button type="button" class="pair-btn btn-group-clause-scan" data-grp="${esc(grpName)}">약관</button>
+                <button type="button" class="pair-btn ndai-arrow-badge${isAutoOpen ? ' on' : ''}">
                   ${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}
                 </button>
               </div>

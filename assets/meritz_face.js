@@ -262,14 +262,14 @@
   ];
   const cataractCodes = baseCodes.concat([{ name: '백내장', codes: ['H25~H27'] }]);
   const polypCodes = baseCodes.concat([{ name: '백내장', codes: ['H25~H27'] }, { name: '대장용종', codes: [] }]);
-  const cataractKey = { items: [{ name: '백내장', codes: ['H25~H27'] }] };
-  const polypKey = { items: [
+  const cataractKey = { title: '추가 제외', items: [{ name: '백내장', codes: ['H25~H27'] }] };
+  const polypKey = { title: '추가 제외', items: [
     { name: '백내장', codes: ['H25~H27'] },
-    { name: '대장용종', codes: [] }
+    { name: '대장용종·양성신생물 내시경적 절제', codes: [] }
   ]};
-  const fiveKey = { numbered: true, items: [
-    { name: '대장용종 · 양성신생물', tag: '내시경적 절제', codes: [] },
-    { name: '백내장', codes: ['H25', 'H26', 'H27'] },
+  const fiveKey = { title: '특정5대 추가 제외', numbered: true, items: [
+    { name: '대장용종·양성신생물 내시경적 절제', codes: [] },
+    { name: '백내장', codes: ['H25~H27'] },
     { name: '후각특정질환', codes: ['J30', 'J31', 'J33', 'J34'] },
     { name: '특정피부질환', codes: ['L72', 'L84'] },
     { name: '혈관종·림프관종', codes: ['D18'] }

@@ -791,7 +791,7 @@ window.POLICY_CLAUSES_DATA = {
       periods: [
 {
           id: 'meritz_201912',
-          periodStr: '~ 2020년 11월 3일',
+          periodStr: '2020년 11월 3일 이전',
           hasRevision: true,
           revBadge: '',
           revSummary: '',
@@ -1402,7 +1402,7 @@ window.POLICY_CLAUSES_DATA = {
       ,
         {
           id: 'hyundai_2018_prior',
-          periodStr: '2018년 5월 이전',
+          periodStr: '2018년 5월 31일 이전',
           hasRevision: true,
           revBadge: '체외충격파 2종, 대장용종 2종, 71대/16대 황금기',
           revSummary: '2018년 5월 이전 계약은 체외충격파쇄석술이 2종으로 지급되고 대장용종 2종, 71대/16대 질병수술비가 전액 보장되던 황금기 계약입니다.',
@@ -1862,7 +1862,7 @@ window.POLICY_CLAUSES_DATA = {
         },
         {
           id: 'kb_2020_prior',
-          periodStr: '2020년 9월 이전',
+          periodStr: '2020년 9월 30일 이전',
           hasRevision: true,
           revBadge: '대장용종 2종, 담석 3종, 21대 질병수술비 황금기',
           revSummary: '2020년 9월 이전 계약은 대장용종 절제술이 2종으로 전액 지급되고, 21대 질병수술비 특약이 탑재된 황금기 계약입니다.',
@@ -2253,7 +2253,7 @@ window.POLICY_CLAUSES_DATA = {
         },
         {
           id: 'db_2020_prior',
-          periodStr: '2020년 6월 이전',
+          periodStr: '2020년 6월 30일 이전',
           hasRevision: true,
           revBadge: '대장용종 2종, 담석 3종, 18대/21대 질병수술비 황금기',
           revSummary: '2020년 6월 이전 계약은 대장용종 절제술이 2종으로 지급되고, 18대/21대 질병수술비가 적용되던 황금기 계약입니다.',
@@ -2677,7 +2677,7 @@ window.POLICY_CLAUSES_DATA = {
         },
         {
           id: 'samsung_2020_prior',
-          periodStr: '2020년 3월 이전',
+          periodStr: '2020년 3월 31일 이전',
           hasRevision: true,
           revBadge: '대장용종 2종, 담석 3종, 21대/15대 질병수술비 황금기',
           revSummary: '2020년 3월 이전 계약은 대장용종 2종 및 21대 생활질병·15대 주요질병 수술비가 탑재된 황금기 계약입니다.',
@@ -3610,7 +3610,7 @@ window.POLICY_CLAUSES_DATA = {
         },
         {
           id: 'nh_2024_12_prior',
-          periodStr: '2024년 12월 이전',
+          periodStr: '2024년 12월 31일 이전',
           hasRevision: true,
           revBadge: '체외충격파 2종 정상 지급 약관',
           revSummary: '2024년 12월 이전 계약은 요로결석 체외충격파쇄석술이 2종으로 회당 100% 정상 지급되는 유리한 약관입니다.',
@@ -4234,7 +4234,7 @@ window.POLICY_CLAUSES_DATA = {
               },
               {
                   "id": "samsunglife_2006_04",
-                  "periodStr": "2006년 3월 이전 계약",
+                  "periodStr": "2006년 3월 31일 이전",
                   "hasRevision": true,
                   "revBadge": "구 1~3종 황금기 약관 (체외충격파 2종, 여유증 3종, 담석 3종 전액 지급)",
                   "revSummary": "2006년 3월 이전 체결된 구 1~3종 수술특약은 요로결석 체외충격파쇄석술 2종, 대장용종 2종, 담석증 3종, 여유증 3종이 100% 전액 지급되는 전설적인 황금기 약관입니다.",

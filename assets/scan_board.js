@@ -11,7 +11,7 @@
       periods: [
         {
           id: 'meritz_201912',
-          label: '~ 2020년 11월 3일',
+          label: '2020년 11월 3일 이전',
           cardLine: '최초 기준',
           changes: [
             { item: '1~5종 맘모톰 문장', after: '있음' },
