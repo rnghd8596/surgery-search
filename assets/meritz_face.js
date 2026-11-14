@@ -48,6 +48,7 @@
   const p130 = p130names.map(name => ({ name, codes: [], pages: pg('U', [590, 591]) }));
 
   function face(o) { return o; }
+  const pyo = (key) => (window.MERITZ_PYO && window.MERITZ_PYO[key]) || null;
 
   window.MERITZ_FACE = {
     meritz_201912: {
@@ -66,8 +67,8 @@
           ]
         },
         bundles: [
-          { name: '64대', sale: '~2020.11.03', clause: pg('A', [528, 529, 530]), parts: p64 },
-          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: p32 }
+          { name: '64대', sale: '~2020.11.03', clause: pg('A', [528, 529, 530]), parts: pyo('A64') || p64 },
+          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: pyo('A32') || p32 }
         ]
       }),
       simplified: face({
@@ -98,8 +99,8 @@
           ]
         },
         bundles: [
-          { name: '82대', sale: '2020.11~2020.12', clause: pg('B', [510, 511, 512, 513, 514, 515]), parts: p82 },
-          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
+          { name: '82대', sale: '2020.11~2020.12', clause: pg('B', [510, 511, 512, 513, 514, 515]), parts: pyo('B82') || p82 },
+          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: pyo('B32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -126,8 +127,8 @@
           items: [{ name: '맘모톰', tier: '문장 없음', pages: [] }]
         },
         bundles: [
-          { name: '82대', sale: '2021.01~2021.09', clause: pg('C', [514, 515, 516]), parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
-          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
+          { name: '82대', sale: '2021.01~2021.09', clause: pg('C', [514, 515, 516]), parts: pyo('C82') || [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
+          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: pyo('C32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -147,8 +148,8 @@
           items: [{ name: 'N62', tier: '1종 문장 없음', pages: [] }]
         },
         bundles: [
-          { name: '131대', parts: p131 },
-          { name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+          { name: '131대', parts: pyo('D131') || p131 },
+          { name: '32대', parts: pyo('D32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -165,9 +166,9 @@
         disease: { pill: '특정5대 제외', line: '질병수술비(특정5대질병 제외).', define: pg('H', [305, 306]), exclude: pg('H', [307, 308]) },
         tier: null,
         bundles: [
-          { name: '82대', sale: '2021.09~2022.06', clause: pg('C', [514, 515, 516]), parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
-          { name: '131대', sale: '2022.07~2024.12', clause: pg('D', [446, 447, 448, 449, 450, 451]), parts: p131 },
-          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+          { name: '82대', sale: '2021.09~2022.06', clause: pg('C', [514, 515, 516]), parts: pyo('H82') || [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
+          { name: '131대', sale: '2022.07~2024.12', clause: pg('D', [446, 447, 448, 449, 450, 451]), parts: pyo('D131') || p131 },
+          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: pyo('H32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -188,6 +189,15 @@
           pay: '', excl: '',
           clause: pg('E', [479, 480, 481]),
           table: pg('E', [592, 593, 594, 595]).concat([old('e_n62.png')]),
+          rev: {
+            rows: [
+              { name: '유방비대(N62)', before: '미분류', after: '1종(신설)' },
+              { name: '담석증(K80)', before: '3종', after: '2종' },
+              { name: '대장용종 내시경절제', before: '2종', after: '1종' }
+            ],
+            beforePages: pg('B', [947, 949, 951]),
+            afterPages: pg('E', [592, 593, 594])
+          },
           items: [
             { name: 'N62', tier: '1종', pages: [old('e_n62.png')].concat(pg('E', [592])) },
             { name: '유방절단', tier: '3종', pages: [old('e_n62.png')] },
@@ -195,8 +205,8 @@
           ]
         },
         bundles: [
-          { name: '131대', sale: '2025.01~', clause: pg('E', [862, 863, 864]), parts: ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
-          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
+          { name: '131대', sale: '2025.01~', clause: pg('E', [862, 863, 864]), parts: pyo('E131') || ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
+          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: pyo('E32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -262,17 +272,17 @@
   ];
   const cataractCodes = baseCodes.concat([{ name: '백내장', codes: ['H25~H27'] }]);
   const polypCodes = baseCodes.concat([{ name: '백내장', codes: ['H25~H27'] }, { name: '대장용종', codes: [] }]);
-  const cataractKey = { lead: '이 특약이 보장에서 빼는 질병입니다.', items: [{ name: '백내장', codes: ['H25~H27'] }] };
-  const polypKey = { lead: '이 특약이 보장에서 빼는 질병입니다.', items: [
+  const cataractKey = { title: '추가 제외', items: [{ name: '백내장', codes: ['H25~H27'] }] };
+  const polypKey = { title: '추가 제외', items: [
     { name: '백내장', codes: ['H25~H27'] },
-    { name: '대장의 용종 또는 대장의 양성신생물의 내시경적 절제', codes: [] }
+    { name: '대장용종·양성신생물 내시경적 절제', codes: [] }
   ]};
-  const fiveKey = { lead: '약관이 특정5대질병으로 정한 항목입니다.', items: [
-    { name: '대장의 용종 또는 대장의 양성신생물의 내시경적 절제', codes: [] },
-    { name: '백내장', codes: ['H25', 'H26', 'H27'] },
+  const fiveKey = { title: '특정5대 추가 제외', numbered: true, items: [
+    { name: '대장용종·양성신생물 내시경적 절제', codes: [] },
+    { name: '백내장', codes: ['H25~H27'] },
     { name: '후각특정질환', codes: ['J30', 'J31', 'J33', 'J34'] },
     { name: '특정피부질환', codes: ['L72', 'L84'] },
-    { name: '혈관종 및 림프관종', codes: ['D18'] }
+    { name: '혈관종·림프관종', codes: ['D18'] }
   ]};
   const five = [
     ex('대장 용종·양성신생물의 내시경 절제', '특정5대질병으로 이 수술비는 지급하지 않는다.'),
@@ -289,15 +299,15 @@
   const n96 = ' 보장개시일부터 2년이 지난 뒤에 생긴 경우는 보상한다.';
   F.meritz_201912.standard.disease.options = [
     opt('pure', '질병수술비', payPure, pg('A', [350, 351, 352]), pureExcl('제7차', '선천성기형', ''), pg('A', [350, 351, 352]), null, baseCodes),
-    opt('cataract', '백내장 제외', [ex('지급 범위', '백내장을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('A', [289, 290]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '이 특약의 질병에서 백내장을 뺀다.', ['H25~H27'])]), pg('A', [289, 290]), cataractKey, cataractCodes)
+    opt('cataract', '백내장 제외', [ex('지급 범위', '백내장을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('A', [289, 290]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '이 특약의 질병에서 백내장을 뺀다.', ['H25~H27'])]), pg('A', [289, 290]), cataractKey, baseCodes)
   ];
   F.meritz_202011.standard.disease.options = [
     opt('pure', '질병수술비', payPure, pg('B', [339, 340, 341]), pureExcl('제7차', '선천성기형', ''), pg('B', [339, 340, 341]), null, baseCodes),
-    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('B', [282, 283]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '대장의 용종 또는 대장의 양성신생물의 내시경적 절제입니다.')]), pg('B', [282, 283]), polypKey, polypCodes)
+    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('B', [282, 283]), pureExcl('제7차', '선천성기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '대장의 용종 또는 대장의 양성신생물의 내시경적 절제입니다.')]), pg('B', [282, 283]), polypKey, baseCodes)
   ];
   F.meritz_202101.standard.disease.options = [
     opt('pure', '질병수술비', payPure, pg('C', [340, 341, 342]), pureExcl('제8차', '선천기형', ''), pg('C', [340, 341, 342]), null, baseCodes),
-    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('C', [283, 284, 285]), pureExcl('제8차', '선천기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '대장의 용종 또는 대장의 양성신생물의 내시경적 절제입니다.')]), pg('C', [283, 284, 285]), polypKey, polypCodes)
+    opt('polyp', '백내장·대장용종 제외', [ex('지급 범위', '백내장과 대장용종을 뺀 질병의 치료 목적 수술에 보험가입금액을 지급한다.')], pg('C', [283, 284, 285]), pureExcl('제8차', '선천기형', '').concat([ex('백내장', '', ['H25~H27']), ex('대장용종', '대장의 용종 또는 대장의 양성신생물의 내시경적 절제입니다.')]), pg('C', [283, 284, 285]), polypKey, baseCodes)
   ];
   F.meritz_202109.standard.disease.options = [
     opt('pure', '질병수술비', payPure, pg('H', [363, 364, 365]), pureExcl('제8차', '선천기형', ''), pg('H', [363, 364, 365]), null, baseCodes),

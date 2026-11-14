@@ -11,7 +11,7 @@
       periods: [
         {
           id: 'meritz_201912',
-          label: '~ 2020년 11월 3일',
+          label: '2020년 11월 3일 이전',
           cardLine: '최초 기준',
           changes: [
             { item: '1~5종 맘모톰 문장', after: '있음' },
@@ -62,7 +62,7 @@
           id: 'meritz_202011',
           label: '2020년 11월 4일 ~ 2020년 12월 31일',
           cardLine: '질병수술비에서 대장용종 제외',
-          revisionBullets: [{ name: '대장용종', before: '보장', after: '제외' }],
+          revisionBullets: [{ cover: '질병수술비', name: '대장용종', before: '보장', after: '제외' }],
           changes: [
             { item: '64대', before: '있음', after: '없음' },
             { item: '82대', before: '없음', after: '있음' },
@@ -109,7 +109,7 @@
           id: 'meritz_202101',
           label: '2021년 1월 1일 ~ 2021년 9월 22일',
           cardLine: '1~5종 수술특약 없음',
-          revisionBullets: [{ name: '1~5종', before: '있음', after: '없음' }],
+          revisionBullets: [{ cover: '1~5종 수술비', name: '1~5종', before: '있음', after: '없음' }],
           changes: [
             { item: '수술분류표', before: '1~5종', after: '1~7종' },
             { item: '82대', before: '있음', after: '있음' }
@@ -151,9 +151,9 @@
           label: '2021년 9월 23일 ~ 2024년 12월 31일',
           cardLine: '질병수술비 제외에 후각·피부·혈관종 추가',
           revisionBullets: [
-            { name: '후각(J30·J31·J33·J34)', before: '보장', after: '제외' },
-            { name: '피부(L72·L84)', before: '보장', after: '제외' },
-            { name: '혈관종(D18)', before: '보장', after: '제외' }
+            { cover: '질병수술비', name: '후각(J30·J31·J33·J34)', before: '보장', after: '제외' },
+            { cover: '질병수술비', name: '피부(L72·L84)', before: '보장', after: '제외' },
+            { cover: '질병수술비', name: '혈관종(D18)', before: '보장', after: '제외' }
           ],
           changes: [
             { item: '82대', before: '있음', after: '없음' },
@@ -200,9 +200,9 @@
           label: '2025년 1월 1일 ~ 현재',
           cardLine: 'N62 3종→1종, 담석증 3종→2종, 대장용종 내시경 2종→1종',
           revisionBullets: [
-            { name: '유방비대(N62)', before: '없음', after: '1종' },
-            { name: '담석증(K80)', before: '3종', after: '2종' },
-            { name: '대장용종 내시경절제', before: '2종', after: '1종' }
+            { cover: '1~5종 수술비', name: '유방비대(N62)', before: '미분류', after: '1종(신설)' },
+            { cover: '1~5종 수술비', name: '담석증(K80)', before: '3종', after: '2종' },
+            { cover: '1~5종 수술비', name: '대장용종 내시경절제', before: '2종', after: '1종' }
           ],
           changes: [
             { item: 'N62 수술', before: '1종 문장 없음', after: '1종' },
