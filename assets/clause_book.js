@@ -183,6 +183,59 @@ window.CLAUSE_BOOK = {
       }
     }
   },
+  hyundai: {
+    lines: {
+      standard: {
+        periods: {
+          hyundai_hi2404: {
+            product: '무배당 현대해상다이렉트 H건강보험(Hi2404)',
+            sale: '약관 표지 상품코드 Hi2404. 파일 CM295G_20240401',
+            source: 'https://direct.hi.co.kr/dhNAS/terms/CM295G_20240401.pdf',
+            riders: {
+              basic: {
+                inclusion: {
+                  caption: '2-19. 질병수술(건강등급)(갱신형). 인쇄 93쪽~',
+                  pages: ['assets/clause_pages/hyundai/dis-093.png','assets/clause_pages/hyundai/dis-094.png','assets/clause_pages/hyundai/dis-095.png','assets/clause_pages/hyundai/dis-096.png','assets/clause_pages/hyundai/dis-097.png','assets/clause_pages/hyundai/dis-098.png']
+                }
+              },
+              tier: {
+                inclusion: {
+                  caption: '1-7. 상해수술Ⅲ(1-5종)(수술회당지급). 인쇄 66쪽~. 왼쪽 단은 앞 특약의 끝',
+                  pages: ['assets/clause_pages/hyundai/inj-066.png','assets/clause_pages/hyundai/inj-067.png','assets/clause_pages/hyundai/inj-068.png']
+                },
+                table: {
+                  caption: '[별표11] 1-5종수술Ⅲ 분류표. 인쇄 126쪽~',
+                  pages: ['assets/clause_pages/hyundai/tbl-126.png','assets/clause_pages/hyundai/tbl-127.png','assets/clause_pages/hyundai/tbl-128.png','assets/clause_pages/hyundai/tbl-129.png','assets/clause_pages/hyundai/tbl-130.png']
+                }
+              },
+              injury: {
+                inclusion: {
+                  caption: '1-7. 상해수술Ⅲ(1-5종). 인쇄 66쪽~',
+                  pages: ['assets/clause_pages/hyundai/inj-066.png','assets/clause_pages/hyundai/inj-067.png','assets/clause_pages/hyundai/inj-068.png']
+                }
+              },
+              ndai: {
+                '120대': {
+                  clause: {
+                    caption: '2-22. 120대질병수술. 26+58+24+치핵+갑상선관련+다발성10. 인쇄 99쪽 지급표',
+                    pages: ['assets/clause_pages/hyundai/n120-099.png','assets/clause_pages/hyundai/n120-100.png','assets/clause_pages/hyundai/n120-101.png','assets/clause_pages/hyundai/n120-102.png','assets/clause_pages/hyundai/n120-103.png','assets/clause_pages/hyundai/n120-104.png']
+                  },
+                  groups: {
+                    '26대질병': { caption: '[별표12] 26대질병 분류표. 인쇄 131쪽~', pages: ['assets/clause_pages/hyundai/tbl-131.png','assets/clause_pages/hyundai/tbl-132.png'] },
+                    '58대질병': { caption: '[별표13] 58대질병 분류표. 인쇄 133쪽~', pages: ['assets/clause_pages/hyundai/tbl-133.png','assets/clause_pages/hyundai/tbl-134.png','assets/clause_pages/hyundai/tbl-135.png','assets/clause_pages/hyundai/tbl-136.png','assets/clause_pages/hyundai/tbl-137.png'] },
+                    '24대질병': { caption: '24대질병 분류표. 인쇄 139쪽~', pages: ['assets/clause_pages/hyundai/tbl-139.png','assets/clause_pages/hyundai/tbl-140.png','assets/clause_pages/hyundai/tbl-141.png'] },
+                    '치핵': { caption: '치핵 분류표. 인쇄 142쪽~', pages: ['assets/clause_pages/hyundai/tbl-142.png','assets/clause_pages/hyundai/tbl-143.png'] },
+                    '다발성10대질병': { caption: '다발성10대질병 분류표. 인쇄 145쪽', pages: ['assets/clause_pages/hyundai/tbl-145.png'] },
+                    '갑상선관련질병': { caption: '갑상선관련질병 분류표. 인쇄 146쪽', pages: ['assets/clause_pages/hyundai/tbl-146.png'] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   kbinsure: {
     lines: {
       standard: {
