@@ -8993,7 +8993,7 @@ function periodsNewestFirst(periods) {
 
 function revisionKeyBoxHTML(cardLine, lines) {
   if (cardLine === '최초 기준') return '';
-  const items = (lines || []).filter(Boolean).slice(0, 2);
+  const items = (lines || []).filter(Boolean);
   if (!items.length) return '';
   return `<div class="rev-key-box"><div class="rev-key-title">주요 개정내용</div><ul>${items.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>`;
 }
@@ -9077,13 +9077,23 @@ function openScanSummary(title, pay, excl, pages) {
   if (pay) blocks.push(`<h3 class="scan-sec">보상하는 사항</h3><p class="scan-none">${esc(pay)}</p>`);
   if (excl) blocks.push(`<h3 class="scan-sec">보장 제외 사항</h3><p class="scan-none">${esc(excl)}</p>`);
   const ready = (pages || []).filter(Boolean);
-  blocks.push(ready.length ? `<p style="margin-top:12px;"><button type="button" class="scan-open" id="scanSummaryOriginal">약관 원문 보기</button></p>` : '');
-  box.innerHTML = blocks.join('');
+  const originalBtn = ready.length ? `<button type="button" class="cov-btn point" id="scanSummaryOriginal" style="width:100%;margin:0 0 12px;">약관 원문보기</button>` : '';
+  box.innerHTML = originalBtn + blocks.join('');
   const btn = box.querySelector('#scanSummaryOriginal');
   if (btn) btn.addEventListener('click', () => openScanPages(ready, title, ''));
   modal.classList.add('show');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+}
+
+function keyCheckHTML(kc) {
+  if (!kc || !kc.items || !kc.items.length) return '';
+  const rows = kc.items.map(it => `
+    <div class="key-row">
+      <span>${esc(it.name)}</span>
+      ${(it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('')}
+    </div>`).join('');
+  return `<div class="key-check"><div class="key-check-title">핵심 체크</div>${kc.lead ? `<p>${esc(kc.lead)}</p>` : ''}${rows}</div>`;
 }
 
 function meritzCardsHTML(list) {
@@ -9108,7 +9118,7 @@ function openMeritzClauseModal(pack, mode) {
   const imgBtn = (pages, title) => {
     const list = (pages || []).filter(Boolean);
     if (!list.length) return '';
-    return `<button type="button" class="cov-btn" id="meritzImgBtn" data-pages="${esc(list.join('|'))}" data-title="${esc(title)}" style="width:100%;margin-top:4px;">약관 원문 보기</button>`;
+    return `<button type="button" class="cov-btn point" id="meritzImgBtn" data-pages="${esc(list.join('|'))}" data-title="${esc(title)}" style="width:100%;margin:0 0 12px;">약관 원문보기</button>`;
   };
   function paint(tab) {
     const excl = tab === 'excl';
@@ -9118,7 +9128,7 @@ function openMeritzClauseModal(pack, mode) {
       <button type="button" class="modal-tab ${tab === 'pay' ? 'on' : ''}" data-mtab="pay">보상하는 사항</button>
       <button type="button" class="modal-tab ${tab === 'excl' ? 'on' : ''}" data-mtab="excl">보장제외 사항</button>
     </div>` : '';
-    box.innerHTML = tabs + meritzCardsHTML(cards) + imgBtn(pages, (pack.label || '') + (excl ? ' 보장제외' : ' 보상'));
+    box.innerHTML = imgBtn(pages, (pack.label || '') + (excl ? ' 보장제외' : ' 보상')) + keyCheckHTML(pack.keyCheck) + tabs + meritzCardsHTML(cards);
     box.querySelectorAll('[data-mtab]').forEach(b => b.addEventListener('click', () => paint(b.getAttribute('data-mtab'))));
     const img = box.querySelector('#meritzImgBtn');
     if (img) img.addEventListener('click', () => openScanPages((img.getAttribute('data-pages') || '').split('|'), img.getAttribute('data-title'), ''));
@@ -9138,7 +9148,8 @@ function scanPagesBtn(label, pages, title) {
 function scanCovBtn(label, pages, title, filled) {
   const list = (pages || []).filter(Boolean);
   if (!list.length) return '';
-  return `<button type="button" class="cov-btn${filled ? ' filled' : ''}" data-act="pages" data-pages="${esc(list.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
+  const point = /약관/.test(label) ? ' point' : '';
+  return `<button type="button" class="cov-btn${point}" data-act="pages" data-pages="${esc(list.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
 }
 
 function scanCovRow(key, label, pill, inner, sel) {
@@ -9215,7 +9226,7 @@ function paintScanDrawer(drawer) {
     const on = curD && o.id === curD.id;
     return `<button type="button" class="btn-ndai-seg${on ? ' on' : ''}" data-act="disease" data-name="${esc(o.id)}"><span>${esc(o.label)}</span></button>`;
   }).join('')}</div>` : '';
-  const dActs = curD ? `<div class="cov-actions"><button type="button" class="cov-btn" data-act="clause-tabs" data-name="${esc(curD.id)}">약관보기</button><button type="button" class="cov-btn" data-act="excl-cards" data-name="${esc(curD.id)}">보장제외 사항</button></div>` : `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`;
+  const dActs = curD ? `<div class="cov-actions"><button type="button" class="cov-btn point" data-act="clause-tabs" data-name="${esc(curD.id)}">약관보기</button><button type="button" class="cov-btn" data-act="excl-cards" data-name="${esc(curD.id)}">보장제외 사항</button></div>` : `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`;
   const rows = [
     scanCovRow('disease', '질병수술비', '', dSegs + dActs, sel)
   ];
@@ -10061,7 +10072,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       <div class="cov-drawer" style="display:none;">
       ${riders.basic.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.basic.summary)}</div>` : ''}
       <div class="cov-actions">
-        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion">보장제외 사항</button>
       </div>
       </div>
@@ -10080,7 +10091,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       <div class="cov-drawer" style="display:none;">
       ${riders.tier.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.tier.summary)}</div>` : ''}
       <div class="cov-actions">
-        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table">분류표</button>
       </div>
       </div>
@@ -10121,7 +10132,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
         `).join('')}
       </div>` : ''}
       <div class="cov-actions">
-        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" data-ndai="${esc(defaultN)}">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" data-ndai="${esc(defaultN)}">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" data-ndai="${esc(defaultN)}">분류표</button>
       </div>
       </div>
@@ -10137,7 +10148,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       </button>
       <div class="cov-drawer" style="display:none;">
         ${riders.injury.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.injury.summary)}</div>` : ''}
-        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="width:100%;margin-top:6px;">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="width:100%;">약관보기</button>
       </div>
     </div>`;
   } else if (cid !== 'meritz') {
@@ -11301,36 +11312,18 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
     <!-- 2대 탭 전환 버튼: [보상하는 사항] vs [보상제외 사항] (#28437 #28442 #33904) -->
     <div style="margin-bottom:12px;">
       <!-- 2대 탭 (박스 높이 44px, 반경 10px 칼정렬 #34648) -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
-        <button type="button" id="tabClauseInclusion" style="height:44px;min-height:44px;box-sizing:border-box;border-radius:10px;border:${curTab === 'inclusion' ? '2px solid var(--brand)' : '1.5px solid var(--border)'};background:${curTab === 'inclusion' ? 'rgba(49,130,246,0.1)' : 'var(--surface)'};color:${curTab === 'inclusion' ? 'var(--brand)' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'inclusion' ? '0 2px 8px rgba(49,130,246,0.2)' : 'none'};transition:all .15s ease;">
-          <span style="white-space:nowrap;">보상하는 사항</span>
-        </button>
-        <button type="button" id="tabClauseExclusion" style="height:44px;min-height:44px;box-sizing:border-box;border-radius:10px;border:${curTab === 'exclusion' ? '2px solid #dc2626' : '1.5px solid var(--border)'};background:${curTab === 'exclusion' ? 'rgba(220,38,38,0.1)' : 'var(--surface)'};color:${curTab === 'exclusion' ? '#dc2626' : 'var(--text-2)'};font-size:13px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:${curTab === 'exclusion' ? '0 2px 8px rgba(220,38,38,0.2)' : 'none'};transition:all .15s ease;">
-          <span style="white-space:nowrap;">보상제외 사항</span>
-        </button>
-      </div>
-
-      <!-- 원터치 실물 약관보기 버튼 (실물 스캔이 검증된 경우만 버튼 제공, 미수집 시 안내 배너로 처리하여 팝업 결함 100% 척결 #37617 #37683) -->
       <div style="margin-bottom:12px;">
         ${(() => {
           const scanObj = getScanPagesForContext(co, period, data, rider, targetRider, curTab, selectedNdai);
           if (scanObj && scanObj.pages && scanObj.pages.length > 0) {
-            return `
-              <button type="button" class="btn-co-clause" id="btnScanAction" style="width:100%;height:44px;min-height:44px;border:1.5px solid ${curTab === 'exclusion' ? 'rgba(220,38,38,0.35)' : 'rgba(49,130,246,0.35)'};border-radius:10px;background:var(--surface);padding:0 14px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-                <span class="btn-co-name" style="font-size:13px;font-weight:850;color:var(--text);display:flex;align-items:center;gap:6px;">
-                  <span>${curTab === 'exclusion' ? '보상제외 사항' : '보상하는 사항'}</span>
-                </span>
-                <span class="btn-co-badge" style="font-size:11.5px;font-weight:850;color:var(--brand);background:transparent;padding:4px 0;white-space:nowrap;">
-                  약관보기
-                </span>
-              </button>
-            `;
-          } else {
-            return `
-              <p class="scan-note">이 특약의 원문 쪽은 아직 연결되어 있지 않습니다.</p>
-            `;
+            return `<button type="button" class="cov-btn point" id="btnScanAction" style="width:100%;margin:0 0 12px;">약관 원문보기</button>`;
           }
+          return `<p class="scan-note">이 특약의 원문 쪽은 아직 연결되어 있지 않습니다.</p>`;
         })()}
+      </div>
+      <div class="modal-tabs" style="margin-bottom:12px;">
+        <button type="button" id="tabClauseInclusion" class="modal-tab ${curTab === 'inclusion' ? 'on' : ''}">보상하는 사항</button>
+        <button type="button" id="tabClauseExclusion" class="modal-tab ${curTab === 'exclusion' ? 'on' : ''}">보상제외 사항</button>
       </div>
     </div>
 
