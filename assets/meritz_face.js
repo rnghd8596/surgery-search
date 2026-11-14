@@ -48,6 +48,7 @@
   const p130 = p130names.map(name => ({ name, codes: [], pages: pg('U', [590, 591]) }));
 
   function face(o) { return o; }
+  const pyo = (key) => (window.MERITZ_PYO && window.MERITZ_PYO[key]) || null;
 
   window.MERITZ_FACE = {
     meritz_201912: {
@@ -66,8 +67,8 @@
           ]
         },
         bundles: [
-          { name: '64대', sale: '~2020.11.03', clause: pg('A', [528, 529, 530]), parts: p64 },
-          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: p32 }
+          { name: '64대', sale: '~2020.11.03', clause: pg('A', [528, 529, 530]), parts: pyo('A64') || p64 },
+          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: pyo('A32') || p32 }
         ]
       }),
       simplified: face({
@@ -98,8 +99,8 @@
           ]
         },
         bundles: [
-          { name: '82대', sale: '2020.11~2020.12', clause: pg('B', [510, 511, 512, 513, 514, 515]), parts: p82 },
-          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
+          { name: '82대', sale: '2020.11~2020.12', clause: pg('B', [510, 511, 512, 513, 514, 515]), parts: pyo('B82') || p82 },
+          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: pyo('B32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -126,8 +127,8 @@
           items: [{ name: '맘모톰', tier: '문장 없음', pages: [] }]
         },
         bundles: [
-          { name: '82대', sale: '2021.01~2021.09', clause: pg('C', [514, 515, 516]), parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
-          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
+          { name: '82대', sale: '2021.01~2021.09', clause: pg('C', [514, 515, 516]), parts: pyo('C82') || [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
+          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: pyo('C32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -147,8 +148,8 @@
           items: [{ name: 'N62', tier: '1종 문장 없음', pages: [] }]
         },
         bundles: [
-          { name: '131대', parts: p131 },
-          { name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+          { name: '131대', parts: pyo('D131') || p131 },
+          { name: '32대', parts: pyo('D32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -165,9 +166,9 @@
         disease: { pill: '특정5대 제외', line: '질병수술비(특정5대질병 제외).', define: pg('H', [305, 306]), exclude: pg('H', [307, 308]) },
         tier: null,
         bundles: [
-          { name: '82대', sale: '2021.09~2022.06', clause: pg('C', [514, 515, 516]), parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
-          { name: '131대', sale: '2022.07~2024.12', clause: pg('D', [446, 447, 448, 449, 450, 451]), parts: p131 },
-          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+          { name: '82대', sale: '2021.09~2022.06', clause: pg('C', [514, 515, 516]), parts: pyo('H82') || [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
+          { name: '131대', sale: '2022.07~2024.12', clause: pg('D', [446, 447, 448, 449, 450, 451]), parts: pyo('D131') || p131 },
+          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: pyo('H32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
         ]
       }),
       simplified: face({
@@ -188,6 +189,15 @@
           pay: '', excl: '',
           clause: pg('E', [479, 480, 481]),
           table: pg('E', [592, 593, 594, 595]).concat([old('e_n62.png')]),
+          rev: {
+            rows: [
+              { name: '유방비대(N62)', before: '미분류', after: '1종(신설)' },
+              { name: '담석증(K80)', before: '3종', after: '2종' },
+              { name: '대장용종 내시경절제', before: '2종', after: '1종' }
+            ],
+            beforePages: pg('B', [947, 949, 951]),
+            afterPages: pg('E', [592, 593, 594])
+          },
           items: [
             { name: 'N62', tier: '1종', pages: [old('e_n62.png')].concat(pg('E', [592])) },
             { name: '유방절단', tier: '3종', pages: [old('e_n62.png')] },
@@ -195,8 +205,8 @@
           ]
         },
         bundles: [
-          { name: '131대', sale: '2025.01~', clause: pg('E', [862, 863, 864]), parts: ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
-          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
+          { name: '131대', sale: '2025.01~', clause: pg('E', [862, 863, 864]), parts: pyo('E131') || ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
+          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: pyo('E32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
         ]
       }),
       simplified: face({

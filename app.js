@@ -8997,7 +8997,25 @@ function revisionKeyBoxHTML(cardLine, lines) {
   if (cardLine === '최초 기준') return '';
   const rows = (lines || []).filter(r => r && typeof r === 'object' && r.name && r.before && r.after);
   if (!rows.length) return '';
-  return `<div class="rev-key-box"><div class="rev-key-title">주요 개정내용</div><div class="rev-grid">${rows.map(r => `<div class="rev-row"><span class="rev-name">${esc(r.name)}</span><span class="rev-pills"><span class="rev-pill">${esc(r.before)}</span><span class="rev-arrow">→</span><span class="rev-pill after">${esc(r.after)}</span></span></div>`).join('')}</div></div>`;
+  const order = ['질병수술비', '1~5종 수술비', 'N대 질병수술비'];
+  const groups = [];
+  rows.forEach(r => {
+    const cover = r.cover || '';
+    let g = groups.find(x => x.cover === cover);
+    if (!g) {
+      g = { cover, rows: [] };
+      groups.push(g);
+    }
+    g.rows.push(r);
+  });
+  groups.sort((a, b) => {
+    const ia = order.indexOf(a.cover);
+    const ib = order.indexOf(b.cover);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  });
+  const rowHTML = (r) => `<div class="rev-row"><span class="rev-name">${esc(r.name)}</span><span class="rev-pills"><span class="rev-pill">${esc(r.before)}</span><span class="rev-arrow">→</span><span class="rev-pill after">${esc(r.after)}</span></span></div>`;
+  const body = groups.map(g => `${g.cover ? `<div class="rev-cover">${esc(g.cover)}</div>` : ''}<div class="rev-grid">${g.rows.map(rowHTML).join('')}</div>`).join('');
+  return `<div class="rev-key-box"><div class="rev-key-title">주요 개정내용</div>${body}</div>`;
 }
 
 function renderScanCompanyHTML(co) {
@@ -9237,7 +9255,10 @@ function paintScanDrawer(drawer) {
     if (parts.length && sel.groups) {
       groups = `<div class="cov-groups">${parts.map(part => {
         const on = sel.group === part.name;
-        const codes = (part.codes || []).map(c => `<span class="kcd-badge">${esc(c)}</span>`).join('');
+        const codes = (part.codes || []).map(c => {
+          if (c && typeof c === 'object') return `<span class="code-pair"><span class="kcd-badge">${esc(c.code)}</span><span class="chip-name">${esc(c.name)}</span></span>`;
+          return `<span class="kcd-badge">${esc(c)}</span>`;
+        }).join('');
         const pages = (part.pages || []).filter(Boolean);
         const pageAttrs = pages.length ? `data-act="pages" data-pages="${esc(pages.join('|'))}" data-title="${esc(part.name)}"` : 'disabled';
         return `<div class="cov-group">
@@ -9266,10 +9287,44 @@ function paintScanDrawer(drawer) {
     scanCovRow('disease', '질병수술비', '', dSegs + dActs, sel)
   ];
   if (showTier) {
-    rows.push(scanCovRow('tier', '1~5종 수술비', tier.pill || '1~5종', `<div class="cov-actions">${scanCovBtn('약관보기', tier.clause, '1~5종 수술비', false)}${scanCovBtn('분류표', tier.table, '1~5종 분류표', true)}</div>`, sel));
+    const tierTableBtn = (tier.rev && tier.rev.rows && tier.rev.rows.length)
+      ? `<button type="button" class="cov-btn" data-act="tier-rev">분류표</button>`
+      : scanCovBtn('분류표', tier.table, '1~5종 분류표', false);
+    rows.push(scanCovRow('tier', '1~5종 수술비', tier.pill || '1~5종', `<div class="cov-actions">${scanCovBtn('약관보기', tier.clause, '1~5종 수술비', false)}${tierTableBtn}</div>`, sel));
   }
   if (bundles.length) rows.push(scanCovRow('ndai', 'N대 질병수술비', ndaiPill, ndaiHTML, sel));
   body.innerHTML = rows.join('');
+}
+
+function openTierRevModal(tier) {
+  const rev = tier && tier.rev;
+  const modal = $('#clauseModal');
+  const box = $('#clauseModalContent');
+  const titleEl = $('#clauseModalTitle');
+  const searchWrap = $('#clauseModalSearchWrap');
+  const alertEl = $('#clauseModalAlert');
+  if (!modal || !box || !rev || !rev.rows || !rev.rows.length) {
+    if (tier && tier.table) openScanPages(tier.table, '1~5종 분류표', '');
+    return;
+  }
+  if (titleEl) titleEl.textContent = '1~5종 분류표';
+  if (searchWrap) searchWrap.style.display = 'none';
+  if (alertEl) alertEl.style.display = 'none';
+  const rows = rev.rows.map(r => `<div class="rev-row"><span class="rev-name">${esc(r.name)}</span><span class="rev-pills"><span class="rev-pill">${esc(r.before)}</span><span class="rev-arrow">→</span><span class="rev-pill after">${esc(r.after)}</span></span></div>`).join('');
+  box.innerHTML = `<div class="rev-key-box"><div class="rev-key-title">개정 포인트</div><div class="rev-grid">${rows}</div></div>
+    <div class="cov-actions">
+      <button type="button" class="cov-btn" id="tierRevBefore">개정 전 약관</button>
+      <button type="button" class="cov-btn" id="tierRevAfter">개정 후 약관</button>
+    </div>`;
+  const before = (rev.beforePages || []).filter(Boolean);
+  const after = (rev.afterPages || []).filter(Boolean);
+  const b1 = box.querySelector('#tierRevBefore');
+  const b2 = box.querySelector('#tierRevAfter');
+  if (b1) b1.addEventListener('click', () => openScanPages(before, '1~5종 분류표 개정 전', ''));
+  if (b2) b2.addEventListener('click', () => openScanPages(after, '1~5종 분류표 개정 후', ''));
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
 }
 
 function paintScanBoard(root) {
@@ -9328,6 +9383,9 @@ function bindScanBoards(container) {
       } else if (act === 'group') {
         const name = btn.getAttribute('data-name');
         sel.group = sel.group === name ? '' : name;
+      } else if (act === 'tier-rev') {
+        const face = window.MERITZ_FACE && window.MERITZ_FACE[pid] && window.MERITZ_FACE[pid].standard;
+        if (face && face.tier) openTierRevModal(face.tier);
       } else if (act === 'pages') openScanPages((btn.getAttribute('data-pages') || '').split('|'), btn.getAttribute('data-title'), '');
       else if (act === 'summary') openScanSummary(btn.getAttribute('data-title'), btn.getAttribute('data-pay'), btn.getAttribute('data-excl'), (btn.getAttribute('data-pages') || '').split('|'));
       if (act === 'ndai' || act === 'disease' || act === 'groups' || act === 'group') paintScanDrawer(drawer);
