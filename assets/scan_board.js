@@ -61,7 +61,8 @@
         {
           id: 'meritz_202011',
           label: '2020년 11월 4일 ~ 2020년 12월 31일',
-          cardLine: 'N대 질병수술비 64대 → 82대',
+          cardLine: '질병수술비에서 대장용종 제외',
+          revisionBullets: ['질병수술비에서 대장용종을 제외'],
           changes: [
             { item: '64대', before: '있음', after: '없음' },
             { item: '82대', before: '없음', after: '있음' },
@@ -106,9 +107,9 @@
         },
         {
           id: 'meritz_202101',
-          label: '2021년 1월 1일 ~ 2022년 6월 30일',
-          cardLine: '1~5종 분류표 → 1~7종 분류표',
-          gapNote: '2022년 4월 1일~6월 30일 약관은 직접 확인하지 못했다.',
+          label: '2021년 1월 1일 ~ 2021년 9월 22일',
+          cardLine: '1~5종 수술특약 없음',
+          revisionBullets: ['1~5종 수술특약 없음'],
           changes: [
             { item: '수술분류표', before: '1~5종', after: '1~7종' },
             { item: '82대', before: '있음', after: '있음' }
@@ -146,9 +147,10 @@
           }
         },
         {
-          id: 'meritz_202207',
-          label: '2022년 7월 1일 ~ 2024년 12월 31일',
-          cardLine: 'N대 질병수술비 82대 → 131대',
+          id: 'meritz_202109',
+          label: '2021년 9월 23일 ~ 2024년 12월 31일',
+          cardLine: '질병수술비 제외에 후각·피부·혈관종 추가',
+          revisionBullets: ['질병수술비 제외에 후각·피부·혈관종 추가'],
           changes: [
             { item: '82대', before: '있음', after: '없음' },
             { item: '131대', before: '없음', after: '있음' }
@@ -192,7 +194,8 @@
         {
           id: 'meritz_202501',
           label: '2025년 1월 1일 ~ 현재',
-          cardLine: 'N62 유방절단 1종으로 변경',
+          cardLine: 'N62 수술은 1종으로 변경',
+          revisionBullets: ['유방의 비대(N62) 수술은 1종'],
           changes: [
             { item: 'N62 수술', before: '1종 문장 없음', after: '1종' },
             { item: '유방절단', before: '3종', after: '3종' }

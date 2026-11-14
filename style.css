@@ -876,6 +876,41 @@ html[data-theme="dark"] .toast{background:rgba(237,241,246,.96);color:#0B0E14}
   color: var(--text);
   white-space: nowrap;
 }
+.qvb-badge.fit {
+  width: auto;
+  min-width: 72px;
+  max-width: none;
+}
+.rev-key-box {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  padding: 10px 12px 8px;
+  text-align: left;
+}
+.rev-key-title { font-size: 12.5px; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+.rev-key-box ul { margin: 0; padding-left: 1.15em; }
+.rev-key-box li { font-size: 13px; font-weight: 700; line-height: 1.45; color: var(--text); }
+.cov-block { display: flex; flex-direction: column; gap: 6px; }
+button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; }
+.cov-drawer { padding: 2px 0 0; }
+.cov-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.cov-btn {
+  height: 40px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface); color: #0f172a; font: inherit; font-weight: 850; font-size: 13px; cursor: pointer;
+}
+.cov-btn.filled { background: #059669; color: #fff; border-color: #059669; }
+.ndai-seg-row { display: flex; gap: 6px; }
+.btn-ndai-seg {
+  flex: 1; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: #334155;
+  font: inherit; font-weight: 900; font-size: 12px; padding: 6px 4px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+}
+.btn-ndai-seg.on { background: #059669; color: #fff; border-color: #059669; }
+.btn-ndai-seg .seg-sale { font-size: 10px; font-weight: 700; line-height: 1.2; }
+.btn-ndai-seg.on .seg-sale { color: rgba(255,255,255,.92); }
+.cov-group-row { height: auto; min-height: 44px; max-height: none; padding: 8px 10px; }
+.cov-codes { display: flex; flex-wrap: wrap; gap: 4px; padding: 6px 2px 2px; }
 .qvb-badge {
   min-width: 98px;
   max-width: 98px;
@@ -2873,6 +2908,17 @@ html[data-theme="dark"] [style*="color:#334155"] { color: var(--text) !important
 .scan-changes { margin: 0 0 8px; text-align: left; font-size: 13px; line-height: 1.45; color: var(--text); }
 .scan-changes div { padding: 2px 0; }
 .scan-periods, .scan-types { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 12px; }
+.scan-board .scan-types { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+.scan-board .scan-type { height: 38px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); text-align: center; }
+.scan-board .scan-type.on { color: var(--brand); border-color: var(--brand); background: rgba(49,130,246,0.1); }
+.scan-board button.qvb-row.scan-fold-btn {
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  padding: 0 14px;
+  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
+}
 .scan-period, .scan-type, .scan-open {
   background: none; border: none; border-bottom: 2px solid transparent;
   padding: 4px 0; margin: 0; cursor: pointer; text-align: left;
