@@ -782,7 +782,7 @@ window.POLICY_CLAUSES_DATA = {
       id: 'meritz',
       name: '메리츠화재',
       shortName: '멜츠',
-      aliases: ['멜츠', '메리츠', '메리츠화재'],
+      aliases: ['멜츠', '메츠', '메리츠', '메리츠화재'],
       logo: '메',
       color: '#d97706',
       desc: '올바른 종합보험 · 또또암 · 간편한 3.5.5',

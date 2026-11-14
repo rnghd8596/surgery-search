@@ -52,6 +52,7 @@ html[data-theme="dark"]{
 *,*::before,*::after{box-sizing:border-box}
 html,body{margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
+html { max-width: 100%; overflow-anchor: none; }
 body{
   font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   background:var(--bg); color:var(--text);
@@ -59,6 +60,10 @@ body{
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   transition:background-color .35s var(--ease), color .35s var(--ease);
   word-break:keep-all; overflow-wrap:anywhere;
+  overflow-x: hidden; max-width: 100%; overflow-anchor: none;
+}
+@media (max-width: 900px) {
+  input, select, textarea { font-size: 16px !important; }
 }
 button{font-family:inherit;letter-spacing:inherit}
 input{font-family:inherit}
