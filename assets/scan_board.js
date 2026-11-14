@@ -62,7 +62,7 @@
           id: 'meritz_202011',
           label: '2020년 11월 4일 ~ 2020년 12월 31일',
           cardLine: '백내장·대장용종 제외형 신설',
-          revisionBullets: [{ cover: '질병수술비', name: '백내장·대장용종 제외형', before: '없음', after: '신설' }],
+          revisionBullets: [{ cover: '질병수술비', name: '백내장·대장용종 제외형', before: '미판매', after: '신설' }],
           changes: [
             { item: '64대', before: '있음', after: '없음' },
             { item: '82대', before: '없음', after: '있음' },
@@ -150,7 +150,7 @@
           id: 'meritz_202109',
           label: '2021년 9월 23일 ~ 2024년 12월 31일',
           cardLine: '특정5대 제외형 신설',
-          revisionBullets: [{ cover: '질병수술비', name: '특정5대 제외형', before: '없음', after: '신설' }],
+          revisionBullets: [{ cover: '질병수술비', name: '특정5대 제외형', before: '미판매', after: '신설' }],
           changes: [
             { item: '82대', before: '있음', after: '없음' },
             { item: '131대', before: '없음', after: '있음' }
