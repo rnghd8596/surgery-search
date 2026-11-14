@@ -178,7 +178,10 @@ window.ndaiOptionsForCompany = function ndaiOptionsForCompany(cid, pid, title) {
     dongyang: 'donga', abllife: 'abl', linalife: 'lina'
   };
   const key = map[cid] ? cid : (alias[cid] && map[alias[cid]] ? alias[cid] : null);
-  let options = (key && map[key] && map[key][pid]) ? map[key][pid].slice() : [];
+  if (key && map[key] && Object.prototype.hasOwnProperty.call(map[key], pid)) {
+    return (map[key][pid] || []).slice();
+  }
+  let options = [];
   if (!options.length) {
     const titleMatch = String(title || '').match(/(\d+대)/g);
     if (titleMatch && titleMatch.length) options = [...new Set(titleMatch)];

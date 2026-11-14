@@ -69,9 +69,9 @@ window.DYNAMIC_NDAI_TABLES = {
     '131대': {
       title: '별표41~48 [131대 질병분류표 및 보장 질병코드 전문]',
       rows: [
-        ['심장질환 (1)', '급성 심근경색증, 허혈성 심장질환, 만성 류마티스성 심장질환 등 (별표23)', 'I00~I02, I05~I09, I20~I25, I26~I28, I30~I52', '관혈 100% / 비관혈 50%'],
-        ['뇌혈관질환 (1)', '지주막하출혈, 뇌내출혈, 뇌경색증, 뇌동맥류, 뇌혈관 기형 등 (별표41)', 'I60~I69 (10대 뇌혈관질환 전수)', '관혈 100% / 비관혈 50%'],
-        ['특정 31대질병 (31)', '결핵, 패혈증, 중추신경계 감염, 파킨슨병, 알츠하이머, 다발경화증, 급성 췌장염, 만성 간염, 간경변, 신부전, 폐렴, COPD 등 (별표44)', 'A15~A19, A40~A41, G00~G09, G20, G30, G35, K85, K70~K76, N17~N19, J12~J18, J40~J47', '관혈 100% / 비관혈 50%'],
+        ['심장질환 (1)', '급성 심근경색증, 허혈성 심장질환, 만성 류마티스성 심장질환 등 (별표23)', 'I00~I02, I05~I09, I20~I25, I26~I28, I30~I52', '지급 비율은 그 특약 원문'],
+        ['뇌혈관질환 (1)', '지주막하출혈, 뇌내출혈, 뇌경색증, 뇌동맥류, 뇌혈관 기형 등 (별표41)', 'I60~I69 (10대 뇌혈관질환 전수)', '지급 비율은 그 특약 원문'],
+        ['특정 31대질병 (31)', '결핵, 패혈증, 중추신경계 감염, 파킨슨병, 알츠하이머, 다발경화증, 급성 췌장염, 만성 간염, 간경변, 신부전, 폐렴, COPD 등 (별표44)', 'A15~A19, A40~A41, G00~G09, G20, G30, G35, K85, K70~K76, N17~N19, J12~J18, J40~J47', '지급 비율은 그 특약 원문'],
         ['다빈도 64대질병 (64)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 고혈압, 당뇨병, 갑상선질환, 녹내장, 동맥경화, 궤양성대장염, 위십이지장궤양 등 (별표45)', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, I10~I15, E10~E14, E00~E07, H40, I70, K51, K25~K28', '정액 지급'],
         ['특정 다빈도 29대질병 (29)', '하지정맥류, 부비동염(축농증), 편도염, 중이염, 수근관증후군, 안면신경마비, 골수염, 척추디스크, 척추협착증, 비염 등 (별표47)', 'I83, J32, J35, H65~H75, G56.0, G51, M86, M50~M51, M48, J30~J34', '정액 지급'],
         ['후각 특정질환 (1)', '알레르기 비염, 혈관운동성 비염, 코폴립(비종양) 등 (별표48)', 'J30, J31, J33, J34', '정액 지급'],
@@ -92,8 +92,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '120대': {
       title: '별표 [120대 질병분류표 및 보장 질병코드 전문]',
       rows: [
-        ['특정 5대질병 (5)', '뇌혈관, 심장질환, 간질환, 췌장질환, 만성 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '관혈 100% / 비관혈 50%'],
-        ['중대 10대질병 (10)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 궤양 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, K25~K28', '관혈 100% / 비관혈 50%'],
+        ['특정 5대질병 (5)', '뇌혈관, 심장질환, 간질환, 췌장질환, 만성 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '지급 비율은 그 특약 원문'],
+        ['중대 10대질병 (10)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 궤양 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, K25~K28', '지급 비율은 그 특약 원문'],
         ['다발성 16대질병 (16)', '부정맥, 심부전, 동맥색전증, 수두증, 폐부종, 식도질환 등', 'I47~I49, I50, I74, G91, J81, K22', '정액 지급'],
         ['다빈도 30대질병 (30)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 편도염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, J35', '정액 지급'],
         ['부인과 10대질병 (10)', '자궁근종, 자궁내막증, 난소낭종, 골반염, 여성생식기 폴립 등', 'D25, N80, D27, N83, N70~N77, N84', '정액 지급'],
@@ -139,7 +139,7 @@ window.DYNAMIC_NDAI_TABLES = {
     '120대': {
       title: '2-204 [120대 질병수술Ⅱ 분류표 전문]',
       rows: [
-        ['26대질병Ⅱ (26)', '중증근무력증, 사르코이드증, 대동맥류, 폐렴, 신장결석, 유방의 비대 등 (1053~1054쪽)', 'G70, D86, I71, J12~J18, N20, N62 등', '관혈 100% / 비관혈 50%'],
+        ['26대질병Ⅱ (26)', '중증근무력증, 사르코이드증, 대동맥류, 폐렴, 신장결석, 유방의 비대 등 (1053~1054쪽)', 'G70, D86, I71, J12~J18, N20, N62 등', '지급 비율은 그 특약 원문'],
         ['58대질병Ⅱ (58)', '담석증, 충수염, 탈장, 치핵, 전립선비대증, 백내장, 녹내장, 당뇨병, 고혈압, 갑상선 등 (1093~1097쪽)', 'K80~K83, K35, K40, K64, N40, H25, H40, E10~E14, I10~I15, E00~E07', '정액 지급'],
         ['24대질병 (24)', '하지정맥류, 부비동염(축농증), 편도염, 중이염, 수근관증후군, 척추질환 등 (1089~1091쪽)', 'I83, J32, J35, H65~H75, G56.0, M50~M51', '정액 지급'],
         ['다발성 10대질병 (10)', '부정맥, 심부전, 폐부종, 만성 신장병, 뇌혈관 후유증 등 (1092쪽)', 'I47~I49, I50, J81, N18, I69', '정액 지급'],
@@ -150,7 +150,7 @@ window.DYNAMIC_NDAI_TABLES = {
     '123대': {
       title: '별표 [123대 질병수술분류표 전문]',
       rows: [
-        ['26대질병 (26)', '중증근무력증, 사르코이드증, 대동맥류, 폐렴, 신장결석, 유방의 비대 등', 'G70, D86, I71, J12~J18, N20, N62 등', '관혈 100% / 비관혈 50%'],
+        ['26대질병 (26)', '중증근무력증, 사르코이드증, 대동맥류, 폐렴, 신장결석, 유방의 비대 등', 'G70, D86, I71, J12~J18, N20, N62 등', '지급 비율은 그 특약 원문'],
         ['59대질병 (59)', '담석증, 충수염, 탈장, 치핵, 전립선비대증, 백내장, 녹내장, 당뇨병, 고혈압, 갑상선 등', 'K80~K83, K35, K40, K64, N40, H25, H40, E10~E14, I10~I15, E00~E07', '정액 지급'],
         ['24대질병 (24)', '하지정맥류, 부비동염(축농증), 편도염, 중이염, 수근관증후군, 척추질환 등', 'I83, J32, J35, H65~H75, G56.0, M50~M51', '정액 지급'],
         ['다발성 10대질병 (10)', '부정맥, 심부전, 폐부종, 만성 신장병, 뇌혈관 후유증 등', 'I47~I49, I50, J81, N18, I69', '정액 지급'],
@@ -183,8 +183,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '112대': {
       title: '【별표17】 [112대 질병분류표 전문]',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
+        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '지급 비율은 그 특약 원문'],
+        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '지급 비율은 그 특약 원문'],
         ['22대질병수술 (22)', '담석증, 담낭염, 담도질환, 충수염, 탈장, 요로결석, 전립선비대증, 방광염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, N30, G51, J35, M05~M14, I83', '정액 지급'],
         ['49대질병수술 (49)', '손발톱장애, 티눈, 사마귀, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증 등', 'L60, L84, B07, D17, D18, D12~D13, M50~M51, M48, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -206,8 +206,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '116대': {
       title: '별표 [116대 질병분류표 전문]',
       rows: [
-        ['5대 주요질병 (5)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '관혈 100% / 비관혈 50%'],
-        ['22대 주요질병 (22)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 결핵 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, A15~A19', '관혈 100% / 비관혈 50%'],
+        ['5대 주요질병 (5)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '지급 비율은 그 특약 원문'],
+        ['22대 주요질병 (22)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 결핵 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, A15~A19', '지급 비율은 그 특약 원문'],
         ['3대 특정질병 (3)', '급성 상기도감염, 폐렴, 버거씨병', 'J00~J06, J12~J18, I73.1', '정액 지급'],
         ['24대 생활질병 (24)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 치핵, 편도염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, K64, J35', '정액 지급'],
         ['62대 생활질병 (62)', '비염, 부비동염(축농증), 하지정맥류, 관절염, 척추디스크, 백내장 등', 'J30~J34, I83, M15~M19, M48, M50~M51, H25~H28', '정액 지급']
@@ -216,8 +216,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '114대': {
       title: '별표 [114대 질병분류표 전문]',
       rows: [
-        ['5대 주요질병 (5)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '관혈 100% / 비관혈 50%'],
-        ['22대 주요질병 (22)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 결핵 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, A15~A19', '관혈 100% / 비관혈 50%'],
+        ['5대 주요질병 (5)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 폐질환', 'I60~I69, I20~I25, K70~K76, K85~K86, J40~J47', '지급 비율은 그 특약 원문'],
+        ['22대 주요질병 (22)', '신부전, 당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 결핵 등', 'N17~N19, E10~E14, I10~I15, I70~I79, E00~E07, H40, A15~A19', '지급 비율은 그 특약 원문'],
         ['3대 특정질병 (3)', '급성 상기도감염, 폐렴, 버거씨병', 'J00~J06, J12~J18, I73.1', '정액 지급'],
         ['22대 생활질병 (22)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 치핵, 편도염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, K64, J35', '정액 지급'],
         ['62대 생활질병 (62)', '비염, 부비동염(축농증), 하지정맥류, 관절염, 척추디스크, 백내장 등', 'J30~J34, I83, M15~M19, M48, M50~M51, H25~H28', '정액 지급']
@@ -228,8 +228,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '120대': {
       title: '별표 [120대 질병분류표 전문]',
       rows: [
-        ['6대 질병 (6)', '뇌혈관질환, 허혈심장질환, 만성 류마티스 심장질환 등', 'I60~I69, I20~I25, I05~I09', '관혈 100% / 비관혈 50%'],
-        ['9대 질병 (9)', '만성 신부전, 간질환, 췌장질환, 폐질환, 당뇨병, 고혈압 등', 'N17~N19, K70~K76, K85~K86, J40~J47, E10~E14, I10~I15', '관혈 100% / 비관혈 50%'],
+        ['6대 질병 (6)', '뇌혈관질환, 허혈심장질환, 만성 류마티스 심장질환 등', 'I60~I69, I20~I25, I05~I09', '지급 비율은 그 특약 원문'],
+        ['9대 질병 (9)', '만성 신부전, 간질환, 췌장질환, 폐질환, 당뇨병, 고혈압 등', 'N17~N19, K70~K76, K85~K86, J40~J47, E10~E14, I10~I15', '지급 비율은 그 특약 원문'],
         ['20대 질병 (20)', '동맥경화, 갑상선질환, 녹내장, 위십이지장궤양, 결핵 등', 'I70, E00~E07, H40, K25~K28, A15~A19', '정액 지급'],
         ['22대 질병 (22)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 편도염 등', 'K80, K35, K40, N20, N40, J35', '정액 지급'],
         ['63대 생활질병 (63)', '비염, 부비동염(축농증), 하지정맥류, 관절염, 척추디스크, 치핵, 백내장 등', 'J30~J34, I83, M15~M19, M48, M50~M51, K64, H25', '정액 지급']
@@ -240,8 +240,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '124대': {
       title: '별표 [124대 질병분류표 전문]',
       rows: [
-        ['10대 중대질병 (10)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 신부전 등', 'I60~I69, I20~I25, K70~K76, K85~K86, N17~N19', '관혈 100% / 비관혈 50%'],
-        ['26대 특정질병 (26)', '당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 폐렴, 결핵 등', 'E10~E14, I10~I15, I70~I79, E00~E07, H40, J12~J18, A15~A19', '관혈 100% / 비관혈 50%'],
+        ['10대 중대질병 (10)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 신부전 등', 'I60~I69, I20~I25, K70~K76, K85~K86, N17~N19', '지급 비율은 그 특약 원문'],
+        ['26대 특정질병 (26)', '당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 폐렴, 결핵 등', 'E10~E14, I10~I15, I70~I79, E00~E07, H40, J12~J18, A15~A19', '지급 비율은 그 특약 원문'],
         ['38대 다빈도질병 (38)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 편도염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, J35', '정액 지급'],
         ['48대 생활질병 (48)', '비염, 부비동염, 하지정맥류, 관절염, 척추디스크, 수근관증후군 등', 'J30~J34, I83, M15~M19, M48, M50~M51, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -251,8 +251,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '116대': {
       title: '별표 [116대 질병분류표 전문]',
       rows: [
-        ['10대 중대질병 (10)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 신부전 등', 'I60~I69, I20~I25, K70~K76, K85~K86, N17~N19', '관혈 100% / 비관혈 50%'],
-        ['26대 특정질병 (26)', '당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 폐렴, 결핵 등', 'E10~E14, I10~I15, I70~I79, E00~E07, H40, J12~J18, A15~A19', '관혈 100% / 비관혈 50%'],
+        ['10대 중대질병 (10)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 신부전 등', 'I60~I69, I20~I25, K70~K76, K85~K86, N17~N19', '지급 비율은 그 특약 원문'],
+        ['26대 특정질병 (26)', '당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 폐렴, 결핵 등', 'E10~E14, I10~I15, I70~I79, E00~E07, H40, J12~J18, A15~A19', '지급 비율은 그 특약 원문'],
         ['38대 다빈도질병 (38)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 편도염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, J35', '정액 지급'],
         ['40대 생활질병 (40)', '비염, 부비동염, 하지정맥류, 관절염, 척추디스크, 수근관증후군 등', 'J30~J34, I83, M15~M19, M48, M50~M51, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -264,8 +264,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '신142대': {
       title: '별표 [신142대 질병분류표 전문]',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
+        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '지급 비율은 그 특약 원문'],
+        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '지급 비율은 그 특약 원문'],
         ['22대질병수술 (22)', '담석증, 담낭염, 담도질환, 충수염, 탈장, 요로결석, 전립선비대증, 방광염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, N30, G51, J35, M05~M14, I83', '정액 지급'],
         ['79대질병수술 (79)', '손발톱장애, 티눈, 사마귀, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증, 비염, 다발성 질환 등', 'L60, L84, B07, D17, D18, D12~D13, M50~M51, M48, G56.0, J30~J34', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -275,8 +275,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '신70대': {
       title: '별표 [신70대 질병분류표 전문]',
       rows: [
-        ['10대 중대질병 (10)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 신부전 등', 'I60~I69, I20~I25, K70~K76, K85~K86, N17~N19', '관혈 100% / 비관혈 50%'],
-        ['20대 특정질병 (20)', '당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 폐렴, 결핵 등', 'E10~E14, I10~I15, I70~I79, E00~E07, H40, J12~J18, A15~A19', '관혈 100% / 비관혈 50%'],
+        ['10대 중대질병 (10)', '뇌혈관질환, 허혈심장질환, 간질환, 췌장질환, 신부전 등', 'I60~I69, I20~I25, K70~K76, K85~K86, N17~N19', '지급 비율은 그 특약 원문'],
+        ['20대 특정질병 (20)', '당뇨병, 고혈압, 동맥경화, 갑상선질환, 녹내장, 폐렴, 결핵 등', 'E10~E14, I10~I15, I70~I79, E00~E07, H40, J12~J18, A15~A19', '지급 비율은 그 특약 원문'],
         ['38대 생활질병 (38)', '담석증, 충수염, 탈장, 요로결석, 전립선비대증, 척추질환, 관절염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, M50~M51, M15~M19', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
         ['치핵 수술 (1)', '내치핵, 외치핵, 혈전성 치핵, 항문열창 및 치루', 'K64', '정액 지급']
@@ -285,8 +285,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '112대': {
       title: '별표 [112대 질병분류표 전문]',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
+        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '지급 비율은 그 특약 원문'],
+        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '지급 비율은 그 특약 원문'],
         ['22대질병수술 (22)', '담석증, 담낭염, 담도질환, 충수염, 탈장, 요로결석, 전립선비대증, 방광염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, N30, G51, J35, M05~M14, I83', '정액 지급'],
         ['49대질병수술 (49)', '손발톱장애, 티눈, 사마귀, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증 등', 'L60, L84, B07, D17, D18, D12~D13, M50~M51, M48, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -298,8 +298,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '112대': {
       title: '별표 [112대 질병분류표 전문]',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
+        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '지급 비율은 그 특약 원문'],
+        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '지급 비율은 그 특약 원문'],
         ['22대질병수술 (22)', '담석증, 담낭염, 담도질환, 충수염, 탈장, 요로결석, 전립선비대증, 방광염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, N30, G51, J35, M05~M14, I83', '정액 지급'],
         ['49대질병수술 (49)', '손발톱장애, 티눈, 사마귀, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증 등', 'L60, L84, B07, D17, D18, D12~D13, M50~M51, M48, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -311,8 +311,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '112대': {
       title: '별표 [112대 질병분류표 전문]',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
+        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '지급 비율은 그 특약 원문'],
+        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '지급 비율은 그 특약 원문'],
         ['22대질병수술 (22)', '담석증, 담낭염, 담도질환, 충수염, 탈장, 요로결석, 전립선비대증, 방광염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, N30, G51, J35, M05~M14, I83', '정액 지급'],
         ['49대질병수술 (49)', '손발톱장애, 티눈, 사마귀, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증 등', 'L60, L84, B07, D17, D18, D12~D13, M50~M51, M48, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -324,8 +324,8 @@ window.DYNAMIC_NDAI_TABLES = {
     '112대': {
       title: '별표 [112대 질병분류표 전문]',
       rows: [
-        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '관혈 100% / 비관혈 50%'],
-        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '관혈 100% / 비관혈 50%'],
+        ['15대질병수술 (15)', '패혈증, 폐렴, 기관지확장증, 폐농양, 식도정맥류, 크론병, 급성췌장염 등', 'A40~A41, J12~J18, J47, J85, I85, K50, K85, I73.1, I20~I25, I60~I69', '지급 비율은 그 특약 원문'],
+        ['24대질병수술 (24)', '당뇨병, 고혈압, 간질환, 동맥경화증, 만성신부전, 결핵, 녹내장 등', 'E10~E14, I10~I15, K70~K76, I70~I79, N18, A15~A19, H40', '지급 비율은 그 특약 원문'],
         ['22대질병수술 (22)', '담석증, 담낭염, 담도질환, 충수염, 탈장, 요로결석, 전립선비대증, 방광염 등', 'K80~K83, K35~K37, K40~K46, N20~N23, N40, N30, G51, J35, M05~M14, I83', '정액 지급'],
         ['49대질병수술 (49)', '손발톱장애, 티눈, 사마귀, 지방종, 혈관종, 양성종양, 척추디스크, 척추협착증 등', 'L60, L84, B07, D17, D18, D12~D13, M50~M51, M48, G56.0', '정액 지급'],
         ['백내장 수술 (1)', '노년 백내장, 수정체 혼탁, 기타 백내장', 'H25~H28', '정액 지급'],
@@ -736,7 +736,7 @@ const COMPARISON_PAIRS = [
         boxBg: 'rgba(37, 99, 235, 0.06)',
         target: '신장·요관 결석 파쇄 배출 (N20)',
         nature: '체외 충격파 결석 분쇄 (생보 37항 / 손보 85항)',
-        payout: '표준 2종 (60일내 1회) · 현대해상 특약별 1·2종'
+        payout: '읽은 별표 제87항은 2종(KB 26.09, 현대 Hi2404·Hi2504, 삼성 2404.10). 회사별 1종 개정일은 그 별표에 없음.'
       }
     ]
   },
@@ -885,14 +885,14 @@ const COMPARISON_PAIRS = [
       },
       {
         name: '맘모톰 절제술 (진공보조절제)',
-        badge: '⭕ 2종 수술비 지급',
+        badge: '⭕ 별표의 Mammotomy 행',
         badgeColor: '#fff',
         badgeBg: '#2563eb',
         borderColor: '#2563eb',
         boxBg: 'rgba(37, 99, 235, 0.06)',
         target: '유방 섬유선종·양성종양',
         nature: '진공 흡입 바늘로 종양 전체 절제',
-        payout: '표준 1~5종 [2종] 지급 (단순검사 제외)'
+        payout: '읽은 별표(KB 55-1, 현대 11, 메리츠 23)의 치료목적 Mammotomy는 1종. 모든 회사 2종으로 적지 않음.'
       }
     ]
   },
@@ -2708,6 +2708,55 @@ function parseCosList(coInput) {
   return [];
 }
 
+/* 카드 문장은 그 회사 약관에서 읽은 행만. 다른 회사 종수·개정일을 여기 넣지 않는다. */
+function verifiedFactLines(topic, coName) {
+  const n = String(coName || '');
+  const kb = /KB손|케손|kbinsure/i.test(n) && !/라이프|생명/.test(n);
+  const hy = /현대해상|현대화재|^현대$|hyundai/i.test(n) && !/라이프|생명/.test(n);
+  const sam = /삼성화재|삼화|samsungfire/i.test(n);
+  const lines = {
+    eswl: {
+      kb: 'KB 5.10.10 플러스 26.09, 2026-10-01 적용, 별표55-1 제87항 체외충격파쇄석술 2종. 60일 이내 2회는 1회. 체외충격파치료술(E.S.W.T)은 그 항에서 제외. 직전 별표와 종수가 바뀐 날짜는 이 약관에 없음.',
+      hy: '현대해상다이렉트 H건강보험 Hi2404(2024-04-01) 별표11 제87항 2종. Hi2504(2025-04-01) 같은 항도 2종이고, 두 약관 사이에서 이 항의 종수는 바뀌지 않음. 2018.06에 1종으로 바뀌었다는 날짜는 이 두 약관에 없음.',
+      sam: '삼성화재 마이헬스 파트너 2404.10, 2024-09-02 적용, 별표16-2 제87항 2종. 직전 별표와 짝이 없어 변경일은 적지 않음.'
+    },
+    polyp: {
+      kb: '같은 KB 별표55-1 주석: 대장의 용종 또는 대장의 양성신생물의 내시경적 절제술은 1종. 2종에서 바뀐 날짜는 이 약관에 없음.',
+      hy: 'Hi2404·Hi2504 별표11에서 대장용종 절제를 따로 적은 행은 없음. 다른 회사의 1종·2종을 현대에 적지 않음.',
+      sam: '마이헬스 파트너 2404.10의 일부 수술비 특약은 대장 용종·양성신생물의 내시경적 절제를 그 특약의 부지급 목록에 둠. 1~5종 표의 종수로 바꾸어 적지 않음.'
+    },
+    breast: {
+      kb: '같은 별표55-1 제3항 유방절단수술 3종. 제4항 치료목적 Mammotomy 1종(60일 이내 2회는 1회). N62 여유증을 따로 적은 행은 없음.',
+      hy: 'Hi2404·Hi2504 별표11: 유방절단은 제자리암·경계성종양이 아니면 2종, 제자리암·경계성종양이면 3종. 치료목적 Mammotomy는 1종. N62 행은 없음.',
+      sam: '별표16-2 제3항 유방절단수술 3종. N62 행은 이 표에서 읽지 않음.'
+    },
+    gall: {
+      kb: '별표55-1 제36항 담낭·담도 관혈수술은 개복술을 수반하는 경우 3종. 복강경 담낭절제를 이 항으로 적지 않음.',
+      hy: '별표11 제36항도 개복술을 수반하는 담낭·담도 관혈수술 3종. 복강경은 이 항의 문장이 아님. Hi2404와 Hi2504의 이 항 종수는 같음.',
+      sam: '별표16-2 제36항 담낭·담도 관혈수술(개복술을 수반하는 것) 3종. 복강경을 3종으로 적지 않음.'
+    }
+  };
+  const bag = lines[topic] || {};
+  if (kb && bag.kb) return bag.kb;
+  if (hy && bag.hy) return bag.hy;
+  if (sam && bag.sam) return bag.sam;
+  return '이 회사의 해당 별표 행은 여기 붙인 원문에 없습니다. 다른 회사의 종수와 개정일을 대신 적지 않습니다.';
+}
+
+function verifiedFactBox(topic, title, cosList) {
+  const names = (cosList && cosList.length) ? cosList : ['확인한 약관'];
+  const body = (!cosList || !cosList.length)
+    ? ['KB 5.10.10 플러스 26.09', '현대해상다이렉트 Hi2404·Hi2504', '삼성화재 마이헬스 파트너 2404.10'].map(n => verifiedFactLines(topic, n)).join('<br>')
+    : names.map(n => `<b>${esc(n)}</b> ${verifiedFactLines(topic, n)}`).join('<br>');
+  return {
+    tier: '별표 행',
+    hasDiff: false,
+    diffBadge: '',
+    note: body.replace(/<[^>]+>/g, ''),
+    boxHTML: `<div class="rev-alert-box"><div class="rab-title">${title}</div><div class="rab-desc" style="color:var(--text-2);margin-top:4px;line-height:1.5;">${body}</div></div>`
+  };
+}
+
 const REVISION_RULES = [
   {
     id: 'eswl_tier',
@@ -2729,7 +2778,7 @@ const REVISION_RULES = [
     ],
     evaluate: function(cosInput, year, month) {
       const cosList = parseCosList(cosInput);
-
+      return verifiedFactBox('eswl', '체외충격파쇄석술 — 읽은 별표 행', cosList);
       if (cosList.length === 0) {
         return {
           tier: '1·2종',
@@ -3046,6 +3095,7 @@ const REVISION_RULES = [
     ],
     evaluate: function(cosInput, year, month) {
       const cosList = parseCosList(cosInput);
+      return verifiedFactBox('polyp', '대장용종 내시경 절제 — 읽은 별표 행', cosList);
 
       // A. 회사가 선택되지 않은 경우 (전사 기준)
       if (cosList.length === 0) {
@@ -3237,6 +3287,7 @@ const REVISION_RULES = [
     ],
     evaluate: function(cosInput, year, month) {
       const cosList = parseCosList(cosInput);
+      return verifiedFactBox('breast', '유방절단·맘모톰 — 읽은 별표 행', cosList);
 
       if (cosList.length === 0) {
         return {
@@ -3385,6 +3436,7 @@ const REVISION_RULES = [
     ],
     evaluate: function(cosInput, year, month) {
       const cosList = parseCosList(cosInput);
+      return verifiedFactBox('gall', '담낭·담도 관혈(개복) — 읽은 별표 행', cosList);
 
       if (cosList.length === 0) {
         return {
@@ -8246,7 +8298,7 @@ function renderDisputesList(filterKey = 'all') {
           </div>
           <div style="background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.25);border-radius:10px;padding:10px 12px;">
             <div style="font-size:12px;font-weight:900;color:#059669;margin-bottom:4px;">✅ 설계사 현장 반박 핵심 근거:</div>
-            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${counter ? '• ' + esc(counter) + '<br>' : ''}• 병변 완전 절제 치료 목적 입증 시 약관상 2종 전액 수령</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">${counter ? '• ' + esc(counter) + '<br>' : ''}• 읽은 별표의 Mammotomy 행은 1종입니다. 2종 전액으로 적지 않습니다.</div>
           </div>
         </div>
 
@@ -9458,38 +9510,38 @@ const COMPANY_NDAI_PERIOD_MAP = {
     'nh_2024_12_prior': ['144대', '112대']
   },
   samsunglife: {
-    'samsunglife_2020_01': ['153대', '7대주요', '7대성인'],
-    'samsunglife_2006_04': ['7대성인']
+    'samsunglife_2020_01': [],
+    'samsunglife_2006_04': []
   },
   hanwhalife: {
-    'hanwhalife_2020_01': ['104대', '70대', '23대', '13대']
+    'hanwhalife_2020_01': []
   },
   kyobo: {
-    'kyobolife_2020_01': ['36대', '25대']
+    'kyobolife_2020_01': []
   },
   shinhan: {
-    'shinhanlife_2020_01': ['100대', '30대']
+    'shinhanlife_2020_01': []
   },
   kblife: {
-    'kblife_2020_01': ['7대', '5대']
+    'kblife_2020_01': []
   },
   mirae: {
-    'mirae_2020': ['100대', '20대']
+    'mirae_2020': []
   },
   donga: {
-    'dongyang_2020_01': ['30대', '7대']
+    'dongyang_2020_01': []
   },
   heungkuklife: {
-    'heungkuklife_2020_01': ['50대', '7대']
+    'heungkuklife_2020_01': []
   },
   abl: {
-    'abllife_2020_01': ['50대', '7대']
+    'abllife_2020_01': []
   },
   lina: {
-    'linalife_2020_01': ['30대', '7대']
+    'linalife_2020_01': []
   },
   nhlife: {
-    'nhlife_2020_01': ['50대', '7대']
+    'nhlife_2020_01': []
   }
 };
 window.COMPANY_NDAI_PERIOD_MAP = COMPANY_NDAI_PERIOD_MAP;
@@ -10448,31 +10500,21 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
           </span>
           <span style="font-size:11px;font-weight:850;padding:2px 6px;border-radius:5px;background:#fef3c7;color:#b45309;">실무 필수 대조</span>
         </div>
-        <div style="font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:8px;line-height:1.45;">종수 비교는 손보 1~5종 개정의 실무 메모입니다. 이 회사·이 시기 별표로 확인하지 못했으면 미검증이며, 스캔 분류표가 우선합니다.</div>
+        <div style="font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:8px;line-height:1.45;">아래 두 칸은 이 회사 약관에서 읽은 행만 적습니다.</div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;font-size:12px;">
           <div style="background:var(--surface);border:1.5px solid rgba(217,119,6,0.3);border-radius:8px;padding:8px 10px;">
             <div style="font-weight:900;color:#d97706;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
               <span>⚠️</span>
-              <span>개정 후 (2024.12~현재 / 최신)</span>
+              <span>이 약관 별표</span>
             </div>
-            <div style="color:var(--text-2);line-height:1.5;">
-              • <strong>대장용종</strong>: 1종 하향 분류<br>
-              • <strong>담석증(복강경)</strong>: 2종 하향<br>
-              • <strong>여유증(유방비대)</strong>: 1종 하향<br>
-              • <strong>체외충격파(ESWL)</strong>: 1종 / 연1회한
-            </div>
+            <div style="color:var(--text-2);line-height:1.5;">${verifiedFactLines('polyp', co.name)}<br>${verifiedFactLines('gall', co.name)}<br>${verifiedFactLines('breast', co.name)}<br>${verifiedFactLines('eswl', co.name)}</div>
           </div>
           <div style="background:var(--surface);border:1.5px solid rgba(37,99,235,0.3);border-radius:8px;padding:8px 10px;">
             <div style="font-weight:900;color:#2563eb;margin-bottom:4px;display:flex;align-items:center;gap:4px;">
               <span>💎</span>
-              <span>개정 전 (2024.11 이전 / 구계약)</span>
+              <span>개정 전 별표</span>
             </div>
-            <div style="color:var(--text-2);line-height:1.5;">
-              • <strong>대장용종</strong>: 표준 2종 지급<br>
-              • <strong>담석증(복강경)</strong>: 표준 3종 지급<br>
-              • <strong>여유증(유방절단)</strong>: 표준 3종 지급<br>
-              • <strong>체외충격파</strong>: 구 2종 지급 (약관별)
-            </div>
+            <div style="color:var(--text-2);line-height:1.5;">같은 수술의 개정 전 별표와 적용일이 한 쌍으로 있는 원문은 이 칸에 없습니다. 다른 회사의 개정 전 종수를 적지 않습니다.</div>
           </div>
         </div>
       </div>
@@ -10502,18 +10544,18 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
 
     // 다빈도 및 신의료기술 12대 대표 태그 (카티스템/연골 포함 & 3열 대칭 그리드 칼정렬 #27519 지침 4)
     const quickChips = [
-      { name: '대장용종', badge: '2종/1종', q: '대장용종' },
-      { name: '요로결석', badge: '2종', q: '요로결석' },
-      { name: '백내장', badge: '1종', q: '백내장' },
-      { name: '여유증', badge: '3종/1종', q: '여유증' },
-      { name: '담석증', badge: '3종/2종', q: '담석증' },
-      { name: '카티스템/연골', badge: '3종/2종', q: '카티스템' },
-      { name: '맘모톰', badge: '2종', q: '맘모톰' },
-      { name: '하이푸', badge: '2~3종', q: '하이푸' },
-      { name: '유로리프트', badge: '1~2종', q: '유로리프트' },
-      { name: '베나실', badge: '1~2종', q: '베나실' },
-      { name: '인공관절', badge: '4종', q: '인공관절' },
-      { name: '자궁근종', badge: '3종', q: '자궁근종' }
+      { name: '대장용종', badge: '별표', q: '대장용종' },
+      { name: '요로결석', badge: '별표', q: '요로결석' },
+      { name: '백내장', badge: '별표', q: '백내장' },
+      { name: '여유증', badge: '별표', q: '여유증' },
+      { name: '담석증', badge: '별표', q: '담석증' },
+      { name: '카티스템/연골', badge: '별표', q: '카티스템' },
+      { name: '맘모톰', badge: '별표', q: '맘모톰' },
+      { name: '하이푸', badge: '별표', q: '하이푸' },
+      { name: '유로리프트', badge: '별표', q: '유로리프트' },
+      { name: '베나실', badge: '별표', q: '베나실' },
+      { name: '인공관절', badge: '별표', q: '인공관절' },
+      { name: '자궁근종', badge: '별표', q: '자궁근종' }
     ];
 
     const chipsHTML = `
@@ -10726,7 +10768,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       },
       {
         title: "제5조(보상하지 않는 손해 - 면책사유 전수 기재)",
-        text: "회사는 다음 각 호의 사유로 생긴 수술비는 1~5종 수술비를 지급하지 않습니다:\n1. 피보험자, 보험수익자 또는 계약자의 고의 또는 자해로 인한 수술\n2. 임신, 출산, 정상 자연분만, 산후기 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n3. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n4. 단순 코골음, 포경수술, 비뇨기계 장애(요실금 등) 및 피임·불임 복원 시술\n5. 치과질환(K00~K08, 치주·치조골보철 처치) 및 한방병원·한의원 한방 비급여 처치\n6. 건강검진, 종합검진, 생검(조직검사) 등 치료를 직접 목적으로 하지 않는 검사적 진료\n7. 무면허 운전, 음주운전 및 피보험자의 범죄행위로 생긴 사고"
+        text: "회사는 다음 각 호의 사유로 생긴 수술비는 1~5종 수술비를 지급하지 않습니다:\n1. 피보험자, 보험수익자 또는 계약자의 고의 또는 자해로 인한 수술\n2. 임신·출산·제왕절개의 지급 여부는 특약마다 다릅니다. 손보 전부 부지급, 생보 전부 1종으로 적지 않습니다.\n3. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n4. 단순 코골음, 포경수술, 비뇨기계 장애(요실금 등) 및 피임·불임 복원 시술\n5. 치과질환(K00~K08, 치주·치조골보철 처치) 및 한방병원·한의원 한방 비급여 처치\n6. 건강검진, 종합검진, 생검(조직검사) 등 치료를 직접 목적으로 하지 않는 검사적 진료\n7. 무면허 운전, 음주운전 및 피보험자의 범죄행위로 생긴 사고"
       }
     ];
   } else if (riderKey === 'ndai' || riderKey === 'adult') {
@@ -10737,7 +10779,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       },
       {
         title: "제2조(관혈수술과 비관혈수술의 정의 및 50% 감액규정)",
-        text: "① [관혈(Open)수술]: 병변 부위를 육안으로 직접 보면서 수술하기 위해 피부나 점막을 절개하는 외과적 수술 (보험가입금액의 100% 전액 지급)\n② [비관혈(Non-open)수술]: 내시경, 복강경, 흉강경, 카테터 등을 이용하여 절개 범위를 최소화하는 수술 (보험가입금액의 50% 감액 지급)"
+        text: "관혈·비관혈 비율은 특약마다 다릅니다. 모든 손보 N대에 비관혈 50%가 있는 것으로 적지 않습니다. 그 특약의 지급표 원문을 봅니다."
       },
       {
         title: "제3조(동시수술 및 지급한도)",
@@ -10779,7 +10821,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
       },
       {
         title: "제5조(보상하지 않는 손해 - 면책사유 전수 기재)",
-        text: "회사는 다음 각 호의 사유로 생긴 수술비는 지급하지 않습니다:\n1. 피보험자, 보험수익자 또는 계약자의 고의 또는 자해\n2. 임신, 출산, 정상 자연분만, 산후기 관련 질환 (단, 제왕절개는 특약에 따라 1종 인정)\n3. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n4. 단순 코골음, 포경수술, 비뇨기계 장애(요실금 등) 및 피임·불임 복원 시술\n5. 치과질환(K00~K08, 치주·치조골보철 처치) 및 한방병원·한의원 한방 비급여 처치\n6. 건강검진, 종합검진, 생검(조직검사) 등 치료를 직접 목적으로 하지 않는 검사적 진료\n7. 무면허 운전, 음주운전 및 피보험자의 범죄행위로 생긴 사고"
+        text: "회사는 다음 각 호의 사유로 생긴 수술비는 지급하지 않습니다:\n1. 피보험자, 보험수익자 또는 계약자의 고의 또는 자해\n2. 임신·출산·제왕절개의 지급 여부는 특약마다 다릅니다. 손보 전부 부지급, 생보 전부 1종으로 적지 않습니다.\n3. 주근깨, 다모, 사마귀, 여드름, 노화현상 탈모 등 피부질환 및 미용성형 목적 수술\n4. 단순 코골음, 포경수술, 비뇨기계 장애(요실금 등) 및 피임·불임 복원 시술\n5. 치과질환(K00~K08, 치주·치조골보철 처치) 및 한방병원·한의원 한방 비급여 처치\n6. 건강검진, 종합검진, 생검(조직검사) 등 치료를 직접 목적으로 하지 않는 검사적 진료\n7. 무면허 운전, 음주운전 및 피보험자의 범죄행위로 생긴 사고"
       }
     ];
   }
@@ -10795,6 +10837,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
 
   // 회사별·상품별 핵심 차별화 요소 하이라이터 (#32220 #32253)
   const formatClauseDiffHTML = (rawText, isExclusionTab) => {
+    return esc(rawText);
     let t = esc(rawText);
     const isLife = co.isLife || co.id.includes('life');
 
@@ -10865,25 +10908,12 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         <span>⚡</span>
         <span>[${esc(co.name)}] 실무 메모 · 회사별 원문 미대조</span>
       </div>
-      <div style="font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:6px;">아래는 손보·생보를 가르는 통념입니다. 해당 증권 약관과 다를 수 있어 미검증으로 둡니다.</div>
+      <div style="font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:6px;">이 회사 약관에서 읽은 행만 적습니다.</div>
       <div style="display:flex;flex-direction:column;gap:5px;font-size:11.8px;line-height:1.5;color:var(--text);">
-        <div style="display:flex;align-items:flex-start;gap:6px;">
-          <span style="font-weight:900;color:${isLifeCo ? '#15803d' : '#b91c1c'};white-space:nowrap;">① 제왕절개:</span>
-          <span>${isLifeCo ? '<strong style="color:#15803d;">생보 1종 정상 지급</strong> (손보 질병수술비 부지급 대비 강력 우위)' : '<strong style="color:#b91c1c;">질병수술비 부지급(면책)</strong> (단, 1~5종 수술특약에서 1종 인정)'}</span>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:6px;">
-          <span style="font-weight:900;color:${isLifeCo ? '#0369a1' : '#c2410c'};white-space:nowrap;">② 비관혈 수술:</span>
-          <span>${isLifeCo ? '<strong style="color:#0369a1;">비관혈 100% 전액 지급</strong> (손보 N대와 달리 복강경·내시경 50% 감액 조항 없음)' : '<strong style="color:#c2410c;">N대 비관혈 50% 감액</strong> (내시경·복강경·카테터 시 가입금액의 50%만 지급)'}</span>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:6px;">
-          <span style="font-weight:900;color:#92400e;white-space:nowrap;">③ 체외충격파:</span>
-          <span>신장·요관결석 쇄석술(ESWL) 연간 1회(또는 60일 1회) 한도 및 1종 지급 (구계약 2종 대조 필수)</span>
-        </div>
-        ${co.id === 'hyundai' ? `
-        <div style="display:flex;align-items:flex-start;gap:6px;background:#fdf4ff;padding:4px 6px;border-radius:6px;border:1px solid #f0abfc;">
-          <span style="font-weight:900;color:#86198f;white-space:nowrap;">⚠️ 현대해상 단독:</span>
-          <span style="color:#701a75;"><strong>비관혈 암수술 4종 하향 개정</strong> (타사 5종 유지와 결정적 차이, 심사 필수 대조)</span>
-        </div>` : ''}
+        <div>${verifiedFactLines('eswl', co.name)}</div>
+        <div>${verifiedFactLines('polyp', co.name)}</div>
+        <div>${verifiedFactLines('breast', co.name)}</div>
+        <div>${verifiedFactLines('gall', co.name)}</div>
       </div>
     </div>
   `;
@@ -10989,6 +11019,7 @@ function bindPhotoButtons(box, rider, co, period) {
   const btnPre = box.querySelector('.btn-tier-rev-photo[data-rev="pre"]');
   const btnSingle = box.querySelector('.btn-tier-single-photo');
 
+  const blockedImage = (src) => !src || /meritz_tier_rev_/.test(src) || (co.id !== 'meritz' && /meritz_/.test(src)) || (co.id !== 'kbinsure' && /\/kb_/.test(src)) || (co.id !== 'samsungfire' && /samsung_/.test(src));
   if (btnPost) {
     btnPost.addEventListener('click', () => {
       if (window.CLAUSE_BOOK && window.CLAUSE_BOOK[co.id] && typeof window.lookupClauseScan === 'function') {
@@ -11004,6 +11035,7 @@ function bindPhotoButtons(box, rider, co, period) {
       if (!isLatestPeriod) {
         const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
         const src = postObj ? postObj.src : rider.imgSrc;
+        if (src && blockedImage(src)) { if (typeof showToast === 'function') showToast('다른 회사 약관 이미지는 열지 않습니다.'); return; }
         if (src) window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 [개정 후 약관 사진]`, period.revSummary, [src], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
         
         return;
@@ -11016,6 +11048,7 @@ function bindPhotoButtons(box, rider, co, period) {
       } else {
         const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
         const src = postObj ? postObj.src : rider.imgSrc;
+        if (src && blockedImage(src)) { if (typeof showToast === 'function') showToast('다른 회사 약관 이미지는 열지 않습니다.'); return; }
         if (src) window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 후 약관 사진]`, period.revSummary);
         
       }
@@ -11031,6 +11064,7 @@ function bindPhotoButtons(box, rider, co, period) {
       if (!isLatestPeriod) {
         const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
         const src = preObj ? preObj.src : rider.imgSrc;
+        if (src && blockedImage(src)) { if (typeof showToast === 'function') showToast('다른 회사 약관 이미지는 열지 않습니다.'); return; }
         if (src) window.openRulesModal(src, `📋 [${co.name}] ${period.periodStr} · 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary, [src], { product: `${co.name} (${period.periodStr})`, type: '해당 시기 약관', page: `${period.periodStr} 공시실 분류표` });
         
         return;
@@ -11043,6 +11077,7 @@ function bindPhotoButtons(box, rider, co, period) {
       } else {
         const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
         const src = preObj ? preObj.src : rider.imgSrc;
+        if (src && blockedImage(src)) { if (typeof showToast === 'function') showToast('다른 회사 약관 이미지는 열지 않습니다.'); return; }
         if (src) window.openRulesModal(src, `📋 [${co.name}] 1-5종 수술분류표 [개정 전 약관 사진]`, period.revSummary);
         
       }
