@@ -52,8 +52,9 @@
   window.MERITZ_FACE = {
     meritz_201912: {
       standard: face({
-        disease: { line: '질병수술비(백내장제외).', define: pg('A', [291, 292]), exclude: pg('A', [289, 290]) },
+        disease: { pill: '백내장 제외', line: '질병수술비(백내장제외).', define: pg('A', [291, 292]), exclude: pg('A', [289, 290]) },
         tier: {
+          pill: '1~5종',
           line: '맘모톰 문장 있음. N62 1종 문장 없음.',
           pay: pay15, excl: excl15,
           clause: pg('A', [768, 769, 770]),
@@ -65,26 +66,28 @@
           ]
         },
         bundles: [
-          { name: '32대', parts: p32 },
-          { name: '64대', parts: p64 }
+          { name: '64대', sale: '~2020.11.03', clause: pg('A', [528, 529, 530]), parts: p64 },
+          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: p32 }
         ]
       }),
       simplified: face({
-        disease: { line: '갱신형 질병수술비(간편가입).', define: pg('Q', [159, 160]), exclude: pg('Q', [158]) },
+        disease: { pill: '간편', line: '갱신형 질병수술비(간편가입).', define: pg('Q', [159, 160]), exclude: pg('Q', [158]) },
         tier: {
+          pill: '1~5종',
           line: '맘모톰 문장 있음.',
           pay: '', excl: '',
           clause: [],
           table: pg('Q', [571, 572, 573]),
           items: [{ name: '맘모톰', tier: '문장 있음', pages: pg('Q', [571]) }]
         },
-        bundles: [{ name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('q_32.png')] }] }]
+        bundles: [{ name: '32대', sale: '~2020.11.03', clause: [old('q_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('q_32.png')] }] }]
       })
     },
     meritz_202011: {
       standard: face({
-        disease: { line: '질병수술비(백내장 및 대장용종 제외).', define: pg('B', [283, 284]), exclude: pg('B', [282, 283]) },
+        disease: { pill: '대장용종 제외', line: '질병수술비(백내장 및 대장용종 제외).', define: pg('B', [283, 284]), exclude: pg('B', [282, 283]) },
         tier: {
+          pill: '1~5종',
           line: '직전 기간과 동일',
           pay: '', excl: '',
           clause: pg('B', [792, 793, 794]),
@@ -95,25 +98,26 @@
           ]
         },
         bundles: [
-          { name: '82대', parts: p82 },
-          { name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
+          { name: '82대', sale: '2020.11~2020.12', clause: pg('B', [510, 511, 512, 513, 514, 515]), parts: p82 },
+          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
         ]
       }),
       simplified: face({
-        disease: { line: '갱신형 질병수술비(간편가입).', define: pg('G', [179, 180]), exclude: pg('G', [178]) },
+        disease: { pill: '간편', line: '갱신형 질병수술비(간편가입).', define: pg('G', [179, 180]), exclude: pg('G', [178]) },
         tier: {
+          pill: '1~5종',
           line: '직전 기간과 동일',
           pay: '', excl: '',
           clause: [],
           table: pg('G', [653, 654, 655]),
           items: [{ name: '맘모톰', tier: '문장 있음', pages: pg('G', [653]) }]
         },
-        bundles: [{ name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('s2011_32.png')] }] }]
+        bundles: [{ name: '32대', sale: '2020.11~2020.12', clause: [old('s2011_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('s2011_32.png')] }] }]
       })
     },
     meritz_202101: {
       standard: face({
-        disease: { line: '질병수술비(백내장 및 대장용종 제외).', define: pg('C', [284, 285]), exclude: pg('C', [283]) },
+        disease: { pill: '대장용종 제외', line: '질병수술비(백내장 및 대장용종 제외).', define: pg('C', [284, 285]), exclude: pg('C', [283]) },
         tier: {
           line: '1~5종 분류표가 1~7종 분류표로 바뀜.',
           pay: '', excl: '',
@@ -122,14 +126,14 @@
           items: [{ name: '맘모톰', tier: '문장 없음', pages: [] }]
         },
         bundles: [
-          { name: '82대', parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
-          { name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
+          { name: '82대', sale: '2021.01~2021.09', clause: pg('C', [514, 515, 516]), parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
+          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
         ]
       }),
       simplified: face({
         disease: { line: '갱신형 질병수술비(335간편가입).', define: pg('S', [175, 176]), exclude: pg('S', [174]) },
         tier: { line: '1~5종 분류표가 1~7종 분류표로 바뀜.', pay: '', excl: '', clause: [], table: [], items: [] },
-        bundles: [{ name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_g32.png')] }] }]
+        bundles: [{ name: '32대', sale: '2021.01~2021.09', clause: [old('c_g32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_g32.png')] }] }]
       })
     },
     meritz_202207: {
@@ -156,10 +160,30 @@
         ]
       })
     },
+    meritz_202109: {
+      standard: face({
+        disease: { pill: '특정5대 제외', line: '질병수술비(특정5대질병 제외).', define: pg('H', [305, 306]), exclude: pg('H', [307, 308]) },
+        tier: null,
+        bundles: [
+          { name: '82대', sale: '2021.09~2022.06', clause: pg('C', [514, 515, 516]), parts: [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
+          { name: '131대', sale: '2022.07~2024.12', clause: pg('D', [446, 447, 448, 449, 450, 451]), parts: p131 },
+          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+        ]
+      }),
+      simplified: face({
+        disease: { pill: '간편', line: '갱신형 질병수술비.', define: pg('P', [183, 184]), exclude: pg('P', [182]) },
+        tier: null,
+        bundles: [
+          { name: '32대', sale: '2021.09~2024.12', clause: [old('p_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('p_32.png')] }] },
+          { name: '128대', sale: '2022.10~2024.12', clause: pg('P', [234, 235, 236]), parts: p128 }
+        ]
+      })
+    },
     meritz_202501: {
       standard: face({
-        disease: { line: '질병수술비(특정5대질병 제외).', define: [], exclude: pg('E', [855, 856]) },
+        disease: { pill: '특정5대 제외', line: '질병수술비(특정5대질병 제외).', define: [], exclude: pg('E', [855, 856]) },
         tier: {
+          pill: 'N62 1종',
           line: '유방의 비대(N62) 수술을 1종으로 적음. 유방절단은 3종.',
           pay: '', excl: '',
           clause: pg('E', [479, 480, 481]),
@@ -171,13 +195,14 @@
           ]
         },
         bundles: [
-          { name: '131대', parts: ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
-          { name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
+          { name: '131대', sale: '2025.01~', clause: pg('E', [862, 863, 864]), parts: ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
+          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
         ]
       }),
       simplified: face({
-        disease: { line: '갱신형 질병수술비.', define: pg('U', [587]), exclude: pg('U', [588]) },
+        disease: { pill: '간편', line: '갱신형 질병수술비.', define: pg('U', [587]), exclude: pg('U', [588]) },
         tier: {
+          pill: 'N62 1종',
           line: '유방의 비대(N62) 수술을 1종으로 적음. 유방절단은 3종.',
           pay: '', excl: '',
           clause: pg('U', [325, 326, 327]),
@@ -188,8 +213,8 @@
           ]
         },
         bundles: [
-          { name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('u_32.png')] }] },
-          { name: '130대', parts: p130 }
+          { name: '130대', sale: '2025.01~', clause: pg('U', [590, 591]), parts: p130 },
+          { name: '32대', sale: '2025.01~', clause: [old('u_32.png')], parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('u_32.png')] }] }
         ]
       })
     }

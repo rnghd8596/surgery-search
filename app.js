@@ -8991,15 +8991,24 @@ function periodsNewestFirst(periods) {
   }).map(x => x.p);
 }
 
+function revisionKeyBoxHTML(cardLine, lines) {
+  if (cardLine === '최초 기준') return '';
+  const items = (lines || []).filter(Boolean).slice(0, 2);
+  if (!items.length) return '';
+  return `<div class="rev-key-box"><div class="rev-key-title">주요 개정내용</div><ul>${items.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>`;
+}
+
 function renderScanCompanyHTML(co) {
   const board = window.SCAN_BOARDS && window.SCAN_BOARDS[co.id];
   if (!board || !board.periods || !board.periods.length) return '';
   const periods = periodsNewestFirst(board.periods);
+  const searchedYear = extractSearchedYear((document.getElementById('clauseCompanySearchInput') || {}).value || '');
   return `
     <div class="scan-board" data-cid="${esc(co.id)}">
       ${periods.map(p => {
         const clauseP = (co.periods || []).find(x => x.id === p.id);
-        const open = !!(clauseP && clauseP._isYearMatch);
+        const [sy, ey] = parsePeriodYearRange(p.label || '');
+        const open = searchedYear ? (searchedYear >= sy && searchedYear <= ey) : !!(clauseP && clauseP._isYearMatch);
         return `
         <div class="period-accordion-box" style="background:var(--surface);border:${open ? '2px solid #2563eb' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;">
           <div class="btn-toggle-period" data-co-id="${esc(co.id)}" data-pid="${esc(p.id)}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
@@ -9010,8 +9019,7 @@ function renderScanCompanyHTML(co) {
             <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:${open ? '#fff' : 'var(--brand)'};background:${open ? 'var(--brand)' : 'var(--surface-2)'};padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;white-space:nowrap;">${open ? '접기 ▴' : '펼쳐보기 ▾'}</span>
           </div>
           <div id="period-drawer-${esc(co.id)}-${esc(p.id)}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:${open ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
-            ${p.gapNote ? `<p class="scan-none">${esc(p.gapNote)}</p>` : ''}
-            ${(p.changes && p.changes.length) ? `<div class="scan-changes">${p.changes.map(c => `<div><b>${esc(c.item)}</b> ${c.before ? esc(c.before) + ' → ' : ''}${esc(c.after)}</div>`).join('')}</div>` : ''}
+            ${revisionKeyBoxHTML(p.cardLine, p.revisionBullets)}
             <div class="scan-types">
               <button type="button" class="scan-type on" data-ptype="standard">일반</button>
               <button type="button" class="scan-type" data-ptype="simplified">간편</button>
@@ -9088,14 +9096,32 @@ function scanPagesBtn(label, pages, title) {
   return `<button type="button" class="scan-open" data-act="pages" data-pages="${esc(ready.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
 }
 
+function scanCovBtn(label, pages, title, filled) {
+  const list = (pages || []).filter(Boolean);
+  if (!list.length) return '';
+  return `<button type="button" class="cov-btn${filled ? ' filled' : ''}" data-act="pages" data-pages="${esc(list.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
+}
+
+function scanCovRow(key, label, pill, inner, sel) {
+  const on = !!(sel.open && sel.open[key]);
+  return `<div class="cov-block">
+    <button type="button" class="qvb-row scan-fold-btn" data-fold="${key}">
+      <span class="qvb-left-label">${esc(label)}</span>
+      <span class="qvb-badge fit">${esc(pill)} ▾</span>
+    </button>
+    <div class="cov-drawer" style="display:${on ? 'block' : 'none'};">${on ? inner : ''}</div>
+  </div>`;
+}
+
 function paintScanDrawer(drawer) {
   const root = drawer.closest('.scan-board');
   const cid = root.getAttribute('data-cid');
   const pid = drawer.getAttribute('data-pid');
   if (!state.scanUi) state.scanUi = {};
   if (!state.scanUi[cid]) state.scanUi[cid] = {};
-  if (!state.scanUi[cid][pid]) state.scanUi[cid][pid] = { ptype: 'standard', q: '', open: {}, drill: null };
+  if (!state.scanUi[cid][pid]) state.scanUi[cid][pid] = { ptype: 'standard', open: {}, ndai: '', groups: false, group: '' };
   const sel = state.scanUi[cid][pid];
+  if (!sel.open) sel.open = {};
   const faceRoot = window.MERITZ_FACE && window.MERITZ_FACE[pid];
   const face = faceRoot && (faceRoot[sel.ptype] || faceRoot.standard);
   const body = drawer.querySelector('.scan-body');
@@ -9103,56 +9129,54 @@ function paintScanDrawer(drawer) {
     if (body) body.innerHTML = '';
     return;
   }
-  const sec = (key, title, inner) => {
-    const on = !!sel.open[key];
-    return `
-      <div class="scan-fold">
-        <button type="button" class="scan-fold-btn" data-fold="${key}">
-          <span>${esc(title)}</span>
-          <span>${on ? '접기' : '펼치기'}</span>
-        </button>
-        <div class="scan-fold-body" style="display:${on ? 'block' : 'none'};">${on ? inner : ''}</div>
-      </div>`;
-  };
   const disease = face.disease || {};
-  const tier = face.tier || {};
+  const tier = face.tier;
   const bundles = face.bundles || [];
-  const drill = sel.drill;
+  const showTier = !!(tier && ((tier.clause && tier.clause.length) || (tier.table && tier.table.length)));
+  const diseasePages = (disease.define || []).concat(disease.exclude || []);
+  const ndaiNames = bundles.map(b => String(b.name || '').replace(/대$/, ''));
+  const ndaiPill = ndaiNames.length ? ndaiNames.join('·') + '대' : '없음';
   let ndaiHTML = '';
-  if (!bundles.length) ndaiHTML = '<p class="scan-none">해당 없음</p>';
-  else if (!drill) {
-    ndaiHTML = `<ul class="scan-links">${bundles.map(b => `<li><span>${esc(b.name)}</span><button type="button" class="scan-open" data-act="bundle" data-name="${esc(b.name)}">펼치기</button></li>`).join('')}</ul>`;
-  } else if (!drill.part) {
-    const b = bundles.find(x => x.name === drill.name);
-    const parts = (b && b.parts) || [];
-    ndaiHTML = `<p><button type="button" class="scan-open" data-act="back">뒤로</button></p><p class="scan-sec">${esc(drill.name)}</p><ul class="scan-links">${parts.map(part => `<li><span>${esc(part.name)}</span><button type="button" class="scan-open" data-act="part" data-name="${esc(part.name)}">펼치기</button></li>`).join('')}</ul>`;
-  } else {
-    const b = bundles.find(x => x.name === drill.name);
-    const part = b && (b.parts || []).find(x => x.name === drill.part);
-    const codes = (part && part.codes) || [];
-    ndaiHTML = `<p><button type="button" class="scan-open" data-act="back-part">뒤로</button></p><p class="scan-sec">${esc(drill.part)}</p>${codes.length ? `<ul class="scan-links">${codes.map(c => `<li><span>${esc(c)}</span></li>`).join('')}</ul>` : ''}${scanPagesBtn('약관보기', part && part.pages, drill.part)}`;
+  if (bundles.length) {
+    const current = bundles.find(b => b.name === sel.ndai) || bundles[0];
+    sel.ndai = current.name;
+    const segs = bundles.length > 1 ? `<div class="ndai-seg-row">${bundles.map(b => {
+      const on = b.name === current.name;
+      return `<button type="button" class="btn-ndai-seg${on ? ' on' : ''}" data-act="ndai" data-name="${esc(b.name)}"><span>${esc(b.name)} 특약</span>${b.sale ? `<span class="seg-sale">${esc(b.sale)}</span>` : ''}</button>`;
+    }).join('')}</div>` : (current.sale ? `<div class="seg-sale" style="font-size:11px;font-weight:700;color:var(--text-2);margin-top:6px;">${esc(current.sale)}</div>` : '');
+    const clausePages = current.clause || ((current.parts && current.parts[0] && current.parts[0].pages) || []);
+    const parts = current.parts || [];
+    const coded = parts.some(p => p.codes && p.codes.length);
+    const tableBtn = coded
+      ? `<button type="button" class="cov-btn filled" data-act="groups">분류표</button>`
+      : scanCovBtn('분류표', current.table && current.table.length ? current.table : clausePages, current.name + ' 분류표', true);
+    let groups = '';
+    if (coded && sel.groups) {
+      groups = `<div class="cov-groups">${parts.map(part => {
+        const on = sel.group === part.name;
+        const codes = (part.codes || []).map(c => `<span class="kcd-badge">${esc(c)}</span>`).join('');
+        return `<div class="cov-group">
+          <div class="qvb-row cov-group-row">
+            <span class="qvb-left-label" style="white-space:normal;font-size:12.5px;">${esc(part.name)}</span>
+            <span style="display:flex;gap:6px;flex-shrink:0;">
+              ${scanCovBtn('약관', part.pages, part.name, false)}
+              ${(part.codes || []).length ? `<button type="button" class="cov-btn" data-act="group" data-name="${esc(part.name)}">${on ? '접기' : '펼치기'}</button>` : ''}
+            </span>
+          </div>
+          ${on && codes ? `<div class="cov-codes">${codes}</div>` : ''}
+        </div>`;
+      }).join('')}</div>`;
+    }
+    ndaiHTML = `${segs}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}`;
   }
-  const items = (tier.items || []).map(it => `
-    <div class="scan-item">
-      <span>${esc(it.name)}</span>
-      <span>${esc(it.tier || '')}</span>
-      ${scanPagesBtn('약관보기', it.pages, it.name)}
-    </div>`).join('');
-  body.innerHTML = [
-    sec('disease', '질병수술비', `
-      ${disease.line ? `<p class="scan-none">${esc(disease.line)}</p>` : ''}
-      <p>${scanPagesBtn('수술의 정의', disease.define, '수술의 정의')}${scanPagesBtn('보장하지 않는 수술', disease.exclude, '보장하지 않는 수술')}</p>
-    `),
-    sec('tier', '1-5종수술비', `
-      ${tier.line ? `<p class="scan-none">${esc(tier.line)}</p>` : ''}
-      <p>
-        ${(tier.pay || tier.excl) ? `<button type="button" class="scan-open" data-act="summary" data-title="1-5종수술비" data-pay="${esc(tier.pay || '')}" data-excl="${esc(tier.excl || '')}" data-pages="${esc((tier.clause || []).join('|'))}">약관보기</button>` : scanPagesBtn('약관보기', tier.clause, '1-5종수술비')}
-        ${scanPagesBtn('분류표', tier.table, '1-5종 분류표')}
-      </p>
-      ${items}
-    `),
-    sec('ndai', 'N대 질병수술비', ndaiHTML)
-  ].join('');
+  const rows = [
+    scanCovRow('disease', '질병수술비', disease.pill || '질병수술', `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`, sel)
+  ];
+  if (showTier) {
+    rows.push(scanCovRow('tier', '1~5종 수술비', tier.pill || '1~5종', `<div class="cov-actions">${scanCovBtn('약관보기', tier.clause, '1~5종 수술비', false)}${scanCovBtn('분류표', tier.table, '1~5종 분류표', true)}</div>`, sel));
+  }
+  if (bundles.length) rows.push(scanCovRow('ndai', 'N대 질병수술비', ndaiPill, ndaiHTML, sel));
+  body.innerHTML = rows.join('');
 }
 
 function paintScanBoard(root) {
@@ -9174,7 +9198,9 @@ function bindScanBoards(container) {
       if (btn.classList.contains('scan-type')) {
         e.stopPropagation();
         sel.ptype = btn.getAttribute('data-ptype');
-        sel.drill = null;
+        sel.ndai = '';
+        sel.groups = false;
+        sel.group = '';
         drawer.querySelectorAll('.scan-type').forEach(b => b.classList.toggle('on', b === btn));
         paintScanDrawer(drawer);
         return;
@@ -9189,13 +9215,19 @@ function bindScanBoards(container) {
       const act = btn.getAttribute('data-act');
       if (!act) return;
       e.stopPropagation();
-      if (act === 'bundle') sel.drill = { name: btn.getAttribute('data-name'), part: '' };
-      else if (act === 'part') sel.drill = { name: sel.drill && sel.drill.name, part: btn.getAttribute('data-name') };
-      else if (act === 'back') sel.drill = null;
-      else if (act === 'back-part') sel.drill = { name: sel.drill && sel.drill.name, part: '' };
-      else if (act === 'pages') openScanPages((btn.getAttribute('data-pages') || '').split('|'), btn.getAttribute('data-title'), '');
+      if (act === 'ndai') {
+        sel.ndai = btn.getAttribute('data-name');
+        sel.groups = false;
+        sel.group = '';
+      } else if (act === 'groups') {
+        sel.groups = !sel.groups;
+        sel.group = '';
+      } else if (act === 'group') {
+        const name = btn.getAttribute('data-name');
+        sel.group = sel.group === name ? '' : name;
+      } else if (act === 'pages') openScanPages((btn.getAttribute('data-pages') || '').split('|'), btn.getAttribute('data-title'), '');
       else if (act === 'summary') openScanSummary(btn.getAttribute('data-title'), btn.getAttribute('data-pay'), btn.getAttribute('data-excl'), (btn.getAttribute('data-pages') || '').split('|'));
-      if (act === 'bundle' || act === 'part' || act === 'back' || act === 'back-part') paintScanDrawer(drawer);
+      if (act === 'ndai' || act === 'groups' || act === 'group') paintScanDrawer(drawer);
     });
   });
 }
@@ -9654,12 +9686,14 @@ function renderClausesCompanyList(searchQuery) {
       const opt = btn.getAttribute('data-ndai-opt');
       parent.querySelectorAll('.btn-ndai-tab-select').forEach(b => {
         b.classList.remove('active');
+        b.classList.remove('on');
         b.style.border = '1.5px solid var(--border)';
         b.style.background = 'var(--surface)';
         b.style.color = '#334155';
         b.style.boxShadow = '0 1px 2px rgba(0,0,0,0.02)';
       });
       btn.classList.add('active');
+      btn.classList.add('on');
       btn.style.border = '1.5px solid #059669';
       btn.style.background = '#059669';
       btn.style.color = '#fff';
@@ -9669,8 +9703,10 @@ function renderClausesCompanyList(searchQuery) {
       parent.querySelectorAll('.btn-open-clause-modal[data-target-rider="ndai"]').forEach(mb => {
         mb.setAttribute('data-ndai', opt);
       });
-      const titleSpan = parent.querySelector('span:first-child');
-      if (titleSpan) titleSpan.textContent = `🏢 ${opt} N대 질병수술비 특약`;
+      const titleSpan = parent.querySelector('.ndai-title');
+      if (titleSpan) titleSpan.textContent = `${opt} 질병수술비`;
+      const pill = parent.querySelector('.ndai-pill');
+      if (pill) pill.textContent = opt + ' ▾';
     });
   });
 
@@ -9731,6 +9767,15 @@ function renderClausesCompanyList(searchQuery) {
           simpBox.style.display = 'none';
         }
       }
+    });
+  });
+
+  container.querySelectorAll('.btn-cov-toggle').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const drawer = btn.parentElement && btn.parentElement.querySelector('.cov-drawer');
+      if (!drawer) return;
+      drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
     });
   });
 
@@ -9888,8 +9933,11 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
     <!-- 가입시기 헤더 버튼 -->
     <div class="btn-toggle-period" data-co-id="${co.id}" data-pid="${p.id}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;flex:1;">
-        <span style="font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;text-align:left;">${esc(cleanPeriodStr(p.periodStr))}</span>
-        ${isYearMatched ? `<span style="font-size:11px;font-weight:900;color:#fff;background:#2563eb;padding:2px 7px;border-radius:5px;">🎯 ${matchContext.searchedYear}년 계약 해당 약관</span>` : ''}
+        <span style="min-width:0;flex:1;text-align:left;">
+          <span style="display:block;font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">${esc(cleanPeriodStr(p.periodStr))}</span>
+          ${p.cardLine ? `<span style="display:block;margin-top:2px;font-size:12px;font-weight:700;color:var(--text-2);line-height:1.35;">${esc(p.cardLine)}</span>` : ''}
+        </span>
+        ${isYearMatched ? `<span style="font-size:11px;font-weight:900;color:#fff;background:#2563eb;padding:2px 7px;border-radius:5px;">${matchContext.searchedYear}년 계약</span>` : ''}
       </div>
       <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:${isDrawerOpen ? '#fff' : 'var(--brand)'};background:${isDrawerOpen ? 'var(--brand)' : 'var(--surface-2)'};padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;">
         ${isDrawerOpen ? '접기 ▴' : '펼쳐보기 ▾'}
@@ -9899,8 +9947,7 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
     <!-- 가입시기 세부 서랍 -->
     <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:${isDrawerOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
       
-      <!-- 개정 핵심 실무 안내 박스 -->
-      ${p.revSummary ? `<p class="scan-note">${formatNoticeSummaryHTML(p.revSummary)}</p>` : ''}
+      ${revisionKeyBoxHTML(p.cardLine, p.revisionBullets)}
 
       <!-- 표준체 / 유병자(간편) 분기 버튼 (50:50 칼맞춤) -->
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%;margin-bottom:4px;">
@@ -9950,46 +9997,38 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
 
   // 1. 질병수술비
   if (riders.basic) {
-    const isHigh = isMatchBasic;
     html += `
-    <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
-      <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
-        <div>
-          <div style="font-size:13.5px;font-weight:900;color:var(--text);word-break:keep-all;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-            <span>${esc(riders.basic.title)}</span>
-          </div>
-          <div style="font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.basic.summary || '')}</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause" style="height:38px;border-radius:8px;border:${matchContext.isExclusion ? '2px solid #dc2626' : '1px solid var(--border)'};background:${matchContext.isExclusion ? 'rgba(220,38,38,0.09)' : 'var(--surface)'};color:${matchContext.isExclusion ? '#dc2626' : '#0f172a'};font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
+    <div class="cov-block">
+      <button type="button" class="qvb-row btn-cov-toggle">
+        <span class="qvb-left-label">${esc(riders.basic.title || '질병수술비')}</span>
+        <span class="qvb-badge fit">${esc(riders.basic.pill || '질병수술')} ▾</span>
+      </button>
+      <div class="cov-drawer" style="display:none;">
+      ${riders.basic.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.basic.summary)}</div>` : ''}
+      <div class="cov-actions">
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause">
           ${matchContext.isExclusion ? '보상제외' : '약관보기'}
         </button>
+      </div>
       </div>
     </div>`;
   }
 
-  // 2. 종수술비
-  if (riders.tier) {
-    const isHigh = isMatchTier;
+  // 2. 종수술비. 1~7종은 이 탭에서 빼 둔다.
+  if (riders.tier && !(cid === 'meritz' && /1\s*[~-]\s*7종/.test(riders.tier.title || ''))) {
+    const tierPill = riders.tier.pill || ((/1\s*[~-]\s*5종/.test(riders.tier.title || '')) ? '1~5종' : '종수술');
     html += `
-    <div class="rider-card" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
-      <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
-        <div>
-          <div style="font-size:13.5px;font-weight:900;color:var(--brand);word-break:keep-all;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-            <span>${esc(riders.tier.title)}</span>
-          </div>
-          <div style="font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.tier.summary || '')}</div>
-          ${cid !== 'meritz' && ((riders.tier.tableBody && riders.tier.tableBody.rows) || []).length > 0 && riders.tier.tableBody.rows.length < 20 ? `<div style="font-size:11.5px;color:var(--text-3);margin-top:4px;font-weight:700;">분류표는 ${riders.tier.tableBody.rows.length}행 발췌입니다. 전수 표가 아니면 종수를 이 표만으로 확정하지 마세요.</div>` : ''}
-        </div>
+    <div class="cov-block">
+      <button type="button" class="qvb-row btn-cov-toggle">
+        <span class="qvb-left-label">${esc(riders.tier.title || '1~5종 수술비')}</span>
+        <span class="qvb-badge fit">${esc(tierPill)} ▾</span>
+      </button>
+      <div class="cov-drawer" style="display:none;">
+      ${riders.tier.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.tier.summary)}</div>` : ''}
+      <div class="cov-actions">
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn filled" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table">분류표</button>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:8px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:#0f172a;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
-          약관보기
-        </button>
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(49,130,246,0.25);display:flex;align-items:center;justify-content:center;gap:4px;">
-          분류표
-        </button>
       </div>
     </div>`;
   }
@@ -10007,55 +10046,57 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     const defaultN = (matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai))
       ? matchContext.searchedNdai
       : nOptions[0];
+    const saleOf = {};
+    (riders.ndai.segments || []).forEach(s => { if (s && s.id) saleOf[s.id] = s.sale || ''; });
+    const ndaiPill = riders.ndai.pill || (ndaiUnknown ? 'N대' : nOptions.map(o => String(o).replace(/대$/, '')).join('·') + '대');
 
     html += `
-    <div class="rider-card rider-card-ndai" data-current-ndai="${esc(defaultN)}" style="border:${isHigh ? '2px solid #ea580c' : '1px solid var(--line)'};border-radius:10px;padding:11px 12px;background:${isHigh ? 'rgba(234,88,12,0.03)' : 'var(--surface)'};">
-      <div style="margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
-        <div style="flex:1;">
-          <div style="font-size:13.5px;font-weight:900;color:#059669;word-break:keep-all;display:flex;align-items:center;gap:5px;">
-            <span>${ndaiUnknown ? 'N대 질병수술비' : esc(defaultN) + ' 질병수술비'}</span>
-          </div>
-          <div style="font-size:12px;color:#334155;margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.ndai.summary || '')}</div>
-        </div>
-      </div>
-
-      <!-- 회사별 판매 N대별 분리 선택 탭 (#29516 섞지 않고 클릭 시 해당 N대 약관 직결) -->
+    <div class="cov-block rider-card-ndai" data-current-ndai="${esc(defaultN)}">
+      <button type="button" class="qvb-row btn-cov-toggle">
+        <span class="qvb-left-label">N대 질병수술비</span>
+        <span class="qvb-badge fit ndai-pill">${esc(ndaiPill)} ▾</span>
+      </button>
+      <div class="cov-drawer" style="display:none;">
+      ${riders.ndai.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.ndai.summary)}</div>` : ''}
       ${!ndaiUnknown && nOptions.length > 1 ? `
-      <div style="margin:8px 0 6px;padding:4px;background:var(--surface-2);border-radius:8px;border:1.5px solid var(--border);display:flex;gap:6px;">
+      <div class="ndai-seg-row">
         ${nOptions.map(opt => `
-          <button type="button" class="btn-ndai-tab-select ${opt === defaultN ? 'active' : ''}" data-ndai-opt="${esc(opt)}" style="flex:1;height:34px;border-radius:6px;border:${opt === defaultN ? '1.5px solid #059669' : '1.5px solid var(--border)'};background:${opt === defaultN ? '#059669' : 'var(--surface)'};color:${opt === defaultN ? '#fff' : '#334155'};font-size:11.5px;font-weight:900;cursor:pointer;box-shadow:${opt === defaultN ? '0 2px 4px rgba(5,150,105,0.2)' : '0 1px 2px rgba(0,0,0,0.02)'};transition:all .15s ease;">
-            ${esc(opt)} 특약
+          <button type="button" class="btn-ndai-tab-select btn-ndai-seg ${opt === defaultN ? 'active on' : ''}" data-ndai-opt="${esc(opt)}">
+            <span>${esc(opt)} 특약</span>
+            ${saleOf[opt] ? `<span class="seg-sale">${esc(saleOf[opt])}</span>` : ''}
           </button>
         `).join('')}
       </div>` : ''}
-
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:6px;">
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" style="height:38px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:#0f172a;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,0.02);display:flex;align-items:center;justify-content:center;gap:4px;">
-          약관보기
-        </button>
-        <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" style="height:38px;border-radius:8px;border:1.5px solid #059669;background:#059669;color:#fff;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 6px rgba(5,150,105,0.25);display:flex;align-items:center;justify-content:center;gap:4px;">
-          분류표
-        </button>
+      <div class="cov-actions">
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" data-ndai="${esc(defaultN)}">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn filled" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" data-ndai="${esc(defaultN)}">분류표</button>
+      </div>
       </div>
     </div>`;
   }
 
-  if (riders.injury) {
+  if (cid !== 'meritz' && riders.injury) {
     html += `
-    <div class="rider-card" style="border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:var(--surface);">
-      <div style="font-size:13.5px;font-weight:900;color:var(--text);word-break:keep-all;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-        <span>${esc(riders.injury.title || '상해수술비')}</span>
+    <div class="cov-block">
+      <button type="button" class="qvb-row btn-cov-toggle">
+        <span class="qvb-left-label">${esc(riders.injury.title || '상해수술비')}</span>
+        <span class="qvb-badge fit">상해 ▾</span>
+      </button>
+      <div class="cov-drawer" style="display:none;">
+        ${riders.injury.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.injury.summary)}</div>` : ''}
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="width:100%;margin-top:6px;">약관보기</button>
       </div>
-      <div style="font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.4;font-weight:700;">${esc(riders.injury.summary || '')}</div>
-      <button type="button" class="btn-open-clause-modal" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="margin-top:8px;height:38px;width:100%;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:#0f172a;font-size:12px;font-weight:850;cursor:pointer;">약관보기</button>
     </div>`;
-  } else {
+  } else if (cid !== 'meritz') {
     html += `
-    <div class="rider-card rider-gap">
-      <div style="font-size:13.5px;font-weight:900;color:var(--text);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-        <span>상해수술비 특별약관</span>
+    <div class="cov-block">
+      <button type="button" class="qvb-row btn-cov-toggle">
+        <span class="qvb-left-label">상해수술비</span>
+        <span class="qvb-badge fit">미확인 ▾</span>
+      </button>
+      <div class="cov-drawer" style="display:none;">
+        <div style="font-size:12px;color:var(--text-2);margin:6px 2px;line-height:1.45;font-weight:700;">이 시기 상해수술비 특약의 원문은 확인하지 못했습니다.</div>
       </div>
-      <div style="font-size:12px;color:var(--text-2);margin-top:4px;line-height:1.45;font-weight:700;">이 시기 상해수술비 특약의 공시실 원문·지급액·면책을 확인하지 못했습니다. 판매 여부를 추정하지 않습니다.</div>
     </div>`;
   }
 
