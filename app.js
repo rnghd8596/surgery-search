@@ -9025,17 +9025,20 @@ function buildPeriodPlan(co, year, ndaiNum) {
   const plan = {};
   if (year == null && ndaiNum == null) return plan;
   const exactLabel = (labels) => labels.find(l => ndaiNumOf(l) === ndaiNum) || null;
-  if (ndaiNum == null) {
+  if (year != null) {
     periods.forEach(p => {
-      if (p.yearHit) plan[p.id] = { tag: '검색한 시기', ndai: null, openNdai: false };
+      if (p.yearHit) plan[p.id] = { tag: '검색한 시기', ndai: null, ndaiTag: '' };
     });
-    return plan;
   }
+  if (ndaiNum == null) return plan;
   const pool = year != null ? periods.filter(p => p.yearHit) : periods;
   const exactPeriods = pool.filter(p => exactLabel(p.labels));
   if (exactPeriods.length) {
     exactPeriods.forEach(p => {
-      plan[p.id] = { tag: year != null ? '검색한 시기' : '검색한 특약', ndai: exactLabel(p.labels), openNdai: true };
+      const row = plan[p.id] || { tag: '', ndai: null, ndaiTag: '' };
+      row.ndai = exactLabel(p.labels);
+      row.ndaiTag = '검색한 특약';
+      plan[p.id] = row;
     });
     return plan;
   }
@@ -9048,18 +9051,17 @@ function buildPeriodPlan(co, year, ndaiNum) {
       bestD = Math.min(bestD, Math.abs(n - ndaiNum));
     });
   });
-  if (bestD === Infinity) {
-    periods.forEach(p => {
-      if (p.yearHit) plan[p.id] = { tag: '검색한 시기', ndai: null, openNdai: false };
-    });
-    return plan;
-  }
+  if (bestD === Infinity) return plan;
   searchPool.forEach(p => {
     const label = p.labels.find(l => {
       const n = ndaiNumOf(l);
       return n != null && Math.abs(n - ndaiNum) === bestD;
     });
-    if (label) plan[p.id] = { tag: '비슷한 항목', ndai: label, openNdai: true };
+    if (!label) return;
+    const row = plan[p.id] || { tag: '', ndai: null, ndaiTag: '' };
+    row.ndai = label;
+    row.ndaiTag = '비슷한 항목';
+    plan[p.id] = row;
   });
   return plan;
 }
@@ -9083,7 +9085,8 @@ function primeScanSearch(matchContext) {
       const sel = state.scanUi[cid][pid];
       if (!sel.open) sel.open = {};
       sel.ndai = hit.ndai;
-      if (hit.openNdai) sel.open.ndai = true;
+      sel.ndaiMatch = hit.ndai;
+      sel.ndaiTag = hit.ndaiTag || '';
     });
   });
 }
@@ -9151,16 +9154,11 @@ function renderScanCompanyHTML(co, matchContext) {
   const board = window.SCAN_BOARDS && window.SCAN_BOARDS[co.id];
   if (!board || !board.periods || !board.periods.length) return '';
   const periods = periodsNewestFirst(board.periods);
-  const locked = !!(matchContext && matchContext.companyLocked);
-  const searchedYear = locked ? null : extractSearchedYear((document.getElementById('clauseCompanySearchInput') || {}).value || '');
   return `
     <div class="scan-board" data-cid="${esc(co.id)}">
       ${periods.map(p => {
-        const clauseP = (co.periods || []).find(x => x.id === p.id);
-        const [sy, ey] = parsePeriodYearRange(p.label || '');
         const hit = periodSearchHit(co, p.id, matchContext);
-        const open = hit ? true : (searchedYear ? (searchedYear >= sy && searchedYear <= ey) : !!(clauseP && clauseP._isYearMatch));
-        const tag = hit ? hit.tag : (open && searchedYear ? '검색한 시기' : '');
+        const tag = hit && hit.tag ? hit.tag : '';
         return `
         <div class="period-accordion-box${tag ? ' search-hit' : ''}" style="background:var(--surface);border:${tag ? '2px solid var(--gold)' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;">
           <div class="btn-toggle-period" data-co-id="${esc(co.id)}" data-pid="${esc(p.id)}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
@@ -9168,9 +9166,9 @@ function renderScanCompanyHTML(co, matchContext) {
               <span style="display:block;font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">${esc(p.label)}</span>
               ${tag ? `<span class="search-hit-label">${esc(tag)}</span>` : ''}
             </span>
-            <span class="fold-toggle period-arrow-badge${open ? ' on' : ''}">${open ? '접기 ▴' : '펼치기 ▾'}</span>
+            <span class="fold-toggle period-arrow-badge">펼치기 ▾</span>
           </div>
-          <div id="period-drawer-${esc(co.id)}-${esc(p.id)}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:${open ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+          <div id="period-drawer-${esc(co.id)}-${esc(p.id)}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:none;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
             ${revisionKeyBoxHTML(p.cardLine, p.revisionBullets)}
             <div class="scan-body"></div>
           </div>
@@ -9407,7 +9405,8 @@ function paintScanDrawer(drawer) {
     sel.ndai = current.name;
     const segs = bundles.length > 1 ? `<div class="ndai-seg-row">${bundles.map(b => {
       const on = b.name === current.name;
-      return `<button type="button" class="btn-ndai-seg${on ? ' on' : ''}" data-act="ndai" data-name="${esc(b.name)}"><span>${esc(b.name)} 특약</span></button>`;
+      const note = sel.ndaiTag && b.name === sel.ndaiMatch ? `<span class="search-tab-note">${esc(sel.ndaiTag)}</span>` : '';
+      return `<button type="button" class="btn-ndai-seg${on ? ' on' : ''}" data-act="ndai" data-name="${esc(b.name)}"><span>${esc(b.name)} 특약</span>${note}</button>`;
     }).join('')}</div>` : '';
     const clausePages = current.clause || ((current.parts && current.parts[0] && current.parts[0].pages) || []);
     const parts = current.parts || [];
@@ -9434,7 +9433,8 @@ function paintScanDrawer(drawer) {
       }).join('')}</div>`;
     }
     const limitHTML = current.limit ? `<div class="key-limit"><div class="key-limit-kicker">핵심 체크</div><div class="key-limit-title">${esc(current.limit.title)}</div><p>${esc(current.limit.note)}</p></div>` : '';
-    ndaiHTML = `<div class="ndai-stack">${segs}${limitHTML}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}</div>`;
+    const loneNote = !segs && sel.ndaiTag && current.name === sel.ndaiMatch ? `<span class="search-hit-label">${esc(sel.ndaiTag)}</span>` : '';
+    ndaiHTML = `<div class="ndai-stack">${segs}${loneNote}${limitHTML}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}</div>`;
   }
   const options = (disease.options && disease.options.length) ? disease.options : [];
   const curD = options.find(o => o.id === sel.disease) || options[0];
@@ -9989,7 +9989,7 @@ function renderClausesCompanyList(searchQuery) {
     `;
   }
 
-  if (matchContext.companyLocked && (matchContext.searchedYear != null || matchContext.ndaiNum != null)) {
+  if (matchContext.searchedYear != null || matchContext.ndaiNum != null) {
     matchContext.periodPlan = {};
     list.forEach(co => {
       matchContext.periodPlan[co.id] = buildPeriodPlan(co, matchContext.searchedYear, matchContext.ndaiNum);
@@ -9997,11 +9997,11 @@ function renderClausesCompanyList(searchQuery) {
   }
 
   html += list.map(co => {
-    const isAutoOpen = !!matchContext.companyLocked;
+    const markCo = !!matchContext.companyLocked;
 
     // 극강의 심플 헤더: TMI 뱃지, 약칭 태그, 손보/생보 라벨, 작은 회색글씨 전면 삭제 (#29547 #29557 #29562 #29574)
     return `
-    <div class="clause-co-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);transition:border-color .2s ease;">
+    <div class="clause-co-card${markCo ? ' search-co' : ''}" style="background:var(--surface);border:${markCo ? '2px solid var(--gold)' : '1.5px solid var(--border)'};border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);transition:border-color .2s ease;">
       <!-- 회사 헤더: 로고 + 회사명 + 펼치기 ▾ (초간결 심플) -->
       <div class="btn-toggle-co" data-co-id="${co.id}" style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:12px;">
         <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
@@ -10012,11 +10012,11 @@ function renderClausesCompanyList(searchQuery) {
             ${esc(co.name)}
           </div>
         </div>
-        <span class="fold-toggle btn-co-toggle-arrow${isAutoOpen ? ' on' : ''}">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
+        <span class="fold-toggle btn-co-toggle-arrow">펼치기 ▾</span>
       </div>
 
       <!-- 시기별 아코디언 서랍 -->
-      <div id="co-periods-${co.id}" class="co-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface-2);flex-direction:column;gap:12px;">
+      <div id="co-periods-${co.id}" class="co-periods-drawer" style="display:none;padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface-2);flex-direction:column;gap:12px;">
         ${(window.SCAN_BOARDS && window.SCAN_BOARDS[co.id]) ? renderScanCompanyHTML(co, matchContext) : periodsNewestFirst(co.periods).map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
       </div>
     </div>
@@ -10026,15 +10026,6 @@ function renderClausesCompanyList(searchQuery) {
   container.innerHTML = html;
   primeScanSearch(matchContext);
   bindScanBoards(container);
-  if (matchContext.companyLocked) {
-    const hit = container.querySelector('.period-accordion-box.search-hit') || container.querySelector('.clause-co-card');
-    if (hit) {
-      const tab = document.querySelector('[data-tab=clauses]');
-      const reserve = (tab ? tab.getBoundingClientRect().bottom : 160) + 10;
-      const y = hit.getBoundingClientRect().top + window.pageYOffset - reserve;
-      window.scrollTo(0, Math.max(0, y));
-    }
-  }
 
   // 이벤트 바인딩
   container.querySelectorAll('.btn-toggle-co').forEach(btn => {
@@ -10331,9 +10322,7 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
   const simpRiders = (simpObj && simpObj.riders) ? simpObj.riders : stdRiders;
 
   const hit = periodSearchHit(co, p.id, matchContext);
-  const yearOnlyHit = !matchContext.companyLocked && !!(matchContext.searchedYear && p._isYearMatch);
-  const tag = hit ? hit.tag : (yearOnlyHit ? '검색한 시기' : '');
-  const isDrawerOpen = hit ? true : (yearOnlyHit ? true : false);
+  const tag = hit && hit.tag ? hit.tag : '';
 
   // 유병자/간편 자동 활성화 (#29041 #29042)
   const preferSimp = hasSimp && (matchContext.isSimplified || false);
@@ -10348,13 +10337,11 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
           ${tag ? `<span class="search-hit-label">${esc(tag)}</span>` : ''}
         </span>
       </div>
-      <span class="fold-toggle period-arrow-badge${isDrawerOpen ? ' on' : ''}">
-        ${isDrawerOpen ? '접기 ▴' : '펼치기 ▾'}
-      </span>
+      <span class="fold-toggle period-arrow-badge">펼치기 ▾</span>
     </div>
 
     <!-- 가입시기 세부 서랍 -->
-    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:${isDrawerOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+    <div id="period-drawer-${co.id}-${p.id}" class="period-drawer-content" style="display:none;padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
       
       ${revisionKeyBoxHTML(p.cardLine, p.revisionBullets)}
 
@@ -10426,7 +10413,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     const defaultN = wanted
       ? (nOptions.includes(wanted) ? wanted : (nOptions.find(o => ndaiNumOf(o) === ndaiNumOf(wanted)) || nOptions[0]))
       : ((matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai)) ? matchContext.searchedNdai : nOptions[0]);
-    const ndaiShown = !!(ndaiHit && ndaiHit.openNdai && !ndaiUnknown);
+    const ndaiNote = ndaiHit && ndaiHit.ndaiTag ? ndaiHit.ndaiTag : '';
     const saleOf = {};
     (riders.ndai.segments || []).forEach(s => { if (s && s.id) saleOf[s.id] = s.sale || ''; });
     const ndaiPill = riders.ndai.pill || (ndaiUnknown ? 'N대' : nOptions.map(o => String(o).replace(/대$/, '')).join('·') + '대');
@@ -10435,18 +10422,19 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     <div class="cov-block rider-card-ndai" data-current-ndai="${esc(defaultN)}">
       <button type="button" class="qvb-row btn-cov-toggle">
         <span class="qvb-left-label">N대 질병수술비</span>
-        <span class="fold-toggle${ndaiShown ? ' on' : ''}">${ndaiShown ? '접기 ▴' : '펼치기 ▾'}</span>
+        <span class="fold-toggle">펼치기 ▾</span>
       </button>
-      <div class="cov-drawer" style="display:${ndaiShown ? 'flex' : 'none'};">
+      <div class="cov-drawer" style="display:none;">
       ${riders.ndai.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.ndai.summary)}</div>` : ''}
       ${!ndaiUnknown && nOptions.length > 1 ? `
       <div class="ndai-seg-row">
         ${nOptions.map(opt => `
           <button type="button" class="btn-ndai-tab-select btn-ndai-seg ${opt === defaultN ? 'active on' : ''}" data-ndai-opt="${esc(opt)}">
             <span>${esc(opt)} 특약</span>
+            ${ndaiNote && opt === defaultN ? `<span class="search-tab-note">${esc(ndaiNote)}</span>` : ''}
           </button>
         `).join('')}
-      </div>` : ''}
+      </div>` : (ndaiNote ? `<span class="search-hit-label">${esc(ndaiNote)}</span>` : '')}
       <div class="cov-actions">
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" data-ndai="${esc(defaultN)}">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" data-ndai="${esc(defaultN)}">분류표</button>
