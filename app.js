@@ -325,6 +325,15 @@ window.DYNAMIC_NDAI_TABLES = {
 };
 
 window.openNdaiGroupModal = function(co, grpName, period, data) {
+  if (typeof window.lookupClauseGroup === 'function' && window.CLAUSE_BOOK && window.CLAUSE_BOOK[co.id]) {
+    const hit = window.lookupClauseGroup(co, period, data, grpName);
+    if (hit && hit.pages && hit.pages.length) {
+      window.openRulesModal(hit.pages[0], `🏢 [${co.name}] ${grpName}`, period ? period.revSummary : '', hit.pages, { product: co.name, type: grpName, page: hit.caption || '' });
+    } else if (typeof showToast === 'function') {
+      showToast('이 질병군만의 약관 쪽이 연결되어 있지 않습니다.');
+    }
+    return;
+  }
   const coKey = (co && co.id) ? (co.id.replace('fire', '').replace('life', '')) : '';
   const coEntry = window.VERIFIED_CLAUSE_SCANS && (window.VERIFIED_CLAUSE_SCANS[co.id] || window.VERIFIED_CLAUSE_SCANS[coKey]);
   const isSimp = (data && data.pData && data.pData.name && data.pData.name.includes('간편')) || (data && data.ptype === 'simplified');
@@ -9775,6 +9784,11 @@ function bindClauseChipEvents(box) {
 
 function getScanPagesForContext(co, period, data, rider, targetRider, scanType, selectedNdai) {
   if (!co || !period || !rider) return null;
+  if (typeof window.lookupClauseScan === 'function' && window.CLAUSE_BOOK && window.CLAUSE_BOOK[co.id]) {
+    const hit = window.lookupClauseScan(co, period, data, targetRider, scanType === 'table' ? 'table' : scanType, selectedNdai);
+    if (!hit || !hit.pages || !hit.pages.length) return null;
+    return hit;
+  }
   const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
   const cleanNdai = (selectedNdai || (rider && rider.title) || '').replace(/\d+대\/\d+대/, m => m.split('/')[0]);
 
@@ -10884,7 +10898,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
             return `
               <div style="padding:10px 14px;border-radius:10px;background:rgba(241,245,249,0.85);border:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-2);">
                 <span style="font-size:15px;">📋</span>
-                <span>해당 가입시기는 아래 <strong>조항 본문 및 면책 규정</strong> 전문으로 확인하실 수 있습니다.</span>
+                <span>이 특약의 공시실 원문 쪽은 아직 연결되어 있지 않습니다. 다른 상품 약관으로 대신 열지 않습니다.</span>
               </div>
             `;
           }
@@ -10954,6 +10968,15 @@ function bindPhotoButtons(box, rider, co, period) {
 
   if (btnPost) {
     btnPost.addEventListener('click', () => {
+      if (window.CLAUSE_BOOK && window.CLAUSE_BOOK[co.id] && typeof window.lookupClauseScan === 'function') {
+        const hit = window.lookupClauseScan(co, period, {}, 'tier', 'table', null);
+        if (hit && hit.pages && hit.pages.length) {
+          window.openRulesModal(hit.pages[0], `📋 [${co.name}] 1~5종 분류표 원문`, '', hit.pages, hit.meta);
+        } else if (typeof showToast === 'function') {
+          showToast('이 시기의 1~5종 분류표 원문 쪽이 연결되어 있지 않습니다.');
+        }
+        return;
+      }
       const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
       if (!isLatestPeriod) {
         const postObj = (rider.revPhotos || []).find(p => p.isPost) || (rider.revPhotos || [])[0];
@@ -10977,6 +11000,10 @@ function bindPhotoButtons(box, rider, co, period) {
   }
   if (btnPre) {
     btnPre.addEventListener('click', () => {
+      if (window.CLAUSE_BOOK && window.CLAUSE_BOOK[co.id]) {
+        if (typeof showToast === 'function') showToast('개정 전 별표 원문 쪽이 한 쌍으로 없어 열지 않습니다.');
+        return;
+      }
       const isLatestPeriod = co.periods && co.periods[0] && co.periods[0].id === period?.id;
       if (!isLatestPeriod) {
         const preObj = (rider.revPhotos || []).find(p => !p.isPost) || (rider.revPhotos || [])[1];
