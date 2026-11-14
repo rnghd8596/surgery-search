@@ -9182,8 +9182,7 @@ function scanPagesBtn(label, pages, title) {
 function scanCovBtn(label, pages, title, filled) {
   const list = (pages || []).filter(Boolean);
   if (!list.length) return '';
-  const point = /약관/.test(label) ? ' point' : '';
-  return `<button type="button" class="cov-btn${point}" data-act="pages" data-pages="${esc(list.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
+  return `<button type="button" class="cov-btn" data-act="pages" data-pages="${esc(list.join('|'))}" data-title="${esc(title || label)}">${esc(label)}</button>`;
 }
 
 function scanCovRow(key, label, pill, inner, sel) {
@@ -9260,7 +9259,7 @@ function paintScanDrawer(drawer) {
     const on = curD && o.id === curD.id;
     return `<button type="button" class="btn-ndai-seg${on ? ' on' : ''}" data-act="disease" data-name="${esc(o.id)}"><span>${esc(o.label)}</span></button>`;
   }).join('')}</div>` : '';
-  const dActs = curD ? `<div class="cov-actions"><button type="button" class="cov-btn point" data-act="clause-tabs" data-name="${esc(curD.id)}">약관보기</button><button type="button" class="cov-btn" data-act="excl-cards" data-name="${esc(curD.id)}">제외 질병코드</button></div>` : `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`;
+  const dActs = curD ? `<div class="cov-actions"><button type="button" class="cov-btn" data-act="clause-tabs" data-name="${esc(curD.id)}">약관보기</button><button type="button" class="cov-btn" data-act="excl-cards" data-name="${esc(curD.id)}">제외 질병코드</button></div>` : `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`;
   const rows = [
     scanCovRow('disease', '질병수술비', '', dSegs + dActs, sel)
   ];
@@ -10110,7 +10109,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       <div class="cov-drawer" style="display:none;">
       ${riders.basic.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.basic.summary)}</div>` : ''}
       <div class="cov-actions">
-        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion">제외 질병코드</button>
       </div>
       </div>
@@ -10129,7 +10128,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       <div class="cov-drawer" style="display:none;">
       ${riders.tier.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.tier.summary)}</div>` : ''}
       <div class="cov-actions">
-        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="clause">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="tier" data-view-mode="table">분류표</button>
       </div>
       </div>
@@ -10170,7 +10169,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
         `).join('')}
       </div>` : ''}
       <div class="cov-actions">
-        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" data-ndai="${esc(defaultN)}">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="clause" data-ndai="${esc(defaultN)}">약관보기</button>
         <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="ndai" data-view-mode="table" data-ndai="${esc(defaultN)}">분류표</button>
       </div>
       </div>
@@ -10186,7 +10185,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       </button>
       <div class="cov-drawer" style="display:none;">
         ${riders.injury.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.injury.summary)}</div>` : ''}
-        <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="width:100%;">약관보기</button>
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="injury" data-view-mode="basic_clause" style="width:100%;">약관보기</button>
       </div>
     </div>`;
   } else if (cid !== 'meritz') {
@@ -10810,9 +10809,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                <button type="button" class="btn-group-clause-scan btn-co-clause" data-grp="${esc(grpName)}" style="height:32px;min-height:32px;width:88px;min-width:88px;max-width:88px;border-radius:7px;border:1.5px solid rgba(5,150,105,0.4);background:rgba(5,150,105,0.08);color:#059669;font-size:11.5px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;box-sizing:border-box;padding:0;">
-                  <span>📑 약관보기 🔍</span>
-                </button>
+                <button type="button" class="btn-group-clause-scan cov-btn" data-grp="${esc(grpName)}">약관보기</button>
                 <button type="button" class="fold-toggle ndai-arrow-badge${isAutoOpen ? ' on' : ''}">
                   ${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}
                 </button>

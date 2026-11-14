@@ -932,11 +932,11 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
 .cov-drawer { padding: 10px 12px 12px; border-top: 1px solid var(--line); }
 .cov-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 0; }
 .cov-btn, .cov-btn.filled {
-  height: 40px; border-radius: 8px; border: 1.5px solid var(--border);
-  background: var(--surface); color: var(--text); font: inherit; font-weight: 850; font-size: 13px; cursor: pointer;
+  height: 40px; border-radius: 8px; border: 1.5px solid var(--brand);
+  background: var(--surface); color: var(--brand); font: inherit; font-weight: 900; font-size: 13px; cursor: pointer;
 }
 .cov-btn.point {
-  background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 900;
+  background: #d97706; color: #fff; border-color: #d97706;
 }
 .ndai-seg-row { display: flex; gap: 6px; margin-bottom: 10px; }
 .btn-ndai-seg {
@@ -950,7 +950,7 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
 .excl-card p { margin: 0; font-size: 12.5px; line-height: 1.45; font-weight: 700; color: var(--text-2); }
 .modal-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 .modal-tab { height: 40px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); font: inherit; font-weight: 850; font-size: 13px; cursor: pointer; }
-.modal-tab.on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.modal-tab.on { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 900; }
 .key-check {
   background: rgba(27,58,75,0.06);
   border: 1.5px solid var(--brand);
