@@ -115,7 +115,7 @@
       standard: face({
         disease: { line: '질병수술비(백내장 및 대장용종 제외).', define: pg('C', [284, 285]), exclude: pg('C', [283]) },
         tier: {
-          line: '영문 Mammotomy 문장이 빠짐.',
+          line: '1~5종 분류표가 1~7종 분류표로 바뀜.',
           pay: '', excl: '',
           clause: [],
           table: [],
@@ -128,7 +128,7 @@
       }),
       simplified: face({
         disease: { line: '갱신형 질병수술비(335간편가입).', define: pg('S', [175, 176]), exclude: pg('S', [174]) },
-        tier: { line: '맘모톰 문장 없음.', pay: '', excl: '', clause: [], table: [], items: [] },
+        tier: { line: '1~5종 분류표가 1~7종 분류표로 바뀜.', pay: '', excl: '', clause: [], table: [], items: [] },
         bundles: [{ name: '32대', parts: [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_g32.png')] }] }]
       })
     },
