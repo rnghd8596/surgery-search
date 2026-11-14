@@ -9091,13 +9091,27 @@ function scrollOpenedCard(el) {
 }
 
 function primeScanSearch(matchContext) {
-  if (!matchContext || !matchContext.periodPlan) return;
   if (!state.scanUi) state.scanUi = {};
-  Object.keys(matchContext.periodPlan).forEach(cid => {
-    const plan = matchContext.periodPlan[cid] || {};
+  const plan = (matchContext && matchContext.periodPlan) || {};
+  Object.keys(state.scanUi).forEach(cid => {
+    const bucket = state.scanUi[cid] || {};
+    Object.keys(bucket).forEach(pid => {
+      const sel = bucket[pid];
+      if (!sel) return;
+      sel.ndaiMatch = '';
+      sel.ndaiTag = '';
+      const hit = plan[cid] && plan[cid][pid];
+      if (!hit || !hit.ndai) return;
+      if (!sel.open) sel.open = {};
+      sel.ndai = hit.ndai;
+      sel.ndaiMatch = hit.ndai;
+      sel.ndaiTag = hit.ndaiTag || '';
+    });
+  });
+  Object.keys(plan).forEach(cid => {
     if (!state.scanUi[cid]) state.scanUi[cid] = {};
-    Object.keys(plan).forEach(pid => {
-      const hit = plan[pid];
+    Object.keys(plan[cid] || {}).forEach(pid => {
+      const hit = plan[cid][pid];
       if (!hit || !hit.ndai) return;
       if (!state.scanUi[cid][pid]) state.scanUi[cid][pid] = { ptype: 'standard', open: {}, ndai: '', groups: false, group: '' };
       const sel = state.scanUi[cid][pid];
