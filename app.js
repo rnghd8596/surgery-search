@@ -8965,9 +8965,127 @@ function extractSearchedYear(rawQ) {
     if (y < 100) y = y <= 35 ? 2000 + y : 1900 + y;
     return y;
   }
-  const m2 = rawQ.match(/\b(19\d{2}|20\d{2})\b/);
+  const m2 = rawQ.match(/(?:^|[^\d])(19\d{2}|20\d{2})(?!\d)/);
   if (m2) return parseInt(m2[1], 10);
   return null;
+}
+
+function extractSearchedNdaiNum(rawQ) {
+  const m = String(rawQ || '').match(/(\d{2,3})대/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function companyAliasKeys(co) {
+  const keys = [co && co.name, co && co.shortName].concat((co && co.aliases) || []);
+  const out = [];
+  keys.forEach(a => {
+    const n = norm(a).replace(/\s+/g, '');
+    if (n.length >= 2 && out.indexOf(n) < 0) out.push(n);
+  });
+  return out.sort((a, b) => b.length - a.length);
+}
+
+function findCompaniesInQuery(rawQ, companies) {
+  const q = norm(rawQ).replace(/\s+/g, '');
+  if (!q) return [];
+  return (companies || []).filter(co => companyAliasKeys(co).some(a => q.includes(a)));
+}
+
+function displayedPeriods(co) {
+  const board = window.SCAN_BOARDS && window.SCAN_BOARDS[co.id];
+  if (board && board.periods && board.periods.length) {
+    return board.periods.map(p => ({ id: p.id, label: p.label || '' }));
+  }
+  return (co.periods || []).map(p => ({ id: p.id, label: p.periodStr || '' }));
+}
+
+function periodNdaiLabels(co, pid) {
+  const face = window.MERITZ_FACE && window.MERITZ_FACE[pid] && window.MERITZ_FACE[pid].standard;
+  if (face && Array.isArray(face.bundles) && face.bundles.length) {
+    return face.bundles.map(b => b.name).filter(Boolean);
+  }
+  const opts = (typeof window.ndaiOptionsForCompany === 'function') ? window.ndaiOptionsForCompany(co.id, pid, '') : [];
+  return (opts || []).filter(o => o && o !== '미확인');
+}
+
+function ndaiNumOf(label) {
+  const m = String(label || '').match(/(\d{2,3})/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function buildPeriodPlan(co, year, ndaiNum) {
+  const periods = displayedPeriods(co).map(p => {
+    const range = parsePeriodYearRange(p.label);
+    return {
+      id: p.id,
+      labels: periodNdaiLabels(co, p.id),
+      yearHit: year != null && year >= range[0] && year <= range[1]
+    };
+  });
+  const plan = {};
+  if (year == null && ndaiNum == null) return plan;
+  const exactLabel = (labels) => labels.find(l => ndaiNumOf(l) === ndaiNum) || null;
+  if (ndaiNum == null) {
+    periods.forEach(p => {
+      if (p.yearHit) plan[p.id] = { tag: '검색한 시기', ndai: null, openNdai: false };
+    });
+    return plan;
+  }
+  const pool = year != null ? periods.filter(p => p.yearHit) : periods;
+  const exactPeriods = pool.filter(p => exactLabel(p.labels));
+  if (exactPeriods.length) {
+    exactPeriods.forEach(p => {
+      plan[p.id] = { tag: year != null ? '검색한 시기' : '검색한 특약', ndai: exactLabel(p.labels), openNdai: true };
+    });
+    return plan;
+  }
+  const searchPool = pool.length ? pool : periods;
+  let bestD = Infinity;
+  searchPool.forEach(p => {
+    p.labels.forEach(l => {
+      const n = ndaiNumOf(l);
+      if (n == null) return;
+      bestD = Math.min(bestD, Math.abs(n - ndaiNum));
+    });
+  });
+  if (bestD === Infinity) {
+    periods.forEach(p => {
+      if (p.yearHit) plan[p.id] = { tag: '검색한 시기', ndai: null, openNdai: false };
+    });
+    return plan;
+  }
+  searchPool.forEach(p => {
+    const label = p.labels.find(l => {
+      const n = ndaiNumOf(l);
+      return n != null && Math.abs(n - ndaiNum) === bestD;
+    });
+    if (label) plan[p.id] = { tag: '비슷한 항목', ndai: label, openNdai: true };
+  });
+  return plan;
+}
+
+function periodSearchHit(co, pid, matchContext) {
+  const plan = matchContext && matchContext.periodPlan && matchContext.periodPlan[co.id];
+  if (plan && plan[pid]) return plan[pid];
+  return null;
+}
+
+function primeScanSearch(matchContext) {
+  if (!matchContext || !matchContext.periodPlan) return;
+  if (!state.scanUi) state.scanUi = {};
+  Object.keys(matchContext.periodPlan).forEach(cid => {
+    const plan = matchContext.periodPlan[cid] || {};
+    if (!state.scanUi[cid]) state.scanUi[cid] = {};
+    Object.keys(plan).forEach(pid => {
+      const hit = plan[pid];
+      if (!hit || !hit.ndai) return;
+      if (!state.scanUi[cid][pid]) state.scanUi[cid][pid] = { ptype: 'standard', open: {}, ndai: '', groups: false, group: '' };
+      const sel = state.scanUi[cid][pid];
+      if (!sel.open) sel.open = {};
+      sel.ndai = hit.ndai;
+      if (hit.openNdai) sel.open.ndai = true;
+    });
+  });
 }
 
 function periodStartKey(str) {
@@ -9029,22 +9147,26 @@ function revisionKeyBoxHTML(cardLine, lines) {
   return `<div class="rev-key-box" style="--rev-chip:${revChipPx(rows)}px"><div class="rev-key-title">주요 개정내용</div>${body}</div>`;
 }
 
-function renderScanCompanyHTML(co) {
+function renderScanCompanyHTML(co, matchContext) {
   const board = window.SCAN_BOARDS && window.SCAN_BOARDS[co.id];
   if (!board || !board.periods || !board.periods.length) return '';
   const periods = periodsNewestFirst(board.periods);
-  const searchedYear = extractSearchedYear((document.getElementById('clauseCompanySearchInput') || {}).value || '');
+  const locked = !!(matchContext && matchContext.companyLocked);
+  const searchedYear = locked ? null : extractSearchedYear((document.getElementById('clauseCompanySearchInput') || {}).value || '');
   return `
     <div class="scan-board" data-cid="${esc(co.id)}">
       ${periods.map(p => {
         const clauseP = (co.periods || []).find(x => x.id === p.id);
         const [sy, ey] = parsePeriodYearRange(p.label || '');
-        const open = searchedYear ? (searchedYear >= sy && searchedYear <= ey) : !!(clauseP && clauseP._isYearMatch);
+        const hit = periodSearchHit(co, p.id, matchContext);
+        const open = hit ? true : (searchedYear ? (searchedYear >= sy && searchedYear <= ey) : !!(clauseP && clauseP._isYearMatch));
+        const tag = hit ? hit.tag : (open && searchedYear ? '검색한 시기' : '');
         return `
-        <div class="period-accordion-box" style="background:var(--surface);border:${open ? '2px solid #2563eb' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;">
+        <div class="period-accordion-box${tag ? ' search-hit' : ''}" style="background:var(--surface);border:${tag ? '2px solid var(--gold)' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;">
           <div class="btn-toggle-period" data-co-id="${esc(co.id)}" data-pid="${esc(p.id)}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
             <span style="min-width:0;flex:1;text-align:left;">
               <span style="display:block;font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">${esc(p.label)}</span>
+              ${tag ? `<span class="search-hit-label">${esc(tag)}</span>` : ''}
             </span>
             <span class="fold-toggle period-arrow-badge${open ? ' on' : ''}">${open ? '접기 ▴' : '펼치기 ▾'}</span>
           </div>
@@ -9526,11 +9648,15 @@ function renderClausesCompanyList(searchQuery) {
   if (normQ) {
     isUnifiedSearch = true;
 
-    // 가입년도 추출
+    // 가입년도·N대·회사 별칭. '23년멜츠', '120대멜츠', '2023 메리츠'처럼 붙여 써도 같이 읽는다.
     const detectedYear = extractSearchedYear(rawQ);
     if (detectedYear) {
       matchContext.searchedYear = detectedYear;
     }
+    const detectedNdaiNum = extractSearchedNdaiNum(rawQ);
+    if (detectedNdaiNum) matchContext.ndaiNum = detectedNdaiNum;
+    const companyHits = findCompaniesInQuery(rawQ, allCompanies);
+    if (companyHits.length) matchContext.companyLocked = true;
 
     // N대 10단위 및 특정 N대 추출 (예: '60대', '112대', '116대', '119대', '120대' 등 #29473 #29516 #31162 #31176 #31183)
     let tensTarget = null;
@@ -9594,6 +9720,7 @@ function renderClausesCompanyList(searchQuery) {
 
     // 회사별 전수 매칭
     list = allCompanies.filter(co => {
+      if (companyHits.length) return companyHits.some(h => h.id === co.id);
       let isCoMatched = false;
       let isYearMatchedForCo = false;
 
@@ -9862,9 +9989,15 @@ function renderClausesCompanyList(searchQuery) {
     `;
   }
 
+  if (matchContext.companyLocked && (matchContext.searchedYear != null || matchContext.ndaiNum != null)) {
+    matchContext.periodPlan = {};
+    list.forEach(co => {
+      matchContext.periodPlan[co.id] = buildPeriodPlan(co, matchContext.searchedYear, matchContext.ndaiNum);
+    });
+  }
+
   html += list.map(co => {
-    // 검색 시에도 기본 펼치지 않고 숨기기(접힘) 상태 유지 (#29458)
-    const isAutoOpen = false;
+    const isAutoOpen = !!matchContext.companyLocked;
 
     // 극강의 심플 헤더: TMI 뱃지, 약칭 태그, 손보/생보 라벨, 작은 회색글씨 전면 삭제 (#29547 #29557 #29562 #29574)
     return `
@@ -9879,19 +10012,29 @@ function renderClausesCompanyList(searchQuery) {
             ${esc(co.name)}
           </div>
         </div>
-        <span class="fold-toggle btn-co-toggle-arrow">펼치기 ▾</span>
+        <span class="fold-toggle btn-co-toggle-arrow${isAutoOpen ? ' on' : ''}">${isAutoOpen ? '접기 ▴' : '펼치기 ▾'}</span>
       </div>
 
-      <!-- 시기별 아코디언 서랍 (검색 시에도 접힘 상태로 유지 #29458) -->
+      <!-- 시기별 아코디언 서랍 -->
       <div id="co-periods-${co.id}" class="co-periods-drawer" style="display:${isAutoOpen ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px solid var(--border);background:var(--surface-2);flex-direction:column;gap:12px;">
-        ${(window.SCAN_BOARDS && window.SCAN_BOARDS[co.id]) ? renderScanCompanyHTML(co) : periodsNewestFirst(co.periods).map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
+        ${(window.SCAN_BOARDS && window.SCAN_BOARDS[co.id]) ? renderScanCompanyHTML(co, matchContext) : periodsNewestFirst(co.periods).map(p => renderPeriodBoxHTML(co, p, matchContext)).join('')}
       </div>
     </div>
     `;
   }).join('');
 
   container.innerHTML = html;
+  primeScanSearch(matchContext);
   bindScanBoards(container);
+  if (matchContext.companyLocked) {
+    const hit = container.querySelector('.period-accordion-box.search-hit') || container.querySelector('.clause-co-card');
+    if (hit) {
+      const tab = document.querySelector('[data-tab=clauses]');
+      const reserve = (tab ? tab.getBoundingClientRect().bottom : 160) + 10;
+      const y = hit.getBoundingClientRect().top + window.pageYOffset - reserve;
+      window.scrollTo(0, Math.max(0, y));
+    }
+  }
 
   // 이벤트 바인딩
   container.querySelectorAll('.btn-toggle-co').forEach(btn => {
@@ -10187,22 +10330,23 @@ function renderPeriodBoxHTML(co, p, matchContext = {}) {
   const hasSimp = !!(simpObj && simpObj.riders) || !!stdRiders;
   const simpRiders = (simpObj && simpObj.riders) ? simpObj.riders : stdRiders;
 
-  // 가입년도 매칭 판정 (#29067 #29068)
-  const isYearMatched = !!(matchContext.searchedYear && p._isYearMatch);
-  const isDrawerOpen = matchContext.searchedYear ? isYearMatched : (matchContext.autoOpen || false);
+  const hit = periodSearchHit(co, p.id, matchContext);
+  const yearOnlyHit = !matchContext.companyLocked && !!(matchContext.searchedYear && p._isYearMatch);
+  const tag = hit ? hit.tag : (yearOnlyHit ? '검색한 시기' : '');
+  const isDrawerOpen = hit ? true : (yearOnlyHit ? true : false);
 
   // 유병자/간편 자동 활성화 (#29041 #29042)
   const preferSimp = hasSimp && (matchContext.isSimplified || false);
 
   return `
-  <div class="period-accordion-box" style="background:var(--surface);border:${isYearMatched ? '2px solid #2563eb' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;box-shadow:${isYearMatched ? '0 4px 14px rgba(37,99,235,0.18)' : '0 1px 3px rgba(0,0,0,0.02)'};">
+  <div class="period-accordion-box${tag ? ' search-hit' : ''}" style="background:var(--surface);border:${tag ? '2px solid var(--gold)' : '1.5px solid var(--border)'};border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.02);">
     <!-- 가입시기 헤더 버튼 -->
     <div class="btn-toggle-period" data-co-id="${co.id}" data-pid="${p.id}" style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:var(--surface);user-select:none;gap:8px;">
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;flex:1;">
         <span style="min-width:0;flex:1;text-align:left;">
           <span style="display:block;font-size:14px;font-weight:900;color:var(--text);letter-spacing:-.01em;">${esc(cleanPeriodStr(p.periodStr))}</span>
+          ${tag ? `<span class="search-hit-label">${esc(tag)}</span>` : ''}
         </span>
-        ${isYearMatched ? `<span style="font-size:11px;font-weight:900;color:#fff;background:#2563eb;padding:2px 7px;border-radius:5px;">${matchContext.searchedYear}년 계약</span>` : ''}
       </div>
       <span class="fold-toggle period-arrow-badge${isDrawerOpen ? ' on' : ''}">
         ${isDrawerOpen ? '접기 ▴' : '펼치기 ▾'}
@@ -10277,9 +10421,12 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     const ndaiUnknown = nOptions.length === 0;
     if (ndaiUnknown) nOptions = ['미확인'];
 
-    const defaultN = (matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai))
-      ? matchContext.searchedNdai
-      : nOptions[0];
+    const ndaiHit = matchContext.periodPlan && matchContext.periodPlan[cid] && matchContext.periodPlan[cid][pid];
+    const wanted = ndaiHit && ndaiHit.ndai;
+    const defaultN = wanted
+      ? (nOptions.includes(wanted) ? wanted : (nOptions.find(o => ndaiNumOf(o) === ndaiNumOf(wanted)) || nOptions[0]))
+      : ((matchContext.searchedNdai && nOptions.includes(matchContext.searchedNdai)) ? matchContext.searchedNdai : nOptions[0]);
+    const ndaiShown = !!(ndaiHit && ndaiHit.openNdai && !ndaiUnknown);
     const saleOf = {};
     (riders.ndai.segments || []).forEach(s => { if (s && s.id) saleOf[s.id] = s.sale || ''; });
     const ndaiPill = riders.ndai.pill || (ndaiUnknown ? 'N대' : nOptions.map(o => String(o).replace(/대$/, '')).join('·') + '대');
@@ -10288,9 +10435,9 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
     <div class="cov-block rider-card-ndai" data-current-ndai="${esc(defaultN)}">
       <button type="button" class="qvb-row btn-cov-toggle">
         <span class="qvb-left-label">N대 질병수술비</span>
-        <span class="fold-toggle">펼치기 ▾</span>
+        <span class="fold-toggle${ndaiShown ? ' on' : ''}">${ndaiShown ? '접기 ▴' : '펼치기 ▾'}</span>
       </button>
-      <div class="cov-drawer" style="display:none;">
+      <div class="cov-drawer" style="display:${ndaiShown ? 'flex' : 'none'};">
       ${riders.ndai.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.ndai.summary)}</div>` : ''}
       ${!ndaiUnknown && nOptions.length > 1 ? `
       <div class="ndai-seg-row">
