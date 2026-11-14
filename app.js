@@ -8995,9 +8995,9 @@ function periodsNewestFirst(periods) {
 
 function revisionKeyBoxHTML(cardLine, lines) {
   if (cardLine === '최초 기준') return '';
-  const items = (lines || []).filter(Boolean);
-  if (!items.length) return '';
-  return `<div class="rev-key-box"><div class="rev-key-title">주요 개정내용</div><ul>${items.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>`;
+  const rows = (lines || []).filter(r => r && typeof r === 'object' && r.name && r.before && r.after);
+  if (!rows.length) return '';
+  return `<div class="rev-key-box"><div class="rev-key-title">주요 개정내용</div><div class="rev-grid">${rows.map(r => `<div class="rev-row"><span class="rev-name">${esc(r.name)}</span><span class="rev-pills"><span class="rev-pill">${esc(r.before)}</span><span class="rev-arrow">→</span><span class="rev-pill after">${esc(r.after)}</span></span></div>`).join('')}</div></div>`;
 }
 
 function renderScanCompanyHTML(co) {
