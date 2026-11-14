@@ -9211,7 +9211,7 @@ function scanCovRow(key, label, pill, inner, sel) {
       <span class="qvb-left-label">${esc(label)}</span>
       <span class="fold-toggle${on ? ' on' : ''}">${on ? '접기 ▴' : '펼치기 ▾'}</span>
     </button>
-    <div class="cov-drawer" style="display:${on ? 'block' : 'none'};">${on ? inner : ''}</div>
+    <div class="cov-drawer" style="display:${on ? 'flex' : 'none'};">${on ? inner : ''}</div>
   </div>`;
 }
 
@@ -9962,7 +9962,7 @@ function renderClausesCompanyList(searchQuery) {
           }
         });
       }
-      drawer.style.display = opening ? 'block' : 'none';
+      drawer.style.display = opening ? 'flex' : 'none';
       const badge = btn.querySelector('.fold-toggle');
       if (badge) {
         badge.textContent = opening ? '접기 ▴' : '펼치기 ▾';
@@ -10845,7 +10845,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </div>
       </div>
 
-      <div class="ndai-group-list" style="display:flex;flex-direction:column;gap:8px;">
+      <div class="ndai-group-list">
         ${rows.map((r, gi) => {
           const grpName = r[0];
           const summaryNames = r[1];
