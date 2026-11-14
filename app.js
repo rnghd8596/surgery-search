@@ -9121,20 +9121,53 @@ function openMeritzClauseModal(pack, mode) {
     if (!list.length) return '';
     return `<button type="button" class="cov-btn point" id="meritzImgBtn" data-pages="${esc(list.join('|'))}" data-title="${esc(title)}" style="width:100%;margin:0 0 12px;">약관 원문보기</button>`;
   };
+  function codeLinesHTML(rows) {
+    return (rows || []).map((r, i) => {
+      const codes = r.codes || [];
+      const chips = codes.map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('');
+      if (codes.length > 4) {
+        return `<div class="code-line"><button type="button" class="code-line-btn" data-code-fold="${i}"><span class="name">${esc(r.name)}</span><span class="fold-toggle">펼치기 ▾</span></button><div class="code-chips" data-code-body="${i}" style="display:none;width:100%;justify-content:flex-start;margin-top:6px;">${chips}</div></div>`;
+      }
+      return `<div class="code-line"><span class="name">${esc(r.name)}</span><span class="code-chips">${chips}</span></div>`;
+    }).join('');
+  }
+  function bindImg() {
+    const img = box.querySelector('#meritzImgBtn');
+    if (img) img.addEventListener('click', () => openScanPages((img.getAttribute('data-pages') || '').split('|'), img.getAttribute('data-title'), ''));
+    box.querySelectorAll('[data-code-fold]').forEach(b => {
+      b.addEventListener('click', () => {
+        const id = b.getAttribute('data-code-fold');
+        const body = box.querySelector(`[data-code-body="${id}"]`);
+        const tog = b.querySelector('.fold-toggle');
+        if (!body) return;
+        const open = body.style.display === 'none';
+        body.style.display = open ? 'flex' : 'none';
+        if (tog) {
+          tog.textContent = open ? '접기 ▴' : '펼치기 ▾';
+          tog.classList.toggle('on', open);
+        }
+      });
+    });
+  }
   function paint(tab) {
     const excl = tab === 'excl';
     const cards = excl ? pack.excl : pack.pay;
     const pages = excl ? pack.exclPages : pack.payPages;
-    const tabs = mode === 'tabs' ? `<div class="modal-tabs">
+    const tabs = `<div class="modal-tabs">
       <button type="button" class="modal-tab ${tab === 'pay' ? 'on' : ''}" data-mtab="pay">보상하는 사항</button>
       <button type="button" class="modal-tab ${tab === 'excl' ? 'on' : ''}" data-mtab="excl">보장제외 사항</button>
-    </div>` : '';
+    </div>`;
     box.innerHTML = imgBtn(pages, (pack.label || '') + (excl ? ' 보장제외' : ' 보상')) + keyCheckHTML(pack.keyCheck) + tabs + meritzCardsHTML(cards);
     box.querySelectorAll('[data-mtab]').forEach(b => b.addEventListener('click', () => paint(b.getAttribute('data-mtab'))));
-    const img = box.querySelector('#meritzImgBtn');
-    if (img) img.addEventListener('click', () => openScanPages((img.getAttribute('data-pages') || '').split('|'), img.getAttribute('data-title'), ''));
+    bindImg();
   }
-  paint(mode === 'excl' ? 'excl' : 'pay');
+  if (mode === 'codes') {
+    if (titleEl) titleEl.textContent = '제외 질병코드';
+    box.innerHTML = imgBtn(pack.exclPages, (pack.label || '') + ' 제외 질병코드') + codeLinesHTML(pack.codeList || []);
+    bindImg();
+  } else {
+    paint('pay');
+  }
   modal.classList.add('show');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -9227,7 +9260,7 @@ function paintScanDrawer(drawer) {
     const on = curD && o.id === curD.id;
     return `<button type="button" class="btn-ndai-seg${on ? ' on' : ''}" data-act="disease" data-name="${esc(o.id)}"><span>${esc(o.label)}</span></button>`;
   }).join('')}</div>` : '';
-  const dActs = curD ? `<div class="cov-actions"><button type="button" class="cov-btn point" data-act="clause-tabs" data-name="${esc(curD.id)}">약관보기</button><button type="button" class="cov-btn" data-act="excl-cards" data-name="${esc(curD.id)}">보장제외 사항</button></div>` : `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`;
+  const dActs = curD ? `<div class="cov-actions"><button type="button" class="cov-btn point" data-act="clause-tabs" data-name="${esc(curD.id)}">약관보기</button><button type="button" class="cov-btn" data-act="excl-cards" data-name="${esc(curD.id)}">제외 질병코드</button></div>` : `<div class="cov-actions">${scanCovBtn('약관보기', diseasePages, '질병수술비', false)}</div>`;
   const rows = [
     scanCovRow('disease', '질병수술비', '', dSegs + dActs, sel)
   ];
@@ -9287,7 +9320,7 @@ function bindScanBoards(container) {
         const face = window.MERITZ_FACE && window.MERITZ_FACE[pid] && window.MERITZ_FACE[pid].standard;
         const opts = face && face.disease && face.disease.options;
         const pack = opts && opts.find(o => o.id === (btn.getAttribute('data-name') || sel.disease));
-        if (pack) openMeritzClauseModal(pack, act === 'excl-cards' ? 'excl' : 'tabs');
+        if (pack) openMeritzClauseModal(pack, act === 'excl-cards' ? 'codes' : 'tabs');
       } else if (act === 'groups') {
         sel.groups = !sel.groups;
         sel.group = '';
@@ -10078,7 +10111,7 @@ function renderRiderCardsHTML(cid, pid, ptype, riders, matchContext = {}) {
       ${riders.basic.summary ? `<div style="font-size:12px;color:var(--text-2);line-height:1.4;font-weight:700;margin:6px 2px;">${esc(riders.basic.summary)}</div>` : ''}
       <div class="cov-actions">
         <button type="button" class="btn-open-clause-modal cov-btn point" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_clause">약관보기</button>
-        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion">보장제외 사항</button>
+        <button type="button" class="btn-open-clause-modal cov-btn" data-cid="${cid}" data-pid="${pid}" data-ptype="${ptype}" data-target-rider="basic" data-view-mode="basic_exclusion">제외 질병코드</button>
       </div>
       </div>
     </div>`;
@@ -10185,6 +10218,17 @@ function openClauseModalFromIds(cid, pid, ptype, targetRider, viewMode, selected
   const pData = (period.types && period.types[ptype]) || (ptype === 'simplified' ? simpObj : null);
   if (!pData) return;
   const rider = (pData.riders && pData.riders[targetRider]) ? pData.riders[targetRider] : (period.types?.standard?.riders?.[targetRider] || { title: '질병수술비' });
+
+  if (viewMode === 'basic_exclusion' && targetRider === 'basic') {
+    const scan = getScanPagesForContext(co, period, pData, rider, 'basic', 'exclusion', null);
+    openMeritzClauseModal({
+      label: rider.title || '질병수술비',
+      exclPages: (scan && scan.pages) || [],
+      codeList: rider.exclusionCodes || [],
+      keyCheck: null
+    }, 'codes');
+    return;
+  }
 
   const modal = $('#clauseModal');
   const modalBadge = $('#clauseModalBadge');

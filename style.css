@@ -957,6 +957,17 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
 .key-check-title { font-size: 13px; font-weight: 900; color: var(--brand); margin-bottom: 4px; }
 .key-check > p { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; line-height: 1.4; color: var(--text); }
 .key-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 3px 0; font-size: 12.5px; font-weight: 800; }
+.code-line {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  min-height: 40px; padding: 6px 10px; margin: 0 0 6px;
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 11px; text-align: left;
+}
+.code-line .name { font-size: 13px; font-weight: 800; color: var(--text); }
+.code-chips { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+.code-line-btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  border: none; background: transparent; padding: 0; cursor: pointer; font: inherit;
+}
 .btn-ndai-seg .seg-sale { font-size: 10px; font-weight: 700; line-height: 1.2; }
 .btn-ndai-seg.on .seg-sale { color: rgba(255,255,255,.92); }
 .cov-group-row { height: auto; min-height: 44px; max-height: none; padding: 8px 10px; }
