@@ -8802,23 +8802,71 @@ function bindClausesTab() {
     });
   }
 
+  let clauseComposing = false;
+  let commitAfterComposition = false;
+  let clauseSubmitLock = 0;
+  function syncClauseQueryLive() {
+    const val = qInput ? qInput.value.trim() : '';
+    state.clauseQ = val;
+    if (clearBtn) clearBtn.hidden = !val;
+    renderClausesCompanyList(val);
+  }
+  function submitClauseSearch() {
+    if (!qInput) return;
+    if (clauseComposing) {
+      commitAfterComposition = true;
+      return;
+    }
+    const now = Date.now();
+    if (now - clauseSubmitLock < 300) return;
+    clauseSubmitLock = now;
+    const val = qInput.value.trim();
+    state.clauseQ = val;
+    if (clearBtn) clearBtn.hidden = !val;
+    qInput.blur();
+    setTimeout(() => renderClausesCompanyList(val, { commit: true }), 60);
+  }
+  window.submitClauseSearch = submitClauseSearch;
+
   // 원터치 예시 칩 터치 시 검색 실행 (#30326)
   $$('.btn-clause-example-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const ex = chip.getAttribute('data-example');
-      if (qInput && ex) {
-        qInput.value = ex;
-        qInput.dispatchEvent(new Event('input'));
-      }
+      if (!qInput || !ex) return;
+      clauseComposing = false;
+      commitAfterComposition = false;
+      qInput.value = ex;
+      submitClauseSearch();
     });
   });
 
+  const clauseForm = document.getElementById('clauseSearchForm');
+  if (clauseForm) {
+    clauseForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitClauseSearch();
+    });
+  }
+
   if (qInput) {
+    qInput.addEventListener('compositionstart', () => { clauseComposing = true; });
+    qInput.addEventListener('compositionend', () => {
+      clauseComposing = false;
+      syncClauseQueryLive();
+      if (commitAfterComposition) {
+        commitAfterComposition = false;
+        submitClauseSearch();
+      }
+    });
     qInput.addEventListener('input', () => {
-      const val = qInput.value.trim();
-      state.clauseQ = val;
-      if (clearBtn) clearBtn.hidden = !val;
-      renderClausesCompanyList(val);
+      syncClauseQueryLive();
+    });
+    qInput.addEventListener('keydown', (e) => {
+      if (e.isComposing || e.keyCode === 229) return;
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitClauseSearch();
+      }
     });
   }
 
@@ -9682,7 +9730,9 @@ function bindScanBoards(container) {
   });
 }
 
-function renderClausesCompanyList(searchQuery) {
+function renderClausesCompanyList(searchQuery, opts) {
+  const commitSearch = !!(opts && opts.commit);
+  const scrollBefore = window.pageYOffset;
   if (typeof window.applyClauseAudit === 'function') window.applyClauseAudit();
   const container = $('#clausesCompanyList');
   if (!container) return;
@@ -10061,7 +10111,8 @@ function renderClausesCompanyList(searchQuery) {
         const qInput = $('#q-clause');
         if (qInput) {
           qInput.value = q;
-          qInput.dispatchEvent(new Event('input'));
+          if (typeof window.submitClauseSearch === 'function') window.submitClauseSearch();
+          else qInput.dispatchEvent(new Event('input'));
         }
       });
     });
@@ -10121,7 +10172,7 @@ function renderClausesCompanyList(searchQuery) {
   container.innerHTML = html;
   primeScanSearch(matchContext);
   bindScanBoards(container);
-  if (isUnifiedSearch && list.length === 1) {
+  if (commitSearch && isUnifiedSearch && list.length === 1) {
     const card = container.querySelector('.clause-co-card');
     const drawer = card && card.querySelector('.co-periods-drawer');
     const arrowBtn = card && card.querySelector('.btn-co-toggle-arrow');
@@ -10137,6 +10188,7 @@ function renderClausesCompanyList(searchQuery) {
     }
   } else if (container) {
     container.style.paddingBottom = '';
+    if (!commitSearch) window.scrollTo(0, scrollBefore);
   }
 
   // 이벤트 바인딩
