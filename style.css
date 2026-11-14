@@ -990,7 +990,7 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
   display: flex; align-items: center; justify-content: center;
 }
 .btn-ndai-seg.on, .btn-ndai-seg.active { background: var(--brand); color: #fff; border-color: var(--brand); }
-.excl-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 11px; padding: 10px 12px; margin: 0 0 8px; text-align: left; }
+.excl-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 11px; padding: 10px 12px; margin: 0; text-align: left; }
 .excl-card b { display: block; font-size: 13.5px; margin-bottom: 4px; }
 .excl-card p { margin: 0; font-size: 12.5px; line-height: 1.45; font-weight: 700; color: var(--text-2); }
 .modal-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
