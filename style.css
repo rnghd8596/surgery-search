@@ -959,6 +959,15 @@ button.qvb-row { width: 100%; font: inherit; cursor: pointer; text-align: left; 
   margin: 0 0 12px;
   text-align: left;
 }
+.diff-box {
+  background: rgba(225, 29, 72, 0.08);
+  border: 1.5px solid #e11d48;
+  border-radius: 11px;
+  padding: 8px;
+  margin: 0 0 12px;
+}
+.diff-box .code-line { background: #fff; border-color: rgba(225, 29, 72, 0.35); margin-bottom: 4px; }
+.diff-box .code-line:last-child { margin-bottom: 0; }
 .key-check-title { font-size: 13px; font-weight: 900; color: var(--brand); margin-bottom: 4px; }
 .key-check > p { margin: 0 0 6px; font-size: 12.5px; font-weight: 700; line-height: 1.4; color: var(--text); }
 .key-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 3px 0; font-size: 12.5px; font-weight: 800; }

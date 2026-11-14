@@ -9087,14 +9087,10 @@ function openScanSummary(title, pay, excl, pages) {
   document.body.style.overflow = 'hidden';
 }
 
-function keyCheckHTML(kc) {
+function diffBoxHTML(kc) {
   if (!kc || !kc.items || !kc.items.length) return '';
-  const rows = kc.items.map(it => `
-    <div class="key-row">
-      <span>${esc(it.name)}</span>
-      ${(it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('')}
-    </div>`).join('');
-  return `<div class="key-check"><div class="key-check-title">핵심 체크</div>${kc.lead ? `<p>${esc(kc.lead)}</p>` : ''}${rows}</div>`;
+  const rows = kc.items.map(it => `<div class="code-line"><span class="name">${esc(it.name)}</span><span class="code-chips">${(it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('')}</span></div>`).join('');
+  return `<div class="diff-box">${rows}</div>`;
 }
 
 function meritzCardsHTML(list) {
@@ -9157,13 +9153,13 @@ function openMeritzClauseModal(pack, mode) {
       <button type="button" class="modal-tab ${tab === 'pay' ? 'on' : ''}" data-mtab="pay">보상하는 사항</button>
       <button type="button" class="modal-tab ${tab === 'excl' ? 'on' : ''}" data-mtab="excl">보장제외 사항</button>
     </div>`;
-    box.innerHTML = imgBtn(pages, (pack.label || '') + (excl ? ' 보장제외' : ' 보상')) + keyCheckHTML(pack.keyCheck) + tabs + meritzCardsHTML(cards);
+    box.innerHTML = imgBtn(pages, (pack.label || '') + (excl ? ' 보장제외' : ' 보상')) + diffBoxHTML(pack.keyCheck) + tabs + meritzCardsHTML(cards);
     box.querySelectorAll('[data-mtab]').forEach(b => b.addEventListener('click', () => paint(b.getAttribute('data-mtab'))));
     bindImg();
   }
   if (mode === 'codes') {
     if (titleEl) titleEl.textContent = '제외 질병코드';
-    box.innerHTML = imgBtn(pack.exclPages, (pack.label || '') + ' 제외 질병코드') + codeLinesHTML(pack.codeList || []);
+    box.innerHTML = imgBtn(pack.exclPages, (pack.label || '') + ' 제외 질병코드') + diffBoxHTML(pack.keyCheck) + codeLinesHTML(pack.codeList || []);
     bindImg();
   } else {
     paint('pay');
