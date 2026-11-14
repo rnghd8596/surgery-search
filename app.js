@@ -9105,15 +9105,46 @@ function openScanSummary(title, pay, excl, pages) {
   document.body.style.overflow = 'hidden';
 }
 
+function mergeCodeRows(list) {
+  const order = [];
+  const map = new Map();
+  (list || []).forEach(raw => {
+    let code = '';
+    let name = '';
+    if (raw && typeof raw === 'object') {
+      code = String(raw.code || '').trim();
+      name = String(raw.name || '').trim();
+    } else {
+      code = String(raw || '').trim();
+    }
+    const key = code || name;
+    if (!key) return;
+    if (!map.has(key)) {
+      map.set(key, []);
+      order.push(key);
+    }
+    const names = map.get(key);
+    if (name && names.indexOf(name) < 0) names.push(name);
+  });
+  return order.map(key => ({ code: key, name: map.get(key).join(' · ') }));
+}
+
+function codeTableHTML(list) {
+  const rows = mergeCodeRows(list);
+  if (!rows.length) return '';
+  return `<div class="code-table">${rows.map(r => `<div class="code-table-row"><span class="code-table-chip">${esc(r.code)}</span><span class="code-table-name">${esc(r.name)}</span></div>`).join('')}</div>`;
+}
+
 function diffBoxHTML(kc) {
   if (!kc || !kc.items || !kc.items.length) return '';
-  const rows = kc.items.map((it, i) => {
-    const chips = (it.codes || []).map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('');
-    const no = kc.numbered ? `<span class="five-no">${i + 1}</span>` : '';
-    return `<div class="code-line">${no}<span class="name">${esc(it.name)}</span><span class="code-chips">${chips}</span></div>`;
-  }).join('');
+  const flat = [];
+  kc.items.forEach((it, i) => {
+    const codes = (it.codes && it.codes.length) ? it.codes : [''];
+    const prefix = kc.numbered ? (i + 1) + '. ' : '';
+    codes.forEach(code => flat.push({ code, name: prefix + (it.name || '') }));
+  });
   const title = kc.title ? `<div class="diff-box-title">${esc(kc.title)}</div>` : '';
-  return `<div class="diff-box">${title}${rows}</div>`;
+  return `<div class="diff-box">${title}${codeTableHTML(flat)}</div>`;
 }
 
 function meritzCardsHTML(list) {
@@ -9141,14 +9172,12 @@ function openMeritzClauseModal(pack, mode) {
     return `<button type="button" class="cov-btn point" id="meritzImgBtn" data-pages="${esc(list.join('|'))}" data-title="${esc(title)}" style="width:100%;margin:0 0 12px;">약관 원문보기</button>`;
   };
   function codeLinesHTML(rows) {
-    return (rows || []).map((r, i) => {
-      const codes = r.codes || [];
-      const chips = codes.map(code => `<span class="kcd-badge">${esc(code)}</span>`).join('');
-      if (codes.length > 4) {
-        return `<div class="code-line"><button type="button" class="code-line-btn" data-code-fold="${i}"><span class="name">${esc(r.name)}</span><span class="fold-toggle">펼치기 ▾</span></button><div class="code-chips" data-code-body="${i}" style="display:none;width:100%;justify-content:flex-start;margin-top:6px;">${chips}</div></div>`;
-      }
-      return `<div class="code-line"><span class="name">${esc(r.name)}</span><span class="code-chips">${chips}</span></div>`;
-    }).join('');
+    const flat = [];
+    (rows || []).forEach(r => {
+      const codes = (r.codes && r.codes.length) ? r.codes : [''];
+      codes.forEach(code => flat.push({ code, name: r.name || '' }));
+    });
+    return codeTableHTML(flat);
   }
   function bindImg() {
     const img = box.querySelector('#meritzImgBtn');
@@ -9211,7 +9240,7 @@ function scanCovRow(key, label, pill, inner, sel) {
       <span class="qvb-left-label">${esc(label)}</span>
       <span class="fold-toggle${on ? ' on' : ''}">${on ? '접기 ▴' : '펼치기 ▾'}</span>
     </button>
-    <div class="cov-drawer" style="display:${on ? 'block' : 'none'};">${on ? inner : ''}</div>
+    <div class="cov-drawer" style="display:${on ? 'flex' : 'none'};">${on ? inner : ''}</div>
   </div>`;
 }
 
@@ -9255,10 +9284,7 @@ function paintScanDrawer(drawer) {
     if (parts.length && sel.groups) {
       groups = `<div class="cov-groups">${parts.map(part => {
         const on = sel.group === part.name;
-        const codes = (part.codes || []).map(c => {
-          if (c && typeof c === 'object') return `<span class="code-pair"><span class="kcd-badge">${esc(c.code)}</span><span class="chip-name">${esc(c.name)}</span></span>`;
-          return `<span class="kcd-badge">${esc(c)}</span>`;
-        }).join('');
+        const codes = codeTableHTML(part.codes || []);
         const pages = (part.pages || []).filter(Boolean);
         const pageAttrs = pages.length ? `data-act="pages" data-pages="${esc(pages.join('|'))}" data-title="${esc(part.name)}"` : 'disabled';
         return `<div class="cov-group">
@@ -9269,11 +9295,12 @@ function paintScanDrawer(drawer) {
               <button type="button" class="pair-btn${on ? ' on' : ''}" data-act="group" data-name="${esc(part.name)}">${on ? '접기 ▴' : '펼치기 ▾'}</button>
             </span>
           </div>
-          ${on && codes ? `<div class="cov-codes">${codes}</div>` : ''}
+          ${on && codes ? codes : ''}
         </div>`;
       }).join('')}</div>`;
     }
-    ndaiHTML = `${segs}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}`;
+    const limitHTML = current.limit ? `<div class="key-limit"><div class="key-limit-kicker">핵심 체크</div><div class="key-limit-title">${esc(current.limit.title)}</div><p>${esc(current.limit.note)}</p><button type="button" class="key-limit-btn" data-act="pages" data-pages="${esc((current.limit.pages || []).join('|'))}" data-title="32대 관혈수술 정의">약관 p.${esc(current.limit.pageLabel)}</button></div>` : '';
+    ndaiHTML = `${segs}${limitHTML}<div class="cov-actions">${scanCovBtn('약관보기', clausePages, current.name + ' 질병수술비', false)}${tableBtn}</div>${groups}`;
   }
   const options = (disease.options && disease.options.length) ? disease.options : [];
   const curD = options.find(o => o.id === sel.disease) || options[0];
@@ -9311,11 +9338,17 @@ function openTierRevModal(tier) {
   if (searchWrap) searchWrap.style.display = 'none';
   if (alertEl) alertEl.style.display = 'none';
   const rows = rev.rows.map(r => `<div class="rev-row"><span class="rev-name">${esc(r.name)}</span><span class="rev-pills"><span class="rev-pill">${esc(r.before)}</span><span class="rev-arrow">→</span><span class="rev-pill after">${esc(r.after)}</span></span></div>`).join('');
+  const shots = (rev.shots || []).map(s => {
+    const before = s.before ? `<div class="tier-rev-shot"><div class="tier-rev-cap">${esc(s.label)} · 개정 전 p.${esc(s.before.page)}</div><img src="${esc(s.before.src)}" alt="${esc(s.label)} 개정 전"></div>` : '';
+    const after = s.after ? `<div class="tier-rev-shot"><div class="tier-rev-cap">${esc(s.label)} · 개정 후 p.${esc(s.after.page)}</div><img src="${esc(s.after.src)}" alt="${esc(s.label)} 개정 후"></div>` : '';
+    return before + after;
+  }).join('');
   box.innerHTML = `<div class="rev-key-box"><div class="rev-key-title">개정 포인트</div><div class="rev-grid">${rows}</div></div>
-    <div class="cov-actions">
+    <div class="cov-actions tier-rev-actions">
       <button type="button" class="cov-btn" id="tierRevBefore">개정 전 약관</button>
       <button type="button" class="cov-btn" id="tierRevAfter">개정 후 약관</button>
-    </div>`;
+    </div>
+    <div class="tier-rev-shots">${shots}</div>`;
   const before = (rev.beforePages || []).filter(Boolean);
   const after = (rev.afterPages || []).filter(Boolean);
   const b1 = box.querySelector('#tierRevBefore');
@@ -9962,7 +9995,7 @@ function renderClausesCompanyList(searchQuery) {
           }
         });
       }
-      drawer.style.display = opening ? 'block' : 'none';
+      drawer.style.display = opening ? 'flex' : 'none';
       const badge = btn.querySelector('.fold-toggle');
       if (badge) {
         badge.textContent = opening ? '접기 ▴' : '펼치기 ▾';
@@ -10845,7 +10878,7 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
         </div>
       </div>
 
-      <div class="ndai-group-list" style="display:flex;flex-direction:column;gap:8px;">
+      <div class="ndai-group-list">
         ${rows.map((r, gi) => {
           const grpName = r[0];
           const summaryNames = r[1];
@@ -10878,21 +10911,12 @@ function renderClauseModalContent(filterQ = '', data = currentClauseModalData) {
 
             <div class="ndai-group-body" style="display:${isAutoOpen ? 'block' : 'none'};padding:10px 12px;background:var(--surface-2);border-top:1px dashed var(--line);">
               <div style="font-size:11px;font-weight:850;color:#059669;margin-bottom:6px;">📋 수록 질병코드 (KCD 전수 분류표):</div>
-              <div style="display:flex;flex-direction:column;gap:5px;">
-                ${detailedList.length ? detailedList.map(item => {
-                  const codeStr = item.code || (item.c && item.c[0]) || 'KCD';
+              <div>
+                ${detailedList.length ? codeTableHTML(detailedList.flatMap(item => {
                   const nameStr = item.name || item.n || '';
-                  const subCodeStr = (item.c && item.c.length > 1) ? ('포함 KCD: ' + item.c.join(', ')) : '';
-                  const descStr = item.desc || subCodeStr;
-                  return `
-                  <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border:1px solid var(--border);min-height:44px;box-shadow:0 1px 2px rgba(0,0,0,0.02);">
-                    <span class="kcd-badge-fixed" style="font-size:11px;font-weight:900;color:#2563eb;background:rgba(37,99,235,0.08);padding:3px 0;border-radius:5px;border:1px solid rgba(37,99,235,0.2);white-space:nowrap;width:84px;min-width:84px;max-width:84px;text-align:center;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex-shrink:0;">${esc(codeStr)}</span>
-                    <div style="min-width:0;flex:1;">
-                      <div style="font-size:12.5px;font-weight:850;color:var(--text);word-break:keep-all;">${esc(nameStr)}</div>
-                      ${descStr ? `<div style="font-size:11px;color:#334155;margin-top:2px;line-height:1.35;word-break:keep-all;">${esc(descStr)}</div>` : ''}
-                    </div>
-                  </div>`;
-                }).join('') : `
+                  const codes = item.code ? [item.code] : (item.c || []);
+                  return (codes.length ? codes : ['']).map(code => ({ code, name: nameStr }));
+                })) : `
                   <div style="padding:6px 8px;font-size:11.5px;background:var(--surface);border-radius:6px;border:1px solid var(--border);color:var(--text);">
                     <div style="font-weight:850;color:#2563eb;margin-bottom:2px;">KCD 코드: ${esc(rawCodes)}</div>
                     <div style="color:var(--text-2);">${esc(summaryNames)}</div>

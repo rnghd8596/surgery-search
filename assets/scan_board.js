@@ -200,7 +200,7 @@
           label: '2025년 1월 1일 ~ 현재',
           cardLine: 'N62 3종→1종, 담석증 3종→2종, 대장용종 내시경 2종→1종',
           revisionBullets: [
-            { cover: '1~5종 수술비', name: '유방비대(N62)', before: '미분류', after: '1종(신설)' },
+            { cover: '1~5종 수술비', name: '유방비대(N62) 유방절단', before: '3종', after: '1종' },
             { cover: '1~5종 수술비', name: '담석증(K80)', before: '3종', after: '2종' },
             { cover: '1~5종 수술비', name: '대장용종 내시경절제', before: '2종', after: '1종' }
           ],
