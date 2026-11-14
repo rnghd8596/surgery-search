@@ -49,6 +49,14 @@
 
   function face(o) { return o; }
   const pyo = (key) => (window.MERITZ_PYO && window.MERITZ_PYO[key]) || null;
+  function limit32(file, pageLabel) {
+    return {
+      title: '관혈수술만 보장',
+      note: '제외: 내시경·카테터·신의료수술. 복강경하·흉강경하·대뇌내시경은 보상.',
+      pages: [P + file],
+      pageLabel
+    };
+  }
 
   window.MERITZ_FACE = {
     meritz_201912: {
@@ -68,7 +76,7 @@
         },
         bundles: [
           { name: '64대', sale: '~2020.11.03', clause: pg('A', [528, 529, 530]), parts: pyo('A64') || p64 },
-          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: pyo('A32') || p32 }
+          { name: '32대', sale: '~2020.11.03', clause: pg('A', [538, 539]), parts: pyo('A32') || p32, limit: limit32('A_541.png', '541') }
         ]
       }),
       simplified: face({
@@ -100,7 +108,7 @@
         },
         bundles: [
           { name: '82대', sale: '2020.11~2020.12', clause: pg('B', [510, 511, 512, 513, 514, 515]), parts: pyo('B82') || p82 },
-          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: pyo('B32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }] }
+          { name: '32대', sale: '2020.11~2020.12', clause: [old('b_32.png')], parts: pyo('B32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('b_32.png')] }], limit: limit32('B_519.png', '519') }
         ]
       }),
       simplified: face({
@@ -128,7 +136,7 @@
         },
         bundles: [
           { name: '82대', sale: '2021.01~2021.09', clause: pg('C', [514, 515, 516]), parts: pyo('C82') || [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
-          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: pyo('C32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }] }
+          { name: '32대', sale: '2021.01~2021.09', clause: [old('c_32.png')], parts: pyo('C32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('c_32.png')] }], limit: limit32('C_523.png', '523') }
         ]
       }),
       simplified: face({
@@ -149,7 +157,7 @@
         },
         bundles: [
           { name: '131대', parts: pyo('D131') || p131 },
-          { name: '32대', parts: pyo('D32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+          { name: '32대', parts: pyo('D32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }], limit: limit32('D_456.png', '456') }
         ]
       }),
       simplified: face({
@@ -168,7 +176,7 @@
         bundles: [
           { name: '82대', sale: '2021.09~2022.06', clause: pg('C', [514, 515, 516]), parts: pyo('H82') || [{ name: '82대질병수술비', codes: [], pages: pg('C', [514, 515, 516]) }] },
           { name: '131대', sale: '2022.07~2024.12', clause: pg('D', [446, 447, 448, 449, 450, 451]), parts: pyo('D131') || p131 },
-          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: pyo('H32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }] }
+          { name: '32대', sale: '2021.09~2024.12', clause: [old('d_32.png')], parts: pyo('H32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('d_32.png')] }], limit: limit32('H_544.png', '544') }
         ]
       }),
       simplified: face({
@@ -191,12 +199,17 @@
           table: pg('E', [592, 593, 594, 595]).concat([old('e_n62.png')]),
           rev: {
             rows: [
-              { name: '유방비대(N62)', before: '미분류', after: '1종(신설)' },
+              { name: '유방비대(N62) 유방절단', before: '3종', after: '1종' },
               { name: '담석증(K80)', before: '3종', after: '2종' },
               { name: '대장용종 내시경절제', before: '2종', after: '1종' }
             ],
             beforePages: pg('B', [947, 949, 951]),
-            afterPages: pg('E', [592, 593, 594])
+            afterPages: pg('E', [592, 593, 594]),
+            shots: [
+              { label: '유방비대(N62) 유방절단', before: { src: 'assets/clause_pages/meritz/crops/n62_before.png', page: '947' }, after: { src: 'assets/clause_pages/meritz/crops/n62_after.png', page: '591' } },
+              { label: '담석증(K80)', before: { src: 'assets/clause_pages/meritz/crops/k80_before.png', page: '949' }, after: { src: 'assets/clause_pages/meritz/crops/k80_after.png', page: '592' } },
+              { label: '대장용종 내시경절제', before: { src: 'assets/clause_pages/meritz/crops/polyp_before.png', page: '951' }, after: { src: 'assets/clause_pages/meritz/crops/polyp_after.png', page: '593' } }
+            ]
           },
           items: [
             { name: 'N62', tier: '1종', pages: [old('e_n62.png')].concat(pg('E', [592])) },
@@ -206,7 +219,7 @@
         },
         bundles: [
           { name: '131대', sale: '2025.01~', clause: pg('E', [862, 863, 864]), parts: pyo('E131') || ['심장질환수술비', '뇌혈관질환수술비', '특정31대질병수술비', '다빈도62대질병수술비', '유방의장애수술비', '편도염수술비', '특정다빈도29대질병수술비', '후각특정질환수술비', '관절염·생식기질환수술비', '치핵수술비', '백내장수술비'].map(name => ({ name, codes: [], pages: pg('E', [862, 863, 864]) })) },
-          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: pyo('E32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }] }
+          { name: '32대', sale: '2025.01~', clause: [old('e_32.png')], parts: pyo('E32') || [{ name: '32대질병관혈수술비', codes: [], pages: [old('e_32.png')] }], limit: limit32('E_259.png', '258') }
         ]
       }),
       simplified: face({
