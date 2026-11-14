@@ -35,7 +35,7 @@
 <meta name="twitter:image" content="https://rnghd8596.github.io/surgery-search/og-brand-bright.png?v=20261111_0815">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css?v=20261114_mzime">
+<link rel="stylesheet" href="style.css?v=20261114_mzzoom">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%233182F6'/%3E%3Ctext x='32' y='43' font-size='34' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'%3E%ED%99%8D%3C/text%3E%3C/svg%3E">
 <script>
 window.onerror = function(msg, url, line, col, err) {
@@ -546,7 +546,7 @@ window.onerror = function(msg, url, line, col, err) {
           </button>
           <div id="ocrPasteDrawer" style="display:none;margin-top:8px;">
             <textarea id="ocrTextInput" placeholder="진단서 텍스트를 그대로 붙여넣으세요.
-(예: J34.2 편위된 코사이막, J32.0 만성 사골동염, 비중격교정술, 하비갑개점막하 절제술 등)" style="width:100%;height:85px;border:1.5px solid rgba(139,92,246,0.35);border-radius:10px;padding:10px;font-size:12px;font-family:inherit;background:var(--surface-2);color:var(--text);resize:vertical;line-height:1.45;"></textarea>
+(예: J34.2 편위된 코사이막, J32.0 만성 사골동염, 비중격교정술, 하비갑개점막하 절제술 등)" style="width:100%;height:85px;border:1.5px solid rgba(139,92,246,0.35);border-radius:10px;padding:10px;font-size:16px;font-family:inherit;background:var(--surface-2);color:var(--text);resize:vertical;line-height:1.45;"></textarea>
             <button type="button" id="btnAnalyzeOcrText" class="f-chip" style="margin-top:6px;width:100%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);color:#fff;font-weight:850;padding:9px 0;border-radius:9px;border:0;font-size:12.5px;box-shadow:0 2px 8px rgba(139,92,246,0.25);">텍스트 즉시 판정 분석하기</button>
           </div>
         </div>
@@ -1018,7 +1018,7 @@ window.onerror = function(msg, url, line, col, err) {
         <form id="clauseSearchForm" action="#" style="margin:0;">
         <div class="searchbox" style="width:100%;box-sizing:border-box;height:52px;border-radius:12px;">
           <svg class="s-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="M15.6 15.6 21 21"/></svg>
-          <input type="search" id="q-clause" placeholder="보험사명 · N대(숫자) · 가입연도 검색" autocomplete="off" enterkeyhint="search" spellcheck="false" style="flex:1;min-width:0;height:100%;border:0;background:transparent;outline:none;font-size:14px;font-weight:600;color:var(--text);">
+          <input type="search" id="q-clause" placeholder="보험사명 · N대(숫자) · 가입연도 검색" autocomplete="off" enterkeyhint="search" spellcheck="false" style="flex:1;min-width:0;height:100%;border:0;background:transparent;outline:none;font-size:16px;font-weight:600;color:var(--text);">
           <button type="button" id="clearBtn-clause" class="clear-btn" hidden aria-label="지우기">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
@@ -1074,7 +1074,7 @@ window.onerror = function(msg, url, line, col, err) {
 
     <!-- 모달 상단 조항 내 실시간 검색바 & 본문 복사 버튼 -->
     <div id="clauseModalSearchWrap" style="display:none;padding:10px 14px;background:var(--surface-2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;">
-      <input type="text" id="clauseInnerSearch" placeholder="조항명 또는 질병코드 검색" style="flex:1;height:38px;border-radius:8px;border:1px solid var(--border);padding:0 12px;font-size:12.5px;background:var(--surface);color:var(--text);min-width:0;">
+      <input type="text" id="clauseInnerSearch" placeholder="조항명 또는 질병코드 검색" style="flex:1;height:38px;border-radius:8px;border:1px solid var(--border);padding:0 12px;font-size:16px;background:var(--surface);color:var(--text);min-width:0;">
       <button type="button" id="btnCopyClauseText" style="height:38px;padding:0 12px;border-radius:8px;border:1.5px solid var(--brand);background:var(--brand);color:#fff;font-size:12px;font-weight:850;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;flex-shrink:0;">
         <span>복사</span>
       </button>
@@ -1136,12 +1136,12 @@ window.onerror = function(msg, url, line, col, err) {
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="assets/curated.js?v=20261113_2140"></script>
 <script src="assets/disputes.js?v=20261114_kbdate"></script>
-<script src="assets/clauses.js?v=20261114_mzime"></script>
-<script src="assets/clause_book.js?v=20261114_mzime"></script>
-<script src="assets/scan_board.js?v=20261114_mzime"></script>
-<script src="assets/meritz_pyo.js?v=20261114_mzime"></script>
-<script src="assets/meritz_face.js?v=20261114_mzime"></script>
-<script src="assets/clause_verified.js?v=20261114_mzime"></script>
-<script src="app.js?v=20261114_mzime"></script>
+<script src="assets/clauses.js?v=20261114_mzzoom"></script>
+<script src="assets/clause_book.js?v=20261114_mzzoom"></script>
+<script src="assets/scan_board.js?v=20261114_mzzoom"></script>
+<script src="assets/meritz_pyo.js?v=20261114_mzzoom"></script>
+<script src="assets/meritz_face.js?v=20261114_mzzoom"></script>
+<script src="assets/clause_verified.js?v=20261114_mzzoom"></script>
+<script src="app.js?v=20261114_mzzoom"></script>
 </body>
 </html>

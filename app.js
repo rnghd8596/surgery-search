@@ -8824,7 +8824,17 @@ function bindClausesTab() {
     state.clauseQ = val;
     if (clearBtn) clearBtn.hidden = !val;
     qInput.blur();
-    setTimeout(() => renderClausesCompanyList(val, { commit: true }), 60);
+    const vv = window.visualViewport;
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      if (vv) vv.removeEventListener('resize', onResize);
+      renderClausesCompanyList(val, { commit: true });
+    };
+    const onResize = () => setTimeout(finish, 80);
+    if (vv) vv.addEventListener('resize', onResize);
+    setTimeout(finish, 320);
   }
   window.submitClauseSearch = submitClauseSearch;
 
@@ -8862,11 +8872,20 @@ function bindClausesTab() {
       syncClauseQueryLive();
     });
     qInput.addEventListener('keydown', (e) => {
-      if (e.isComposing || e.keyCode === 229) return;
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        submitClauseSearch();
+      const enter = e.key === 'Enter' || e.keyCode === 13;
+      if (!enter) return;
+      if (e.isComposing || e.keyCode === 229 || clauseComposing) {
+        commitAfterComposition = true;
+        return;
       }
+      e.preventDefault();
+      submitClauseSearch();
+    });
+    qInput.addEventListener('search', () => submitClauseSearch());
+    qInput.addEventListener('focus', () => {
+      const x = window.pageXOffset;
+      const y = window.pageYOffset;
+      requestAnimationFrame(() => window.scrollTo(x, y));
     });
   }
 
@@ -8874,7 +8893,7 @@ function bindClausesTab() {
     clearBtn.addEventListener('click', () => {
       if (qInput) {
         qInput.value = '';
-        qInput.focus();
+        qInput.focus({ preventScroll: true });
       }
       state.clauseQ = '';
       clearBtn.hidden = true;
@@ -9126,7 +9145,7 @@ function stickyCoverBottom() {
 }
 
 function scrollOpenedCard(el) {
-  if (!el) return;
+  if (!el || !el.isConnected) return;
   const reserve = stickyCoverBottom() + 8;
   const y = el.getBoundingClientRect().top + window.pageYOffset - reserve;
   window.scrollTo(0, Math.max(0, y));
@@ -10182,9 +10201,12 @@ function renderClausesCompanyList(searchQuery, opts) {
         arrowBtn.textContent = '접기 ▴';
         arrowBtn.classList.add('on');
       }
-      const marked = card.querySelector('.period-accordion-box.search-hit');
       container.style.paddingBottom = Math.max(160, window.innerHeight - stickyCoverBottom()) + 'px';
-      requestAnimationFrame(() => scrollOpenedCard(marked || card));
+      const align = () => {
+        const live = card.querySelector('.period-accordion-box.search-hit') || card;
+        scrollOpenedCard(live);
+      };
+      requestAnimationFrame(() => requestAnimationFrame(align));
     }
   } else if (container) {
     container.style.paddingBottom = '';
