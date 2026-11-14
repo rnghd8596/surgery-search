@@ -8945,7 +8945,7 @@ window.closeClauseModal = closeClauseModal;
 
 function parsePeriodYearRange(periodStr) {
   const years = (periodStr.match(/\d{4}/g) || []).map(Number);
-  if (periodStr.includes('이전')) {
+  if (periodStr.trim().startsWith('~') || periodStr.includes('이전')) {
     return [1990, years[0] || 2020];
   } else if (periodStr.includes('현재') || years.length === 1) {
     return [years[0] || 2024, 2099];
@@ -9007,6 +9007,7 @@ function renderScanCompanyHTML(co) {
             <span class="period-arrow-badge" style="font-size:11px;font-weight:800;color:${open ? '#fff' : 'var(--brand)'};background:${open ? 'var(--brand)' : 'var(--surface-2)'};padding:3px 8px;border-radius:6px;border:1px solid var(--border);flex-shrink:0;white-space:nowrap;">${open ? '접기 ▴' : '펼쳐보기 ▾'}</span>
           </div>
           <div id="period-drawer-${esc(co.id)}-${esc(p.id)}" class="period-drawer-content" data-pid="${esc(p.id)}" style="display:${open ? 'flex' : 'none'};padding:12px 14px 14px;border-top:1px dashed var(--line);background:var(--surface-2);flex-direction:column;gap:10px;">
+            ${p.gapNote ? `<p class="scan-none">${esc(p.gapNote)}</p>` : ''}
             <div class="scan-types">
               <button type="button" class="scan-type on" data-ptype="standard">일반</button>
               <button type="button" class="scan-type" data-ptype="simplified">간편</button>

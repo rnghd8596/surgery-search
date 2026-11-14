@@ -791,7 +791,7 @@ window.POLICY_CLAUSES_DATA = {
       periods: [
 {
           id: 'meritz_201912',
-          periodStr: '2019년 12월 18일 ~ 2020년 11월 3일',
+          periodStr: '~ 2020년 11월 3일',
           hasRevision: true,
           revBadge: '',
           revSummary: '',
@@ -859,7 +859,7 @@ window.POLICY_CLAUSES_DATA = {
         },
         {
           id: 'meritz_202101',
-          periodStr: '2021년 1월 1일 ~ 2022년 3월 31일',
+          periodStr: '2021년 1월 1일 ~ 2022년 6월 30일',
           hasRevision: true,
           revBadge: '',
           revSummary: '',
