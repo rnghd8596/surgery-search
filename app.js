@@ -9072,6 +9072,24 @@ function periodSearchHit(co, pid, matchContext) {
   return null;
 }
 
+function stickyCoverBottom() {
+  const bar = document.querySelector('.topbar');
+  let bottom = bar ? bar.getBoundingClientRect().bottom : 0;
+  const search = document.querySelector('.search-wrap');
+  if (search) {
+    const rect = search.getBoundingClientRect();
+    if (rect.height > 8 && rect.bottom > bottom && rect.top < bottom + 40) bottom = rect.bottom;
+  }
+  return bottom;
+}
+
+function scrollOpenedCard(el) {
+  if (!el) return;
+  const reserve = stickyCoverBottom() + 8;
+  const y = el.getBoundingClientRect().top + window.pageYOffset - reserve;
+  window.scrollTo(0, Math.max(0, y));
+}
+
 function primeScanSearch(matchContext) {
   if (!matchContext || !matchContext.periodPlan) return;
   if (!state.scanUi) state.scanUi = {};
@@ -10041,6 +10059,10 @@ function renderClausesCompanyList(searchQuery) {
           arrowBtn.textContent = isHidden ? '접기 ▴' : '펼치기 ▾';
           arrowBtn.classList.toggle('on', isHidden);
         }
+        if (isHidden) {
+          const card = btn.closest('.clause-co-card') || btn;
+          requestAnimationFrame(() => scrollOpenedCard(card));
+        }
       }
     });
   });
@@ -10111,6 +10133,10 @@ function renderClausesCompanyList(searchQuery) {
         if (arrowBadge) {
           arrowBadge.textContent = isHidden ? '접기 ▴' : '펼치기 ▾';
           arrowBadge.classList.toggle('on', isHidden);
+        }
+        if (isHidden) {
+          const card = btn.closest('.period-accordion-box') || btn;
+          requestAnimationFrame(() => scrollOpenedCard(card));
         }
       }
     });
